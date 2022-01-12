@@ -8,11 +8,10 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class User
- * 
+ *
  * @property int $id
  * @property string|null $name
  * @property string $email
@@ -25,15 +24,21 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $remember_me_token
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * 
+ *
  * @property Role|null $role
  * @property Collection|ApiToken[] $api_tokens
  * @property Collection|UserLocal[] $user_locals
  *
  * @package App\Models
  */
-class User extends Model
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class User extends Authenticatable
 {
+    use HasFactory, Notifiable;
 	protected $table = 'users';
 
 	protected $casts = [
