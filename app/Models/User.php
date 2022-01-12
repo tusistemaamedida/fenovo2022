@@ -1,44 +1,75 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+/**
+ * Class User
+ * 
+ * @property int $id
+ * @property string|null $name
+ * @property string $email
+ * @property string|null $username
+ * @property int|null $rol_id
+ * @property string|null $avatar
+ * @property string|null $last_login
+ * @property bool $active
+ * @property string $password
+ * @property string|null $remember_me_token
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * 
+ * @property Role|null $role
+ * @property Collection|ApiToken[] $api_tokens
+ * @property Collection|UserLocal[] $user_locals
+ *
+ * @package App\Models
+ */
+class User extends Model
 {
-    use HasApiTokens, HasFactory, Notifiable;
+	protected $table = 'users';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+	protected $casts = [
+		'rol_id' => 'int',
+		'active' => 'bool'
+	];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+	protected $hidden = [
+		'password',
+		'remember_me_token'
+	];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+	protected $fillable = [
+		'name',
+		'email',
+		'username',
+		'rol_id',
+		'avatar',
+		'last_login',
+		'active',
+		'password',
+		'remember_me_token'
+	];
+
+	public function role()
+	{
+		return $this->belongsTo(Role::class, 'rol_id');
+	}
+
+	public function api_tokens()
+	{
+		return $this->hasMany(ApiToken::class);
+	}
+
+	public function user_locals()
+	{
+		return $this->hasMany(UserLocal::class);
+	}
 }
