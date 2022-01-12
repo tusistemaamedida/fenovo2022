@@ -3,6 +3,8 @@
 
 @include('partials.head')
 
+@yield('css')
+
 <body id="tc_body" class="@auth header-fixed header-mobile-fixed subheader-enabled aside-enabled aside-fixed @endauth">
 	@include('partials.preloader')
 
@@ -36,6 +38,8 @@
     @endguest
 
     @include('partials.scripts')
+
+    @yield('js')
 
 </body>
 </html>
