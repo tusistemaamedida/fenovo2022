@@ -11,17 +11,17 @@
                     <div class="card-header align-items-center  justify-content-center border-0 h-100px flex-column">
                         <div class="card-title mb-0">
                             <h3 class="card-label font-weight-bold mb-0 text-body">
-                                <img src="./assets/images/misc/logo.png" alt="logo">
+                                <img src="{{asset('assets/images/misc/logo.png')}}" alt="fenovo" style="height:40px;">
                             </h3>
-
+                            <br>
+                            <h3 class="font-size-h5 mb-0 mt-3 text-dark">
+                                Bienvenido.
+                            </h3>
                         </div>
-                        <h5 class="font-size-h5 mb-0 mt-3 text-dark">
-                            Please login to your account.
-                        </h5>
-
                     </div>
                     <div class="card-body p-0">
-                        <form id="myform" class="pb-5 pt-5">
+                        <form method="POST" action="{{ route('login') }}" class="pb-5 pt-5">
+                            @csrf
                             <div class="form-group  row">
                                 <div class="col-lg-2 col-3 ">
                                     <label for="exampleInputEmail1" class="mb-0 text-dark">
@@ -31,7 +31,21 @@
                                     </label>
                                 </div>
                                 <div class="col-lg-10 col-9 pl-0">
-                                    <input type="email" name="email" class="form-control bg-transparent text-dark border-0 p-0 h-20px font-size-h5" placeholder="example@mail.com" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                    <input type="email"
+                                    class="form-control bg-transparent text-dark border-0 p-0 h-20px font-size-h5 @error('email') is-invalid @enderror"
+                                    name="email" value="{{ old('email') }}"
+                                    required
+                                    autocomplete="email"
+                                    autofocus
+                                    placeholder="example@mail.com"
+                                    id="exampleInputEmail1"
+                                    aria-describedby="emailHelp">
+
+                                    @error('email')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
 
                                 </div>
 
@@ -45,202 +59,37 @@
                                     </label>
                                 </div>
                                 <div class="col-lg-10 col-9 pl-0">
-                                    <input type="password" name="password" placeholder="......." class="form-control text-dark bg-transparent font-size-h4 border-0 p-0 h-20px" id="exampleInputPassword1">
+                                    <input type="password"
+                                           placeholder="......."
+                                           class="form-control text-dark bg-transparent font-size-h4 border-0 p-0 h-20px @error('password') is-invalid @enderror"
+                                           name="password"
+                                           required
+                                           autocomplete="current-password"
+                                           id="exampleInputPassword1">
+
+                                    @error('password')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
 
                             </div>
+
                             <div class="form-group row align-items-center justify-content-between">
                                 <div class="col-6">
                                     <div class="form-check pl-4">
-                                        <input type="checkbox" class="form-check-input ml--4" id="exampleCheck1">
-                                        <label class="form-check-label text-dark" for="exampleCheck1">Remember me</label>
+                                        <input type="checkbox" class="form-check-input ml--4"  name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                        <label class="form-check-label text-dark" for="exampleCheck1">Recordarme!</label>
                                     </div>
                                 </div>
-
-                                <div class="col-6 text-right">
-                                    <a href="#">Forgot Password?</a>
-                                </div>
-
                             </div>
-                            <button type="button" class="btn btn-primary text-white font-weight-bold w-100 py-3" data-toggle="modal" data-target="#default">
+
+                            <button type="submit" class="btn btn-primary text-white font-weight-bold w-100 py-3" data-toggle="modal" data-target="#default">
                                 Login
-                              </button>
-                              <!--Basic Modal -->
-                              <div class="modal fade text-left" id="default" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" style="display: none;" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-scrollable" role="document">
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <h3 class="modal-title" id="myModalLabel1">Setting</h3>
-                                      <button type="button" class="close rounded-pill btn btn-sm btn-icon btn-light btn-hover-primary m-0" data-dismiss="modal" aria-label="Close">
-                                        <svg width="20px" height="20px" viewBox="0 0 16 16" class="bi bi-x" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path>
-                                        </svg>
-                                      </button>
-
-                                    </div>
-                                    <div class="modal-body text-center">
-                                        <ul class="list-unstyled mb-3 font-size-h4">
-                                            <li class="d-inline-block mr-3 mb-1">
-                                              <fieldset>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="DigitalPhysical" id="PhysicalRadios1" value="Physical" onclick="checkedPoint()">
-                                                    <label class="form-check-label" for="PhysicalRadios1">
-                                                    Physical
-                                                    </label>
-                                                </div>
-                                              </fieldset>
-                                            </li>
-                                            <li class="d-inline-block mr-3 mb-1">
-                                              <fieldset>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="DigitalPhysical" id="DigitalRadio2" value="Digital" onclick="checkedPoint()">
-                                                    <label class="form-check-label" for="DigitalRadio2">Digital</label>
-                                                </div>
-                                              </fieldset>
-                                            </li>
-                                          </ul>
-                                          <div class="DigitalEnter" id="DigitalEnter" style="display: none;">
-                                            <h3 class="text-dark font-size-h3 mb-3">
-                                                Account
-                                            </h3>
-                                          <ul class="list-unstyled  mb-3 font-size-h4">
-                                              <li class="d-inline-block mr-3 mb-1">
-                                                <fieldset>
-                                                  <div class="form-check form-check-inline">
-                                                      <input class="form-check-input" type="radio" name="AccountRadios" id="AccountRadios1" value="option1" checked>
-                                                      <label class="form-check-label" for="AccountRadios1">
-                                                      Yes
-                                                      </label>
-                                                  </div>
-                                                </fieldset>
-                                              </li>
-                                              <li class="d-inline-block mr-3 mb-1">
-                                                <fieldset>
-                                                  <div class="form-check form-check-inline">
-                                                      <input class="form-check-input" type="radio" name="AccountRadios" id="AccountRadios2" value="option2">
-                                                      <label class="form-check-label" for="AccountRadios2">No</label>
-                                                  </div>
-                                                </fieldset>
-                                              </li>
-                                            </ul>
-                                        </div>
-                                          <div class="inventryEnter" id="inventryEnter" style="display: none;">
-                                              <h3 class="text-dark font-size-h3 mb-3">
-                                                  Inventory
-                                              </h3>
-                                            <ul class="list-unstyled  mb-3 font-size-h4">
-                                                <li class="d-inline-block mr-3 mb-1">
-                                                  <fieldset>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="InventoryRadios" id="InventoryRadios1" value="yes" onclick="checkedPoint()">
-                                                        <label class="form-check-label" for="InventoryRadios1">
-                                                        Yes
-                                                        </label>
-                                                    </div>
-                                                  </fieldset>
-                                                </li>
-                                                <li class="d-inline-block mr-3 mb-1">
-                                                  <fieldset>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="InventoryRadios" id="InventoryRadio2" value="no" onclick="checkedPoint()">
-                                                        <label class="form-check-label" for="InventoryRadio2">No</label>
-                                                    </div>
-                                                  </fieldset>
-                                                </li>
-                                              </ul>
-                                          </div>
-                                          <div class="afterinventory" id="afterinventory"  style="display: none;">
-                                            <ul class="list-unstyled mb-3 font-size-h4">
-                                                <li class="d-inline-block mr-3 mb-1">
-                                                  <fieldset>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="extendRadios" id="extendRadios1" value="option1" onclick="checkedPoint()">
-                                                        <label class="form-check-label" for="extendRadios1">
-                                                        Simple
-                                                        </label>
-                                                    </div>
-                                                  </fieldset>
-                                                </li>
-                                                <li class="d-inline-block mr-3 mb-1">
-                                                  <fieldset>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="extendRadios" id="extendRadios2" value="option2" onclick="checkedPoint()">
-                                                        <label class="form-check-label" for="extendRadios2">Advance</label>
-                                                    </div>
-                                                  </fieldset>
-                                                </li>
-                                              </ul>
-                                          </div>
-                                          <div class="afterinventorynext" id="afterinventorynext"  style="display: none;">
-                                            <ul class="list-unstyled mb-0">
-                                                <li class="d-inline-block mr-2 mb-1">
-                                                  <fieldset>
-                                                    <div class="checkbox">
-                                                      <input type="checkbox" class="checkbox-input" id="checkbox1" checked="">
-                                                      <label for="checkbox1">POS</label>
-                                                    </div>
-                                                  </fieldset>
-                                                </li>
-                                                <li class="d-inline-block mr-2 mb-1">
-                                                  <fieldset>
-                                                    <div class="checkbox">
-                                                      <input type="checkbox" class="checkbox-input" id="checkbox2">
-                                                      <label for="checkbox2">Account</label>
-                                                    </div>
-                                                  </fieldset>
-                                                </li>
-                                                <li class="d-inline-block mr-2 mb-1">
-                                                    <fieldset>
-                                                      <div class="checkbox">
-                                                        <input type="checkbox" class="checkbox-input" id="checkbox3">
-                                                        <label for="checkbox3">Purchasing</label>
-                                                      </div>
-                                                    </fieldset>
-                                                  </li>
-                                                  <li class="d-inline-block mr-2 mb-1">
-                                                    <fieldset>
-                                                      <div class="checkbox">
-                                                        <input type="checkbox" class="checkbox-input" id="checkbox4">
-                                                        <label for="checkbox4">Warehouse</label>
-                                                      </div>
-                                                    </fieldset>
-                                                  </li>
-                                                  <li class="d-inline-block mr-2 mb-1">
-                                                    <fieldset>
-                                                      <div class="checkbox">
-                                                        <input type="checkbox" class="checkbox-input" id="checkbox5">
-                                                        <label for="checkbox5">Simple</label>
-                                                      </div>
-                                                    </fieldset>
-                                                  </li>
-                                              </ul>
-                                          </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                      <button type="button" class="btn btn-light" data-dismiss="modal">
-
-                                        <span class="">Close</span>
-                                      </button>
-                                      <button type="button" class="btn btn-primary ml-1" data-dismiss="modal">
-
-                                        <span class="">Submit</span>
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
+                            </button>
                         </form>
-                        <div class="text-center h-100px">
-                            <h5 class="font-size-h5 mb-3 mt-3 text-dark">
-                                or Login with
-                            </h5>
-                            <div class="">
-                                <a href="#"><img class="img-fluid w-45px" src="./assets/images/social/fb.png" alt="social1"></a>
-                                <a href="#"><img class="img-fluid w-45px ml-2" src="./assets/images/social/gp.png" alt="social1"></a>
-                                <a href="#"><img class="img-fluid w-45px ml-2" src="./assets/images/social/pn.png" alt="social1"></a>
-                                <a href="#"><img class="img-fluid w-45px ml-2" src="./assets/images/social/tw.png" alt="social1"></a>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
 
