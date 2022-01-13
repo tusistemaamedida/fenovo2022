@@ -12,4 +12,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::group(['middleware' => ['auth']], function () {
     require __DIR__ . '/admin/products.php';
+    require __DIR__ . '/admin/stores.php';
+    require __DIR__ . '/admin/customers.php';
+    require __DIR__ . '/admin/users.php';
 });

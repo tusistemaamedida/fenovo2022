@@ -40,7 +40,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
- * @property Regione|null $regione
+ * @property Region|null $region
  * @property Store|null $store
  * @property Collection|Customer[] $customers
  * @property Collection|Store[] $stores
@@ -91,9 +91,9 @@ class Store extends Model
 		'active'
 	];
 
-	public function regione()
+	public function region()
 	{
-		return $this->belongsTo(Regione::class, 'region_id');
+		return $this->belongsTo(Region::class, 'region_id');
 	}
 
 	public function store()

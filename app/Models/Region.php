@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Regione extends Model
+class Region extends Model
 {
 	protected $table = 'regiones';
 	public $timestamps = false;
