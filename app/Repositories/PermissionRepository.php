@@ -20,4 +20,9 @@ class PermissionRepository extends BaseRepository {
             ->orderBy('name', 'DESC')
             ->paginate($cant);
     }
+
+    public function getOne($id){
+        return Permission::find($id);
+    }
+
 }

@@ -23,4 +23,8 @@ class StoreRepository extends BaseRepository {
             ->orderBy('created_at', 'DESC')
             ->paginate($cant);
     }
+
+    public function getOne($id){
+        return Store::find($id);
+    }
 }

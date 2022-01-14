@@ -20,4 +20,8 @@ class RoleRepository extends BaseRepository {
             ->orderBy('name', 'DESC')
             ->paginate($cant);
     }
+
+    public function getOne($id){
+        return Role::find($id);
+    }
 }

@@ -20,4 +20,8 @@ class UserRepository extends BaseRepository {
             ->orderBy('created_at', 'DESC')
             ->paginate($cant);
     }
+    
+    public function getOne($id){
+        return User::find($id);
+    }
 }

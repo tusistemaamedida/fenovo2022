@@ -19,4 +19,10 @@ class RoleController extends Controller
         $roles = $this->roleRepository->paginate(20);
         return view('admin.roles.list', compact('roles'));
     }
+
+    public function edit(Request $request){
+        $role = $this->roleRepository->getOne($request->id);
+        return $role;
+    }
+
 }
