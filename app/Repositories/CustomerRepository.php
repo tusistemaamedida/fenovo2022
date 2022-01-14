@@ -11,14 +11,16 @@ class CustomerRepository extends BaseRepository {
     }
 
     protected function selectList(){
-        return $this->newQuery()->with(
-            ['']
-        );
+        return $this->newQuery();
     }
 
     public function paginate($cant){
         return $this->selectList()
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('razon_social', 'DESC')
             ->paginate($cant);
+    }
+
+    public function getOne($id){
+        return Customer::find($id);
     }
 }

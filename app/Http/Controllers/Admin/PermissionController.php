@@ -19,4 +19,10 @@ class PermissionController extends Controller
         $permissions = $this->permissionRepository->paginate(20);
         return view('admin.permissions.list', compact('permissions'));
     }
+
+    public function edit(Request $request){
+        $permission = $this->permissionRepository->getOne($request->id);
+        return $permission;
+    }
+
 }

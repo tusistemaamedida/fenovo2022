@@ -19,4 +19,9 @@ class UserController extends Controller
         $users = $this->userRepository->paginate(20);
         return view('admin.users.list', compact('users'));
     }
+
+    public function edit(Request $request){
+        $user = $this->userRepository->getOne($request->id);
+        return $user;
+    }
 }

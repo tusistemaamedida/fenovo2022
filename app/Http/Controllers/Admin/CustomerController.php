@@ -19,4 +19,9 @@ class CustomerController extends Controller
         $customers = $this->customerRepository->paginate(20);
         return view('admin.customers.list', compact('customers'));
     }
+
+    public function edit(Request $request){
+        $customer = $this->customerRepository->getOne($request->id);
+        return $customer;
+    }
 }
