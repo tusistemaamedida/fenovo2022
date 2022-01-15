@@ -8,7 +8,7 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Roles</li>
+                <li class="breadcrumb-item active" aria-current="page">Proveedores</li>
             </ol>
         </nav>
     </div>
@@ -69,7 +69,7 @@
                             <div class="card-body">
                                 <div>
                                     <div class=" table-responsive" id="printableTable">
-                                        @include('admin.roles.table-roles')
+                                        @include('admin.proveedors.table-proveedors')
                                     </div>
                                 </div>
                             </div>
@@ -89,9 +89,8 @@
 
 <script>
     jQuery(document).ready( function () {
-        jQuery('#roleTable').dataTable( {
-        "pagingType": "simple_numbers",
-
+        jQuery('#userTable').dataTable( {
+        "pagingType": "simple_numbers",    
         "columnDefs": [ {
           "targets"  : 'no-sort',
           "orderable": false,

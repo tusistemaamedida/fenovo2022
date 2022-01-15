@@ -1,21 +1,21 @@
 <table id="userTable" class="display">
     <thead class="text-body">
         <tr>
-            <th>ID</th>
             <th>Nombre</th>
-            <th>E-Mail</th>
-            <th>Acceso</th>
+            <th>Responsable</th>
+            <th>CUIT</th>
+            <th>Tipo IVA</th>
             <th class="no-sort"></th>
         </tr>
     </thead>
     <tbody class="kt-table-tbody text-dark">
-        @if (isset($users))
-        @foreach ($users as $user)
+        @if (isset($proveedors))
+        @foreach ($proveedors as $proveedor)
         <tr class="kt-table-row kt-table-row-level-0">
-            <td>{{$user->id}}</td>
-            <td>{{$user->name}}</td>
-            <td>{{ $user->email }}</td>
-            <td>{{ $user->last_login }}</td>
+            <td>{{ $proveedor->name }}</td>
+            <td>{{ $proveedor->responsable }}</td>
+            <td>{{ $proveedor->cuit }}</td>
+            <td>{{ $proveedor->iva_type }}</td>
             <td>
                 <div class="card-toolbar text-right">
                     <button class="btn p-0 shadow-none" type="button" id="dropdowneditButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,7 +26,7 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton">
-                        <a class="dropdown-item" href="{{ route('users.edit', $user->id) }}">Editar</a>
+                        <a class="dropdown-item" href="{{ route('proveedors.edit', $proveedor->id) }}">Editar</a>
                         <a class="dropdown-item confirm-delete" title="Delete" href="#">Borrar</a>
                     </div>
                 </div>

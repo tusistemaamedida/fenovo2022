@@ -2,12 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Models\Permission;
+use App\Models\Proveedor;
 
-class PermissionRepository extends BaseRepository {
+class ProveedorRepository extends BaseRepository {
 
     public function getModel(){
-        return new Permission();
+        return new Proveedor();
     }
 
     protected function selectList(){
@@ -17,12 +17,11 @@ class PermissionRepository extends BaseRepository {
 
     public function paginate($cant){
         return $this->selectList()
-            ->orderBy('name', 'DESC')
+            ->orderBy('name', 'ASC')
             ->paginate($cant);
     }
-
+    
     public function getOne($id){
-        return Permission::find($id);
+        return Proveedor::find($id);
     }
-
 }

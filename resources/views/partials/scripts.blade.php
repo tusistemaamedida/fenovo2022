@@ -8,4 +8,4 @@
 <script src="{{asset('assets/js/sweetalert.js')}}"></script>
 <script src="{{asset('assets/js/sweetalert1.js')}}"></script>
 <script src="{{asset('assets/js/script.bundle.js')}}"></script>
-
+<script src="{{asset('assets/js/scripts.js')}}"></script>
