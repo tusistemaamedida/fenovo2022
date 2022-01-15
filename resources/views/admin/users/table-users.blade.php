@@ -26,8 +26,8 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton">
-                        <a class="dropdown-item" href="{{ route('users.edit', $user->id) }}">Editar</a>
-                        <a class="dropdown-item confirm-delete" title="Delete" href="#">Borrar</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="editUser({{$user->id}})"> <i class="fa fa-edit"></i> Editar</a>
+                        <a class="dropdown-item confirm-delete" title="Delete" href="#"><i class="fa fa-trash"></i> Borrar</a>
                     </div>
                 </div>
             </td>
