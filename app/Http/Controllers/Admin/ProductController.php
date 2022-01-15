@@ -19,4 +19,8 @@ class ProductController extends Controller
         $products = $this->productRepository->paginate(20);
         return view('admin.products.list', compact('products'));
     }
+
+    public function add(){
+        return view('admin.products.add');
+    }
 }

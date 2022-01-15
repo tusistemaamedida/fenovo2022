@@ -9,8 +9,8 @@ $.noConflict();
 // };
 
 jQuery('body').on('click', function (e) {
-  if (!jQuery('.dropdown.mega-dropdown').is(e.target) 
-      && jQuery('.dropdown.mega-dropdown').has(e.target).length === 0 
+  if (!jQuery('.dropdown.mega-dropdown').is(e.target)
+      && jQuery('.dropdown.mega-dropdown').has(e.target).length === 0
       && jQuery('.open').has(e.target).length === 0
   ) {
     jQuery('.dropdown.mega-dropdown').removeClass('open');
@@ -21,22 +21,22 @@ jQuery('body').on('click', function (e) {
 "use strict";
 
 
-jQuery(window).on('load', function(){ 
+jQuery(window).on('load', function(){
   // Animate loader off screen
   jQuery('.se-pre-con').fadeOut("slow");
 });
 
 jQuery('#kt_notes_panel_toggle2').on("click", function(e){
   window.location.replace("http://localhost:3000/admin/product-units-list.html");
- 
-  
+
+
     // jQuery( document ).on('load' , readyFn );
     // if( window.location.href == 'http://localhost:3000/admin/product-units-list.html'){
-      
+
     //    jQuery('#kt_notes_panel').addClass('offcanvas-on');
     // }
     // var hash= window.location.href;
-   
+
     // if(hash === 'http://localhost:3000/admin/product-units-list.html'){
     //    jQuery('#kt_notes_panel').addClass('offcanvas-on');
     // }
@@ -47,7 +47,7 @@ jQuery('#kt_notes_panel_toggle2').on("click", function(e){
   });
 
 // tabs open with click on another page
-window.onload = function(){  
+window.onload = function(){
 
   var url = document.location.toString();
   if (url.match('#')) {
@@ -56,25 +56,24 @@ window.onload = function(){
   //Change hash for page-reload
   jQuery('.nav-item a[href="#' + url.split('#')[1] + '"]').on('shown', function (e) {
       window.location.hash = e.target.hash;
-  }); 
+  });
 }
 
 jQuery(function() {
   let url = location.href.replace(/\/$/, "");
- 
+
     const hash = url.split("#");
-    
+
     jQuery('#pills-tab a[href="#'+hash[1]+'"]').tab("show");
     url = location.href.replace(/\/#/, "#");
     history.replaceState(null, null, url);
     setTimeout(() => {
       jQuery(window).scrollTop(0);
     }, 400);
-   
+
   jQuery('a[data-toggle="pill"]').on("click", function() {
     let newUrl;
     const hash = jQuery(this).attr("href");
-    console.log('check2' ,hash);
     if(hash == "#info-tab") {
       newUrl = url.split("#")[0];
     } else {
@@ -86,15 +85,15 @@ jQuery(function() {
 });
 
 
-// 2 tabs click show one tab content  
-
-jQuery('.nav-pills li a').on('click',function (e) {     
+// 2 tabs click show one tab content
+/*
+jQuery('.nav-pills li a').on('click',function (e) {
   //get selected href
   var href = jQuery(this).attr('href');
-  
+
   // show tab for all tabs that match href
   jQuery('.nav-pills li a[href="' + href + '"]').tab('show');
-})
+}) */
 
 
 function checkedme() {
@@ -144,15 +143,15 @@ function checkedPoint() {
     if (checkBox3.checked === true){
       console.log("xvc")
       jQuery(text3).css("display", "block");
-     
+
       if (checkBox4.checked === true){
         console.log("xvc")
         jQuery(text4).css("display", "block");
-        
+
       }
       else if(checkBox4.checked === false){
         jQuery(text4).css("display", "none");
-     
+
       }
     }
     else if(checkBox5.checked === true){
@@ -160,15 +159,15 @@ function checkedPoint() {
       jQuery(text4).css("display", "none");
       jQuery(text3).css("display", "none");
     }
-    
+
     else if(checkBox3.checked === false){
       jQuery(text3).css("display", "none");
     }
-   
-    
+
+
   }
-  
-  
+
+
   else if (checkBox2.checked == true){
     jQuery(text2).css("display", "block");
     jQuery(text).css("display", "none");
@@ -181,22 +180,20 @@ function checkedPoint() {
 
 }
 
-  
+
 jQuery(document).ready(function(){
   jQuery(".loadingmore").slice(0, 12).show();
-  console.log( jQuery(".loadingmore").slice(0, 12).show().length);
-  var getnumber = document.getElementById('numbering').innerHTML;
- console.log(getnumber);
+  var getnumber = 1;;
   var totalgetnumber =jQuery(".loadingmore").length
-  document.getElementById('totalnumber').innerHTML=totalgetnumber;
-  console.log(totalgetnumber);
-  
+/*   document.getElementById('totalnumber').innerHTML=totalgetnumber;
+  console.log(totalgetnumber); */
+
   jQuery("#loadMore").on("click", function(e){
   e.preventDefault();
   jQuery(".loadingmore:hidden").slice(0, 6).slideDown();
    getnumber= parseInt(getnumber)+6;
    document.getElementById("numbering").innerHTML=getnumber;
- 
+
   if(jQuery(".loadingmore:hidden").length == 0) {
       jQuery("#loadMore").text("No Content").addClass("noContent");
   }
@@ -207,7 +204,7 @@ jQuery(document).ready(function(){
 function printDiv2() {
   var id = jQuery('.tab-pane.show.active .table-responsive-sm').attr('id');
     console.log(id);
-   
+
   jQuery('table').css('text-align','left');
   jQuery('table  .no-sort').css('opacity','0');
   jQuery('table .card-toolbar').css('opacity','0');
@@ -215,7 +212,7 @@ function printDiv2() {
   jQuery('.dataTables_length').css('display','none');
   jQuery('.dataTables_info').css('display','none');
   jQuery('.dataTables_paginate').css('display','none');
- 
+
   window.frames["print_frame"].document.body.innerHTML = document.getElementById(id).innerHTML;
   console.log(document.getElementById(id).innerHTML);
 
@@ -254,8 +251,8 @@ function printDiv() {
 
 
 
-jQuery('.cta').on('click', function(){	
-    
+jQuery('.cta').on('click', function(){
+
   jQuery(this).removeClass( "active");
 
   jQuery(this).removeClass( "show");
@@ -265,18 +262,18 @@ jQuery('.cta').on('click', function(){
 });
 
 jQuery('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
- 
+
   var hashValue = jQuery(e.target).attr('href');
 
-  
+
   jQuery("#info-tab").removeClass("active");
   jQuery("#ad-info-tab").removeClass("active");
   jQuery("#pricing-tab").removeClass("active");
   jQuery("#seo-tab").removeClass("active");
   jQuery(hashValue+"-tab").addClass("active");
-  
- 
-  
+
+
+
 })
 
 
@@ -300,7 +297,7 @@ function mysizeSelect(){
       selectedSize.push(option.value);
     }
   }
- 
+
   for (var option of document.getElementById('selectColor').options) {
     if (option.selected) {
       selectedColor.push(option.value);
@@ -340,7 +337,7 @@ function mysizeSelect(){
           //create and array with as many elements as the number of arrays you are to combine
           //add them in
           //you could have as many dimensions as you need
-         
+
           let obj = {
             color : selectedColor[j],
             size: selectedSize[i]
@@ -356,7 +353,7 @@ function mysizeSelect(){
 
    combos.forEach(function(elem){
     jQuery('#table-show').css('display', 'block')
-    
+
     jQuery('#table-show').append('<tr class="row m-0 text-center"><td  class="col-2"> '+ elem.color+'</td><td class="col-2">'+ elem.size+'</td><td class="col-3 d-flex justify-content-center"><input type="text" class="form-control w-150px text-center" id="disabledInput" placeholder="'+ elem.color+ "-" +elem.size +'" disabled=""></td><td class="col-2"><img src="./assets/images/carousel/slide1.jpg" class="h-45px w-45px img-fluid" alt="img"></td><td class="col-3 d-flex justify-content-center"><input type="text" class="form-control w-150px text-center" id="disabledInput" placeholder="Credit Card" disabled=""></td></tr>')
 });
 }
@@ -369,18 +366,18 @@ jQuery('#remove-c').on("click", function(e){
 });
 /////////////////////////////////////////////////
 
-jQuery('.thumbnail .detail-link').on('click', function(){	
+jQuery('.thumbnail .detail-link').on('click', function(){
   console.log("aa")
   jQuery(this).parent(".thumbnail").toggleClass("active");
-}); 
-jQuery('.selectall').on('click', function(){	
+});
+jQuery('.selectall').on('click', function(){
   jQuery('.thumbnail .detail-link').parent().addClass( "active");
-}); 
-jQuery('.unselectall').on('click', function(){	
+});
+jQuery('.unselectall').on('click', function(){
   console.log("aa")
   jQuery('.thumbnail .detail-link').parent().removeClass( "active");
-}); 
-jQuery("#checkbox1").on('click', function(){	
+});
+jQuery("#checkbox1").on('click', function(){
 
   if(jQuery(this).is(":checked")) {
     jQuery('.changeme').html('UnSelect All');
@@ -393,7 +390,7 @@ jQuery("#checkbox1").on('click', function(){
   }
   var checked = jQuery('input', this).is(':checked');
   jQuery('span', this).text(checked ? 'Off' : 'On');
-  
+
 });
 
 function readURL(input) {
@@ -442,7 +439,7 @@ if ($isCheckedLevelTwo === 'true') {
     jQuery(this).attr('isChecked', 'false');
     jQuery(this).closest('.level-one-closed').find('.level-one-folder .userPermissionCheckBox-level-one').prop('checked', false).attr('isChecked', 'false');
     jQuery(this).closest('.level-two-closed').find('.level-three-folder .userPermissionCheckBox-level-three').prop('checked', false).attr('isChecked', 'false');
-    
+
 } else {
     jQuery(this).attr('isChecked', 'true');
     jQuery(this).closest('.level-one-closed').find('.level-one-folder .userPermissionCheckBox-level-one').prop('checked', true).attr('isChecked', 'true');
@@ -453,11 +450,11 @@ if ($isCheckedLevelTwo === 'true') {
 $levelThreeCheck.on('click',function() {
 var $isCheckedLevelTwo = jQuery(this).attr('isChecked');
 if ($isCheckedLevelTwo === 'true') {
- 
+
     jQuery(this).attr('isChecked', 'false');
     jQuery(this).closest('.level-one-closed').find('.level-one-folder .userPermissionCheckBox-level-one').prop('checked', false).attr('isChecked', 'false');
     jQuery(this).closest('.level-two-closed').find('.level-two-folder .userPermissionCheckBox-level-two').prop('checked', false).attr('isChecked', 'false');
-    
+
 } else {
     jQuery(this).attr('isChecked', 'true');
     jQuery(this).closest('.level-one-closed').find('.level-one-folder .userPermissionCheckBox-level-one').prop('checked', true).attr('isChecked', 'true');
@@ -485,13 +482,13 @@ jQuery(document).ready(function() {
   //sidebar menu active
   jQuery('#basic-input .nav-link').on("click", function(e){
     console.log('ac');
-    
+
     jQuery('.nav-collapse').addClass('show');
   });
 
   //Mobile Menu
   jQuery('#tc_aside_mobile_toggle').on('click', function () {
-      
+
       jQuery('#tc_aside').toggleClass('aside-on');
       jQuery('.aside-overlay').addClass('active');
 
@@ -538,7 +535,7 @@ jQuery(document).ready(function() {
 });
 jQuery('#kt_notes_panel_close').on("click", function(e){
     jQuery('#kt_notes_panel').removeClass('offcanvas-on');
-   
+
 });
 
 jQuery('.click-edit').on("click",function(){
@@ -571,12 +568,12 @@ jQuery('.kt_notes_panel_close').on("click", function(e){
       jQuery('#radio-dark').parent('label').addClass('active');
   })
 
-  
+
   jQuery('.btn-rtl').on('click', function(e){
     jQuery('.btn-rtl').toggleClass('active');
     jQuery('body').toggleClass('rtl');
     jQuery('#kt_color_panel').removeClass('offcanvas-on');
-    
+
   })
 
   //theme color
@@ -586,7 +583,7 @@ jQuery('.kt_notes_panel_close').on("click", function(e){
     jQuery('body').removeClass('color-theme-blue');
     jQuery('body').removeClass('color-theme-yellow');
     jQuery('body').removeClass('color-theme-navy-blue');
-    
+
   })
   jQuery('#color-theme-blue').on('click', function(e){
     jQuery('body').removeClass('color-theme-red');
@@ -594,7 +591,7 @@ jQuery('.kt_notes_panel_close').on("click", function(e){
     jQuery('body').removeClass('color-theme-yellow');
     jQuery('body').removeClass('color-theme-navy-blue');
     jQuery('body').addClass('color-theme-blue');
-    
+
   })
   jQuery('#color-theme-red').on('click', function(e){
     jQuery('body').removeClass('color-theme-blue');
@@ -638,24 +635,24 @@ jQuery('.kt_notes_panel_close').on("click", function(e){
       }
     }
   });
-  
+
 });
 jQuery(document).on('click',function() {
-  var sel22 = document.getElementById('typeselect');
-  console.log('value', sel22.value)
+  var sel22 = 1;
+ // console.log('value', sel22.value)
    /// show and hide div on the click by value basis
   //  var cliked = document.getElementById(sel.value);
    for ( var i = 1; i <= 7; i++){
-     if(sel22.value == i){
-     console.log("aya rye" ,i);
+     if(sel22 == i){
+     //console.log("aya rye" ,i);
       jQuery(`#${i}`).css("display", "block");
-      
+
      }else{
 
      jQuery(`#${i}`).css("display", "none");
    }
   }
-  
+
 
 
 } );
@@ -686,7 +683,7 @@ jQuery(document).ready(function() {
       jQuery(`#${id} .pin-fixnot`).addClass('dis-none');
       jQuery(`#${id} .pin`).addClass("dis-block border-bottoms");
       jQuery(`#${id} .pin`).removeClass("dis-none");
-     
+
     }
 
     if(pin.length == 1){
@@ -754,9 +751,9 @@ function openFullscreen() {
     } else if (elem.msRequestFullscreen) { /* IE/Edge */
       elem.msRequestFullscreen();
     }
-    
-  
-    
+
+
+
 }
 
 
@@ -779,15 +776,15 @@ function closeFullscreen() {
 paceOptions = {
   elements: true
 };
-var input = document.getElementById('input'), // input/output button
-  number = document.querySelectorAll('.numbers div'), // number buttons
-  operator = document.querySelectorAll('.operators div'), // operator buttons
-  result = document.getElementById('result'), // equal button
-  clear = document.getElementById('clear'), // clear button
-  resultDisplayed = false; // flag to keep an eye on what output is displayed
+  //var input = document.getElementById('input'), // input/output button
+  //number = document.querySelectorAll('.numbers div'), // number buttons
+  //operator = document.querySelectorAll('.operators div'), // operator buttons
+  //result = document.getElementById('result'), // equal button
+  //clear = document.getElementById('clear'), // clear button
+  //resultDisplayed = false; // flag to keep an eye on what output is displayed
 
 // adding click handlers to number buttons
-for (var i = 0; i < number.length; i++) {
+/* for (var i = 0; i < number.length; i++) {
   number[i].addEventListener("click", function(e) {
 
     // storing current input string and its last character in variables - used later
@@ -811,10 +808,10 @@ for (var i = 0; i < number.length; i++) {
     }
 
   });
-}
+} */
 
 // adding click handlers to number buttons
-for (var i = 0; i < operator.length; i++) {
+/* for (var i = 0; i < operator.length; i++) {
   operator[i].addEventListener("click", function(e) {
 
     // storing current input string and its last character in variables - used later
@@ -834,106 +831,109 @@ for (var i = 0; i < operator.length; i++) {
     }
 
   });
-}
+} */
+
 
 // on click of 'equal' button
-result.addEventListener("click", function() {
+/* result.addEventListener("click", function() {
 
-  // this is the string that we will be processing eg. -10+26+33-56*34/23
-  var inputString = input.innerHTML;
+// this is the string that we will be processing eg. -10+26+33-56*34/23
+var inputString = input.innerHTML;
 
-  // forming an array of numbers. eg for above string it will be: numbers = ["10", "26", "33", "56", "34", "23"]
-  var numbers = inputString.split(/\+|\-|\×|\÷/g);
+// forming an array of numbers. eg for above string it will be: numbers = ["10", "26", "33", "56", "34", "23"]
+var numbers = inputString.split(/\+|\-|\×|\÷/g);
 
-  // forming an array of operators. for above string it will be: operators = ["+", "+", "-", "*", "/"]
-  // first we replace all the numbers and dot with empty string and then split
-  var operators = inputString.replace(/[0-9]|\./g, "").split("");
+// forming an array of operators. for above string it will be: operators = ["+", "+", "-", "*", "/"]
+// first we replace all the numbers and dot with empty string and then split
+var operators = inputString.replace(/[0-9]|\./g, "").split("");
 
-  console.log(inputString);
-  console.log(operators);
-  console.log(numbers);
-  console.log("----------------------------");
+console.log(inputString);
+console.log(operators);
+console.log(numbers);
+console.log("----------------------------");
 
-  // now we are looping through the array and doing one operation at a time.
-  // first divide, then multiply, then subtraction and then addition
-  // as we move we are alterning the original numbers and operators array
-  // the final element remaining in the array will be the output
+// now we are looping through the array and doing one operation at a time.
+// first divide, then multiply, then subtraction and then addition
+// as we move we are alterning the original numbers and operators array
+// the final element remaining in the array will be the output
 
-  var divide = operators.indexOf("÷");
-  while (divide != -1) {
+var divide = operators.indexOf("÷");
+while (divide != -1) {
     numbers.splice(divide, 2, numbers[divide] / numbers[divide + 1]);
     operators.splice(divide, 1);
     divide = operators.indexOf("÷");
-  }
+}
 
-  var multiply = operators.indexOf("×");
-  while (multiply != -1) {
+var multiply = operators.indexOf("×");
+while (multiply != -1) {
     numbers.splice(multiply, 2, numbers[multiply] * numbers[multiply + 1]);
     operators.splice(multiply, 1);
     multiply = operators.indexOf("×");
-  }
+}
 
-  var subtract = operators.indexOf("-");
-  while (subtract != -1) {
+var subtract = operators.indexOf("-");
+while (subtract != -1) {
     numbers.splice(subtract, 2, numbers[subtract] - numbers[subtract + 1]);
     operators.splice(subtract, 1);
     subtract = operators.indexOf("-");
-  }
+}
 
-  var add = operators.indexOf("+");
-  while (add != -1) {
+var add = operators.indexOf("+");
+while (add != -1) {
     // using parseFloat is necessary, otherwise it will result in string concatenation :)
     numbers.splice(add, 2, parseFloat(numbers[add]) + parseFloat(numbers[add + 1]));
     operators.splice(add, 1);
     add = operators.indexOf("+");
-  }
+}
 
-  input.innerHTML = numbers[0]; // displaying the output
+input.innerHTML = numbers[0]; // displaying the output
 
-  resultDisplayed = true; // turning flag if result is displayed
-});
+resultDisplayed = true; // turning flag if result is displayed
+}); */
 
 // clearing the input on press of clear
-clear.addEventListener("click", function() {
-  input.innerHTML = "";
-})
+/* clear.addEventListener("click", function() {
+input.innerHTML = "";
+}) */
+
+
 jQuery(document).ready(function() {
   // Create two variables with names of months and days of the week in the array
-  var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ]; 
+  var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
   var dayNames= ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
-  
+
   // Create an object newDate()
   var newDate = new Date();
   // Retrieve the current date from the Date object
   newDate.setDate(newDate.getDate());
-  // At the output of the day, date, month and year    
+  // At the output of the day, date, month and year
   jQuery('#Date').html(dayNames[newDate.getDay()] + " " + newDate.getDate() + ' ' + monthNames[newDate.getMonth()] + ' ' + newDate.getFullYear());
-  
+
   setInterval( function() {
       // Create an object newDate () and extract the second of the current time
       var seconds = new Date().getSeconds();
       // Add a leading zero to the value of seconds
       jQuery("#sec").html(( seconds < 10 ? "0" : "" ) + seconds);
       },1000);
-      
+
   setInterval( function() {
       // Create an object newDate () and extract the minutes of the current time
       var minutes = new Date().getMinutes();
       // Add a leading zero to the minutes
       jQuery("#min").html(( minutes < 10 ? "0" : "" ) + minutes);
       },1000);
-      
+
   setInterval( function() {
       // Create an object newDate () and extract the clock from the current time
       var hours = new Date().getHours();
       // Add a leading zero to the value of hours
       jQuery("#hours").html(( hours < 10 ? "0" : "" ) + hours);
       }, 1000);
-      
-  }); 
+
+  });
 
 // for classic Editor
-ClassicEditor
+/* ClassicEditor
 .create( document.querySelector( '#editor' ),{
     toolbar: [ 'heading', '|', 'bold', 'italic', 'link' ],
     alignment: {
@@ -955,18 +955,18 @@ ClassicEditor
 
 .catch( error => {
     console.error( error );
-});
+}); */
 
-InlineEditor
+/* InlineEditor
 .create( document.querySelector( '#editor2' ) )
 .catch( error => {
     console.error( error );
-} );
+} ); */
 
 // for data tables
-jQuery(document).ready( function () {
+/* jQuery(document).ready( function () {
 	jQuery('#myTable').DataTable();
-});
+}); */
 
 
 (function($){
@@ -982,26 +982,24 @@ jQuery(document).ready( function () {
 
 
 
-jQuery(".nav-pills .nav-link").each(function(i){ 
+/* jQuery(".nav-pills .nav-link").each(function(i){
   jQuery(this).click(function(e){
     jQuery(this).attr("href", jQuery('.tab-pane')[i].id);
     window.location.hash  = jQuery('.tab-pane')[i].id;
-    console.log( "abc", window.location.hash);
   });
 });
 
 jQuery(".nav-pills .nav-link").click(function(e) {
   var active = this.href.slice(-5)
-  , link = active.slice(1);
-  console.log(active, link)
+  link = active.slice(1);
   jQuery(".tab-content [id^=tab]").hide();
   jQuery(active).show();
   history.replaceState(null, link
-    , location.href.slice(-1) === "/" 
-    ? location.href + "/" + link 
+    , location.href.slice(-1) === "/"
+    ? location.href + "/" + link
     : link
   )
-});
+}); */
 
 
 
