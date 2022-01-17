@@ -22,12 +22,14 @@
                     @include('partials.header')
 
                     <div class="content d-flex flex-column flex-column-fluid" id="tc_content">
+                        <div id="loader" class="lds-dual-ring hidden overlay"></div>
 
                         @yield('content')
 
                     </div>
 
                     @include('partials.footer')
+
                 </div>
             </div>
         </div>
