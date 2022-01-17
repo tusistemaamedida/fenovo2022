@@ -23,8 +23,7 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">Listado
-                                    </h3>
+                                    <h3 class="card-label mb-0 font-weight-bold text-body">Listado</h3>
                                 </div>
                                 <div class="icons d-flex">
                                     <a href="add-product.html" class="ml-2">

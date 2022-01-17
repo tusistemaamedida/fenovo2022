@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 
 use App\Repositories\RoleRepository;
 
-use App\Http\Requests\Roles\AddRequest;
+use App\Http\Requests\Roles\EditRequest;
 
 class RoleController extends Controller
 {
@@ -35,7 +35,7 @@ class RoleController extends Controller
         }
     }
 
-    public function update(AddRequest $request){
+    public function update(EditRequest $request){
         try {
             $data = $request->except(['_token','role_id','active']);
             $data['active'] = ($request->has('active'))?1:0;

@@ -23,4 +23,8 @@ abstract class BaseRepository {
         return $this->newQuery()->where('id',$id)->update($data);
     }
 
+    public function create($data){
+        return $this->getModel()->create($data);
+    }
+
 }

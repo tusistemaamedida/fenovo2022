@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use App\Repositories\PermissionRepository;
 use App\Repositories\RoleRepository;
 
-use App\Http\Requests\Permissions\AddRequest;
+use App\Http\Requests\Permissions\EditRequest;
 
 class PermissionController extends Controller
 {
@@ -39,7 +39,7 @@ class PermissionController extends Controller
         }
     }
 
-    public function update(AddRequest $request){
+    public function update(EditRequest $request){
         try {
             $data = $request->except(['_token','permission_id','active']);
             $data['active'] = ($request->has('active'))?1:0;
