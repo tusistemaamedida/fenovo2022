@@ -27,4 +27,8 @@ class StoreRepository extends BaseRepository {
     public function getOne($id){
         return Store::find($id);
     }
+
+    public function getAll(){
+        return Store::all();
+    }
 }
