@@ -107,6 +107,9 @@
             url:"{{ route('users.edit') }}",
             type:'GET',
             data:{id},
+            beforeSend: function() {
+                jQuery('#loader').removeClass('hidden');
+            },
             success:function(data){
                 if(data['type'] == 'success'){
                     jQuery("#insertByAjax").html(data['html']);
@@ -120,6 +123,9 @@
                         buttonsStyling: !1
                     }) ;
                 }
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
             }
         });
     }
