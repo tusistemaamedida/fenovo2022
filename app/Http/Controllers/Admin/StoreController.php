@@ -10,7 +10,7 @@ use App\Repositories\StoreRepository;
 use App\Repositories\RegionRepository;
 use App\Repositories\EnumRepository;
 
-use App\Http\Requests\Stores\AddRequest;
+use App\Http\Requests\Stores\EditRequest;
 
 class StoreController extends Controller
 {
@@ -45,7 +45,7 @@ class StoreController extends Controller
         }
     }
 
-    public function update(AddRequest $request){
+    public function update(EditRequest $request){
         try {
             $data = $request->except(['_token','store_id','active', 'online_sale']);
             $data['active'] = ($request->has('active'))?1:0;

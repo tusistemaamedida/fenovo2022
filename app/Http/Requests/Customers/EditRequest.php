@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Permissions;
+namespace App\Http\Requests\Customers;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddRequest extends FormRequest
+class EditRequest extends FormRequest
 {
     /**
      * 
@@ -18,13 +18,13 @@ class AddRequest extends FormRequest
 
     public function rules(){
         return [
-            'name' => 'required',
+            'razon_social' => 'required',
         ];
     }
 
     public function messages(){
         return [
-            'name.required'   => 'El nombre es requerido!',
+            'razon_social.required'   => 'El nombre es requerido!',
         ];
     }
 }

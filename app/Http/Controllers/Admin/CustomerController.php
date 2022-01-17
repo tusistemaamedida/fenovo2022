@@ -10,7 +10,7 @@ use App\Repositories\CustomerRepository;
 use App\Repositories\StoreRepository;
 use App\Repositories\EnumRepository;
 
-use App\Http\Requests\Customers\AddRequest;
+use App\Http\Requests\Customers\EditRequest;
 
 class CustomerController extends Controller
 {
@@ -43,7 +43,7 @@ class CustomerController extends Controller
         }
     }
 
-    public function update(AddRequest $request){
+    public function update(EditRequest $request){
         try {
             $data = $request->except(['_token','customer_id','active']);
             $data['active'] = ($request->has('active'))?1:0;

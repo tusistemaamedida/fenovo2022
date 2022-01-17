@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Stores;
+namespace App\Http\Requests\Permissions;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddRequest extends FormRequest
+class EditRequest extends FormRequest
 {
     /**
      * 
@@ -18,15 +18,13 @@ class AddRequest extends FormRequest
 
     public function rules(){
         return [
-            'cod_fenovo' => 'required',
-            'fantasy_name' => 'required',
+            'name' => 'required',
         ];
     }
 
     public function messages(){
         return [
-            'cod_fenovo.required'   => 'Cod Fenovo es requerido!',
-            'fantasy_name.required'   => 'El nombre de la Tienda es requerido!',
+            'name.required'   => 'El nombre es requerido!',
         ];
     }
 }
