@@ -83,6 +83,9 @@
     </div>
 
 </div>
+
+@include('admin.permissions.modal')
+
 @endsection
 
 @section('js')
@@ -90,13 +93,92 @@
 <script>
     jQuery(document).ready( function () {
         jQuery('#permissionTable').dataTable( {
-        "pagingType": "simple_numbers",
-
-        "columnDefs": [ {
-          "targets"  : 'no-sort',
-          "orderable": false,
-        }]
+            "pagingType": "simple_numbers",
+            "columnDefs": [ {
+            "targets"  : 'no-sort',
+            "orderable": false,
+            }]
+        });
     });
+
+    function editPermission(id){
+
+        var elements = document.querySelectorAll('.is-invalid');
+        jQuery.ajax({
+            url:"{{ route('permissions.edit') }}",
+            type:'GET',
+            data:{id},
+            success:function(data){
+                if(data['type'] == 'success'){
+                    jQuery("#insertByAjax").html(data['html']);
+                    jQuery('.editpopup').addClass('offcanvas-on');
+                }else{
+                    Swal.fire({
+                        title: "Error!",
+                        html: data['msj'],
+                        type: "error",
+                        confirmButtonClass: "btn btn-primary",
+                        buttonsStyling: !1
+                    }) ;
+                }
+            }
+        });
+    }
+
+    jQuery('.close_modal_permission').on("click", function(e){
+        document.getElementById("formPermission").reset();
+        jQuery('.editpopup').removeClass('offcanvas-on');
+    });
+
+    jQuery("#btn-guardar-permission").click(function(){
+        var elements = document.querySelectorAll('.is-invalid');
+        var form = jQuery('#formPermission').serialize();
+
+        jQuery.ajax({
+            url:"{{ route('permissions.update') }}",
+            type:'POST',
+            data:form,
+            beforeSend: function() {
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].classList.remove('is-invalid');
+                }
+            },
+            success:function(data){
+                if(data['type'] == 'success'){
+                    Swal.fire({
+                        title: "Exito!",
+                        html: data['msj'],
+                        type: "success",
+                        confirmButtonClass: "btn btn-primary",
+                        buttonsStyling: !1
+                    }) ;
+                    setTimeout(function(){ location.reload() }, 1500);
+                }else{
+                    Swal.fire({
+                        title: "Error!",
+                        html: data['msj'],
+                        type: "error",
+                        confirmButtonClass: "btn btn-primary",
+                        buttonsStyling: !1
+                    }) ;
+                }
+            },
+            error: function (data) {
+                var lista_errores="";
+                var data = data.responseJSON;
+                jQuery.each(data.errors,function(index, value) {
+                    lista_errores+=value+'<br />';
+                    jQuery('#'+index).addClass('is-invalid');
+                });
+                Swal.fire({
+                    title: "Error!",
+                    html: lista_errores,
+                    type: "error",
+                    confirmButtonClass: "btn btn-primary",
+                    buttonsStyling: !1
+                }) ;
+            }
+        });
     });
 
 </script>

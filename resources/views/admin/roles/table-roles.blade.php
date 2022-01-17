@@ -22,7 +22,7 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton">
-                        <a class="dropdown-item" href="{{ route('roles.edit', $role->id) }}">Editar</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="editRole({{$role->id}})"> <i class="fa fa-edit"></i> Editar</a>
                         <a class="dropdown-item confirm-delete" title="Delete" href="#">Borrar</a>
                     </div>
                 </div>
