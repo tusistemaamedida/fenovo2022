@@ -144,6 +144,7 @@
                 type:'POST',
                 data:form,
                 beforeSend: function() {
+                    jQuery('#loader').removeClass('hidden');
                     for (var i = 0; i < elements.length; i++) {
                         elements[i].classList.remove('is-invalid');
                     }
@@ -182,6 +183,9 @@
                         confirmButtonClass: "btn btn-primary",
                         buttonsStyling: !1
                     }) ;
+                },
+                complete: function () {
+                    jQuery('#loader').addClass('hidden');
                 }
             });
         });
