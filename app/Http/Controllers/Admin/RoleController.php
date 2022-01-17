@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 use App\Repositories\RoleRepository;
+
+use App\Http\Requests\Roles\AddRequest;
 
 class RoleController extends Controller
 {
@@ -21,8 +24,29 @@ class RoleController extends Controller
     }
 
     public function edit(Request $request){
-        $role = $this->roleRepository->getOne($request->id);
-        return $role;
+        try {
+            $role  = $this->roleRepository->getOne($request->id);
+            return new JsonResponse([
+                'type'=>'success',
+                'html' => view('admin.roles.insertByAjax',compact('role'))->render()
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj'=> $e->getMessage(),'type'=>'error']);
+        }
+    }
+
+    public function update(AddRequest $request){
+        try {
+            $data = $request->except(['_token','role_id','active']);
+            $data['active'] = ($request->has('active'))?1:0;
+            $roles = $this->roleRepository->update($request->input('role_id'),$data);
+            return new JsonResponse([
+                'msj'=>'Actualización correcta !',
+                'type'=>'success'
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj'=> $e->getMessage(),'type'=>'error']);
+        }
     }
 
 }

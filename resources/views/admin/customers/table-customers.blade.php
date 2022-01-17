@@ -2,7 +2,7 @@
     <thead class="text-body">
         <tr>
             <th>#Id</th>
-            <th>Nombre</th>
+            <th>Razón social</th>
             <th>Cuit</th>
             <th>Email</th>
             <th class="no-sort"></th>
@@ -13,7 +13,7 @@
         @foreach ($customers as $customer)
         <tr class="kt-table-row kt-table-row-level-0">
             <td>{{$customer->id}}</td>
-            <td>{{$customer->bussiness_name}}</td>
+            <td>{{$customer->razon_social}}</td>
             <td>{{ $customer->cuit }}</td>
             <td>{{ $customer->email }}</td>
             <td>
@@ -26,7 +26,7 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton">
-                        <a class="dropdown-item" href="{{ route('customers.edit', $customer->id) }}">Editar</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="editCustomer({{$customer->id}})"> <i class="fa fa-edit"></i> Editar</a>
                         <a class="dropdown-item confirm-delete" title="Delete" href="#">Borrar</a>
                     </div>
                 </div>

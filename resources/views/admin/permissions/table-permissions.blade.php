@@ -15,7 +15,7 @@
             <td>{{$permission->id}}</td>
             <td>{{$permission->name}}</td>
             <td>{{$permission->description}}</td>
-            <td>{{ $permission->role->name }}</td>
+            <td>{{$permission->role->name }}</td>
             <td>
                 <div class="card-toolbar text-right">
                     <button class="btn p-0 shadow-none" type="button" id="dropdowneditButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,7 +26,7 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton">
-                        <a class="dropdown-item" href="{{ route('permissions.edit', $permission->id) }}">Editar</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="editPermission({{$permission->id}})"> <i class="fa fa-edit"></i> Editar</a>
                         <a class="dropdown-item confirm-delete" title="Delete" href="#">Borrar</a>
                     </div>
                 </div>
