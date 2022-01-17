@@ -11,8 +11,7 @@ class UserRepository extends BaseRepository {
     }
 
     protected function selectList(){
-        return $this->newQuery()->with(
-            [ ]);
+        return $this->newQuery()->with([ ]);
     }
 
     public function paginate($cant){

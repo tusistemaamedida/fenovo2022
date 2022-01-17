@@ -1,0 +1,143 @@
+{
+  "iva": [
+    {
+      "type": "RI"
+    },
+    {
+      "type": "E"
+    },
+    {
+      "type": "M"
+    }
+  ],
+  "store": [
+    {
+      "type": "N"
+    },
+    {
+      "type": "B"
+    },
+    {
+      "type": "C"
+    },
+    {
+      "type": "T"
+    },
+    {
+      "type": "E"
+    }
+  ],
+  "print": [
+    {
+      "type": "G1"
+    },
+    {
+      "type": "G2"
+    }
+  ],
+  "role": [
+    {
+      "type": "ADMIN"
+    },
+    {
+      "type": "VENTA"
+    },
+    {
+      "type": "DEPOSITO"
+    },
+    {
+      "type": "TIENDA"
+    }
+  ],
+  "price": [
+    {
+      "type": "L0"
+    },
+    {
+      "type": "L1"
+    },
+    {
+      "type": "L2"
+    },
+    {
+      "type": "P1"
+    },
+    {
+      "type": "P2"
+    }
+  ],
+  "state": [
+    {
+      "name": "Buenos Aires"
+    },
+    {
+      "name": "Catamarca"
+    },
+    {
+      "name": "Corrientes"
+    },
+    {
+      "name": "Ciudad Autónoma de Buenos Aires"
+    },
+    {
+      "name": "Chubut"
+    },
+    {
+      "name": "Córdoba"
+    },
+    {
+      "name": "Chaco"
+    },
+    {
+      "name": "Entre Ríos"
+    },
+    {
+      "name": "Formosa"
+    },
+    {
+      "name": "Misiones"
+    },
+    {
+      "name": "Mendoza"
+    },
+    {
+      "name": "Neuquén"
+    },
+    {
+      "name": "La Rioja"
+    },
+    {
+      "name": "La Pampa"
+    },
+    {
+      "name": "Río Negro"
+    },
+    {
+      "name": "Santa Cruz"
+    },
+    {
+      "name": "Santiago del Estero"
+    },
+    {
+      "name": "Santa Fe"
+    },
+    {
+      "name": "Salta"
+    },
+    {
+      "name": "San Luis"
+    },
+    {
+      "name": "San Juan"
+    },
+    {
+      "name": "Jujuy"
+    },
+    {
+      "name": "Tucumán"
+    },
+    {
+      "name": "Tierra del Fuego, Antártida e Islas del Atlántico Sur}"
+    }
+  ]
+}
