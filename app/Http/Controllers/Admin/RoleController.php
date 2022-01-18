@@ -23,6 +23,32 @@ class RoleController extends Controller
         return view('admin.roles.list', compact('roles'));
     }
 
+    public function add(){
+        try {
+            $role  = null;
+            return new JsonResponse([
+                'type'=>'success',
+                'html' => view('admin.roles.insertByAjax',compact('role'))->render()
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj'=> $e->getMessage(),'type'=>'error']);
+        }
+    }
+
+    public function store(EditRequest $request){
+        try {
+            $data = $request->except(['_token']);
+            $data['active'] = 1;
+            $roles = $this->roleRepository->create($data);
+            return new JsonResponse([
+                'msj'=>'Actualización correcta !',
+                'type'=>'success'
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj'=> $e->getMessage(),'type'=>'error']);
+        }
+    }
+
     public function edit(Request $request){
         try {
             $role  = $this->roleRepository->getOne($request->id);
