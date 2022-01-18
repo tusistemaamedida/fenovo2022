@@ -136,6 +136,7 @@
                 for (var i = 0; i < elements.length; i++) {
                     elements[i].classList.remove('is-invalid');
                 }
+                jQuery('#loader').removeClass('hidden');
             },
             success:function(data){
                 if(data['type'] == 'success'){
@@ -171,9 +172,13 @@
                     confirmButtonClass: "btn btn-primary",
                     buttonsStyling: !1
                 }) ;
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
             }
         });
     });
+
 
     function editRole(id){
         var elements = document.querySelectorAll('.is-invalid');
@@ -212,6 +217,7 @@
                 for (var i = 0; i < elements.length; i++) {
                     elements[i].classList.remove('is-invalid');
                 }
+                jQuery('#loader').removeClass('hidden');
             },
             success:function(data){
                 if(data['type'] == 'success'){
@@ -246,7 +252,10 @@
                     type: "error",
                     confirmButtonClass: "btn btn-primary",
                     buttonsStyling: !1
-                }) ;
+                })
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
             }
         });
     });
