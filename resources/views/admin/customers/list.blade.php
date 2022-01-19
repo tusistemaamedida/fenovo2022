@@ -8,7 +8,7 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Tiendas</li>
+                <li class="breadcrumb-item active" aria-current="page">Clientes</li>
             </ol>
         </nav>
     </div>
@@ -23,8 +23,7 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">Listado
-                                    </h3>
+                                    <h3 class="card-label mb-0 font-weight-bold text-body">Listado</h3>
                                 </div>
                                 <div class="icons d-flex">
                                     <a href="add-product.html" class="ml-2">
@@ -132,54 +131,54 @@
         });
 
         jQuery("#btn-guardar-customer").click(function(){
-        var elements = document.querySelectorAll('.is-invalid');
-        var form = jQuery('#formCustomer').serialize();
+            var elements = document.querySelectorAll('.is-invalid');
+            var form = jQuery('#formCustomer').serialize();
 
-        jQuery.ajax({
-            url:"{{ route('customers.update') }}",
-            type:'POST',
-            data:form,
-            beforeSend: function() {
-                for (var i = 0; i < elements.length; i++) {
-                    elements[i].classList.remove('is-invalid');
-                }
-            },
-            success:function(data){
-                if(data['type'] == 'success'){
-                    Swal.fire({
-                        title: "Exito!",
-                        html: data['msj'],
-                        type: "success",
-                        confirmButtonClass: "btn btn-primary",
-                        buttonsStyling: !1
-                    }) ;
-                    setTimeout(function(){ location.reload() }, 1500);
-                }else{
+            jQuery.ajax({
+                url:"{{ route('customers.update') }}",
+                type:'POST',
+                data:form,
+                beforeSend: function() {
+                    for (var i = 0; i < elements.length; i++) {
+                        elements[i].classList.remove('is-invalid');
+                    }
+                },
+                success:function(data){
+                    if(data['type'] == 'success'){
+                        Swal.fire({
+                            title: "Exito!",
+                            html: data['msj'],
+                            type: "success",
+                            confirmButtonClass: "btn btn-primary",
+                            buttonsStyling: !1
+                        }) ;
+                        setTimeout(function(){ location.reload() }, 1500);
+                    }else{
+                        Swal.fire({
+                            title: "Error!",
+                            html: data['msj'],
+                            type: "error",
+                            confirmButtonClass: "btn btn-primary",
+                            buttonsStyling: !1
+                        }) ;
+                    }
+                },
+                error: function (data) {
+                    var lista_errores="";
+                    var data = data.responseJSON;
+                    jQuery.each(data.errors,function(index, value) {
+                        lista_errores+=value+'<br />';
+                        jQuery('#'+index).addClass('is-invalid');
+                    });
                     Swal.fire({
                         title: "Error!",
-                        html: data['msj'],
+                        html: lista_errores,
                         type: "error",
                         confirmButtonClass: "btn btn-primary",
                         buttonsStyling: !1
                     }) ;
                 }
-            },
-            error: function (data) {
-                var lista_errores="";
-                var data = data.responseJSON;
-                jQuery.each(data.errors,function(index, value) {
-                    lista_errores+=value+'<br />';
-                    jQuery('#'+index).addClass('is-invalid');
-                });
-                Swal.fire({
-                    title: "Error!",
-                    html: lista_errores,
-                    type: "error",
-                    confirmButtonClass: "btn btn-primary",
-                    buttonsStyling: !1
-                }) ;
-            }
-        });
+            });
         });
 
 </script>

@@ -1,8 +1,9 @@
 <div class="form-group">
     <label class="text-dark">Nombre</label>
-    <input type="text" id="name" name="name" @if (isset($role)) value="{{$role->name}}" @else value="" @endif class="form-control" required autofocus>
+    <input type="text" id="name" name="name" @if (isset($role)) value="{{$role->name}}" @else value="" @endif class="form-control" required>
 </div>
 
+@if (isset($role))
 <div class="row" style="margin-bottom: 25px">
     <div class="col-4">
         <fieldset>
@@ -14,6 +15,5 @@
     </div>
 </div>
 
-@if (isset($role))
 <input type="hidden" name="role_id" value="{{$role->id}}" />
 @endif
