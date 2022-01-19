@@ -6593,7 +6593,7 @@ button.bg-dark:focus {
 }
 
 .border-dark {
-    border-color: #1a3353 !important;
+    border-color: #cccfd3 !important;
 }
 
 .border-white {
@@ -16059,7 +16059,7 @@ readers do not read off random characters that represent icons */
 }
 
 .border-dark {
-    border: 1px solid var(--artical-background-element) !important;
+    border: 1px solid #cccfd3 !important;
 }
 
 .border-bottom-dark {
@@ -16576,7 +16576,7 @@ select.form-control:not([multiple="multiple"]) {
 .select2-container--default .select2-selection--multiple {
     background-color: transparent !important;
     border: 1px solid !important;
-    border-color: var(--artical-color-border) !important;
+    border-color: #cccfd3 !important;
 }
 
 .select2-container--default
@@ -17943,8 +17943,8 @@ div.equal:active {
     text-transform: uppercase;
 }
 
-/* This for loop creates the 	necessary css animation names 
-Due to the split circle of progress-left and progress right, we must use the animations on each side. 
+/* This for loop creates the 	necessary css animation names
+Due to the split circle of progress-left and progress right, we must use the animations on each side.
 */
 .progress[data-percentage="10"] .progress-right .progress-bar {
     animation: loading-1 1.5s linear forwards;
@@ -18723,7 +18723,7 @@ body {
 }
 
 .addproduct-main .form-control {
-    height: 36px !important;
+   /*  height: 36px !important; */
     border-color: var(--artical-background-element);
 }
 
@@ -18742,7 +18742,7 @@ body {
     height: 32px !important;
     display: flex !important;
     align-items: center !important;
-    border-color: var(--artical-background-element) !important;
+    border-color: #cccfd3 !important;
 }
 
 .ms-choice {

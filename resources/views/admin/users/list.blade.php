@@ -136,59 +136,59 @@
     });
 
     jQuery("#btn-guardar-user").click(function(){
-            var elements = document.querySelectorAll('.is-invalid');
-            var form = jQuery('#formUser').serialize();
+        var elements = document.querySelectorAll('.is-invalid');
+        var form = jQuery('#formUser').serialize();
 
-            jQuery.ajax({
-                url:"{{ route('users.update') }}",
-                type:'POST',
-                data:form,
-                beforeSend: function() {
-                    jQuery('#loader').removeClass('hidden');
-                    for (var i = 0; i < elements.length; i++) {
-                        elements[i].classList.remove('is-invalid');
-                    }
-                },
-                success:function(data){
-                    if(data['type'] == 'success'){
-                        Swal.fire({
-                            title: "Exito!",
-                            html: data['msj'],
-                            type: "success",
-                            confirmButtonClass: "btn btn-primary",
-                            buttonsStyling: !1
-                        }) ;
-                        setTimeout(function(){ location.reload() }, 1500);
-                    }else{
-                        Swal.fire({
-                            title: "Error!",
-                            html: data['msj'],
-                            type: "error",
-                            confirmButtonClass: "btn btn-primary",
-                            buttonsStyling: !1
-                        }) ;
-                    }
-                },
-                error: function (data) {
-                    var lista_errores="";
-                    var data = data.responseJSON;
-                    jQuery.each(data.errors,function(index, value) {
-                        lista_errores+=value+'<br />';
-                        jQuery('#'+index).addClass('is-invalid');
-                    });
+        jQuery.ajax({
+            url:"{{ route('users.update') }}",
+            type:'POST',
+            data:form,
+            beforeSend: function() {
+                jQuery('#loader').removeClass('hidden');
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].classList.remove('is-invalid');
+                }
+            },
+            success:function(data){
+                if(data['type'] == 'success'){
+                    Swal.fire({
+                        title: "Exito!",
+                        html: data['msj'],
+                        type: "success",
+                        confirmButtonClass: "btn btn-primary",
+                        buttonsStyling: !1
+                    }) ;
+                    setTimeout(function(){ location.reload() }, 1500);
+                }else{
                     Swal.fire({
                         title: "Error!",
-                        html: lista_errores,
+                        html: data['msj'],
                         type: "error",
                         confirmButtonClass: "btn btn-primary",
                         buttonsStyling: !1
                     }) ;
-                },
-                complete: function () {
-                    jQuery('#loader').addClass('hidden');
                 }
-            });
+            },
+            error: function (data) {
+                var lista_errores="";
+                var data = data.responseJSON;
+                jQuery.each(data.errors,function(index, value) {
+                    lista_errores+=value+'<br />';
+                    jQuery('#'+index).addClass('is-invalid');
+                });
+                Swal.fire({
+                    title: "Error!",
+                    html: lista_errores,
+                    type: "error",
+                    confirmButtonClass: "btn btn-primary",
+                    buttonsStyling: !1
+                }) ;
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
+            }
         });
+    });
 
 </script>
 
