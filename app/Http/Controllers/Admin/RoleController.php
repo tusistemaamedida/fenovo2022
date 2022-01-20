@@ -45,7 +45,7 @@ class RoleController extends Controller
         try {
             $data = $request->except(['_token']);
             $data['active'] = 1;
-            $roles = $this->roleRepository->create($data);
+            $this->roleRepository->create($data);
             return new JsonResponse([
                 'msj' => 'Actualización correcta !',
                 'type' => 'success'

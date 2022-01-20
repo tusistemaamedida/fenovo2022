@@ -33,16 +33,24 @@ class UserController extends Controller
 
     public function add()
     {
-        $roles = $this->roleRepository->getActives();
-        return view('admin.users.add', compact('roles'));
+        try {
+            $roles = $this->roleRepository->getActives();
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.users.insertByAjax', compact('roles'))->render()
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
     }
 
     public function store(AddRequest $request)
     {
         try {
             $data = $request->except(['_token']);
+            $data['active'] = 1;
             $data['password'] = Hash::make($data['password']);
-            $users = $this->userRepository->create($data);
+            $this->userRepository->create($data);
             return new JsonResponse([
                 'msj' => 'Usuario creado correctamente!',
                 'type' => 'success'

@@ -1,9 +1,9 @@
 <table id="user" class="display">
     <thead class="text-body">
         <tr>
-            <th>ID</th>
-            <th>Nombre y Apellido</th>
             <th>Usuario</th>
+            <th>Nombre y Apellido</th>
+            <th>Rol</th>
             <th>E-Mail</th>
             <th>Acceso</th>
             <th class="no-sort"></th>
@@ -13,9 +13,9 @@
         @if (isset($users))
         @foreach ($users as $user)
         <tr class="kt-table-row kt-table-row-level-0">
-            <td>{{$user->id}}</td>
-            <td>{{$user->name}}</td>
             <td>{{$user->username}}</td>
+            <td>{{$user->name}}</td>
+            <td>{{$user->role->name}}</td>
             <td>{{ $user->email }}</td>
             <td>{{ $user->last_login }}</td>
             <td>

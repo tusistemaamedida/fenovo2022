@@ -16,22 +16,25 @@ class AddRequest extends FormRequest
         return true;
     }
 
-    public function rules(){
+    public function rules()
+    {
         return [
             'username' => ['required', 'unique:users'],
             'email' => ['required', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'min:8'],
             'name' => 'required',
+            'active' => ['value'],
         ];
     }
 
-    public function messages(){
+    public function messages()
+    {
         return [
-            'username.required' => 'El Username es requerido ',   
-            'username.unique'   => 'El Username está en uso ',   
+            'username.required' => 'El Username es requerido ',
+            'username.unique'   => 'El Username está en uso ',
             'name.required'     => 'El nombre y apellido del usuario es requerido',
             'email.required'    => 'El email del usuario es requerido',
-            'email.unique'      => 'El email ya esta en uso ',            
+            'email.unique'      => 'El email ya esta en uso ',
             'password.required' => 'El password es requerido ',
             'password.min'      => 'El password debe contener al menos 8 caracteres',
         ];
