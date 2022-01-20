@@ -4,7 +4,7 @@
         <div class="brand flex-column-auto" id="tc_brand">
             <a href="{{url('/home')}}" class="brand-logo">
                 <div class="brand-image">FTK </div>
-                <span class="brand-text"><img style="height: 25px;" alt="fenovo" src="{{asset('assets/images/misc/logo.png')}}" /></span>
+                <span class="brand-text"><img style="height: 40px;margin-right:20px" alt="fenovo" src="{{asset('assets/images/misc/logo.png')}}" /></span>
             </a>
         </div>
 
@@ -13,7 +13,7 @@
                 <div id="accordion">
                     <ul class="nav flex-column">
 
-                        <li class="nav-item active">
+                        <li class="nav-item @if(Route::is('home') ) active @endif">
                             <a href="{{url('/home')}}" class="nav-link">
                                 <span class="svg-icon nav-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
@@ -27,7 +27,7 @@
                             </a>
                         </li>
 
-                        <li class="nav-item">
+                        <li class="nav-item @if(Route::is('product.*') ||Route::is('products.*') ) active @endif">
                             <a href="{{url('products')}}" class="nav-link">
                                 <span class="svg-icon nav-icon">
                                     <i class="fas fa-boxes font-size-h4"></i>

@@ -7,15 +7,14 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="plistproveedor" id="plistproveedor" value="" class="form-control border-dark">
+                    <input type="number" step="0.50" min="0" name="plistproveedor" id="plistproveedor" value="" class="form-control border-dark">
                 </fieldset>
-                <p><small  id="span-plistproveedor" style="margin-top: 0;font-size:13px;top: 30px;color:rgb(217 13 47)"></small></p>
             </div>
 
             <div class="col-md-4">
                 <label  class="text-body">Desc. Proveedor *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="descproveedor" id="descproveedor" value="0" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="descproveedor" id="descproveedor" value="0" class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
@@ -28,14 +27,14 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="costfenovo" id="costfenovo" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="costfenovo" id="costfenovo" value="0" disabled class="form-control border-dark"  >
                 </fieldset>
             </div>
 
             <div class="col-md-4">
                 <label  class="text-body">Markup Fenovo *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="mupfenovo" id="mupfenovo" value="16" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="mupfenovo" id="mupfenovo" value="16" class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
@@ -45,7 +44,7 @@
             <div class="col-md-4">
                 <label  class="text-body">Fondo contribución *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="contribution_fund" id="contribution_fund" value="0" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="contribution_fund" id="contribution_fund" value="0" class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
@@ -58,16 +57,19 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="plist0neto" id="plist0neto" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="plist0neto" id="plist0neto" value="0" disabled class="form-control border-dark"  >
                 </fieldset>
             </div>
 
             <div class="col-md-4">
                 <label  class="text-body">IVA *</label>
                 <fieldset class="form-group mb-3">
-                    <select class="js-example-basic-single js-states form-control bg-transparent" name="tasiva">
-                        <option value="AL">Supplier a</option>
-                        <option value="WY">Supplier b</option>
+                    <select class="js-example-basic-single js-states form-control bg-transparent" name="tasiva" id="tasiva">
+                        @foreach ($alicuotas as $alicuota)
+                            <option value="{{$alicuota->value}}" @if($alicuota->value *100 == 21) selected @endif>
+                                {{$alicuota->description}}
+                            </option>
+                        @endforeach
                     </select>
                 </fieldset>
             </div>
@@ -78,8 +80,12 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="plist0iva" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="plist0iva" id="plist0iva" value="0" disabled class="form-control border-dark"  >
                 </fieldset>
+            </div>
+
+            <div class="col-md-12">
+                <p><small  id="info-calculate" style="margin-top: 0;font-size:13px;top: 30px;color:rgb(217 13 47)"></small></p>
             </div>
         </div>
     </div>
@@ -89,7 +95,7 @@
             <div class="col-md-4">
                 <label  class="text-body">Markup lista 1 *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="muplist1" value="0" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="muplist1" id="muplist1" value="0" class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
@@ -101,7 +107,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="plist1" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="plist1" id="plist1" value="0" disabled class="form-control border-dark"  >
                 </fieldset>
             </div>
             <div class="col-md-4">
@@ -110,26 +116,27 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="comlista1" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="comlista1" id="comlista1" value="0" disabled class="form-control border-dark"  >
                 </fieldset>
             </div>
 
             <div class="col-md-4">
                 <label  class="text-body">Markup lista 2 *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="muplist2" value="0" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="muplist2" id="muplist2" value="0" class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
                 </fieldset>
             </div>
+
             <div class="col-md-4">
                 <label  class="text-body">Precio lista 2 *</label>
                 <fieldset class="input-group form-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="plist2" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="plist2" id="plist2" value="0" disabled class="form-control border-dark"  >
                 </fieldset>
             </div>
             <div class="col-md-4">
@@ -138,7 +145,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="comlista2" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="comlista2" id="comlista2" value="0" disabled class="form-control border-dark"  >
                 </fieldset>
             </div>
         </div>
@@ -151,13 +158,13 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="p1tienda" value="0" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="p1tienda" id="p1tienda" value="0" class="form-control border-dark"  >
                 </fieldset>
             </div>
             <div class="col-md-6">
                 <label  class="text-body">Markup precio tienda 1 *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="mup1" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="mup1" id="mup1" value="0" disabled class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
@@ -166,17 +173,14 @@
             <div class="col-md-3">
                 <label  class="text-body">Cant. mayorista *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">$</span>
-                    </div>
-                    <input type="number" name="cantmay1" value="0" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="cantmay1" id="cantmay1" value="0" class="form-control border-dark"  >
                 </fieldset>
             </div>
 
             <div class="col-md-3">
                 <label  class="text-body">Desc. mayorista *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="descp1" value="0" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="descp1" id="descp1" value="0" class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
@@ -188,13 +192,13 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="p1may" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="p1may" id="p1may" value="0" disabled class="form-control border-dark"  >
                 </fieldset>
             </div>
             <div class="col-md-3">
                 <label  class="text-body">Markup *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="mupp1may" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="mupp1may" id="mupp1may" value="0" disabled class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
@@ -210,13 +214,13 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="p2tienda" value="0" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="p2tienda" id="p2tienda" value="0" class="form-control border-dark"  >
                 </fieldset>
             </div>
             <div class="col-md-6">
                 <label  class="text-body">Markup precio tienda 2 *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="mup2" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="mup2" id="mup2" value="0" disabled class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
@@ -225,17 +229,14 @@
             <div class="col-md-3">
                 <label  class="text-body">Cant. mayorista *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">$</span>
-                    </div>
-                    <input type="number" name="cantmay2" value="0" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="cantmay2" value="0" class="form-control border-dark"  >
                 </fieldset>
             </div>
 
             <div class="col-md-3">
                 <label  class="text-body">Desc. mayorista *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="descp2" value="0" class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="descp2" id="descp2" value="0" class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
@@ -247,13 +248,13 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
-                    <input type="number" name="p2may" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="p2may" id="p2may" value="0" disabled class="form-control border-dark"  >
                 </fieldset>
             </div>
             <div class="col-md-3">
                 <label  class="text-body">Markup *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" name="mupp2may" value="0" disabled class="form-control border-dark"  >
+                    <input type="number" step="0.50" min="0" name="mupp2may" id="mupp2may" value="0" disabled class="form-control border-dark"  >
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
