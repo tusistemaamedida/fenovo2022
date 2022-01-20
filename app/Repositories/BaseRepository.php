@@ -23,7 +23,14 @@ abstract class BaseRepository {
         return $this->newQuery()->where('id',$id)->update($data);
     }
 
+
     public function get($orderBy = 'id', $order = 'ASC'){
         return $this->newQuery()->orderBy($orderBy ,$order)->get();
     }
+
+    public function create($data){
+        return $this->getModel()->create($data);
+    }
+
+
 }

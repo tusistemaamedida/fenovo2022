@@ -23,13 +23,11 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">Listado
-                                    </h3>
+                                    <h3 class="card-label mb-0 font-weight-bold text-body">Listado</h3>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="add-product.html" class="ml-2">
+                                    <a href="{{ route('stores.add') }}" class="ml-2">
                                         <span class="bg-secondary h-30px font-size-h5 w-30px d-flex align-items-center justify-content-center  rounded-circle shadow-sm ">
-
                                             <svg width="25px" height="25px" viewBox="0 0 16 16" class="bi bi-plus white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                             </svg>
@@ -57,10 +55,7 @@
 
                                 </div>
                             </div>
-
                         </div>
-
-
                     </div>
                 </div>
                 <div class="row">
@@ -69,7 +64,7 @@
                             <div class="card-body">
                                 <div>
                                     <div class=" table-responsive" id="printableTable">
-                                        @include('admin.stores.table-stores')
+                                        @include('admin.stores.table')
                                     </div>
                                 </div>
                             </div>
@@ -82,10 +77,6 @@
         </div>
     </div>
 </div>
-
-
-@include('admin.stores.modal')
-
 
 @endsection
 
@@ -102,86 +93,23 @@
         });
     });
 
-    function editStore(id){
-
-        var elements = document.querySelectorAll('.is-invalid');
-        jQuery.ajax({
-            url:"{{ route('stores.edit') }}",
-            type:'GET',
-            data:{id},
-            success:function(data){
-                if(data['type'] == 'success'){
-                    jQuery("#insertByAjax").html(data['html']);
-                    jQuery('.editpopup').addClass('offcanvas-on');
-                }else{
-                    Swal.fire({
-                        title: "Error!",
-                        html: data['msj'],
-                        type: "error",
-                        confirmButtonClass: "btn btn-primary",
-                        buttonsStyling: !1
-                    }) ;
-                }
+    jQuery('.show_confirm').on('click', function (event) {
+        var form = jQuery(this).closest("form");
+        event.preventDefault();
+        Swal.fire({
+            title: 'Confirma eliminar?',
+            text: "No podrá reversar este movimiento !",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si borrar'
+        }).then((result) => {
+            if (result.value) {
+                form.submit()
             }
-        });
-    }
-
-    jQuery('.close_modal_store').on("click", function(e){
-        document.getElementById("formStore").reset();
-        jQuery('.editpopup').removeClass('offcanvas-on');
+        })
     });
-
-    jQuery("#btn-guardar-store").click(function(){
-            var elements = document.querySelectorAll('.is-invalid');
-            var form = jQuery('#formStore').serialize();
-
-            jQuery.ajax({
-                url:"{{ route('stores.update') }}",
-                type:'POST',
-                data:form,
-                beforeSend: function() {
-                    for (var i = 0; i < elements.length; i++) {
-                        elements[i].classList.remove('is-invalid');
-                    }
-                },
-                success:function(data){
-                    if(data['type'] == 'success'){
-                        Swal.fire({
-                            title: "Exito!",
-                            html: data['msj'],
-                            type: "success",
-                            confirmButtonClass: "btn btn-primary",
-                            buttonsStyling: !1
-                        }) ;
-                        setTimeout(function(){ location.reload() }, 1500);
-                    }else{
-                        Swal.fire({
-                            title: "Error!",
-                            html: data['msj'],
-                            type: "error",
-                            confirmButtonClass: "btn btn-primary",
-                            buttonsStyling: !1
-                        }) ;
-                    }
-                },
-                error: function (data) {
-                    var lista_errores="";
-                    var data = data.responseJSON;
-                    jQuery.each(data.errors,function(index, value) {
-                        lista_errores+=value+'<br />';
-                        jQuery('#'+index).addClass('is-invalid');
-                    });
-                    Swal.fire({
-                        title: "Error!",
-                        html: lista_errores,
-                        type: "error",
-                        confirmButtonClass: "btn btn-primary",
-                        buttonsStyling: !1
-                    }) ;
-                }
-            });
-        });
-
+    
 </script>
 
 @endsection

@@ -1,7 +1,8 @@
 <?php
-    Route::group(['namespace' => 'Admin'], function () {
-        Route::get('products', [App\Http\Controllers\Admin\ProductController::class,'list'])->name('products.list');
-        Route::get('product-add', [App\Http\Controllers\Admin\ProductController::class,'add'])->name('product.add');
-        Route::get('calculate-product-prices', [App\Http\Controllers\Admin\ProductController::class,'calculateProductPrices'])->name('calculate.product.prices');
-    });
-?>
+
+use App\Http\Controllers\Admin\ProductController;
+
+Route::get('products', [ProductController::class, 'list'])->name('products.list');
+Route::get('product-add', [ProductController::class, 'add'])->name('product.add');
+Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+Route::get('calculate-product-prices', [ProductController::class, 'calculateProductPrices'])->name('calculate.product.prices');

@@ -18,8 +18,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $email
  * @property string|null $cuit
  * @property string|null $iva_type
- * @property string|null $firstname
- * @property string|null $lastname
  * @property string|null $address
  * @property string|null $city
  * @property string|null $state
@@ -45,8 +43,6 @@ class Proveedor extends Model
 		'email',
 		'cuit',
 		'iva_type',
-		'firstname',
-		'lastname',
 		'address',
 		'city',
 		'state',

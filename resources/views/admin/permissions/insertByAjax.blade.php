@@ -1,6 +1,14 @@
 <div class="form-group">
+    <div class="offcanvas-header d-flex align-items-center justify-content-between pb-3">
+        <h4 class="font-size-h4 font-weight-bold m-0" id="title-modal">
+            {{ ($permission)?'Editar':'Agregar'}} permiso
+        </h4>
+    </div>
+</div>
+
+<div class="form-group">
     <label class="text-dark">Nombre</label>
-    <input type="text" id="name" name="name" @if (isset($permission)) value="{{$permission->name}}" @else value="" @endif class="form-control" required autofocus>
+    <input type="text" id="name" name="name" @if (isset($permission)) value="{{$permission->name}}" @else value="" @endif class="form-control" required>
 </div>
 
 <div class="form-group">
@@ -8,7 +16,7 @@
     <fieldset class="form-group">
         <select class="rounded form-control bg-transparent" name="rol_id" id="rol_id">
             @forelse ($roles as $rol)
-            <option value="{{$rol->id}}" @if($rol->id == $permission->rol_id) selected @endif>
+            <option value="{{$rol->id}}" @if(isset($permission) && ($rol->id == $permission->rol_id)) selected @endif>
                 {{$rol->name}}
             </option>
             @empty
@@ -18,6 +26,8 @@
     </fieldset>
 
 </div>
+
+@if (isset($permission))
 
 <div class="row" style="margin-bottom: 25px">
     <div class="col-4">
@@ -30,8 +40,5 @@
     </div>
 </div>
 
-
-
-@if (isset($permission))
 <input type="hidden" name="permission_id" value="{{$permission->id}}" />
 @endif

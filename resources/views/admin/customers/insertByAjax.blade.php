@@ -1,4 +1,12 @@
 <div class="form-group">
+    <div class="offcanvas-header d-flex align-items-center justify-content-between pb-3">
+        <h4 class="font-size-h4 font-weight-bold m-0" id="title-modal">
+            {{ ($customer)?'Editar':'Agregar'}} cliente
+        </h4>
+    </div>
+</div>
+
+<div class="form-group">
     <label class="text-dark">Razon social</label>
     <input type="text" id="razon_social" name="razon_social" @if (isset($customer)) value="{{$customer->razon_social}}" @else value="" @endif class="form-control" required autofocus>
 </div>
@@ -31,7 +39,7 @@
             <fieldset class="form-group">
                 <select class="rounded form-control bg-transparent" name="iva_type">
                     @forelse ($ivaType as $iva)
-                    <option value="{{$iva['type']}}" @if($iva['type']==$customer->iva_type ) selected @endif>
+                    <option value="{{$iva['type']}}" @if(isset($customer) && ($iva['type']==$customer->iva_type)) selected @endif>
                         {{$iva['type'] }}
                     </option>
                     @empty
@@ -52,7 +60,7 @@
     <fieldset class="form-group">
         <select class="rounded form-control bg-transparent" name="store_id">
             @forelse ($stores as $store)
-            <option value="{{$store->id}}" @if($store->id == $customer->store_id) selected @endif>
+            <option value="{{$store->id}}" @if(isset($customer) && ($store->id == $customer->store_id)) selected @endif>
                 {{$store->fantasy_name}}
             </option>
             @empty
@@ -79,7 +87,7 @@
                 <select class="rounded form-control bg-transparent" name="state">
                     @forelse ($states as $state)
 
-                    <option value="{{$state['name']}}" @if($state['name']==$customer->state ) selected @endif>
+                    <option value="{{$state['name']}}" @if(isset($customer) && ($state['name']==$customer->state)) selected @endif>
                         {{$state['name'] }}
                     </option>
 
@@ -99,7 +107,7 @@
     <fieldset class="form-group">
         <select class="rounded form-control bg-transparent" name="listprice_associate">
             @forelse ($listPrices as $listPrice)
-            <option value="{{$listPrice['type']}}" @if($listPrice['type']==$customer->listprice_associate ) selected @endif>
+            <option value="{{$listPrice['type']}}" @if(isset($customer) && ($listPrice['type']==$customer->listprice_associate)) selected @endif>
                 {{$listPrice['type'] }}
             </option>
             @empty
@@ -109,6 +117,7 @@
     </fieldset>
 </div>
 
+@if (isset($customer))
 <div class="row" style="margin-bottom: 25px">
     <div class="col-4">
         <fieldset>
@@ -120,8 +129,5 @@
     </div>
 </div>
 
-
-
-@if (isset($customer))
 <input type="hidden" name="customer_id" value="{{$customer->id}}" />
 @endif

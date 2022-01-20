@@ -1,3 +1,9 @@
+jQuery.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+    }
+});
+
 (function ($) {
     $.extend(true, $.fn.dataTable.defaults, {
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
