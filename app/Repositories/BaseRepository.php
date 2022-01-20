@@ -15,12 +15,15 @@ abstract class BaseRepository {
         return $this->newQuery()->findOrFail($id);
     }
 
-    public function getActives(){
-        return $this->newQuery()->where('active',true)->get();
+    public function getActives($orderBy = 'id', $order = 'ASC'){
+        return $this->newQuery()->where('active',true)->orderBy($orderBy ,$order)->get();
     }
 
     public function update($id,$data){
         return $this->newQuery()->where('id',$id)->update($data);
     }
 
+    public function get($orderBy = 'id', $order = 'ASC'){
+        return $this->newQuery()->orderBy($orderBy ,$order)->get();
+    }
 }

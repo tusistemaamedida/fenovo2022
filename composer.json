@@ -11,10 +11,13 @@
         "php": "^7.3|^8.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "hazzard/config": "^1.0",
+        "intervention/image": "^2.7",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "laravel/ui": "^3.4"
+        "laravel/ui": "^3.4",
+        "league/flysystem-aws-s3-v3": "~1.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.11",
@@ -35,7 +38,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Hazzard\\Filepicker\\": "app/uploader/src"
         }
     },
     "scripts": {
