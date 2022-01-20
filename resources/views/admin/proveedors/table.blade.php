@@ -1,10 +1,10 @@
 <table id="userTable" class="display">
     <thead class="text-body">
         <tr>
-            <th>Nombre</th>
-            <th>Responsable</th>
-            <th>CUIT</th>
-            <th>Tipo IVA</th>
+            <th>Razón social</th>
+            <th>Contacto</th>
+            <th>Cuit</th>
+            <th>Tipo iva</th>
             <th class="no-sort"></th>
         </tr>
     </thead>
@@ -26,8 +26,16 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton">
-                        <a class="dropdown-item" href="{{ route('proveedors.edit', $proveedor->id) }}">Editar</a>
-                        <a class="dropdown-item confirm-delete" title="Delete" href="#">Borrar</a>
+                        <a class="dropdown-item" href="{{ route('proveedors.edit', ['id'=>$proveedor->id]) }}"> <i class="fa fa-edit"></i> Editar</a>
+                        <a class="dropdown-item" href="javascript:void(0)">
+                            <form method="post" action="{{ route('proveedors.destroy', $proveedor) }}" id="formDelete">
+                                @csrf
+                                @method('delete')
+                                <button type="submit" class="btn ml-0 p-0 show_confirm" data-toggle="tooltip" title='Borrar'>
+                                    <i class="fa fa-trash text-danger"></i> Borrar
+                                </button>
+                            </form>
+                        </a>
                     </div>
                 </div>
             </td>

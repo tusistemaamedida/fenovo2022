@@ -23,7 +23,15 @@
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton">
                         <a class="dropdown-item" href="javascript:void(0)" onclick="editRole({{$role->id}})"> <i class="fa fa-edit"></i> Editar</a>
-                        <a class="dropdown-item confirm-delete" title="Delete" href="#">Borrar</a>
+                        <a class="dropdown-item" href="javascript:void(0)">
+                            <form method="post" action="{{ route('roles.destroy', $role) }}" id="formDelete">
+                                @csrf
+                                @method('delete')
+                                <button type="submit" class="btn ml-0 p-0 show_confirm" data-toggle="tooltip" title='Borrar'>
+                                    <i class="fa fa-trash text-danger"></i> Borrar
+                                </button>
+                            </form>
+                        </a>
                     </div>
                 </div>
             </td>

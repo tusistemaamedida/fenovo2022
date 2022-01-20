@@ -1,6 +1,10 @@
 <?php
-    
-    Route::get('stores', [App\Http\Controllers\Admin\StoreController::class,'list'])->name('stores.list');    
-    Route::get('stores/edit', [App\Http\Controllers\Admin\StoreController::class,'edit'])->name('stores.edit');
-    Route::post('stores/update', [App\Http\Controllers\Admin\StoreController::class,'update'])->name('stores.update');
-?>
+
+use App\Http\Controllers\Admin\StoreController;
+
+Route::get('stores', [StoreController::class, 'list'])->name('stores.list');
+Route::get('stores/add', [StoreController::class, 'add'])->name('stores.add');
+Route::post('stores/store', [StoreController::class, 'store'])->name('stores.store');
+Route::get('stores/edit', [StoreController::class, 'edit'])->name('stores.edit');
+Route::post('stores/update', [StoreController::class, 'update'])->name('stores.update');
+Route::delete('stores/{store}', [StoreController::class, 'destroy'])->name('stores.destroy');

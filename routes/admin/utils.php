@@ -1,3 +1,5 @@
 <?php
-    Route::get('clean', [App\Http\Controllers\Admin\UtilsController::class,'clean'])->name('clean');
-?>
+
+use App\Http\Controllers\Admin\UtilsController;
+
+Route::get('clean', [UtilsController::class, 'clean'])->name('clean');

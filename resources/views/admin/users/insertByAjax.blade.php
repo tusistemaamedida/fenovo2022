@@ -1,11 +1,17 @@
 <div class="form-group">
-    <label class="text-dark">Nombre</label>
-    <input type="text" id="name" name="name" @if (isset($user)) value="{{$user->name}}" @else value="" @endif class="form-control" required autofocus>
+    <label class="text-dark">Username</label>
+    <input type="text" name="username" @if (isset($user)) value="{{$user->username}}" @else value="" @endif class="form-control" required>
 </div>
 
 <div class="form-group">
-    <label class="text-dark">Username</label>
-    <input type="text" name="username" @if (isset($user)) value="{{$user->username}}" @else value="" @endif class="form-control">
+    <div class="row">
+        <div class="col-12">
+            @empty($user)
+            <label class="text-dark">Password</label>
+            <input type="password" id="password" name="password" value="" class="form-control" required>
+            @endempty
+        </div>
+    </div>
 </div>
 
 <div class="form-group">
@@ -14,11 +20,16 @@
 </div>
 
 <div class="form-group">
+    <label class="text-dark">Nombre y apellido</label>
+    <input type="text" id="name" name="name" @if (isset($user)) value="{{$user->name}}" @else value="" @endif class="form-control" required>
+</div>
+
+<div class="form-group">
     <label class="text-dark">Rol</label>
     <fieldset class="form-group">
         <select class="rounded form-control bg-transparent" name="rol_id">
             @forelse ($roles as $rol)
-            <option value="{{$rol->id}}" @if($rol->id == $user->rol_id) selected @endif>
+            <option value="{{$rol->id}}" @if(isset($user) && ($rol->id == $user->rol_id)) selected @endif>
                 {{$rol->name}}
             </option>
             @empty
@@ -28,17 +39,22 @@
     </fieldset>
 </div>
 
-<div class="row" style="margin-bottom: 25px">
-    <div class="col-4">
-        <fieldset>
-            <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" @if (isset($user) && $user->active) checked="" @endif name="active" id="active" value='1'>
-                <label class="custom-control-label" for="active">Activo</label>
-            </div>
-        </fieldset>
-    </div>
-</div>
 
-@if (isset($user))
-<input type="hidden" name="user_id" value="{{$user->id}}" />
-@endif
+<div class="form-group">
+    @if (isset($user))
+
+    <div class="row">
+        <div class="col-4">
+            <fieldset>
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" @if (isset($user) && $user->active) checked="" @endif name="active" id="active" value='1'>
+                    <label class="custom-control-label" for="active">Activo</label>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <input type="hidden" name="user_id" value="{{$user->id}}" />
+
+    @endif
+</div>
