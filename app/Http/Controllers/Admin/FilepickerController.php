@@ -37,8 +37,8 @@ class FilepickerController extends Controller
         $this->config ['upload_url'] = url('/img/productos/');
         $this->config ['accept_file_types'] = 'jpg|jpeg|png|gif';
         $this->config ['debug'] = config ('app.debug');
-        $this->config ['keep_original_image'] = false;
-        $this->config ['overwrite '] = true;
+        $this->config ['keep_original_image'] = true;
+        $this->config ['overwrite '] = false;
         $this->config ['name'] = 5;
         $this->config ['image_versions.thumb'] = array(
             'width' => 220,
@@ -63,12 +63,6 @@ class FilepickerController extends Controller
          * @param \Symfony\Component\HttpFoundation\File\UploadedFile $file
          */
         $this->handler->on('upload.before', function ($file){
-            //if(!is_dir('img/propiedades/'.$codigo_prop.'/')) mkdir('img/propiedades/'.$codigo_prop.'/',0777);
-
-            //$this->config ['upload_dir'] = public_path('img/propiedades/'.$codigo_prop);//$this>config ['upload_dir'] =   __DIR__ . '/../../../../public_html/img/propiedades';
-            //$this->config ['upload_url'] = url('/img/propiedades/'.$codigo_prop);//$this>config ['upload_url'] = url('img/propiedades');
-
-            //$file->saveWithExtension = rand(0,99999999).time()*rand(0,999) .'.jpg';
             $file->save =  $file->getClientOriginalName();
             // throw new \Hazzard\Filepicker\Exception\AbortException('Error message!');
         });
