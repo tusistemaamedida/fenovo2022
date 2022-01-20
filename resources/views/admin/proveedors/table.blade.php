@@ -1,21 +1,21 @@
-<table id="permissionTable" class="display">
+<table id="userTable" class="display">
     <thead class="text-body">
         <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Descripcion</th>
-            <th>Role</th>
+            <th>Razón social</th>
+            <th>Contacto</th>
+            <th>Cuit</th>
+            <th>Tipo iva</th>
             <th class="no-sort"></th>
         </tr>
     </thead>
     <tbody class="kt-table-tbody text-dark">
-        @if (isset($permissions))
-        @foreach ($permissions as $permission)
+        @if (isset($proveedors))
+        @foreach ($proveedors as $proveedor)
         <tr class="kt-table-row kt-table-row-level-0">
-            <td>{{$permission->id}}</td>
-            <td>{{$permission->name}}</td>
-            <td>{{$permission->description}}</td>
-            <td>{{$permission->role->name }}</td>
+            <td>{{ $proveedor->name }}</td>
+            <td>{{ $proveedor->responsable }}</td>
+            <td>{{ $proveedor->cuit }}</td>
+            <td>{{ $proveedor->iva_type }}</td>
             <td>
                 <div class="card-toolbar text-right">
                     <button class="btn p-0 shadow-none" type="button" id="dropdowneditButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,8 +26,16 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton">
-                        <a class="dropdown-item" href="javascript:void(0)" onclick="editPermission({{$permission->id}})"> <i class="fa fa-edit"></i> Editar</a>
-                        <a class="dropdown-item confirm-delete" title="Delete" href="#">Borrar</a>
+                        <a class="dropdown-item" href="{{ route('proveedors.edit', ['id'=>$proveedor->id]) }}"> <i class="fa fa-edit"></i> Editar</a>
+                        <a class="dropdown-item" href="javascript:void(0)">
+                            <form method="post" action="{{ route('proveedors.destroy', $proveedor) }}" id="formDelete">
+                                @csrf
+                                @method('delete')
+                                <button type="submit" class="btn ml-0 p-0 show_confirm" data-toggle="tooltip" title='Borrar'>
+                                    <i class="fa fa-trash text-danger"></i> Borrar
+                                </button>
+                            </form>
+                        </a>
                     </div>
                 </div>
             </td>

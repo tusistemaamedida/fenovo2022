@@ -4,31 +4,39 @@ namespace App\Repositories;
 
 use App\Models\Store;
 
-class StoreRepository extends BaseRepository {
+class StoreRepository extends BaseRepository
+{
 
-    public function getModel(){
+    public function getModel()
+    {
         return new Store();
     }
 
-    protected function selectList(){
+    protected function selectList()
+    {
         return $this->newQuery()->with(
             [
                 'region',
                 'customers'
-        ]);
+            ]
+        );
     }
 
-    public function paginate($cant){
+    public function paginate($cant)
+    {
         return $this->selectList()
+            ->where('active', true)
             ->orderBy('created_at', 'DESC')
             ->paginate($cant);
     }
 
-    public function getOne($id){
+    public function getOne($id)
+    {
         return Store::find($id);
     }
 
-    public function getAll(){
+    public function getAll()
+    {
         return Store::all();
     }
 }

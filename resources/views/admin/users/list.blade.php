@@ -69,7 +69,7 @@
                             <div class="card-body">
                                 <div>
                                     <div class=" table-responsive" id="printableTable">
-                                        @include('admin.users.table-users')
+                                        @include('admin.users.table')
                                     </div>
                                 </div>
                             </div>
@@ -90,15 +90,31 @@
 @section('js')
 
 <script>
-    jQuery(document).ready( function () {
-        jQuery('#userTable').dataTable( {
+    jQuery(function () {
+        let table = jQuery('#user').dataTable( {
             "pagingType": "simple_numbers",
-
             "columnDefs": [ {
             "targets"  : 'no-sort',
             "orderable": false,
-            }]
+            }],
         });
+    });
+
+    jQuery('.show_confirm').on('click', function (event) {
+        var form = jQuery(this).closest("form");
+        event.preventDefault();
+        Swal.fire({
+            title: 'Confirma eliminar?',
+            text: "No podrá reversar este movimiento !",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si borrar'
+        }).then((result) => {
+            if (result.value) {
+                form.submit()
+            }
+        })
     });
 
     function editUser(id){
@@ -158,7 +174,7 @@
                             confirmButtonClass: "btn btn-primary",
                             buttonsStyling: !1
                         }) ;
-                        setTimeout(function(){ location.reload() }, 1500);
+                        table.ajax.reload();
                     }else{
                         Swal.fire({
                             title: "Error!",

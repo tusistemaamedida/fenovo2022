@@ -1,8 +1,9 @@
-<table id="userTable" class="display">
+<table id="user" class="display">
     <thead class="text-body">
         <tr>
             <th>ID</th>
-            <th>Nombre</th>
+            <th>Nombre y Apellido</th>
+            <th>Usuario</th>
             <th>E-Mail</th>
             <th>Acceso</th>
             <th class="no-sort"></th>
@@ -14,6 +15,7 @@
         <tr class="kt-table-row kt-table-row-level-0">
             <td>{{$user->id}}</td>
             <td>{{$user->name}}</td>
+            <td>{{$user->username}}</td>
             <td>{{ $user->email }}</td>
             <td>{{ $user->last_login }}</td>
             <td>
@@ -26,8 +28,18 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton">
-                        <a class="dropdown-item" href="javascript:void(0)" onclick="editUser({{$user->id}})"> <i class="fa fa-edit"></i> Editar</a>
-                        <a class="dropdown-item confirm-delete" title="Delete" href="#"><i class="fa fa-trash"></i> Borrar</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="editUser({{$user->id}})" title="Editar">
+                            <i class="fa fa-edit"></i> Editar
+                        </a>
+                        <a class="dropdown-item" href="javascript:void(0)">
+                            <form method="post" action="{{ route('users.destroy', $user) }}" id="formDelete">
+                                @csrf
+                                @method('delete')
+                                <button type="submit" class="btn ml-0 p-0 show_confirm" data-toggle="tooltip" title='Borrar'>
+                                    <i class="fa fa-trash text-danger"></i> Borrar
+                                </button>
+                            </form>
+                        </a>
                     </div>
                 </div>
             </td>

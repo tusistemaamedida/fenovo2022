@@ -69,7 +69,7 @@
                             <div class="card-body">
                                 <div>
                                     <div class=" table-responsive" id="printableTable">
-                                        @include('admin.permissions.table-permissions')
+                                        @include('admin.permissions.table')
                                     </div>
                                 </div>
                             </div>
@@ -265,6 +265,23 @@
     jQuery('.close_modal').on("click", function(e){
         document.getElementById("formData").reset();
         jQuery('.editpopup').removeClass('offcanvas-on');
+    });
+
+    jQuery('.show_confirm').on('click', function (event) {
+        var form = jQuery(this).closest("form");
+        event.preventDefault();
+        Swal.fire({
+            title: 'Confirma eliminar?',
+            text: "No podrá reversar este movimiento !",
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si borrar'
+        }).then((result) => {
+            if (result.value) {
+                form.submit()
+            }
+        })
     });
 
 </script>

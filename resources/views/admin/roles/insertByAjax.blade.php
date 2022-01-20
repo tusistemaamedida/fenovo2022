@@ -1,4 +1,12 @@
 <div class="form-group">
+    <div class="offcanvas-header d-flex align-items-center justify-content-between pb-3">
+        <h4 class="font-size-h4 font-weight-bold m-0" id="title-modal">
+            {{ ($role)?'Editar':'Agregar'}} Rol
+        </h4>
+    </div>
+</div>
+
+<div class="form-group">
     <label class="text-dark">Nombre</label>
     <input type="text" id="name" name="name" @if (isset($role)) value="{{$role->name}}" @else value="" @endif class="form-control" required>
 </div>

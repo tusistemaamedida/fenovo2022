@@ -1,21 +1,21 @@
-<table id="userTable" class="display">
+<table id="customersTable" class="display">
     <thead class="text-body">
         <tr>
-            <th>Nombre</th>
-            <th>Responsable</th>
-            <th>CUIT</th>
-            <th>Tipo IVA</th>
+            <th>#Id</th>
+            <th>Razón social</th>
+            <th>Cuit</th>
+            <th>Email</th>
             <th class="no-sort"></th>
         </tr>
     </thead>
     <tbody class="kt-table-tbody text-dark">
-        @if (isset($proveedors))
-        @foreach ($proveedors as $proveedor)
+        @if (isset($customers))
+        @foreach ($customers as $customer)
         <tr class="kt-table-row kt-table-row-level-0">
-            <td>{{ $proveedor->name }}</td>
-            <td>{{ $proveedor->responsable }}</td>
-            <td>{{ $proveedor->cuit }}</td>
-            <td>{{ $proveedor->iva_type }}</td>
+            <td>{{$customer->id}}</td>
+            <td>{{$customer->razon_social}}</td>
+            <td>{{ $customer->cuit }}</td>
+            <td>{{ $customer->email }}</td>
             <td>
                 <div class="card-toolbar text-right">
                     <button class="btn p-0 shadow-none" type="button" id="dropdowneditButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,8 +26,16 @@
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton">
-                        <a class="dropdown-item" href="{{ route('proveedors.edit', $proveedor->id) }}">Editar</a>
-                        <a class="dropdown-item confirm-delete" title="Delete" href="#">Borrar</a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="editCustomer({{$customer->id}})"> <i class="fa fa-edit"></i> Editar</a>
+                        <a class="dropdown-item" href="javascript:void(0)">
+                            <form method="post" action="{{ route('customers.destroy', $customer) }}" id="formDelete">
+                                @csrf
+                                @method('delete')
+                                <button type="submit" class="btn ml-0 p-0 show_confirm" data-toggle="tooltip" title='Borrar'>
+                                    <i class="fa fa-trash text-danger"></i> Borrar
+                                </button>
+                            </form>
+                        </a>
                     </div>
                 </div>
             </td>
