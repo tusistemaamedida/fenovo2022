@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 use App\Repositories\RoleRepository;
 
 use App\Http\Requests\Roles\EditRequest;
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -73,7 +73,7 @@ class RoleController extends Controller
         try {
             $data = $request->except(['_token', 'role_id', 'active']);
             $data['active'] = ($request->has('active')) ? 1 : 0;
-            $roles = $this->roleRepository->update($request->input('role_id'), $data);
+            $this->roleRepository->update($request->input('role_id'), $data);
             return new JsonResponse([
                 'msj' => 'Actualización correcta !',
                 'type' => 'success'

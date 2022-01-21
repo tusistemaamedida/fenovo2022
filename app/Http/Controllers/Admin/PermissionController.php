@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
 
 use App\Repositories\PermissionRepository;
 use App\Repositories\RoleRepository;
 
 use App\Http\Requests\Permissions\EditRequest;
-use App\Models\Permission;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class PermissionController extends Controller
 {
@@ -47,10 +47,14 @@ class PermissionController extends Controller
     public function store(EditRequest $request)
     {
         try {
-            $data = $request->except(['_token']);
-            $data['key'] = Hash::make($data['name']);
+
+            $data = $request->except(['_token', 'active']);
             $data['active'] = 1;
-            $permissions = $this->permissionRepository->create($data);
+            $permission = $this->permissionRepository->create($data);
+
+            $role = $this->roleRepository->getOne($request->rol_id);
+            $role->syncPermissions($permission);
+
             return new JsonResponse([
                 'msj' => 'Actualización correcta !',
                 'type' => 'success'
@@ -77,9 +81,14 @@ class PermissionController extends Controller
     public function update(EditRequest $request)
     {
         try {
-            $data = $request->except(['_token', 'permission_id', 'active']);
+            $data['name']   = $request->name;
+            $data['guard_name'] = $request->guard_name;
             $data['active'] = ($request->has('active')) ? 1 : 0;
-            $permissions = $this->permissionRepository->update($request->input('permission_id'), $data);
+            $permission = $this->permissionRepository->update($request->input('permission_id'), $data);
+
+            $role = $this->roleRepository->getOne($request->rol_id);
+            $role->syncPermissions($permission);
+
             return new JsonResponse([
                 'msj' => 'Actualización correcta !',
                 'type' => 'success'

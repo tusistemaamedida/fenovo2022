@@ -66,10 +66,8 @@
                     <div class="col-12 ">
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
-                                <div>
-                                    <div class=" table-responsive" id="printableTable">
-                                        @include('admin.roles.table')
-                                    </div>
+                                <div class=" table-responsive" id="printableTable">
+                                    @include('admin.roles.table')
                                 </div>
                             </div>
                         </div>

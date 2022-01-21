@@ -11,12 +11,17 @@
     <input type="text" id="name" name="name" @if (isset($permission)) value="{{$permission->name}}" @else value="" @endif class="form-control" required>
 </div>
 
+<div class="form-group d-none">
+    <label class="text-dark">Guard Name</label>
+    <input type="text" id="guard_name" name="guard_name" @if (isset($permission)) value="{{$permission->guard_name}}" @else value="web" @endif class="form-control">
+</div>
+
 <div class="form-group">
     <label class="text-dark">Rol</label>
     <fieldset class="form-group">
         <select class="rounded form-control bg-transparent" name="rol_id" id="rol_id">
             @forelse ($roles as $rol)
-            <option value="{{$rol->id}}" @if(isset($permission) && ($rol->id == $permission->rol_id)) selected @endif>
+            <option value="{{$rol->id}}" @if(isset($permission) && isset($permission->roles->pluck('id')[0]) && ($rol->id == $permission->roles->pluck('id')[0]) ) selected @endif>
                 {{$rol->name}}
             </option>
             @empty
@@ -28,7 +33,6 @@
 </div>
 
 @if (isset($permission))
-
 <div class="row" style="margin-bottom: 25px">
     <div class="col-4">
         <fieldset>

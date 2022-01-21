@@ -27,7 +27,6 @@ class CustomerController extends Controller
     public function list()
     {
         $customers = $this->customerRepository->paginate(20);
-
         return view('admin.customers.list', compact('customers'));
     }
 
