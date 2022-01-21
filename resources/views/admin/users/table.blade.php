@@ -15,9 +15,9 @@
         <tr class="kt-table-row kt-table-row-level-0">
             <td>{{$user->username}}</td>
             <td>{{$user->name}}</td>
-            <td>{{$user->role->name}}</td>
-            <td>{{ $user->email }}</td>
-            <td>{{ $user->last_login }}</td>
+            <td>{{$user->roles}}</td>
+            <td>{{$user->email }}</td>
+            <td>{{$user->last_login }}</td>
             <td>
                 <div class="card-toolbar text-right">
                     <button class="btn p-0 shadow-none" type="button" id="dropdowneditButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

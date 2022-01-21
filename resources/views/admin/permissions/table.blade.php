@@ -3,8 +3,7 @@
         <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Descripcion</th>
-            <th>Role</th>
+            <th>Rol</th>
             <th class="no-sort"></th>
         </tr>
     </thead>
@@ -14,8 +13,7 @@
         <tr class="kt-table-row kt-table-row-level-0">
             <td>{{$permission->id}}</td>
             <td>{{$permission->name}}</td>
-            <td>{{$permission->description}}</td>
-            <td>{{$permission->role->name }}</td>
+            <td>@if(isset($permission->roles->pluck('id')[0])) {{ $permission->roles->pluck('name')[0] }} @endif</td>
             <td>
                 <div class="card-toolbar text-right">
                     <button class="btn p-0 shadow-none" type="button" id="dropdowneditButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

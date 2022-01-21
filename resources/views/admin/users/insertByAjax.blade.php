@@ -29,7 +29,7 @@
     <fieldset class="form-group">
         <select class="rounded form-control bg-transparent" name="rol_id">
             @forelse ($roles as $rol)
-            <option value="{{$rol->id}}" @if(isset($user) && ($rol->id == $user->rol_id)) selected @endif>
+            <option value="{{$rol->id}}" @if(isset($user) && isset($user->roles->pluck('id')[0]) && ($rol->id == $user->roles->pluck('id')[0]) ) selected @endif>
                 {{$rol->name}}
             </option>
             @empty
