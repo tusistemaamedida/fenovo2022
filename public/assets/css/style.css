@@ -1,4 +1,20 @@
 @charset "UTF-8";
+
+/* DataTable style */
+
+div.dataTables_wrapper div.dataTables_processing {
+    top: 150;
+    left: 250;
+    padding: 5px !important;
+    background-color: #f5f8fa !important;
+    color: blue !important;
+    border: 1px dotted darkgrey;
+    border-radius: 1px !important;
+    font-size: 14 !important;
+    opacity: 1 !important;
+    text-decoration: none;
+}
+
 :root {
     --artical-background-page: #f8f9fa;
     --artical-background-panel: #fff;
@@ -18723,7 +18739,7 @@ body {
 }
 
 .addproduct-main .form-control {
-   /*  height: 36px !important; */
+    /*  height: 36px !important; */
     border-color: var(--artical-background-element);
 }
 

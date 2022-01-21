@@ -12,6 +12,8 @@ use App\Repositories\RoleRepository;
 use App\Http\Requests\Roles\EditRequest;
 use Spatie\Permission\Models\Role;
 
+use Yajra\DataTables\Facades\DataTables;
+
 class RoleController extends Controller
 {
     private $roleRepository;
@@ -21,10 +23,24 @@ class RoleController extends Controller
         $this->roleRepository = $roleRepository;
     }
 
-    public function list()
+    public function index(Request $request)
     {
-        $roles = $this->roleRepository->paginate(20);
-        return view('admin.roles.list', compact('roles'));
+        if ($request->ajax()) {
+            $rol = Role::all();
+            return Datatables::of($rol)
+                ->addIndexColumn()
+                ->addColumn('edit', function ($rol) {
+                    $ruta = "edit(" . $rol->id . ",'" . route('roles.edit') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                })
+                ->addColumn('destroy', function ($rol) {
+                    $ruta = "destroy(" . $rol->id . ",'" . route('roles.destroy') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash text-danger"></i> </a>';
+                })
+                ->rawColumns(['edit', 'destroy'])
+                ->make(true);
+        }
+        return view('admin.roles.index');
     }
 
     public function add()
