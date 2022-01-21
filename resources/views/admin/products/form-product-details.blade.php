@@ -12,9 +12,9 @@
                 <label  class="text-body">Categoría *</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="categorie_id">
-                        <option value="AL">Warehouse 1</option>
-
-                        <option value="WY">Warehouse 2</option>
+                        @foreach ($categories as $category)
+                            <option value="{{$category->id}}">{{$category->name}}</option>
+                        @endforeach
                     </select>
                 </fieldset>
             </div>
@@ -23,9 +23,9 @@
                 <label  class="text-body">Rubro</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="type_id">
-                        <option value="AL">Supplier a</option>
-
-                        <option value="WY">Supplier b</option>
+                        @foreach ($types as $type)
+                            <option value="{{$type->id}}">{{$type->name}}</option>
+                        @endforeach
                     </select>
                 </fieldset>
             </div>
@@ -71,8 +71,10 @@
                 <label  class="text-body">Proveedor *</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="proveedor_id">
-                        <option value="AL">Warehouse 1</option>
-                        <option value="WY">Warehouse 2</option>
+                        <option value="">Seleccione un proveedor</option>
+                        @foreach ($proveedores as $proveedor)
+                            <option value="{{$proveedor->id}}">{{$proveedor->name}}</option>
+                        @endforeach
                     </select>
                 </fieldset>
             </div>
@@ -85,9 +87,10 @@
 
             <div class="col-md-3">
                 <label  class="text-body">Unidad de medida *</label>
-                <fieldset class="form-group mb-3">
-                    <input type="text" class="form-control border-dark" name="unit_type">
-                </fieldset>
+                <select class="js-example-basic-single js-states form-control bg-transparent" name="unit_type">
+                    <option value="K">Pesable</option>
+                    <option value="U">Unidad</option>
+                </select>
             </div>
 
             <div class="col-md-3">
@@ -130,8 +133,8 @@
                 <label  class="text-body">Tipo de bulto *</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="type_package">
-                        <option value="AL">Warehouse 1</option>
-                        <option value="WY">Warehouse 2</option>
+                        <option value="1">Caja</option>
+                        <option value="2">Bolsa</option>
                     </select>
                 </fieldset>
             </div>
@@ -140,8 +143,9 @@
                 <label  class="text-body">Unidad x bulto *</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="type_package" multiple="multiple" >
-                        <option value="AL">Warehouse 1</option>
-                        <option value="WY">Warehouse 2</option>
+                        @for ($i = 1; $i < 101; $i++)
+                            <option value="{{$i}}">{{$i}}</option>
+                        @endfor
                     </select>
                 </fieldset>
             </div>
@@ -214,8 +218,9 @@
                 <label  class="text-body">Fragilidad *</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="fragility" >
-                        <option value="AL">Warehouse 1</option>
-                        <option value="WY">Warehouse 2</option>
+                        <option value="1">Baja</option>
+                        <option value="2">Media</option>
+                        <option value="3">Alta</option>
                     </select>
                 </fieldset>
             </div>
@@ -224,8 +229,9 @@
                 <label  class="text-body">Moneda *</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="currency" >
-                        <option value="AL">Warehouse 1</option>
-                        <option value="WY">Warehouse 2</option>
+                        <option value="1">Peso Argentino</option>
+                        <option value="2">Real</option>
+                        <option value="3">Dolar</option>
                     </select>
                 </fieldset>
             </div>
@@ -268,8 +274,10 @@
                 <label  class="text-body">Agrupación</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="senasa_id" >
-                        <option value="AL">Warehouse 1</option>
-                        <option value="WY">Warehouse 2</option>
+                        <option value="">Seleccione una opción</option>
+                        @foreach ($senasaDefinitions as $senasaDefinition)
+                            <option value="{{$senasaDefinition->id}}">{{$senasaDefinition->product_name}}</option>
+                        @endforeach
                     </select>
                 </fieldset>
             </div>

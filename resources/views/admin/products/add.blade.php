@@ -2,6 +2,12 @@
 
 @section('css')
 	<link href="{{asset('assets/api/select2/select2.min.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{asset('assets/css/cropper.min.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/css/fileicons.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/css/filepicker.css')}}">
+    <style>
+        input[type="file"] { display: block; }
+    </style>
 @endsection
 
 @section('content')
@@ -47,7 +53,7 @@
                                 </li>
                             </ul>
                             <div class="row">
-                                <form>
+                                <form style="width: 100%;margin-top: 15px;">
                                     <div class="col-12">
                                         <div class="tab-content" id="v-pills-tabContent1">
                                             <div class="tab-pane fade show active" id="detalle" role="tabpanel" aria-labelledby="home-tab-basic">
@@ -57,10 +63,7 @@
                                                 @include('admin.products.form-product-prices')
                                             </div>
                                             <div class="tab-pane fade " id="imagenes" role="tabpanel" aria-labelledby="account-tab-basic">
-                                                <p class="text-dark">
-                                                    .Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lorem est, vestibulum eu ex ac, mattis aliquam turpis. Vivamus sed orci nibh. Donec scelerisque. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lorem est, vestibulum
-                                                    eu ex ac, mattis aliquam turpis. Vivamus sed orci nibh. Donec scelerisque
-                                                </p>
+                                                @include('admin.products.form-product-images')
                                             </div>
                                         </div>
                                     </div>
@@ -76,10 +79,16 @@
 
 @section('js')
     <script src="{{asset('assets/api/select2/select2.min.js')}}"></script>
+    <script src="{{asset('assets/js/filepicker.js')}}"></script>
+    <script src="{{asset('assets/js//cropper.min.js')}}"></script>
+    <script src="{{asset('assets/js/filepicker-ui.js')}}"></script>
+    <script src="{{asset('assets/js/filepicker-crop.js')}}"></script>
     <script>
         jQuery(document).ready(function() {
-			  jQuery('.js-example-basic-single').select2();
-		  });
+            jQuery('.js-example-basic-single').select2({
+                dropdownPosition: 'below'
+            });
+		});
 
           function expandTextarea(id) {
 			document.getElementById(id).addEventListener('keyup', function() {
@@ -92,19 +101,105 @@
 		expandTextarea('txtarea');
 
         jQuery("#plistproveedor").keyup(function(){
-            calculatePrices('#span-plistproveedor','Calculando costo fenovo...')
+            calculatePrices()
         });
 
         jQuery("#descproveedor").keyup(function(){
-            calculatePrices('#span-plistproveedor','Calculando costo fenovo...')
+            calculatePrices()
         });
 
-        function calculatePrices(spanId,text){
+        jQuery("#mupfenovo").keyup(function(){
+            calculatePrices()
+        });
+
+        jQuery("#contribution_fund").keyup(function(){
+            calculatePrices()
+        });
+
+        jQuery("#plistproveedor").change(function(){
+            calculatePrices()
+        });
+
+        jQuery("#descproveedor").change(function(){
+            calculatePrices()
+        });
+
+        jQuery("#mupfenovo").change(function(){
+            calculatePrices()
+        });
+
+        jQuery("#contribution_fund").change(function(){
+            calculatePrices()
+        });
+
+        jQuery("#tasiva").change(function(){
+            calculatePrices()
+        });
+
+        jQuery("#muplist1").keyup(function(){
+            calculatePrices()
+        });
+
+        jQuery("#muplist1").change(function(){
+            calculatePrices()
+        });
+
+        jQuery("#muplist2").keyup(function(){
+            calculatePrices()
+        });
+
+        jQuery("#muplist2").change(function(){
+            calculatePrices()
+        });
+
+        jQuery("#p1tienda").keyup(function(){
+            calculatePrices()
+        });
+
+        jQuery("#p1tienda").change(function(){
+            calculatePrices()
+        });
+
+        jQuery("#descp1").keyup(function(){
+            calculatePrices()
+        });
+
+        jQuery("#descp1").change(function(){
+            calculatePrices()
+        });
+
+        jQuery("#p2tienda").keyup(function(){
+            calculatePrices()
+        });
+
+        jQuery("#p2tienda").change(function(){
+            calculatePrices()
+        });
+
+        jQuery("#descp2").keyup(function(){
+            calculatePrices()
+        });
+
+        jQuery("#descp2").change(function(){
+            calculatePrices()
+        });
+
+        function calculatePrices(){
+            var text = "Aguarde por favor, se están claculando los precios..."
+            var spanId = "#info-calculate";
             var elements = document.querySelectorAll('.is-invalid');
             var plistproveedor = jQuery("#plistproveedor").val();
             var descproveedor = jQuery("#descproveedor").val();
             var contribution_fund = jQuery("#contribution_fund").val();
             var mupfenovo = jQuery("#mupfenovo").val();
+            var tasiva = jQuery("#tasiva").val();
+            var muplist1 = jQuery("#muplist1").val();
+            var muplist2 = jQuery("#muplist2").val();
+            var p1tienda = jQuery("#p1tienda").val();
+            var descp1 = jQuery("#descp1").val();
+
+            var p2tienda = jQuery("#p2tienda").val();
+            var descp2 = jQuery("#descp2").val();
 
             jQuery.ajax({
                 url:"{{ route('calculate.product.prices') }}",
@@ -113,7 +208,14 @@
                     plistproveedor,
                     descproveedor,
                     mupfenovo,
-                    contribution_fund
+                    contribution_fund,
+                    tasiva,
+                    muplist1,
+                    muplist2,
+                    p1tienda,
+                    descp1,
+                    descp2,
+                    p2tienda
                 },
                 beforeSend: function() {
                     jQuery(spanId).html(text)
@@ -125,6 +227,17 @@
                     if(data['type'] == 'success'){
                         jQuery("#costfenovo").val(data['costFenovo']);
                         jQuery("#plist0neto").val(data['plist0Neto']);
+                        jQuery("#plist0iva").val(data['plist0Iva']);
+                        jQuery("#plist1").val(data['plist1']);
+                        jQuery("#comlista1").val(data['comlista1']);
+                        jQuery("#plist2").val(data['plist2']);
+                        jQuery("#comlista2").val(data['comlista2']);
+                        jQuery("#mup1").val(data['mup1']);
+                        jQuery("#p1may").val(data['p1may']);
+                        jQuery("#mupp1may").val(data['mupp1may']);
+                        jQuery("#mup2").val(data['mup2']);
+                        jQuery("#p2may").val(data['p2may']);
+                        jQuery("#mupp2may").val(data['mupp2may']);
                     }
                     jQuery(spanId).html('')
                 },
@@ -149,4 +262,143 @@
             });
         }
     </script>
+
+    <script>
+        jQuery('#filepicker').filePicker({
+            url: "{{url('filepicker')}}",
+            plugins: ['ui', 'drop','crop'],
+            data: {
+                _token: "{{ csrf_token() }}"
+            }
+        });
+        if (jQuery.fn.timeago) {
+            jQuery.timeago.settings.strings = jQuery.extend({}, jQuery.timeago.settings.strings , {
+                seconds: 'few seconds', minute: 'a minute',
+                hour: 'an hour', hours: '%d hours', day: 'a day',
+                days: '%d days', month: 'a month', year: 'a year'
+            });
+        }
+    </script>
+
+    <!-- Upload Template -->
+    <script type="text/x-tmpl" id="uploadTemplate">
+        <tr class="upload-template">
+            <td class="column-preview">
+                <div class="preview">
+                    <span class="fa file-icon-{%= o.file.extension %}"></span>
+                </div>
+            </td>
+            <td class="column-name">
+                <p class="name">{%= o.file.name %}</p>
+                <span class="text-danger error">{%= o.file.error || '' %}</span>
+            </td>
+            <td colspan="2">
+                <p>{%= o.file.sizeFormatted || '' %}</p>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped active"></div>
+                </div>
+            </td>
+            <td>
+                {% if (!o.file.autoUpload && !o.file.error) { %}
+                    <a href="#" class="action action-primary start" title="Upload">
+                        <i class="fa fa-arrow-circle-o-up"></i>
+                    </a>
+                {% } %}
+                <a href="#" class="action action-warning cancel" title="Cancel">
+                    <i class="fa fa-ban"></i>
+                </a>
+            </td>
+        </tr>
+    </script><!-- end of #uploadTemplate -->
+
+    <!-- Download Template -->
+    <script type="text/x-tmpl" id="downloadTemplate">
+        {% o.timestamp = function (src) {
+            return (src += (src.indexOf('?') > -1 ? '&' : '?') + new Date().getTime());
+        }; %}
+        <tr class="download-template">
+            <td class="column-preview">
+                <div class="preview">
+                    {% if (o.file.versions && o.file.versions.thumb) { %}
+                        <a href="{%= o.file.url %}" target="_blank">
+                            <img src="{%= o.timestamp(o.file.versions.thumb.url) %}" width="64" height="64"></a>
+                        </a>
+                    {% } else { %}
+                        <span class="fa file-icon-{%= o.file.extension %}"></span>
+                    {% } %}
+                </div>
+            </td>
+            <td class="column-name">
+                <p class="name">
+                    {% if (o.file.url) { %}
+                        <a href="{%= o.file.url %}" target="_blank">{%= o.file.name %}</a>
+                    {% } else { %}
+                        {%= o.file.name %}
+                    {% } %}
+                </p>
+                {% if (o.file.error) { %}
+                    <span class="text-danger">{%= o.file.error %}</span>
+                {% } %}
+            </td>
+            <td class="column-size"><p>{%= o.file.sizeFormatted %}</p></td>
+            <td class="column-date">
+                {% if (o.file.time) { %}
+                    <time datetime="{%= o.file.timeISOString() %}">
+                        {%= o.file.timeFormatted %}
+                    </time>
+                {% } %}
+            </td>
+            <td>
+                {% if (o.file.imageFile && !o.file.error) { %}
+                    <a href="#" class="action action-primary crop" title="Crop">
+                        <i class="fa fa-crop"></i>
+                    </a>
+                {% } %}
+                {% if (o.file.error) { %}
+                    <a href="#" class="action action-warning cancel" title="Cancel">
+                        <i class="fa fa-ban"></i>
+                    </a>
+                {% } else { %}
+                    <a href="#" class="action action-danger delete" title="Delete">
+                        <i class="fa fa-trash-o"></i>
+                    </a>
+                {% } %}
+            </td>
+        </tr>
+    </script><!-- end of #downloadTemplate -->
+
+    <!-- Pagination Template -->
+    <script type="text/x-tmpl" id="paginationTemplate">
+        {% if (o.lastPage > 1) { %}
+            <ul class="pagination pagination-sm">
+                <li {% if (o.currentPage === 1) { %} class="disabled" {% } %}>
+                    <a href="#!page={%= o.prevPage %}" data-page="{%= o.prevPage %}" title="Previous">&laquo;</a>
+                </li>
+
+                {% if (o.firstAdjacentPage > 1) { %}
+                    <li><a href="#!page=1" data-page="1">1</a></li>
+                    {% if (o.firstAdjacentPage > 2) { %}
+                    <li class="disabled"><a>...</a></li>
+                    {% } %}
+                {% } %}
+
+                {% for (var i = o.firstAdjacentPage; i <= o.lastAdjacentPage; i++) { %}
+                    <li {% if (o.currentPage === i) { %} class="active" {% } %}>
+                        <a href="#!page={%= i %}" data-page="{%= i %}">{%= i %}</a>
+                    </li>
+                {% } %}
+
+                {% if (o.lastAdjacentPage < o.lastPage) { %}
+                    {% if (o.lastAdjacentPage < o.lastPage - 1) { %}
+                        <li class="disabled"><a>...</a></li>
+                    {% } %}
+                    <li><a href="#!page={%= o.lastPage %}" data-page="{%= o.lastPage %}">{%= o.lastPage %}</a></li>
+                {% } %}
+
+                <li {% if (o.currentPage === o.lastPage) { %} class="disabled" {% } %}>
+                    <a href="#!page={%= o.nextPage %}" data-page="{%= o.nextPage %}" title="Next">&raquo</a>
+                </li>
+            </ul>
+        {% } %}
+    </script><!-- end of #paginationTemplate -->
 @endsection
