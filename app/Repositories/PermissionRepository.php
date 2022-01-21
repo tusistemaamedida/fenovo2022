@@ -22,7 +22,6 @@ class PermissionRepository extends BaseRepository
     public function paginate($cant)
     {
         return $this->selectList()
-            ->where('active', true)
             ->orderBy('name', 'DESC')
             ->paginate($cant);
     }

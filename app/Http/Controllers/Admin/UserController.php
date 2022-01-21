@@ -14,6 +14,8 @@ use App\Http\Requests\Users\AddRequest;
 use App\Http\Requests\Users\EditRequest;
 use App\Models\User;
 
+use Yajra\DataTables\Facades\DataTables;
+
 class UserController extends Controller
 {
     private $userRepository;
@@ -25,10 +27,27 @@ class UserController extends Controller
         $this->roleRepository = $roleRepository;
     }
 
-    public function list()
+    public function index(Request $request)
     {
-        $users = $this->userRepository->paginate(20);
-        return view('admin.users.list', compact('users'));
+        if ($request->ajax()) {
+            $user = User::all();
+            return Datatables::of($user)
+                ->addIndexColumn()
+                ->addColumn('rol', function ($user) {
+                    return isset($user->roles->pluck('id')[0]) ? $user->roles->pluck('name')[0] : null;
+                })
+                ->addColumn('edit', function ($user) {
+                    $ruta = "edit(" . $user->id . ",'" . route('users.edit') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                })
+                ->addColumn('destroy', function ($user) {
+                    $ruta = "destroy(" . $user->id . ",'" . route('users.destroy') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash text-danger"></i> </a>';
+                })
+                ->rawColumns(['rol', 'edit', 'destroy'])
+                ->make(true);
+        }
+        return view('admin.users.index');
     }
 
     public function add()
@@ -47,10 +66,14 @@ class UserController extends Controller
     public function store(AddRequest $request)
     {
         try {
-            $data = $request->except(['_token']);
+            $data = $request->except(['_token', 'rol_id']);
             $data['active'] = 1;
             $data['password'] = Hash::make($data['password']);
-            $this->userRepository->create($data);
+            $role  = $this->roleRepository->getOne($request->rol_id);
+            $user = $this->userRepository->create($data);
+
+            $user->assignRole($role);
+
             return new JsonResponse([
                 'msj' => 'Usuario creado correctamente!',
                 'type' => 'success'
@@ -78,9 +101,14 @@ class UserController extends Controller
     public function update(EditRequest $request)
     {
         try {
-            $data = $request->except(['_token', 'user_id', 'active']);
+            $data = $request->except(['_token', 'user_id', 'active', 'rol_id']);
             $data['active'] = ($request->has('active')) ? 1 : 0;
-            $users = $this->userRepository->update($request->input('user_id'), $data);
+            $this->userRepository->update($request->input('user_id'), $data);
+
+            $user  = $this->userRepository->getOne($request->user_id);
+            $role  = $this->roleRepository->getOne($request->rol_id);
+            $user->syncRoles($role);
+
             return new JsonResponse([
                 'msj' => 'Usuario actualizado correctamente!',
                 'type' => 'success'
