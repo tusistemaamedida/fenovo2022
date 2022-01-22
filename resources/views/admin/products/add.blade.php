@@ -264,13 +264,39 @@
     </script>
 
     <script>
+
         jQuery('#filepicker').filePicker({
             url: "{{url('filepicker')}}",
             plugins: ['ui', 'drop','crop'],
             data: {
-                _token: "{{ csrf_token() }}"
+                _token: "{{ csrf_token() }}",
+                cod_fenovo: jQuery("#cod_fenovo").val()
             }
+        })
+        .on('add.filepicker', function (e, data) {
+            var cod_fenovo = jQuery("#cod_fenovo").val();
+            if(cod_fenovo == ''){
+                Swal.fire({
+                    title: "Error!",
+                    html: 'Ingrese un código fenovo en el detalle del producto!',
+                    type: "error",
+                    confirmButtonClass: "btn btn-primary",
+                    buttonsStyling: !1
+                }) ;
+                data.abort()
+            }
+        })
+        .on('progress.filepicker', function (e, data) {
+            jQuery('#loader').removeClass('hidden');
+        })
+        .on('fail.filepicker', function (e, data) {
+            console.log(data);
+            alert('Oops! Something went wrong.');
+        }).on('always.filepicker', function (e, data) {
+            console.log(data);
+            jQuery('#loader').addClass('hidden');
         });
+
         if (jQuery.fn.timeago) {
             jQuery.timeago.settings.strings = jQuery.extend({}, jQuery.timeago.settings.strings , {
                 seconds: 'few seconds', minute: 'a minute',

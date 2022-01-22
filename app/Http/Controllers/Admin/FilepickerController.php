@@ -56,15 +56,15 @@ class FilepickerController extends Controller
      */
     public function handle(Request $request)
     {
-        $data =$request->all();
         /**
          * Fired before the file upload starts.
          *
          * @param \Symfony\Component\HttpFoundation\File\UploadedFile $file
          */
-        $this->handler->on('upload.before', function ($file){
+        $this->handler->on('upload.before', function ($file) use ($request){
+            if(!$request->has('cod_fenovo') || $request->input('cod_fenovo') == '' ) throw new \Hazzard\Filepicker\Exception\AbortException('la imágen no fue subida correctamente, debe ingresar un código de fenovo para subirla correctamente!');
             $file->save =  $file->getClientOriginalName();
-            // throw new \Hazzard\Filepicker\Exception\AbortException('Error message!');
+            //
         });
 
         /**

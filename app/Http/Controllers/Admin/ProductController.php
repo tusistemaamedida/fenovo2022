@@ -78,7 +78,6 @@ class ProductController extends Controller
         $mup1       = $this->mup1($plist0Iva,$p1tienda);
         $p1may      = $this->p1may($p1tienda,$descp1);
         $mupp1may   = $this->mupp1may($p1may,$plist0Iva);
-
         $mup2       = $this->mup2($plist0Iva,$p2tienda);
         $p2may      = $this->p2may($p2tienda,$descp2);
         $mupp2may   = $this->mupp2may($p2may,$plist0Iva);
