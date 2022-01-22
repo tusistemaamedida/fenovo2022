@@ -41,12 +41,12 @@
                                       Detalles
                                     </a>
                                 </li>
-                                <li class="nav-item mr-2">
+                                <li class="nav-item mr-2" id="nav-item-precios">
                                     <a class="nav-link btn-light shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="false">
                                         Precios
                                     </a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item mr-2" id="nav-item-imagenes">
                                     <a class="nav-link btn-light shadow-none" id="imagenes-tab-basic" data-toggle="pill" href="#imagenes" role="tab" aria-controls="imagenes" aria-selected="false">
                                       Imágenes
                                     </a>
@@ -59,10 +59,10 @@
                                             <div class="tab-pane fade show active" id="detalle" role="tabpanel" aria-labelledby="home-tab-basic">
                                                 @include('admin.products.form-product-details')
                                             </div>
-                                            <div class="tab-pane fade " id="precios" role="tabpanel" aria-labelledby="service-tab-basic">
+                                            <div class="tab-pane fade" id="precios" role="tabpanel" aria-labelledby="service-tab-basic">
                                                 @include('admin.products.form-product-prices')
                                             </div>
-                                            <div class="tab-pane fade " id="imagenes" role="tabpanel" aria-labelledby="account-tab-basic">
+                                            <div class="tab-pane fade" id="imagenes" role="tabpanel" aria-labelledby="account-tab-basic">
                                                 @include('admin.products.form-product-images')
                                             </div>
                                         </div>
@@ -113,10 +113,6 @@
         });
 
         jQuery("#contribution_fund").keyup(function(){
-            calculatePrices()
-        });
-
-        jQuery("#plistproveedor").change(function(){
             calculatePrices()
         });
 
@@ -264,38 +260,76 @@
     </script>
 
     <script>
-
-        jQuery('#filepicker').filePicker({
-            url: "{{url('filepicker')}}",
-            plugins: ['ui', 'drop','crop'],
-            data: {
-                _token: "{{ csrf_token() }}",
-                cod_fenovo: jQuery("#cod_fenovo").val()
-            }
-        })
-        .on('add.filepicker', function (e, data) {
+        jQuery("#btn-file").click(function(e){
             var cod_fenovo = jQuery("#cod_fenovo").val();
             if(cod_fenovo == ''){
-                Swal.fire({
-                    title: "Error!",
-                    html: 'Ingrese un código fenovo en el detalle del producto!',
-                    type: "error",
-                    confirmButtonClass: "btn btn-primary",
-                    buttonsStyling: !1
-                }) ;
-                data.abort()
+                toast('ERROR!','Ingrese un Código Fenovo','top-right','error',3500);
+                jQuery('#cod_fenovo').addClass('is-invalid');
+                e.preventDefault()
+            }else{
+                imagenes();
             }
-        })
-        .on('progress.filepicker', function (e, data) {
-            jQuery('#loader').removeClass('hidden');
-        })
-        .on('fail.filepicker', function (e, data) {
-            console.log(data);
-            alert('Oops! Something went wrong.');
-        }).on('always.filepicker', function (e, data) {
-            console.log(data);
-            jQuery('#loader').addClass('hidden');
         });
+
+        function imagenes(){
+            jQuery('#filepicker').filePicker({
+                url: "{{url('filepicker')}}",
+                plugins: ['ui', 'drop','crop'],
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    cod_fenovo: jQuery("#cod_fenovo").val()
+                }
+            })
+            .on('add.filepicker', function (e, data) {
+                var cod_fenovo = jQuery("#cod_fenovo").val();
+                if(cod_fenovo == ''){
+                    Swal.fire({
+                        title: "Error!",
+                        html: 'Ingrese un código fenovo en el detalle del producto!',
+                        type: "error",
+                        confirmButtonClass: "btn btn-primary",
+                        buttonsStyling: !1
+                    }) ;
+                    data.abort()
+                }
+            })
+            .on('progress.filepicker', function (e, data) {
+                jQuery('#loader').removeClass('hidden');
+                setTimeout(() => {
+
+                }, 150000);
+            })
+            .on('fail.filepicker', function (e, data) {
+                console.log(data);
+                alert('Oops! Something went wrong.');
+            }).on('always.filepicker', function (e, data) {
+                jQuery('#loader').addClass('hidden');
+            });
+        }
+
+        function validateCode(){
+            jQuery.ajax({
+                url:"{{ route('product.validate.code') }}",
+                type:'GET',
+                data:{
+                    category:jQuery("#type_id").val(),
+                    cod_fenovo:jQuery("#cod_fenovo").val(),
+                },
+                beforeSend: function() {
+                    jQuery("#cod_fenovo").remove('is-invalid');
+                },
+                success:function(data){
+                    if(data['type'] != 'success'){
+                        jQuery("#cod_fenovo").addClass('is-invalid');
+                        jQuery("#cod_fenovo").focus();
+                        toast('ERROR!',data['msj'],'top-right','error',3500);
+                    }
+                },
+                error: function (data) {
+                    toast('ERROR!',JSON.stringify(data),'top-right','error',3500);
+                }
+            });
+        }
 
         if (jQuery.fn.timeago) {
             jQuery.timeago.settings.strings = jQuery.extend({}, jQuery.timeago.settings.strings , {
@@ -320,9 +354,6 @@
             </td>
             <td colspan="2">
                 <p>{%= o.file.sizeFormatted || '' %}</p>
-                <div class="progress">
-                    <div class="progress-bar progress-bar-striped active"></div>
-                </div>
             </td>
             <td>
                 {% if (!o.file.autoUpload && !o.file.error) { %}
@@ -376,17 +407,17 @@
             </td>
             <td>
                 {% if (o.file.imageFile && !o.file.error) { %}
-                    <a href="#" class="action action-primary crop" title="Crop">
+                    <a href="#" class="action action-primary crop" title="Cortar">
                         <i class="fa fa-crop"></i>
                     </a>
                 {% } %}
                 {% if (o.file.error) { %}
-                    <a href="#" class="action action-warning cancel" title="Cancel">
+                    <a href="#" class="action action-warning cancel" title="Cancelar">
                         <i class="fa fa-ban"></i>
                     </a>
                 {% } else { %}
-                    <a href="#" class="action action-danger delete" title="Delete">
-                        <i class="fa fa-trash-o"></i>
+                    <a href="#" class="action action-danger delete" title="Eliminar">
+                        <i class="fa fa-trash"></i>
                     </a>
                 {% } %}
             </td>

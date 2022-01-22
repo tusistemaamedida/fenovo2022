@@ -27,4 +27,8 @@ class ProductRepository extends BaseRepository {
             ->orderBy('created_at', 'DESC')
             ->paginate($cant);
     }
+
+    public function existCode($code_fenovo){
+        return $this->newQuery()->where('cod_fenovo',$code_fenovo)->exists();
+    }
 }

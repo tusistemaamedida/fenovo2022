@@ -53,6 +53,13 @@ class ProductController extends Controller
         return view('admin.products.add',compact('alicuotas','categories','types','proveedores','senasaDefinitions'));
     }
 
+    public function validateCode(Request $request){
+        $data = $request->all();
+        if($data['cod_fenovo'] == '') return new JsonResponse(['msj'=>'Ingrese un Código Fenovo','type' => 'error']);
+        if($this->productRepository->existCode($data['cod_fenovo'])) return new JsonResponse(['msj'=>'El Código Fenovo ingresado ya existe','type' => 'error']);
+        return new JsonResponse(['msj'=>'Ok','type' => 'success']);
+    }
+
     public function calculateProductPrices(CalculatePrices $request){
         $plistproveedor = ($request->has('plistproveedor'))?$request->input('plistproveedor'):0;
         $descproveedor  = ($request->has('descproveedor'))?$request->input('descproveedor'):0;
