@@ -17,6 +17,9 @@
 </div>
 
 @if (isset($role))
+
+{!! Form::model($role, []) !!}
+
 <div class="row" style="margin-bottom: 25px">
     <div class="col-4">
         <fieldset>
@@ -28,5 +31,18 @@
     </div>
 </div>
 
+<div class="form-group">
+    <h5>Asignar permisos</h5>
+    @foreach ($permissions as $permiso)
+    <label>
+        {{ Form::checkbox('permissions[]', $permiso->id ) }}
+        {{$permiso->name}}
+    </label>
+    <br>
+    @endforeach
+</div>
+
 <input type="hidden" name="role_id" value="{{$role->id}}" />
+
+{{ Form::close() }}
 @endif

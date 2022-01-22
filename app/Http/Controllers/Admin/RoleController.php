@@ -11,6 +11,7 @@ use App\Repositories\RoleRepository;
 
 use App\Http\Requests\Roles\EditRequest;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 use Yajra\DataTables\Facades\DataTables;
 
@@ -75,9 +76,10 @@ class RoleController extends Controller
     {
         try {
             $role  = $this->roleRepository->getOne($request->id);
+            $permissions = Permission::all();
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.roles.insertByAjax', compact('role'))->render()
+                'html' => view('admin.roles.insertByAjax', compact('role', 'permissions'))->render()
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -87,9 +89,10 @@ class RoleController extends Controller
     public function update(EditRequest $request)
     {
         try {
-            $data = $request->except(['_token', 'role_id', 'active']);
+            $data['name'] = $request->name;
             $data['active'] = ($request->has('active')) ? 1 : 0;
             $this->roleRepository->update($request->input('role_id'), $data);
+            $this->roleRepository->getOne($request->role_id)->syncPermissions($request->input('permissions'));
             return new JsonResponse([
                 'msj' => 'Actualización correcta !',
                 'type' => 'success'
