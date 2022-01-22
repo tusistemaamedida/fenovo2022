@@ -53,6 +53,13 @@ class ProductController extends Controller
         return view('admin.products.add',compact('alicuotas','categories','types','proveedores','senasaDefinitions'));
     }
 
+    public function validateCode(Request $request){
+        $data = $request->all();
+        if($data['cod_fenovo'] == '') return new JsonResponse(['msj'=>'Ingrese un Código Fenovo','type' => 'error']);
+        if($this->productRepository->existCode($data['cod_fenovo'])) return new JsonResponse(['msj'=>'El Código Fenovo ingresado ya existe','type' => 'error']);
+        return new JsonResponse(['msj'=>'Ok','type' => 'success']);
+    }
+
     public function calculateProductPrices(CalculatePrices $request){
         $plistproveedor = ($request->has('plistproveedor'))?$request->input('plistproveedor'):0;
         $descproveedor  = ($request->has('descproveedor'))?$request->input('descproveedor'):0;
@@ -78,7 +85,6 @@ class ProductController extends Controller
         $mup1       = $this->mup1($plist0Iva,$p1tienda);
         $p1may      = $this->p1may($p1tienda,$descp1);
         $mupp1may   = $this->mupp1may($p1may,$plist0Iva);
-
         $mup2       = $this->mup2($plist0Iva,$p2tienda);
         $p2may      = $this->p2may($p2tienda,$descp2);
         $mupp2may   = $this->mupp2may($p2may,$plist0Iva);

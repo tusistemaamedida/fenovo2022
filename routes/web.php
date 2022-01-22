@@ -26,3 +26,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/utils.php';
     });
 });
+
+Route::group(['namespace' => 'Admin', 'middleware' => ['auth']], function () {
+    Route::any('filepicker', [App\Http\Controllers\Admin\FilepickerController::class, 'handle'])->name('filepicker');;
+});
