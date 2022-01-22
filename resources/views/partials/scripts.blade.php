@@ -23,7 +23,6 @@
 <script src="{{asset('assets/api/datatable/moment.min.js')}}"></script>
 <script src="{{asset('assets/api/datatable/datetime.js')}}"></script>
 
-<script src="{{asset('assets/api/editor/classic.ckeditor.js')}}"></script>
 <script src="{{asset('assets/js/sweetalert.js')}}"></script>
 <script src="{{asset('assets/js/sweetalert1.js')}}"></script>
 <script src="{{asset('assets/js/script.bundle.js')}}"></script>
