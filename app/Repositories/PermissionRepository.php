@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Permission;
+use Spatie\Permission\Models\Permission;
 
 class PermissionRepository extends BaseRepository
 {
@@ -22,7 +22,6 @@ class PermissionRepository extends BaseRepository
     public function paginate($cant)
     {
         return $this->selectList()
-            ->where('active', true)
             ->orderBy('name', 'DESC')
             ->paginate($cant);
     }

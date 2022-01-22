@@ -1,8 +1,180 @@
-jQuery.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-    }
+
+// Botones comunes a todos los modales // 
+
+const add = (route) => {
+    var elements = document.querySelectorAll('.is-invalid');
+    jQuery.ajax({
+        url: route,
+        type: 'GET',
+        success: function (data) {
+            if (data['type'] == 'success') {
+                jQuery("#insertByAjax").html(data['html']);
+                jQuery(".btn-actualizar").hide()
+                jQuery(".btn-guardar").show()
+                jQuery('.editpopup').addClass('offcanvas-on');
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    html: data['msj'],
+                    type: "error",
+                    confirmButtonClass: "btn btn-primary",
+                    buttonsStyling: !1
+                });
+            }
+        }
+    });
+}
+
+const store = (route) => {
+    var elements = document.querySelectorAll('.is-invalid');
+    var form = jQuery('#formData').serialize();
+
+    jQuery.ajax({
+        url: route,
+        type: 'POST',
+        data: form,
+        beforeSend: function () {
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].classList.remove('is-invalid');
+            }
+            jQuery('#loader').removeClass('hidden');
+        },
+        success: function (data) {
+            if (data['type'] == 'success') {
+                closeModal();
+                table.ajax.reload();
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    html: data['msj'],
+                    type: "error",
+                    confirmButtonClass: "btn btn-primary",
+                    buttonsStyling: !1
+                });
+            }
+        },
+        error: function (data) {
+            var lista_errores = "";
+            var data = data.responseJSON;
+            jQuery.each(data.errors, function (index, value) {
+                lista_errores += value + '<br />';
+                jQuery('#' + index).addClass('is-invalid');
+            });
+            Swal.fire({
+                title: "Error!",
+                html: lista_errores,
+                type: "error",
+                confirmButtonClass: "btn btn-primary",
+                buttonsStyling: !1
+            });
+        },
+        complete: function () {
+            jQuery('#loader').addClass('hidden');
+        }
+    });
+};
+
+const edit = (id, route) => {
+    var elements = document.querySelectorAll('.is-invalid');
+    jQuery.ajax({
+        url: route,
+        type: 'GET',
+        data: { id },
+        success: function (data) {
+            if (data['type'] == 'success') {
+                jQuery("#insertByAjax").html(data['html']);
+                jQuery(".btn-guardar").hide()
+                jQuery(".btn-actualizar").show()
+                jQuery('.editpopup').addClass('offcanvas-on');
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    html: data['msj'],
+                    type: "error",
+                    confirmButtonClass: "btn btn-primary",
+                    buttonsStyling: !1
+                });
+            }
+        }
+    });
+}
+
+const update = (route) => {
+    var elements = document.querySelectorAll('.is-invalid');
+    var form = jQuery('#formData').serialize();
+
+    jQuery.ajax({
+        url: route,
+        type: 'POST',
+        data: form,
+        beforeSend: function () {
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].classList.remove('is-invalid');
+            }
+            jQuery('#loader').removeClass('hidden');
+        },
+        success: function (data) {
+            if (data['type'] == 'success') {
+                closeModal();
+                table.ajax.reload();
+            } else {
+                Swal.fire({
+                    title: "Error!",
+                    html: data['msj'],
+                    type: "error",
+                    confirmButtonClass: "btn btn-primary",
+                    buttonsStyling: !1
+                });
+            }
+        },
+        error: function (data) {
+            var lista_errores = "";
+            var data = data.responseJSON;
+            jQuery.each(data.errors, function (index, value) {
+                lista_errores += value + '<br />';
+                jQuery('#' + index).addClass('is-invalid');
+            });
+            Swal.fire({
+                title: "Error!",
+                html: lista_errores,
+                type: "error",
+                confirmButtonClass: "btn btn-primary",
+                buttonsStyling: !1
+            })
+        },
+        complete: function () {
+            jQuery('#loader').addClass('hidden');
+        }
+    });
+};
+
+const closeModal = () => {
+    document.getElementById("formData").reset();
+    jQuery('.editpopup').removeClass('offcanvas-on');
+}
+
+jQuery('.show_confirm').on('click', function (event) {
+    event.preventDefault();
+    Swal.fire({
+        title: 'Confirma eliminar?',
+        text: "No podrá reversar este movimiento !",
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si borrar'
+    }).then((result) => {
+        if (result.value) {
+            jQuery(this).closest("form").trigger('submit')
+        }
+    })
 });
+
+jQuery('.close_modal').on("click", function (event) {
+    document.getElementById("formData").reset();
+    jQuery('.editpopup').removeClass('offcanvas-on');
+});
+
+// Fin botones modales //
 
 (function ($) {
     $.extend(true, $.fn.dataTable.defaults, {

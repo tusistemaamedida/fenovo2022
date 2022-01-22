@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
 
 use App\Repositories\PermissionRepository;
 use App\Repositories\RoleRepository;
 
 use App\Http\Requests\Permissions\EditRequest;
-use App\Models\Permission;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+
+use Yajra\DataTables\Facades\DataTables;
 
 class PermissionController extends Controller
 {
@@ -24,11 +26,29 @@ class PermissionController extends Controller
         $this->roleRepository = $roleRepository;
     }
 
-    public function list()
+    public function index(Request $request)
     {
-        $permissions = $this->permissionRepository->paginate(20);
-        return view('admin.permissions.list', compact('permissions'));
+        if ($request->ajax()) {
+            $permission = Permission::all();
+            return Datatables::of($permission)
+                ->addIndexColumn()
+                ->addColumn('rol', function ($permission) {
+                    return isset($permission->roles->pluck('id')[0]) ? $permission->roles->pluck('name')[0] : null;
+                })
+                ->addColumn('edit', function ($permission) {
+                    $ruta = "edit(" . $permission->id . ",'" . route('permissions.edit') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                })
+                ->addColumn('destroy', function ($permission) {
+                    $ruta = "destroy(" . $permission->id . ",'" . route('permissions.destroy') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash text-danger"></i> </a>';
+                })
+                ->rawColumns(['rol', 'edit', 'destroy'])
+                ->make(true);
+        }
+        return view('admin.permissions.index');
     }
+
 
     public function add()
     {
@@ -47,10 +67,14 @@ class PermissionController extends Controller
     public function store(EditRequest $request)
     {
         try {
-            $data = $request->except(['_token']);
-            $data['key'] = Hash::make($data['name']);
+
+            $data = $request->except(['_token', 'active']);
             $data['active'] = 1;
-            $permissions = $this->permissionRepository->create($data);
+            $permission = $this->permissionRepository->create($data);
+            $role = $this->roleRepository->getOne($request->rol_id);
+
+            $permission->assignRole($role);
+
             return new JsonResponse([
                 'msj' => 'Actualización correcta !',
                 'type' => 'success'
@@ -77,9 +101,16 @@ class PermissionController extends Controller
     public function update(EditRequest $request)
     {
         try {
-            $data = $request->except(['_token', 'permission_id', 'active']);
+            $data['name']   = $request->name;
+            $data['guard_name'] = $request->guard_name;
             $data['active'] = ($request->has('active')) ? 1 : 0;
-            $permissions = $this->permissionRepository->update($request->input('permission_id'), $data);
+            $this->permissionRepository->update($request->permission_id, $data);
+
+            $permission = $this->permissionRepository->getOne($request->permission_id);
+
+            $role = $this->roleRepository->getOne($request->rol_id);
+            $permission->syncRoles($role);
+
             return new JsonResponse([
                 'msj' => 'Actualización correcta !',
                 'type' => 'success'

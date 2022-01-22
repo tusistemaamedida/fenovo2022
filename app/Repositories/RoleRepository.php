@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 
 class RoleRepository extends BaseRepository
 {
@@ -22,7 +22,6 @@ class RoleRepository extends BaseRepository
     public function paginate($cant)
     {
         return $this->selectList()
-            ->where('active', true)
             ->orderBy('name', 'DESC')
             ->paginate($cant);
     }

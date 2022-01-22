@@ -11,6 +11,11 @@
     <input type="text" id="name" name="name" @if (isset($role)) value="{{$role->name}}" @else value="" @endif class="form-control" required>
 </div>
 
+<div class="form-group d-none">
+    <label class="text-dark">Guard Name</label>
+    <input type="text" id="guard_name" name="guard_name" @if (isset($role)) value="{{$role->guard_name}}" @else value="web" @endif class="form-control">
+</div>
+
 @if (isset($role))
 <div class="row" style="margin-bottom: 25px">
     <div class="col-4">
