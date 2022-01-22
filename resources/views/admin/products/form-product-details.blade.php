@@ -33,7 +33,7 @@
             <div class="col-md-6">
                 <label  class="text-body">Código Fenovo *</label>
                 <fieldset class="form-group mb-3">
-                    <input type="text" name="cod_fenovo" value="" class="form-control border-dark"  >
+                    <input type="number" name="cod_fenovo" id="cod_fenovo" value="" class="form-control border-dark" onfocusout="validateCode()" >
                 </fieldset>
             </div>
 

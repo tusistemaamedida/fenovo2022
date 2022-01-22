@@ -1,5 +1,34 @@
 
-// Botones comunes a todos los modales // 
+
+function toast($heading, $msj, $position, $icon,$timeOnVisible){
+    var $options = {
+        "preventDuplicates": true,
+        "progressBar": true,
+        "closeButton": true,
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut",
+        'escapeHtml':true,
+        "timeOut": $timeOnVisible,
+        "positionClass": "toast-"+$position
+    }
+    if($icon === 'error') {
+        toastr.error($msj, $heading, $options);
+    }
+
+    if($icon === 'success') {
+        toastr.success($msj, $heading, $options);
+    }
+
+    if($icon === 'warning') {
+        toastr.warning($msj, $heading, $options);
+    }
+
+    if($icon === 'info') {
+        toastr.info($msj, $heading, $options);
+    }
+}
+
+// Botones comunes a todos los modales //
 
 const add = (route) => {
     var elements = document.querySelectorAll('.is-invalid');
@@ -226,4 +255,4 @@ jQuery('.close_modal').on("click", function (event) {
             },
         },
     });
-})(jQuery); 
+})(jQuery);
