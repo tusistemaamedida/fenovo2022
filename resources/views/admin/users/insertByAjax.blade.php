@@ -3,13 +3,20 @@
     <input type="text" name="username" @if (isset($user)) value="{{$user->username}}" @else value="" @endif class="form-control" required>
 </div>
 
+
 <div class="form-group">
     <div class="row">
         <div class="col-12">
-            @empty($user)
             <label class="text-dark">Password</label>
-            <input type="password" id="password" name="password" value="" class="form-control" required>
-            @endempty
+            <input type="password" id="password" name="password" class="form-control">
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <div class="row">
+        <div class="col-12">
+            <label class="text-dark">Confirm Password</label>
+            <input type="password" id="confirm-password" name="confirm-password" class="form-control">
         </div>
     </div>
 </div>

@@ -77,6 +77,6 @@ class User extends Authenticatable
 
 	public function rol()
 	{
-		return ($this->roles()->first()) ? $this->roles()->first()->name : '<i class=" text-muted">Rol pendiente</i>';
+		return ($this->roles()->first()) ? $this->roles()->first()->name : "Sin rol";
 	}
 }
