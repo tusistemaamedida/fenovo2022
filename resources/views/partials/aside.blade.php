@@ -107,6 +107,7 @@
                             </a>
                         </li>
 
+                        @role('superadmin')
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="collapse" href="#setting" role="button" aria-expanded="false" aria-controls="setting">
                                 <span class="svg-icon nav-icon">
@@ -119,7 +120,7 @@
                                 <div id="accordion3">
                                     <ul class="nav flex-column">
 
-                                        @role('superadmin')
+
                                         <li class="nav-item">
                                             <a href="{{ url('users') }}" class="nav-link sub-nav-link @if(Route::is('users.*')) active @endif">
                                                 <span class="svg-icon nav-icon d-flex justify-content-center">
@@ -150,11 +151,11 @@
                                                 <span class="nav-text">Permisos</span>
                                             </a>
                                         </li>
-                                        @endrole
                                     </ul>
                                 </div>
                             </div>
                         </li>
+                        @endrole
                     </ul>
                 </div>
             </div>

@@ -105,7 +105,10 @@ class UserController extends Controller
     public function update(EditRequest $request)
     {
         try {
-            $data = $request->except(['_token', 'user_id', 'active', 'rol_id']);
+            $data = $request->except(['_token', 'user_id', 'active', 'rol_id', 'password', 'confirm-password']);
+            if ($request->password) {
+                $data['password'] = Hash::make($request->password);
+            }
             $data['active'] = ($request->has('active')) ? 1 : 0;
             $this->userRepository->update($request->input('user_id'), $data);
 
