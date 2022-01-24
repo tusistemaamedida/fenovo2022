@@ -49,8 +49,7 @@
                                             <th>Username</th>
                                             <th>Email</th>
                                             <th>Rol</th>
-                                            <th>Editar</th>
-                                            <th>Borrar</th>
+                                            @include('partials.table.head-action')
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -82,13 +81,12 @@
         serverSide: true,
         ajax: "{{ route('users.index') }}",
         columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'DT_RowIndex', name: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'name'},
             {data: 'username'},
             {data: 'email'},
             {data: 'rol'},
-            {data: 'edit', name: 'Editar', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'destroy', name: 'Borrar', 'class':'text-center', orderable: false, searchable: false},
+            @include('partials.table.data-action')
         ]
     });      
 </script>

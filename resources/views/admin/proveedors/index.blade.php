@@ -1,8 +1,5 @@
 @extends('layouts.app')
 
-@section('css')
-<link href="{{asset('assets/api/datatable/jquery.dataTables.min.css')}}" rel="stylesheet" type="text/css" />
-@endsection
 @section('content')
 <div class="subheader py-2 py-lg-6 subheader-solid">
     <div class="container-fluid">
@@ -23,7 +20,8 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">Listado
+                                    <h3 class="card-label mb-0 font-weight-bold text-body">
+                                        Listado
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
@@ -43,52 +41,50 @@
                     <div class="col-12 ">
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
-                                <div class=" table-responsive" id="printableTable">
-                                    @include('admin.proveedors.table')
-                                </div>
+                                <table class="display table-hover yajra-datatable">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Razon social</th>
+                                            <th>Cuit</th>
+                                            <th>Email</th>
+                                            @include('partials.table.head-action')
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 
 </div>
+
 @endsection
 
 @section('js')
 
 <script>
-    jQuery(document).ready( function () {
-        jQuery('#userTable').dataTable( {
-        "pagingType": "simple_numbers",    
-        "columnDefs": [ {
-          "targets"  : 'no-sort',
-          "orderable": false,
-        }]
+    var table = jQuery('.yajra-datatable').DataTable({
+        lengthMenu      : [[10, 25, 50, -1], [10, 25, 50, "Todos"]],        
+        dom: '<"row"<"col-sm-6"B><"col-sm-6"fl>>tr<"bottom"<"row"<"col-sm-6"i><"col-sm-6"p>>><"clear">',  
+        buttons: [{ extend: 'copy', text: 'copiar'},{ extend: 'excel', text: 'xls' },{ extend: 'pdf', text: 'pdf' },],
+        statesave:true,
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('proveedors.index') }}",
+        columns: [
+            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'name'},
+            {data: 'cuit'},
+            {data: 'email'},
+            @include('partials.table.data-action')
+        ]
     });
-    });
-
-    jQuery('.show_confirm').on('click', function (event) {
-        var form = jQuery(this).closest("form");
-        event.preventDefault();
-        Swal.fire({
-            title: 'Confirma eliminar?',
-            text: "No podrá reversar este movimiento !",
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Si borrar'
-        }).then((result) => {
-            if (result.value) {
-                form.submit()
-            }
-        })
-    });
-
 </script>
 
 @endsection

@@ -12,10 +12,6 @@
             <label class="text-dark">Cod Fenovo</label>
             <input type="text" id="cod_fenovo" name="cod_fenovo" @if (isset($store)) value="{{$store->cod_fenovo}}" @else value="" @endif class="form-control" required autofocus>
         </div>
-        <div class="col-8">
-            <label class="text-dark">Nombre </label>
-            <input type="text" id="fantasy_name" name="fantasy_name" @if (isset($store)) value="{{$store->fantasy_name}}" @else value="" @endif class="form-control" required>
-        </div>
     </div>
 </div>
 
@@ -26,15 +22,19 @@
             <input type="text" id="razon_social" name="razon_social" @if (isset($store)) value="{{$store->razon_social}}" @else value="" @endif class="form-control">
         </div>
         <div class="col-6">
-            <label class="text-dark">Responsable</label>
+            <label class="text-dark">Contacto</label>
             <input type="text" id="responsable" name="responsable" @if (isset($store)) value="{{$store->responsable}}" @else value="" @endif class="form-control">
         </div>
     </div>
 </div>
 
 <div class="form-group">
-    <label class="text-dark">Descripción breve (opcional)</label>
-    <input type="text" id="description" name="description" @if (isset($store)) value="{{$store->description}}" @else value="" @endif class="form-control">
+    <div class="row">
+        <div class="col-12">
+            <label class="text-dark">Descripción breve (opcional)</label>
+            <input type="text" id="description" name="description" @if (isset($store)) value="{{$store->description}}" @else value="" @endif class="form-control">
+        </div>
+    </div>
 </div>
 
 <div class="form-group">
@@ -168,12 +168,7 @@
             <input type="text" id="stock_capacity" name="stock_capacity" @if (isset($store)) value="{{$store->stock_capacity}}" @else value="" @endif class="form-control">
         </div>
         <div class="col-xs-12 col-md-2">
-            <fieldset>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" @if (isset($store) && $store->active) checked="" @endif name="active" id="active" value='1'>
-                    <label class="custom-control-label" for="active">Activo</label>
-                </div>
-            </fieldset>
+
         </div>
         <div class="col-xs-12 col-md-2">
             <fieldset>
@@ -201,11 +196,20 @@
 
 
 @if (isset($store))
+{!! Form::model($store, []) !!}
 <input type="hidden" name="store_id" value="{{$store->id}}" />
 <div class="form-group">
     <div class="row">
-        <div class="col-12">
-            <button type="button" class="btn btn-primary btn-actualizar" style="float: right"><i class="fa fa-save"></i> Actualizar</button>
+        <div class="col-6">
+            <fieldset>
+                <label>
+                    {{ Form::checkbox('active', $store->id ) }}
+                    Activo
+                </label>
+            </fieldset>
+        </div>
+        <div class="col-6">
+            <button type="button" class="btn btn-primary btn-actualizar" onclick="actualiza('{{ route('stores.update') }}')" style="float: right"><i class="fa fa-save"></i> Actualizar</button>
         </div>
     </div>
 </div>
@@ -213,8 +217,9 @@
 <div class="form-group">
     <div class="row">
         <div class="col-12">
-            <button type="button" class="btn btn-primary btn-guardar" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+            <button type="button" class="btn btn-primary btn-guardar" onclick="store('{{ route('stores.store') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
         </div>
     </div>
 </div>
+{{ Form::close() }}
 @endif

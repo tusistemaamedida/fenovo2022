@@ -1,33 +1,3 @@
-
-
-function toast($heading, $msj, $position, $icon,$timeOnVisible){
-    var $options = {
-        "preventDuplicates": true,
-        "progressBar": true,
-        "closeButton": true,
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut",
-        'escapeHtml':true,
-        "timeOut": $timeOnVisible,
-        "positionClass": "toast-"+$position
-    }
-    if($icon === 'error') {
-        toastr.error($msj, $heading, $options);
-    }
-
-    if($icon === 'success') {
-        toastr.success($msj, $heading, $options);
-    }
-
-    if($icon === 'warning') {
-        toastr.warning($msj, $heading, $options);
-    }
-
-    if($icon === 'info') {
-        toastr.info($msj, $heading, $options);
-    }
-}
-
 // Botones comunes a todos los modales //
 
 const add = (route) => {
@@ -42,13 +12,7 @@ const add = (route) => {
                 jQuery(".btn-guardar").show()
                 jQuery('.editpopup').addClass('offcanvas-on');
             } else {
-                Swal.fire({
-                    title: "Error!",
-                    html: data['msj'],
-                    type: "error",
-                    confirmButtonClass: "btn btn-primary",
-                    buttonsStyling: !1
-                });
+                toastr.error(data['msj'], 'Verifique');
             }
         }
     });
@@ -57,7 +21,6 @@ const add = (route) => {
 const store = (route) => {
     var elements = document.querySelectorAll('.is-invalid');
     var form = jQuery('#formData').serialize();
-
     jQuery.ajax({
         url: route,
         type: 'POST',
@@ -71,15 +34,10 @@ const store = (route) => {
         success: function (data) {
             if (data['type'] == 'success') {
                 closeModal();
+                toastr.info('Creado', 'Registro');
                 table.ajax.reload();
             } else {
-                Swal.fire({
-                    title: "Error!",
-                    html: data['msj'],
-                    type: "error",
-                    confirmButtonClass: "btn btn-primary",
-                    buttonsStyling: !1
-                });
+                toastr.error(data['msj'], 'Verifique');
             }
         },
         error: function (data) {
@@ -89,13 +47,7 @@ const store = (route) => {
                 lista_errores += value + '<br />';
                 jQuery('#' + index).addClass('is-invalid');
             });
-            Swal.fire({
-                title: "Error!",
-                html: lista_errores,
-                type: "error",
-                confirmButtonClass: "btn btn-primary",
-                buttonsStyling: !1
-            });
+            toastr.error(lista_errores, 'Verifique');
         },
         complete: function () {
             jQuery('#loader').addClass('hidden');
@@ -116,13 +68,7 @@ const edit = (id, route) => {
                 jQuery(".btn-actualizar").show()
                 jQuery('.editpopup').addClass('offcanvas-on');
             } else {
-                Swal.fire({
-                    title: "Error!",
-                    html: data['msj'],
-                    type: "error",
-                    confirmButtonClass: "btn btn-primary",
-                    buttonsStyling: !1
-                });
+                toastr.error(data['html'], 'Verifique');
             }
         }
     });
@@ -145,15 +91,10 @@ const update = (route) => {
         success: function (data) {
             if (data['type'] == 'success') {
                 closeModal();
+                toastr.info('Actualizado', 'Registro');
                 table.ajax.reload();
             } else {
-                Swal.fire({
-                    title: "Error!",
-                    html: data['msj'],
-                    type: "error",
-                    confirmButtonClass: "btn btn-primary",
-                    buttonsStyling: !1
-                });
+                toastr.error(data['html'], 'Verifique');
             }
         },
         error: function (data) {
@@ -163,16 +104,35 @@ const update = (route) => {
                 lista_errores += value + '<br />';
                 jQuery('#' + index).addClass('is-invalid');
             });
-            Swal.fire({
-                title: "Error!",
-                html: lista_errores,
-                type: "error",
-                confirmButtonClass: "btn btn-primary",
-                buttonsStyling: !1
-            })
+            toastr.error(lista_errores, 'Verifique');
         },
         complete: function () {
             jQuery('#loader').addClass('hidden');
+        }
+    });
+};
+
+const destroy = (id, route) => {
+    ymz.jq_confirm({
+        title: 'Eliminar',
+        text: "confirma borrar registro ?",
+        no_btn: "Cancelar",
+        yes_btn: "Confirma",
+        no_fn: function () {
+            return false;
+        },
+        yes_fn: function () {
+            jQuery.ajax({
+                url: route,
+                type: 'POST',
+                dataType: 'json',
+                data: { id: id },
+                success: function (data) {
+                    table.ajax.reload();
+                    toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                    toastr.error("Eliminado ... ");
+                }
+            });
         }
     });
 };
@@ -181,22 +141,6 @@ const closeModal = () => {
     document.getElementById("formData").reset();
     jQuery('.editpopup').removeClass('offcanvas-on');
 }
-
-jQuery('.show_confirm').on('click', function (event) {
-    event.preventDefault();
-    Swal.fire({
-        title: 'Confirma eliminar?',
-        text: "No podrá reversar este movimiento !",
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Si borrar'
-    }).then((result) => {
-        if (result.value) {
-            jQuery(this).closest("form").trigger('submit')
-        }
-    })
-});
 
 jQuery('.close_modal').on("click", function (event) {
     document.getElementById("formData").reset();

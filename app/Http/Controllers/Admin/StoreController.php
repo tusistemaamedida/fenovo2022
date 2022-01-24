@@ -13,6 +13,8 @@ use App\Repositories\EnumRepository;
 use App\Http\Requests\Stores\EditRequest;
 use App\Models\Store;
 
+use Yajra\DataTables\Facades\DataTables;
+
 class StoreController extends Controller
 {
     private $storeRepository;
@@ -25,10 +27,26 @@ class StoreController extends Controller
         $this->enumRepository = $enumRepository;
     }
 
-    public function list()
+    public function index(Request $request)
     {
-        $stores = $this->storeRepository->paginate(20);
-        return view('admin.stores.list', compact('stores'));
+        if ($request->ajax()) {
+            $store = Store::all();
+            return Datatables::of($store)
+                ->addIndexColumn()
+                ->addColumn('inactivo', function ($store) {
+                    return ($store->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
+                })
+                ->addColumn('edit', function ($store) {
+                    return '<a class="dropdown-item" href="' . route('stores.edit', ['id' => $store->id]) . '"> <i class="fa fa-edit"></i> </a>';
+                })
+                ->addColumn('destroy', function ($store) {
+                    $ruta = "destroy(" . $store->id . ",'" . route('stores.destroy') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                })
+                ->rawColumns(['inactivo', 'edit', 'destroy'])
+                ->make(true);
+        }
+        return view('admin.stores.index');
     }
 
     public function add()
@@ -84,10 +102,9 @@ class StoreController extends Controller
         }
     }
 
-    public function destroy(Store $store)
+    public function destroy(Request $request)
     {
-        $data['active'] = 0;
-        $this->storeRepository->update($store->id, $data);
-        return redirect()->route('stores.list');
+        $this->storeRepository->update($request->id, ['active' => 0]);
+        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
     }
 }

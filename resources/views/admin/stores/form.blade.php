@@ -58,104 +58,40 @@
 <script src="{{asset('assets/api/select2/select2.min.js')}}"></script>
 
 <script>
-    jQuery(".btn-guardar").click(function(){
+    const actualiza = (route) => {
         var elements = document.querySelectorAll('.is-invalid');
         var form = jQuery('#formData').serialize();
 
         jQuery.ajax({
-            url:"{{ route('stores.store') }}",
-            type:'POST',
-            data:form,
-            beforeSend: function() {
+            url: route,
+            type: 'POST',
+            data: form,
+            beforeSend: function () {
                 for (var i = 0; i < elements.length; i++) {
                     elements[i].classList.remove('is-invalid');
                 }
+                jQuery('#loader').removeClass('hidden');
             },
-            success:function(data){
-                if(data['type'] == 'success'){
-                    Swal.fire({
-                        title: "Exito!",
-                        html: data['msj'],
-                        type: "success",
-                        confirmButtonClass: "btn btn-primary",
-                        buttonsStyling: !1
-                    }) ;
-                }else{
-                    Swal.fire({
-                        title: "Error!",
-                        html: data['msj'],
-                        type: "error",
-                        confirmButtonClass: "btn btn-primary",
-                        buttonsStyling: !1
-                    }) ;
+            success: function (data) {
+                if (data['type'] == 'success') {
+                    toastr.info('Actualizado', 'Registro');
+                } else {
+                    toastr.error(data['html'], 'Verifique');
                 }
             },
             error: function (data) {
-                var lista_errores="";
+                var lista_errores = "";
                 var data = data.responseJSON;
-                jQuery.each(data.errors,function(index, value) {
-                    lista_errores+=value+'<br />';
-                    jQuery('#'+index).addClass('is-invalid');
+                jQuery.each(data.errors, function (index, value) {
+                    lista_errores += value + '<br />';
+                    jQuery('#' + index).addClass('is-invalid');
                 });
-                Swal.fire({
-                    title: "Error!",
-                    html: lista_errores,
-                    type: "error",
-                    confirmButtonClass: "btn btn-primary",
-                    buttonsStyling: !1
-                }) ;
+                toastr.error(lista_errores, 'Verifique');
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
             }
         });
-    });
-
-    jQuery(".btn-actualizar").click(function(){
-        var elements = document.querySelectorAll('.is-invalid');
-        var form = jQuery('#formData').serialize();
-
-        jQuery.ajax({
-            url:"{{ route('stores.update') }}",
-            type:'POST',
-            data:form,
-            beforeSend: function() {
-                for (var i = 0; i < elements.length; i++) {
-                    elements[i].classList.remove('is-invalid');
-                }
-            },
-            success:function(data){
-                if(data['type'] == 'success'){
-                    Swal.fire({
-                        title: "Exito!",
-                        html: data['msj'],
-                        type: "success",
-                        confirmButtonClass: "btn btn-primary",
-                        buttonsStyling: !1
-                    }) ;
-                }else{
-                    Swal.fire({
-                        title: "Error!",
-                        html: data['msj'],
-                        type: "error",
-                        confirmButtonClass: "btn btn-primary",
-                        buttonsStyling: !1
-                    }) ;
-                }
-            },
-            error: function (data) {
-                var lista_errores="";
-                var data = data.responseJSON;
-                jQuery.each(data.errors,function(index, value) {
-                    lista_errores+=value+'<br />';
-                    jQuery('#'+index).addClass('is-invalid');
-                });
-                Swal.fire({
-                    title: "Error!",
-                    html: lista_errores,
-                    type: "error",
-                    confirmButtonClass: "btn btn-primary",
-                    buttonsStyling: !1
-                }) ;
-            }
-        });
-    });
+    };
 </script>
 @endsection
