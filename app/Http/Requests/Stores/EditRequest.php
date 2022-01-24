@@ -16,17 +16,19 @@ class EditRequest extends FormRequest
         return true;
     }
 
-    public function rules(){
+    public function rules()
+    {
         return [
+            'razon_social' => 'required',
             'cod_fenovo' => 'required',
-            'fantasy_name' => 'required',
         ];
     }
 
-    public function messages(){
+    public function messages()
+    {
         return [
+            'razon_social.required'   => 'Razon social de la tienda es requerido!',
             'cod_fenovo.required'   => 'Cod Fenovo es requerido!',
-            'fantasy_name.required'   => 'El nombre de la Tienda es requerido!',
         ];
     }
 }

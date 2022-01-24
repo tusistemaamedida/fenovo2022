@@ -23,6 +23,7 @@ class UserController extends Controller
 
     public function __construct(UserRepository $userRepository, RoleRepository $roleRepository)
     {
+        $this->middleware('permission:users.index', ['only' => ['index', 'add', 'store']]);
         $this->userRepository = $userRepository;
         $this->roleRepository = $roleRepository;
     }
@@ -34,7 +35,10 @@ class UserController extends Controller
             return Datatables::of($user)
                 ->addIndexColumn()
                 ->addColumn('rol', function ($user) {
-                    return isset($user->roles->pluck('id')[0]) ? $user->roles->pluck('name')[0] : null;
+                    return $user->rol();
+                })
+                ->addColumn('inactivo', function ($user) {
+                    return ($user->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
                 })
                 ->addColumn('edit', function ($user) {
                     $ruta = "edit(" . $user->id . ",'" . route('users.edit') . "')";
@@ -42,9 +46,9 @@ class UserController extends Controller
                 })
                 ->addColumn('destroy', function ($user) {
                     $ruta = "destroy(" . $user->id . ",'" . route('users.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash text-danger"></i> </a>';
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['rol', 'edit', 'destroy'])
+                ->rawColumns(['rol', 'edit', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.users.index');
@@ -118,10 +122,9 @@ class UserController extends Controller
         }
     }
 
-    public function destroy(User $user)
+    public function destroy(Request $request)
     {
-        $data['active'] = 0;
-        $this->userRepository->update($user->id, $data);
-        return redirect()->route('users.list');
+        $this->userRepository->update($request->id, ['active' => 0]);
+        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
     }
 }

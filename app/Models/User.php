@@ -53,6 +53,7 @@ class User extends Authenticatable
 	];
 
 	protected $fillable = [
+		'id',
 		'name',
 		'email',
 		'username',
@@ -72,5 +73,10 @@ class User extends Authenticatable
 	public function user_locals()
 	{
 		return $this->hasMany(UserLocal::class);
+	}
+
+	public function rol()
+	{
+		return ($this->roles()->first()) ? $this->roles()->first()->name : '<i class=" text-muted">Rol pendiente</i>';
 	}
 }

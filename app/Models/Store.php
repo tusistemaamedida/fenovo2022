@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $cod_fenovo
  * @property int|null $region_id
  * @property int|null $storefather_id
- * @property string|null $fantasy_name
  * @property string|null $razon_social
  * @property string|null $description
  * @property string|null $responsable
@@ -69,7 +68,6 @@ class Store extends Model
 		'cod_fenovo',
 		'region_id',
 		'storefather_id',
-		'fantasy_name',
 		'razon_social',
 		'description',
 		'responsable',

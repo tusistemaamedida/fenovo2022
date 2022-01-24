@@ -35,15 +35,18 @@ class PermissionController extends Controller
                 ->addColumn('rol', function ($permission) {
                     return isset($permission->roles->pluck('id')[0]) ? $permission->roles->pluck('name')[0] : null;
                 })
+                ->addColumn('inactivo', function ($permission) {
+                    return ($permission->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
+                })
                 ->addColumn('edit', function ($permission) {
                     $ruta = "edit(" . $permission->id . ",'" . route('permissions.edit') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($permission) {
                     $ruta = "destroy(" . $permission->id . ",'" . route('permissions.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash text-danger"></i> </a>';
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['rol', 'edit', 'destroy'])
+                ->rawColumns(['rol', 'inactivo', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.permissions.index');
@@ -120,10 +123,9 @@ class PermissionController extends Controller
         }
     }
 
-    public function destroy(Permission $permission)
+    public function destroy(Request $request)
     {
-        $data['active'] = 0;
-        $this->permissionRepository->update($permission->id, $data);
-        return redirect()->route('permissions.list');
+        $this->permissionRepository->update($request->id, ['active' => 0]);
+        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
     }
 }

@@ -85,19 +85,22 @@
 
 
 @if (isset($proveedor))
+
+{!! Form::model($proveedor, []) !!}
+
 <input type="hidden" name="proveedor_id" value="{{$proveedor->id}}" />
 <div class="form-group">
     <div class="row">
         <div class="col-6">
             <fieldset>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" @if (isset($proveedor) && $proveedor->active) checked="" @endif name="active" id="active" value='1'>
-                    <label class="custom-control-label" for="active">Activo</label>
-                </div>
+                <label>
+                    {{ Form::checkbox('active', $proveedor->id ) }}
+                    Activo
+                </label>
             </fieldset>
         </div>
         <div class="col-6">
-            <button type="button" class="btn btn-primary btn-actualizar" style="float: right"><i class="fa fa-save"></i> Actualizar</button>
+            <button type="button" class="btn btn-primary btn-actualizar" onclick="actualiza('{{ route('proveedors.update') }}')" style="float: right"><i class="fa fa-save"></i> Actualizar</button>
         </div>
     </div>
 </div>
@@ -105,8 +108,9 @@
 <div class="form-group">
     <div class="row">
         <div class="col-12">
-            <button type="button" class="btn btn-primary btn-guardar" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+            <button type="button" class="btn btn-primary btn-guardar" onclick="store('{{ route('proveedors.store') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
         </div>
     </div>
 </div>
+{{ Form::close() }}
 @endif

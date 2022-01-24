@@ -13,6 +13,8 @@ use App\Repositories\EnumRepository;
 use App\Http\Requests\Customers\EditRequest;
 use App\Models\Customer;
 
+use Yajra\DataTables\Facades\DataTables;
+
 class CustomerController extends Controller
 {
     private $customerRepository;
@@ -24,10 +26,27 @@ class CustomerController extends Controller
         $this->enumRepository = $enumRepository;
     }
 
-    public function list()
+    public function index(Request $request)
     {
-        $customers = $this->customerRepository->paginate(20);
-        return view('admin.customers.list', compact('customers'));
+        if ($request->ajax()) {
+            $customer = Customer::all();
+            return Datatables::of($customer)
+                ->addIndexColumn()
+                ->addColumn('inactivo', function ($permission) {
+                    return ($permission->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
+                })
+                ->addColumn('edit', function ($customer) {
+                    $ruta = "edit(" . $customer->id . ",'" . route('customers.edit') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                })
+                ->addColumn('destroy', function ($customer) {
+                    $ruta = "destroy(" . $customer->id . ",'" . route('customers.destroy') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                })
+                ->rawColumns(['inactivo', 'edit', 'destroy'])
+                ->make(true);
+        }
+        return view('admin.customers.index');
     }
 
     public function add()
@@ -94,10 +113,9 @@ class CustomerController extends Controller
         }
     }
 
-    public function destroy(Customer $customer)
+    public function destroy(Request $request)
     {
-        $data['active'] = 0;
-        $this->customerRepository->update($customer->id, $data);
-        return redirect()->route('customers.list');
+        $this->customerRepository->update($request->id, ['active' => 0]);
+        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
     }
 }

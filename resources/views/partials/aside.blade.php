@@ -3,7 +3,7 @@
 
         <div class="brand flex-column-auto" id="tc_brand">
             <a href="{{url('/home')}}" class="brand-logo">
-                <div class="brand-image">FTK </div>
+                <div class="brand-image"><img style="height: 40px;margin-right:20px" alt="fenovo" src="{{asset('assets/images/misc/logo.png')}}" /></div>
                 <span class="brand-text"><img style="height: 40px;margin-right:20px" alt="fenovo" src="{{asset('assets/images/misc/logo.png')}}" /></span>
             </a>
         </div>
@@ -12,8 +12,7 @@
             <div id="tc_aside_menu" class="aside-menu  mb-5" data-menu-vertical="1" data-menu-scroll="1" data-menu-dropdown-timeout="500">
                 <div id="accordion">
                     <ul class="nav flex-column">
-
-                        <li class="nav-item @if(Route::is('home') ) active @endif">
+                        <li class="nav-item @if(Route::is('home')) active @endif">
                             <a href="{{url('/home')}}" class="nav-link">
                                 <span class="svg-icon nav-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
@@ -27,7 +26,7 @@
                             </a>
                         </li>
 
-                        <li class="nav-item @if(Route::is('product.*') ||Route::is('products.*') ) active @endif">
+                        <li class="nav-item @if(Route::is('product.*')||Route::is('products.*')) active @endif">
                             <a href="{{url('products')}}" class="nav-link">
                                 <span class="svg-icon nav-icon">
                                     <i class="fas fa-boxes font-size-h4"></i>
@@ -81,15 +80,30 @@
                                 </ul>
                             </div>
                         </li>
-
-                        <li class="nav-item @if(Route::is('proveedors.*') ||Route::is('proveedors.*') ) active @endif">
+                        <li class="nav-item @if(Route::is('proveedors.*')) active @endif">
                             <a href="{{url('proveedors')}}" class="nav-link">
                                 <span class="svg-icon nav-icon">
-                                    <i class="fas fa-user-friends font-size-h4"></i>
+                                    <i class="fas fa-truck font-size-h4"></i>
                                 </span>
                                 <span class="nav-text">
                                     Proveedores
                                 </span>
+                            </a>
+                        </li>
+                        <li class="nav-item @if(Route::is('stores.*')) active @endif">
+                            <a href="{{ url('stores') }}" class="nav-link">
+                                <span class="svg-icon nav-icon">
+                                    <i class="fas fa-store font-size-h4"></i>
+                                </span>
+                                <span class="nav-text">Tiendas</span>
+                            </a>
+                        </li>
+                        <li class="nav-item @if(Route::is('customers.*')) active @endif">
+                            <a href="{{ url('customers') }}" class="nav-link">
+                                <span class="svg-icon nav-icon">
+                                    <i class="fas fa-user-friends font-size-h4"></i>
+                                </span>
+                                <span class="nav-text">Clientes</span>
                             </a>
                         </li>
 
@@ -101,31 +115,13 @@
                                 <span class="nav-text">Configuración</span>
                                 <i class="fas fa-chevron-right fa-rotate-90"></i>
                             </a>
-                            <div class="collapse nav-collapse" id="setting" data-parent="#accordion">
+                            <div class="collapse nav-collapse show" id="setting" data-parent="#accordion">
                                 <div id="accordion3">
                                     <ul class="nav flex-column">
+
+                                        @role('superadmin')
                                         <li class="nav-item">
-                                            <a href="{{ url('stores') }}" class="nav-link sub-nav-link">
-                                                <span class="svg-icon nav-icon d-flex justify-content-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10px" height="10px" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
-                                                        <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                                    </svg>
-                                                </span>
-                                                <span class="nav-text">Tiendas</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="{{ url('customers') }}" class="nav-link sub-nav-link">
-                                                <span class="svg-icon nav-icon d-flex justify-content-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10px" height="10px" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
-                                                        <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                                    </svg>
-                                                </span>
-                                                <span class="nav-text">Clientes</span>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="{{ url('users') }}" class="nav-link sub-nav-link">
+                                            <a href="{{ url('users') }}" class="nav-link sub-nav-link @if(Route::is('users.*')) active @endif">
                                                 <span class="svg-icon nav-icon d-flex justify-content-center">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="10px" height="10px" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
                                                         <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -134,8 +130,8 @@
                                                 <span class="nav-text">Usuarios</span>
                                             </a>
                                         </li>
-                                        <li class="nav-item @if(Route::is('roles.*') ||Route::is('roles.*') ) active @endif">
-                                            <a href="{{ route('roles.index') }}" class="nav-link sub-nav-link">
+                                        <li class="nav-item">
+                                            <a href="{{ route('roles.index') }}" class="nav-link sub-nav-link  @if(Route::is('roles.*')) active @endif">
                                                 <span class="svg-icon nav-icon d-flex justify-content-center">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="10px" height="10px" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
                                                         <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -145,7 +141,7 @@
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{{ url('permissions') }}" class="nav-link sub-nav-link">
+                                            <a href="{{ url('permissions') }}" class="nav-link sub-nav-link  @if(Route::is('permissions.*')) active @endif">
                                                 <span class="svg-icon nav-icon d-flex justify-content-center">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="10px" height="10px" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
                                                         <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -154,6 +150,7 @@
                                                 <span class="nav-text">Permisos</span>
                                             </a>
                                         </li>
+                                        @endrole
                                     </ul>
                                 </div>
                             </div>

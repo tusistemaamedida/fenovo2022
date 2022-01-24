@@ -12,6 +12,8 @@ use App\Repositories\EnumRepository;
 
 use App\Http\Requests\Proveedors\EditRequest;
 
+use Yajra\DataTables\Facades\DataTables;
+
 class ProveedorController extends Controller
 {
     private $proveedorRepository;
@@ -22,10 +24,26 @@ class ProveedorController extends Controller
         $this->enumRepository = $enumRepository;
     }
 
-    public function list()
+    public function index(Request $request)
     {
-        $proveedors = $this->proveedorRepository->paginate(20);
-        return view('admin.proveedors.list', compact('proveedors'));
+        if ($request->ajax()) {
+            $proveedor = Proveedor::all();
+            return Datatables::of($proveedor)
+                ->addIndexColumn()
+                ->addColumn('inactivo', function ($proveedor) {
+                    return ($proveedor->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
+                })
+                ->addColumn('edit', function ($proveedor) {
+                    return '<a class="dropdown-item" href="' . route('proveedors.edit', ['id' => $proveedor->id]) . '"> <i class="fa fa-edit"></i> </a>';
+                })
+                ->addColumn('destroy', function ($proveedor) {
+                    $ruta = "destroy(" . $proveedor->id . ",'" . route('proveedors.destroy') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                })
+                ->rawColumns(['inactivo', 'edit', 'destroy'])
+                ->make(true);
+        }
+        return view('admin.proveedors.index');
     }
 
     public function add()
@@ -51,7 +69,6 @@ class ProveedorController extends Controller
         }
     }
 
-
     public function edit(Request $request)
     {
         $proveedor = $this->proveedorRepository->getOne($request->id);
@@ -75,10 +92,9 @@ class ProveedorController extends Controller
         }
     }
 
-    public function destroy(Proveedor $proveedor)
+    public function destroy(Request $request)
     {
-        $data['active'] = 0;
-        $this->proveedorRepository->update($proveedor->id, $data);
-        return redirect()->route('proveedors.list');
+        $this->proveedorRepository->update($request->id, ['active' => 0]);
+        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
     }
 }

@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Permisos</li>
+                <li class="breadcrumb-item active" aria-current="page">Proveedores</li>
             </ol>
         </nav>
     </div>
@@ -25,7 +25,7 @@
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="javascript:void(0)" onclick="add('{{ route('permissions.add') }}')" class="ml-2">
+                                    <a href="{{ route('proveedors.add') }}" class="ml-2">
                                         <span class="bg-secondary h-30px font-size-h5 w-30px d-flex align-items-center justify-content-center  rounded-circle shadow-sm ">
                                             <svg width="25px" height="25px" viewBox="0 0 16 16" class="bi bi-plus white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
@@ -45,8 +45,9 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Nombre</th>
-                                            <th>Rol</th>
+                                            <th>Razon social</th>
+                                            <th>Cuit</th>
+                                            <th>Email</th>
                                             @include('partials.table.head-action')
                                         </tr>
                                     </thead>
@@ -63,8 +64,6 @@
 
 </div>
 
-@include('admin.permissions.modal')
-
 @endsection
 
 @section('js')
@@ -77,14 +76,15 @@
         statesave:true,
         processing: true,
         serverSide: true,
-        ajax: "{{ route('permissions.index') }}",
+        ajax: "{{ route('proveedors.index') }}",
         columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'name'},
-            {data: 'rol'},
+            {data: 'cuit'},
+            {data: 'email'},
             @include('partials.table.data-action')
         ]
-    });      
+    });
 </script>
 
 @endsection
