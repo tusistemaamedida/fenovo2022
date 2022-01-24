@@ -5,7 +5,7 @@
 
 @yield('css')
 
-<body id="tc_body" class="@auth header-fixed header-mobile-fixed subheader-enabled aside-enabled aside-fixed @endauth">
+<body id="tc_body" class="@auth header-fixed header-mobile-fixed subheader-enabled aside-enabled aside-fixed pace-done pace-done aside-minimize @endauth">
     @include('partials.preloader')
 
     @auth

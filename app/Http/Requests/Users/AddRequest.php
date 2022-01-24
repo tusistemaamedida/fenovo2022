@@ -21,7 +21,7 @@ class AddRequest extends FormRequest
         return [
             'username' => ['required', 'unique:users'],
             'email' => ['required', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'min:8'],
+            'password' => ['required', 'same:confirm-password', 'min:8'],
             'name' => 'required',
             'active' => ['value'],
         ];
@@ -36,7 +36,9 @@ class AddRequest extends FormRequest
             'email.required'    => 'El email del usuario es requerido',
             'email.unique'      => 'El email ya esta en uso ',
             'password.required' => 'El password es requerido ',
+            'password.same'     => 'Las claves no coinciden',
             'password.min'      => 'El password debe contener al menos 8 caracteres',
+
         ];
     }
 }

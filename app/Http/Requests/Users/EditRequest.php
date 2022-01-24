@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class EditRequest extends FormRequest
 {
@@ -16,17 +17,23 @@ class EditRequest extends FormRequest
         return true;
     }
 
-    public function rules(){
+    public function rules()
+    {
         return [
+            'username' => 'required|unique:users,username,' . $this->user_id,
+            'email' => 'required|email|unique:users,email,' . $this->user_id,
             'name' => 'required',
-            'email' => 'required'
         ];
     }
 
-    public function messages(){
+    public function messages()
+    {
         return [
+            'username.required'   => 'El nombreusuario es requerido!',
+            'username.unique'   => 'El nombreusuario ya existe!',
+            'email.unique'   => 'El email del usuario es requerido!',
+            'email.required'   => 'El email ya existe!',
             'name.required'   => 'El nombre del usuario es requerido!',
-            'email.required'   => 'El email del usaurio es requerido!',
         ];
     }
 }

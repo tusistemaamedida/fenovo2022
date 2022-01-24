@@ -46,8 +46,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Name</th>
-                                            <th>Editar</th>
-                                            <th>Borrar</th>
+                                            @include('partials.table.head-action')
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -79,12 +78,11 @@
         serverSide: true,
         ajax: "{{ route('roles.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'name'},
-            {data: 'edit', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'destroy', name: 'Borrar', 'class':'text-center', orderable: false, searchable: false},
+            @include('partials.table.data-action')
         ]
-    });      
+    });
 </script>
 
 @endsection

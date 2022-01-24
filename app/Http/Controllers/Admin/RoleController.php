@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use App\Repositories\RoleRepository;
 
 use App\Http\Requests\Roles\EditRequest;
+use App\Models\Role as ModelsRole;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -30,15 +31,18 @@ class RoleController extends Controller
             $rol = Role::all();
             return Datatables::of($rol)
                 ->addIndexColumn()
+                ->addColumn('inactivo', function ($rol) {
+                    return ($rol->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
+                })
                 ->addColumn('edit', function ($rol) {
                     $ruta = "edit(" . $rol->id . ",'" . route('roles.edit') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($rol) {
                     $ruta = "destroy(" . $rol->id . ",'" . route('roles.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash text-danger"></i> </a>';
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['edit', 'destroy'])
+                ->rawColumns(['inactivo', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.roles.index');
@@ -102,10 +106,9 @@ class RoleController extends Controller
         }
     }
 
-    public function destroy(Role $role)
+    public function destroy(Request $request)
     {
-        $data['active'] = 0;
-        $this->roleRepository->update($role->id, $data);
-        return redirect()->route('roles.list');
+        $this->roleRepository->update($request->id, ['active' => 0]);
+        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
     }
 }
