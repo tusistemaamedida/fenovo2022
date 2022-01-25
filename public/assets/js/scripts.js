@@ -90,7 +90,7 @@ const update = (route) => {
         },
         success: function (data) {
             if (data['type'] == 'success') {
-                closeModal();
+                //closeModal();
                 toastr.info('Actualizado', 'Registro');
                 table.ajax.reload();
             } else {

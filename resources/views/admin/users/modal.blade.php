@@ -6,7 +6,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <button type="reset" class="btn btn-outline-secondary close_modal"><i class="fa fa-times"></i> Cancelar</button>
+                <button type="reset" class="btn btn-outline-secondary close_modal"><i class="fa fa-times"></i> Cerrar</button>
                 <button type="button" class="btn btn-primary btn-guardar" onclick="store('{{ route('users.store') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
                 <button type="button" class="btn btn-primary btn-actualizar" onclick="update('{{ route('users.update') }}')" style="float: right"><i class="fa fa-save"></i> Actualizar</button>
             </div>

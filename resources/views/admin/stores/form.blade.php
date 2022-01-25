@@ -58,40 +58,6 @@
 <script src="{{asset('assets/api/select2/select2.min.js')}}"></script>
 
 <script>
-    const actualiza = (route) => {
-        var elements = document.querySelectorAll('.is-invalid');
-        var form = jQuery('#formData').serialize();
-
-        jQuery.ajax({
-            url: route,
-            type: 'POST',
-            data: form,
-            beforeSend: function () {
-                for (var i = 0; i < elements.length; i++) {
-                    elements[i].classList.remove('is-invalid');
-                }
-                jQuery('#loader').removeClass('hidden');
-            },
-            success: function (data) {
-                if (data['type'] == 'success') {
-                    toastr.info('Actualizado', 'Registro');
-                } else {
-                    toastr.error(data['html'], 'Verifique');
-                }
-            },
-            error: function (data) {
-                var lista_errores = "";
-                var data = data.responseJSON;
-                jQuery.each(data.errors, function (index, value) {
-                    lista_errores += value + '<br />';
-                    jQuery('#' + index).addClass('is-invalid');
-                });
-                toastr.error(lista_errores, 'Verifique');
-            },
-            complete: function () {
-                jQuery('#loader').addClass('hidden');
-            }
-        });
-    };
+    var table = jQuery('.yajra-datatable').DataTable({});
 </script>
 @endsection
