@@ -6,11 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-use App\Models\Store;
-
 use Yajra\DataTables\Facades\DataTables;
 
-class MovimientoController extends Controller
+class IngresoController extends Controller
 {
 
     public function index(Request $request)
