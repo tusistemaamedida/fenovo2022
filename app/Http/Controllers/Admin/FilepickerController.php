@@ -49,7 +49,7 @@ class FilepickerController extends Controller
             //$file->save =  $file->getFilename();
         });
 
-        $this->handler->on('upload.success', function ($file) {
+        $this->handler->on('upload.success', function ($file) use ($request) {
         });
         $this->handler->on('upload.error', function ($file) {
 

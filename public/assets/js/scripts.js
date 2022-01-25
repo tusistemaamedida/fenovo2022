@@ -142,6 +142,9 @@ const closeModal = () => {
     jQuery('.editpopup').removeClass('offcanvas-on');
 }
 
+//todos los select con la clase js-example-basic-single funcionan con select2 simple
+jQuery('.js-example-basic-single').select2();
+
 jQuery('.close_modal').on("click", function (event) {
     document.getElementById("formData").reset();
     jQuery('.editpopup').removeClass('offcanvas-on');

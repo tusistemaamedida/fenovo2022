@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Product
- * 
+ *
  * @property int $id
  * @property int $cod_fenovo
  * @property string|null $name
@@ -53,7 +53,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $is_senasa
  * @property Carbon|null $updated_at
  * @property Carbon|null $created_at
- * 
+ *
  * @property ProductCategory|null $product_category
  * @property Proveedor|null $proveedor
  * @property SenasaDefinition|null $senasa_definition
@@ -159,7 +159,7 @@ class Product extends Model
 
 	public function product_images()
 	{
-		return $this->hasMany(ProductImage::class);
+		return $this->hasMany(ProductImage::class,'cod_fenovo');
 	}
 
 	public function product_nutricional()

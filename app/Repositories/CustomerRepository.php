@@ -29,4 +29,16 @@ class CustomerRepository extends BaseRepository
     {
         return Customer::find($id);
     }
+
+    public function search($term){
+
+        return Customer::where('active',true)
+                       ->where(function($query) use ($term){
+                            $query->orWhere('cuit','LIKE','%'.$term.'%')
+                                ->orWhere('responsable','LIKE','%'.$term.'%')
+                                ->orWhere('bussiness_name','LIKE','%'.$term.'%')
+                                ->orWhere('razon_social','LIKE','%'.$term.'%');
+                        })
+                        ->get();
+    }
 }

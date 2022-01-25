@@ -14,8 +14,8 @@ class AlterTableProductImages extends Migration
     public function up()
     {
         Schema::table('product_images', function (Blueprint $table) {
-            //$table->dropForeign('product_images_product_id_foreign');
-            //$table->dropColumn('product_id');
+            $table->dropForeign('product_images_product_id_foreign');
+            $table->dropColumn('product_id');
             $table->integer('cod_fenovo');
             $table->foreign('cod_fenovo')->references('cod_fenovo')->on('products');
         });
