@@ -100,7 +100,7 @@
             </fieldset>
         </div>
         <div class="col-6">
-            <button type="button" class="btn btn-primary btn-actualizar" onclick="actualiza('{{ route('proveedors.update') }}')" style="float: right"><i class="fa fa-save"></i> Actualizar</button>
+            <button type="button" class="btn btn-primary btn-actualizar" onclick="update('{{ route('proveedors.update') }}')" style="float: right"><i class="fa fa-save"></i> Actualizar</button>
         </div>
     </div>
 </div>

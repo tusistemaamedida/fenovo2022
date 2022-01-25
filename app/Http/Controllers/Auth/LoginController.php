@@ -15,7 +15,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/inicio';
 
     public function logout(Request $request)
     {
