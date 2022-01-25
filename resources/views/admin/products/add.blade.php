@@ -263,7 +263,7 @@
         jQuery("#btn-file").click(function(e){
             var cod_fenovo = jQuery("#cod_fenovo").val();
             if(cod_fenovo == ''){
-                toast('ERROR!','Ingrese un Código Fenovo','top-right','error',3500);
+                toastr.error('Ingrese un Código Fenovo','ERROR!');
                 jQuery('#cod_fenovo').addClass('is-invalid');
                 e.preventDefault()
             }else{

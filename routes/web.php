@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\FilepickerController;
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +17,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
     Route::group(['namespace' => 'Admin', 'middleware' => ['auth']], function () {
-        Route::any('filepicker', [App\Http\Controllers\Admin\FilepickerController::class, 'handle'])->name('filepicker');;
+        Route::any('filepicker', [FilepickerController::class, 'handle'])->name('filepicker');;
         require __DIR__ . '/admin/products.php';
         require __DIR__ . '/admin/stores.php';
         require __DIR__ . '/admin/customers.php';
@@ -28,5 +30,5 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
 });
 
 Route::group(['namespace' => 'Admin', 'middleware' => ['auth']], function () {
-    Route::any('filepicker', [App\Http\Controllers\Admin\FilepickerController::class, 'handle'])->name('filepicker');;
+    Route::any('filepicker', [FilepickerController::class, 'handle'])->name('filepicker');;
 });
