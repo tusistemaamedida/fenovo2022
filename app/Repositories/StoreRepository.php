@@ -39,4 +39,15 @@ class StoreRepository extends BaseRepository
     {
         return Store::all();
     }
+
+    public function search($term){
+        return Store::where('active',true)
+                    ->where('cod_fenovo','!=',1)
+                    ->where(function($query) use ($term){
+                        $query->orWhere('cuit','LIKE','%'.$term.'%')
+                              ->orWhere('responsable','LIKE','%'.$term.'%')
+                              ->orWhere('razon_social','LIKE','%'.$term.'%');
+                    })
+                    ->get();
+    }
 }

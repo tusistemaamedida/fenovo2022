@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Customer
- * 
+ *
  * @property int $id
  * @property string|null $cuit
  * @property int|null $store_id
@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $telephone
  * @property string|null $listprice_associate
  * @property int $active
- * 
+ *
  * @property Store|null $store
  *
  * @package App\Models
@@ -61,4 +61,13 @@ class Customer extends Model
 	{
 		return $this->belongsTo(Store::class);
 	}
+
+    public function displayName(){
+        $display = '';
+        $display .= (is_null($this->bussiness_name))?'':$this->bussiness_name;
+        $display .= ($display != '' && !is_null($this->razon_social) )?', '.$this->razon_social:$this->razon_social;
+        $display .= ($display != '' && !is_null($this->responsable) )?', '.$this->responsable:$this->responsable;
+
+        return $display;
+    }
 }

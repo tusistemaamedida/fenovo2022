@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('css')
-	<link href="{{asset('assets/api/select2/select2.min.css')}}" rel="stylesheet" />
     <link rel="stylesheet" href="{{asset('assets/css/cropper.min.css')}}">
     <link rel="stylesheet" href="{{asset('assets/css/fileicons.css')}}">
     <link rel="stylesheet" href="{{asset('assets/css/filepicker.css')}}">
@@ -78,19 +77,14 @@
 @endsection
 
 @section('js')
-    <script src="{{asset('assets/api/select2/select2.min.js')}}"></script>
+
     <script src="{{asset('assets/js/filepicker.js')}}"></script>
     <script src="{{asset('assets/js//cropper.min.js')}}"></script>
     <script src="{{asset('assets/js/filepicker-ui.js')}}"></script>
     <script src="{{asset('assets/js/filepicker-crop.js')}}"></script>
     <script>
-        jQuery(document).ready(function() {
-            jQuery('.js-example-basic-single').select2({
-                dropdownPosition: 'below'
-            });
-		});
 
-          function expandTextarea(id) {
+        function expandTextarea(id) {
 			document.getElementById(id).addEventListener('keyup', function() {
 				this.style.overflow = 'hidden';
 				this.style.height = 0;

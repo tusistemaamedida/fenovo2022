@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Store
- * 
+ *
  * @property int $id
  * @property int $cod_fenovo
  * @property int|null $region_id
@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
+ *
  * @property Region|null $region
  * @property Store|null $store
  * @property Collection|Customer[] $customers
@@ -113,4 +113,12 @@ class Store extends Model
 	{
 		return $this->hasMany(UserLocal::class);
 	}
+
+    public function displayName(){
+        $display = '';
+        $display .= (is_null($this->razon_social))?'':$this->razon_social;
+        $display .= ($display != '' && !is_null($this->responsable) )?', '.$this->responsable:$this->responsable;
+
+        return $display;
+    }
 }

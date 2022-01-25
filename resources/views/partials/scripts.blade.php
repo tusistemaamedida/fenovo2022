@@ -4,7 +4,6 @@
 <script src="{{asset('assets/api/pace/pace.js')}}"></script>
 <script src="{{asset('assets/api/mcustomscrollbar/jquery.mCustomScrollbar.concat.min.js')}}"></script>
 
-
 <!-- DataTable / DataTable Buttons / DataTable Fixed Header / DataTable Moment -->
 
 <script src="{{asset('assets/api/datatable/jquery.dataTables.min.js')}}"></script>
@@ -28,6 +27,8 @@
 <script src="{{asset('assets/js/script.bundle.js')}}"></script>
 <script src="{{asset('assets/js/toastr.min.js')}}"></script>
 <script src="{{asset('assets/js/ymz_box.min.js')}}"></script>
+
+<script src="{{asset('assets/api/select2/select2.min.js')}}"></script>
 
 <script>
     jQuery.ajaxSetup({
