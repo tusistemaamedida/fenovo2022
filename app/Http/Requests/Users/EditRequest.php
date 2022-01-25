@@ -22,6 +22,7 @@ class EditRequest extends FormRequest
         return [
             'username' => 'required|unique:users,username,' . $this->user_id,
             'email' => 'required|email|unique:users,email,' . $this->user_id,
+            'password' => ['same:confirm-password'],
             'name' => 'required',
         ];
     }
@@ -34,6 +35,9 @@ class EditRequest extends FormRequest
             'email.unique'   => 'El email del usuario es requerido!',
             'email.required'   => 'El email ya existe!',
             'name.required'   => 'El nombre del usuario es requerido!',
+            'password.required' => 'El password es requerido ',
+            'password.same'     => 'Las claves no coinciden',
+            'password.min'      => 'El password debe contener al menos 8 caracteres',
         ];
     }
 }
