@@ -8,13 +8,20 @@ use Illuminate\Http\Request;
 
 use App\Repositories\CustomerRepository;
 use App\Repositories\StoreRepository;
+use App\Repositories\ProductRepository;
 
 class SalidasController extends Controller
 {
     private $customerRepository;
     private $storeRepository;
+    private $productRepository;
 
-    public function __construct(CustomerRepository $customerRepository, StoreRepository $storeRepository){
+    public function __construct(
+        CustomerRepository $customerRepository,
+        StoreRepository $storeRepository,
+        ProductRepository $productRepository
+    ){
+        $this->productRepository = $productRepository;
         $this->customerRepository   = $customerRepository;
         $this->storeRepository = $storeRepository;
     }
@@ -36,6 +43,22 @@ class SalidasController extends Controller
             $stores =  $this->storeRepository->search($term);
             foreach ($stores as $store) {
                 $valid_names[] = ['id' => $store->id, 'text' => $store->displayName()];
+            }
+        }
+
+        return \Response::json($valid_names);
+    }
+
+    public function searchProducts(Request $request){
+        $term = $request->term ?: '';
+        $valid_names = [];
+
+        $products = $this->productRepository->search($term);
+
+        foreach ($products as $product) {
+            $stock = $product->stock();
+            if($stock > 0){
+                $valid_names[] = ['id' => $product->id, 'text' => $product->name .' ['.$stock.' '. $product->unit_type.']'];
             }
         }
 

@@ -31,4 +31,15 @@ class ProductRepository extends BaseRepository {
     public function existCode($code_fenovo){
         return $this->newQuery()->where('cod_fenovo',$code_fenovo)->exists();
     }
+
+    public function search($term){
+        return $this->newQuery()->select('id','name','barcode','cod_fenovo','unit_type')
+                    ->where('active',true)
+                    ->where(function($query) use ($term){
+                        $query->orWhere('name','LIKE','%'.$term.'%')
+                              ->orWhere('barcode','LIKE','%'.$term.'%')
+                              ->orWhere('cod_fenovo','LIKE','%'.$term.'%');
+                    })
+                    ->get();
+    }
 }
