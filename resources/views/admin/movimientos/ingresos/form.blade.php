@@ -9,7 +9,7 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Tiendas</li>
+                <li class="breadcrumb-item active" aria-current="page">Ingresos</li>
             </ol>
         </nav>
     </div>
@@ -37,7 +37,7 @@
                                             @csrf
                                             <div class="row">
                                                 <div class="col-12">
-                                                    @include('admin.stores.form-details')
+                                                    @include('admin.movimientos.ingresos.form-details')
                                                 </div>
                                             </div>
                                         </form>
