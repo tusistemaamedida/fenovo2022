@@ -34,35 +34,38 @@
                         <input type="text" id="voucher_number" name="voucher_number" value="{{ $movement->voucher_number }}" class="form-control" required="true">
                     </div>
                     <div class="col-md-1 text-center">
-                        <label class="text-dark">&nbsp;</label>
-                        <fieldset class="form-group mb-3">
+                        <label class="text-dark">Anular</label>
+                        <fieldset class="form-group">
                             <form id="formData" action="{{ route('ingresos.destroy', ['id' => $movement->id])}}" method="POST">
                                 @csrf
                                 @method("DELETE")
-                                <button type="submit" title="Anular ingreso" class="btn btn-outline-danger btn-anular-ingreso"><i class="fa fa-trash"></i> </button>
+                                <button type="submit" title="Anular ingreso" class="btn btn-link btn-anular-ingreso">
+                                    <i class="fa fa-trash text-danger"></i>
+                                </button>
                             </form>
                         </fieldset>
                     </div>
                     <div class="col-md-1 text-center">
-                        <label class="text-dark">&nbsp;</label>
-                        <fieldset class="form-group mb-3">
-                            <button type="button" class="btn btn-primary btn-cerrar-ingreso"><i class="fa fa-lock"></i></button>
+                        <label class="text-dark">Finalizar</label>
+                        <fieldset class="form-group">
+                            <a href="{{ route('ingresos.index') }}" class="btn btn-link btn-cerrar-ingreso">
+                                <i class="fa fa-lock text-primary"></i>
+                            </a>
                         </fieldset>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-6">
-                        <form id="formProduct">
-                            <fieldset class="form-group mb-3">
-                                {{ Form::select('product_id', $productos, null, ['id'=>'product_id', 'class' => 'js-example-basic-single form-control bg-transparent', 'placeholder'=>'Seleccione productos ...']) }}
-                            </fieldset>
-                        </form>
-                    </div>
-                </div>
+                    <div class="col-4">
+                        <div class="row font-weight-bold">
+                            <div class="col-12"> Producto</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">{{ Form::select('product_id', $productos, null, ['id'=>'product_id', 'class' => 'js-example-basic-single form-control bg-transparent', 'placeholder'=>'Seleccione productos ...']) }}</div>
+                        </div>
 
-                <div class="row">
-                    <div class="col-lg-12 col-xl-12">
+                    </div>
+                    <div class="col-4">
                         <div id="dataTemp">
                             @include('admin.movimientos.ingresos.detalleTemp')
                         </div>
@@ -166,6 +169,7 @@
 
                 if (data['type'] == 'success') {
                     actualizarIngreso();
+                    jQuery('#btn-guardar-producto').addClass("d-none");
                 }
                 if (data['type'] !== 'success') {
                     toastr.error(data['msj'], 'Verifique');
@@ -186,6 +190,34 @@
                 }
             },
         });
+    }
+
+    const borrarDetalle = ( movement_id, product_id ) => {
+        const route = '{{ route('detalle-ingresos.destroy') }}';
+
+        ymz.jq_confirm({
+            title: 'Atención',
+            text: "Ud eliminará el producto y todas sus presentaciones ?",
+            no_btn: "Cancelar",
+            yes_btn: "Confirma",
+            no_fn: function () {
+                return false;
+            },
+            yes_fn: function () {
+                jQuery.ajax({
+                    url: route,
+                    type: 'POST',
+                    data: {movement_id, product_id},
+                    success: function (data) {
+                        if (data['type'] == 'success') {
+                            jQuery("#dataConfirm").html(data['html']);
+                            toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                            toastr.error("Eliminado ... ");
+                        }
+                    }
+                })
+            }
+        })
     }
 
 </script>

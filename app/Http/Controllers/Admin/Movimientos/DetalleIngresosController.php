@@ -46,4 +46,23 @@ class DetalleIngresosController extends Controller
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
+
+    public function destroy(Request $request)
+    {
+        try {
+            MovementProduct::where('movement_id', $request->movement_id)->where('product_id', $request->product_id)->delete();
+            $movimientos = MovementProduct::where('movement_id', $request->movement_id)->orderBy('id', 'desc')->get();
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.movimientos.ingresos.detalleConfirm', compact('movimientos'))->render(),
+            ]);
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.movimientos.ingresos.detalleTemp', compact('producto', 'presentaciones'))->render()
+
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
 }
