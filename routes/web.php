@@ -26,6 +26,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/utils.php';
         // Movimientos
         require __DIR__ . '/admin/movimientos/ingresos.php';
+        require __DIR__ . '/admin/movimientos/detalle-ingresos.php';
         require __DIR__ . '/admin/movimientos/salidas.php';
     });
 });

@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $movement_id
  * @property int|null $store_id
  * @property int|null $product_id
+ * @property string|null $unit_package
  * @property bool|null $invoice
  * @property float|null $entry
  * @property float|null $egress
@@ -45,6 +46,7 @@ class MovementProduct extends Model
 		'movement_id',
 		'store_id',
 		'product_id',
+		'unit_package',
 		'invoice',
 		'entry',
 		'egress',
