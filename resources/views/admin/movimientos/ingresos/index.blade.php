@@ -48,6 +48,8 @@
                                             <th>Fecha</th>
                                             <th>Tipo</th>
                                             <th>ComprobanteNro</th>
+                                            <th>Estado</th>
+                                            <th>Actualización</th>
                                             <th>Editar</th>
                                         </tr>
                                     </thead>
@@ -82,6 +84,8 @@
             {data: 'date'},
             {data: 'type'},
             {data: 'voucher_number'},
+            {data: 'status'},
+            {data: 'updated_at'},
             {data: 'edit', name: 'Editar', 'class':'text-center col-1', orderable: false, searchable: false},
         ]
     });

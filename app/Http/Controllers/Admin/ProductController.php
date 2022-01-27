@@ -13,6 +13,7 @@ use App\Repositories\ProducTypeRepository;
 use App\Repositories\ProveedorRepository;
 use App\Repositories\SenasaDefinitionRepository;
 use App\Http\Requests\Products\CalculatePrices;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
@@ -181,5 +182,18 @@ class ProductController extends Controller
     {
         $this->productRepository->update($request->id, ['active' => 0]);
         return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
+    }
+
+    public function getProductByProveedor(Request $request)
+    {
+        try {
+            $productos = $this->productRepository->getByProveedorIdPluck($request->id);
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.movimientos.ingresos.detalle', compact('productos'))->render()
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
     }
 }

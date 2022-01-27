@@ -54,4 +54,12 @@ class Proveedor extends Model
 	{
 		return $this->hasMany(Product::class);
 	}
+
+	public function displayName()
+	{
+		$display = '';
+		$display .= ($display != '' && !is_null($this->name)) ? ', ' . $this->name : $this->name;
+		$display .= ($display != '' && !is_null($this->responsable)) ? ', ' . $this->responsable : $this->responsable;
+		return $display;
+	}
 }
