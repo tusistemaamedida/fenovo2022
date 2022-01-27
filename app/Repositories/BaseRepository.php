@@ -32,5 +32,9 @@ abstract class BaseRepository {
         return $this->getModel()->create($data);
     }
 
+    public function all(){
+        return $this->getModel()->all();
+    }
+
 
 }

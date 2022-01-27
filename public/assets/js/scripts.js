@@ -32,6 +32,7 @@ const store = (route) => {
             jQuery('#loader').removeClass('hidden');
         },
         success: function (data) {
+            jQuery('#loader').addClass('hidden');
             if (data['type'] == 'success') {
                 closeModal();
                 toastr.info('Creado', 'Registro');
@@ -46,6 +47,7 @@ const store = (route) => {
             jQuery.each(data.errors, function (index, value) {
                 lista_errores += value + '<br />';
                 jQuery('#' + index).addClass('is-invalid');
+                jQuery('#'+ index).next().find('.select2-selection').addClass('is-invalid');
             });
             toastr.error(lista_errores, 'Verifique');
         },

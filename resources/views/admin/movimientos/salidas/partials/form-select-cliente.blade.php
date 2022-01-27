@@ -15,8 +15,7 @@
                 <div class="col-md-4">
                     <label  class="text-body">Cliente</label>
                     <fieldset class="form-group mb-3">
-                        <select class="js-example-basic-single js-states form-control bg-transparent" name="to" id="to">
-                        </select>
+                        <select class="js-example-basic-single js-states form-control bg-transparent" name="to" id="to"> </select>
                     </fieldset>
                 </div>
             </div>
