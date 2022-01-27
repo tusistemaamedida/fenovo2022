@@ -171,4 +171,11 @@ class Product extends Model
 	{
 		return $this->hasOne(ProductPrice::class);
 	}
+
+    public function stock(){
+        $stock = 0;
+        $movement_product = MovementProduct::where('product_id',$this->id)->latest()->first();
+        if($movement_product) $stock = (float) $movement_product->balance;
+        return $stock;
+    }
 }

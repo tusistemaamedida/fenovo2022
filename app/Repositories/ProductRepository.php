@@ -41,4 +41,15 @@ class ProductRepository extends BaseRepository
     {
         return Product::selectRaw('id, CONCAT(name," - ",cod_fenovo) as nombreCompleto')->where('proveedor_id', $proveedorId)->orderBy('name')->pluck('nombreCompleto', 'id');
     }
+
+    public function search($term){
+        return $this->newQuery()->select('id','name','barcode','cod_fenovo','unit_type')
+                    ->where('active',true)
+                    ->where(function($query) use ($term){
+                        $query->orWhere('name','LIKE','%'.$term.'%')
+                              ->orWhere('barcode','LIKE','%'.$term.'%')
+                              ->orWhere('cod_fenovo','LIKE','%'.$term.'%');
+                    })
+                    ->get();
+    }
 }
