@@ -31,4 +31,15 @@ class ProveedorRepository extends BaseRepository
     {
         return Proveedor::find($id);
     }
+
+    public function search($term)
+    {
+        return Proveedor::where('active', true)
+            ->where(function ($query) use ($term) {
+                $query->orWhere('cuit', 'LIKE', '%' . $term . '%')
+                    ->orWhere('responsable', 'LIKE', '%' . $term . '%')
+                    ->orWhere('name', 'LIKE', '%' . $term . '%');
+            })
+            ->get();
+    }
 }

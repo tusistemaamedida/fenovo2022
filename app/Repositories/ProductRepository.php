@@ -4,13 +4,16 @@ namespace App\Repositories;
 
 use App\Models\Product;
 
-class ProductRepository extends BaseRepository {
+class ProductRepository extends BaseRepository
+{
 
-    public function getModel(){
+    public function getModel()
+    {
         return new Product();
     }
 
-    protected function selectList(){
+    protected function selectList()
+    {
         return $this->newQuery()->with([
             'product_category',
             'proveedor',
@@ -22,14 +25,21 @@ class ProductRepository extends BaseRepository {
         ]);
     }
 
-    public function paginate($cant){
+    public function paginate($cant)
+    {
         return $this->selectList()
             ->orderBy('created_at', 'DESC')
             ->paginate($cant);
     }
 
-    public function existCode($code_fenovo){
-        return $this->newQuery()->where('cod_fenovo',$code_fenovo)->exists();
+    public function existCode($code_fenovo)
+    {
+        return $this->newQuery()->where('cod_fenovo', $code_fenovo)->exists();
+    }
+
+    public function getByProveedorIdPluck($proveedorId)
+    {
+        return Product::selectRaw('id, CONCAT(name," - ",cod_fenovo) as nombreCompleto')->where('proveedor_id', $proveedorId)->orderBy('name')->pluck('nombreCompleto', 'id');
     }
 
     public function search($term){

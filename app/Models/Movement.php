@@ -31,6 +31,8 @@ class Movement extends Model
 {
 	protected $table = 'movements';
 
+	public $timestamps = true;
+
 	protected $dates = [
 		'date'
 	];

@@ -25,7 +25,7 @@
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{ route('stores.add') }}" class="ml-2">
+                                    <a href="{{ route('ingresos.add') }}" class="ml-2">
                                         <span class="bg-secondary h-30px font-size-h5 w-30px d-flex align-items-center justify-content-center  rounded-circle shadow-sm ">
                                             <svg width="25px" height="25px" viewBox="0 0 16 16" class="bi bi-plus white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
@@ -45,10 +45,12 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Razon social</th>
-                                            <th>Cuit</th>
-                                            <th>Email</th>
-                                            @include('partials.table.head-action')
+                                            <th>Fecha</th>
+                                            <th>Tipo</th>
+                                            <th>ComprobanteNro</th>
+                                            <th>Estado</th>
+                                            <th>Actualización</th>
+                                            <th>Editar</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -76,13 +78,15 @@
         statesave:true,
         processing: true,
         serverSide: true,
-        ajax: "{{ route('stores.index') }}",
+        ajax: "{{ route('ingresos.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'razon_social'},
-            {data: 'cuit'},
-            {data: 'email'},
-            @include('partials.table.data-action')
+            {data: 'date'},
+            {data: 'type'},
+            {data: 'voucher_number'},
+            {data: 'status'},
+            {data: 'updated_at'},
+            {data: 'edit', name: 'Editar', 'class':'text-center col-1', orderable: false, searchable: false},
         ]
     });
 </script>
