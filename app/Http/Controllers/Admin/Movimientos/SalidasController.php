@@ -10,22 +10,26 @@ use Illuminate\Http\Request;
 use App\Repositories\CustomerRepository;
 use App\Repositories\StoreRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\SessionProductRepository;
 
 class SalidasController extends Controller
 {
     private $customerRepository;
     private $storeRepository;
     private $productRepository;
+    private $sessionProductRepository;
 
 
     public function __construct(
         CustomerRepository $customerRepository,
         StoreRepository $storeRepository,
-        ProductRepository $productRepository
+        ProductRepository $productRepository,
+        SessionProductRepository $sessionProductRepository
     ){
         $this->productRepository = $productRepository;
         $this->customerRepository   = $customerRepository;
         $this->storeRepository = $storeRepository;
+        $this->sessionProductRepository = $sessionProductRepository;
     }
 
     public function add()
@@ -67,5 +71,26 @@ class SalidasController extends Controller
         }
 
         return \Response::json($valid_names);
+    }
+
+    public function getSessionProducts(Request $request){
+        try {
+            $session_products = $this->sessionProductRepository->getByListId($request->input('list_id'));
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products'))->render()
+            ]);
+        } catch (\Exception $e) {
+            return \Response::json(['msj' => $e->getMessage(),'type' =>'error']);
+        }
+    }
+
+    public function deleteSessionProduct(Request $request){
+        try {
+            $session_products = $this->sessionProductRepository->delete($request->input('id'));
+            return new JsonResponse([ 'type' => 'success', 'msj' => 'ok']);
+        } catch (\Exception $e) {
+            return \Response::json(['msj' => $e->getMessage(),'type' =>'error']);
+        }
     }
 }

@@ -2,7 +2,7 @@
     <div class="card card-custom gutter-b bg-white border-0" >
         <div class="card-body">
             <div class="form-group row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label  class="text-body">Movimiento</label>
                     <fieldset class="form-group mb-3">
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="to_type" id="to_type">
@@ -12,10 +12,16 @@
                         </select>
                     </fieldset>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label  class="text-body">Cliente</label>
                     <fieldset class="form-group mb-3">
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="to" id="to"> </select>
+                    </fieldset>
+                </div>
+                <div class="col-md-4">
+                    <label  class="text-body">Seleccionar producto</label>
+                    <fieldset class="form-group mb-3 d-flex">
+                        <select class="js-example-basic-single js-states form-control bg-transparent" name="product_search" id="product_search"> </select>
                     </fieldset>
                 </div>
             </div>

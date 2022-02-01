@@ -132,7 +132,7 @@ const destroy = (id, route) => {
                 success: function (data) {
                     table.ajax.reload();
                     toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                    toastr.error("Eliminado ... ");
+                    toastr.success("Eliminado ... ");
                 }
             });
         }

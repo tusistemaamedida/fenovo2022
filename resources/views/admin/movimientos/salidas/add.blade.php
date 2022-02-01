@@ -23,7 +23,12 @@
                     <div class="card card-custom gutter-b bg-white border-0" >
                         <div class="card-body">
                             @include('admin.movimientos.salidas.partials.form-select-product')
-                            @include('admin.movimientos.salidas.partials.form-table-products')
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table-responsive"  id="session_products_table">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -144,6 +149,62 @@
             },
         }
     });
+
+    jQuery('#to').change(function(){
+        cargarTablaProductos();
+    });
+
+    function deleteItemSession(id,route){
+        ymz.jq_confirm({
+        title: 'Eliminar',
+        text: "confirma borrar registro ?",
+        no_btn: "Cancelar",
+        yes_btn: "Confirma",
+        no_fn: function () {
+            return false;
+        },
+        yes_fn: function () {
+            jQuery.ajax({
+                url: route,
+                type: 'POST',
+                dataType: 'json',
+                data: { id: id },
+                success: function (data) {
+                    toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                    toastr.success("Eliminado ... ");
+                    setTimeout(() => {
+                        cargarTablaProductos();
+                    }, 500);
+                }
+            });
+        }
+    });
+    }
+
+    function cargarTablaProductos(){
+        var to_type = jQuery("#to_type").val();
+        var to = jQuery("#to").val();
+        var list_id = to_type+'_'+to;
+        var formData =  {list_id};
+        var url ="{{ route('get.session.products') }}";
+        jQuery.ajax({
+            url:url,
+            type:'GET',
+            data:formData,
+            beforeSend: function() {
+                jQuery('#loader').removeClass('hidden');
+                jQuery("#session_products_table").html('')
+            },
+            success:function(data){
+                jQuery("#session_products_table").html(data['html'])
+            },
+            error: function (data) {
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
+            }
+        });
+    }
 
 </script>
 @endsection
