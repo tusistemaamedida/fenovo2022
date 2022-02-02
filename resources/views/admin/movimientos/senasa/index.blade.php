@@ -46,6 +46,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Habilitacion nro</th>
+                                            <th>Vincular</th>
                                             <th>Patente nro</th>
                                             <th>Precintos</th>
                                             <th>Editar</th>
@@ -82,9 +83,10 @@
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'habilitacion_nro'},
+            {data: 'vincular', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'patente_nro'},
             {data: 'precintos'},
-            {data: 'edit'},
+            {data: 'edit', 'class':'text-center col-1', orderable: false, searchable: false},
         ]
     });
 </script>

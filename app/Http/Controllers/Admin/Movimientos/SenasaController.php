@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
+use App\Models\Movement;
 use App\Models\Senasa;
 use App\Repositories\SenasaRepository;
 use Illuminate\Http\JsonResponse;
@@ -27,11 +28,14 @@ class SenasaController extends Controller
                 ->editColumn('updated_at', function ($senasa) {
                     return date('Y-m-d H:i:s', strtotime($senasa->updated_at));
                 })
+                ->addColumn('vincular', function ($senasa) {
+                    return '<a href="' . route('senasa.vincular', ['id' => $senasa->id]) . '"> <i class="fa fa-link"></i> </a>';
+                })
                 ->addColumn('edit', function ($senasa) {
                     $ruta = 'edit(' . $senasa->id . ",'" . route('senasa.edit') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
-                ->rawColumns(['edit'])
+                ->rawColumns(['edit', 'vincular'])
                 ->make(true);
         }
         return view('admin.movimientos.senasa.index');
@@ -89,5 +93,24 @@ class SenasaController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
+    }
+
+    public function vincular(Request $request)
+    {
+        $senasa    = Senasa::find($request->id);
+        $movements = Movement::where('TYPE', '!=', 'COMPRA')->orderBy('id', 'desc')->limit(100)->get();
+        return view('admin.movimientos.senasa.vincular', compact('senasa', 'movements'));
+    }
+
+    public function vincularStore(Request $request)
+    {
+        $senasa = Senasa::find($request->id);
+        $senasa->movements()->sync($request->get('movements'));
+        $notification = [
+            'message'    => 'Relacion actualizada !',
+            'alert-type' => 'warning',
+        ];
+
+        return redirect()->route('senasa.index')->with($notification);
     }
 }

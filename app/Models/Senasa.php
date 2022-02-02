@@ -26,7 +26,7 @@ class Senasa extends Model
         'precintos',
     ];
 
-    public function movement()
+    public function movements()
     {
         return $this->belongsToMany(Movement::class);
     }
