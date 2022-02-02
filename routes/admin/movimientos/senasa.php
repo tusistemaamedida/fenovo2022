@@ -10,3 +10,6 @@ Route::post('senasa/store', [SenasaController::class, 'store'])->name('senasa.st
 Route::get('senasa/edit', [SenasaController::class, 'edit'])->name('senasa.edit');
 Route::post('senasa/update', [SenasaController::class, 'update'])->name('senasa.update');
 Route::delete('senasa/destroy', [SenasaController::class, 'destroy'])->name('senasa.destroy');
+
+Route::get('senasa/vincular', [SenasaController::class, 'vincular'])->name('senasa.vincular');
+Route::post('senasa/vincular-store', [SenasaController::class, 'vincularStore'])->name('senasa.vincularStore');
