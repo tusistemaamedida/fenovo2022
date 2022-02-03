@@ -2,12 +2,10 @@
 
 use App\Http\Controllers\Admin\FilepickerController;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'preventBackHistory'], function () {
-
     Route::get('/', function () {
         return view('auth.login');
     });
@@ -26,11 +24,11 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/utils.php';
         // Movimientos
         require __DIR__ . '/admin/movimientos/ingresos.php';
-        require __DIR__ . '/admin/movimientos/detalle-ingresos.php';
         require __DIR__ . '/admin/movimientos/salidas.php';
+        require __DIR__ . '/admin/movimientos/senasa.php';
     });
 });
 
 Route::group(['namespace' => 'Admin', 'middleware' => ['auth']], function () {
-    Route::any('filepicker', [FilepickerController::class, 'handle'])->name('filepicker');;
+    Route::any('filepicker', [FilepickerController::class, 'handle'])->name('filepicker');
 });

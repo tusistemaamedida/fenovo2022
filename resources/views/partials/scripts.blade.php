@@ -19,6 +19,7 @@
 <script src="{{asset('assets/api/datatable/buttons.print.min.js')}}"></script>
 <script src="{{asset('assets/api/datatable/buttons.html5.min.js')}}"></script>
 <script src="{{asset('assets/api/datatable/dataTables.fixedHeader.min.js')}}"></script>
+<script src="{{asset('assets/api/datatable/dataTables.rowGroup.min.js')}}"></script>
 <script src="{{asset('assets/api/datatable/moment.min.js')}}"></script>
 <script src="{{asset('assets/api/datatable/datetime.js')}}"></script>
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Movimientos\DetalleIngresosController;
 use App\Http\Controllers\Admin\Movimientos\IngresosController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,3 +14,8 @@ Route::delete('ingresos/destroy', [IngresosController::class, 'destroy'])->name(
 
 Route::get('ingresos/movimentos', [IngresosController::class, 'getMovements'])->name('get.movements.ingreso');
 Route::get('ingresos/proveedores', [IngresosController::class, 'getProveedorIngreso'])->name('get.proveedor.ingreso');
+
+// Detalle ingresos
+Route::post('detalle-ingresos/store', [DetalleIngresosController::class, 'store'])->name('detalle-ingresos.store');
+Route::post('detalle-ingresos/check', [DetalleIngresosController::class, 'check'])->name('detalle-ingresos.check');
+Route::post('detalle-ingresos/destroy', [DetalleIngresosController::class, 'destroy'])->name('detalle-ingresos.destroy');
