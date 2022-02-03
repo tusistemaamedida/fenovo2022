@@ -88,16 +88,6 @@
     <script src="{{asset('assets/js/filepicker-crop.js')}}"></script>
     <script>
 
-        function expandTextarea(id) {
-			document.getElementById(id).addEventListener('keyup', function() {
-				this.style.overflow = 'hidden';
-				this.style.height = 0;
-				this.style.height = this.scrollHeight + 'px';
-			}, false);
-		}
-
-		expandTextarea('txtarea');
-
         jQuery("#plistproveedor").keyup(function(){
             calculatePrices()
         });

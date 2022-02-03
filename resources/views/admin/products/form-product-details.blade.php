@@ -46,7 +46,7 @@
 
             <div class="col-md-12 mb-3">
                 <label  class="text-body">Descripción pública (web)</label>
-                <textarea type="text" name="description" rows="8" id="txtarea" class="autoexpand-textarea form-control"></textarea>
+                <textarea type="text" name="description" rows="4" id="txtarea" class="autoexpand-textarea form-control"></textarea>
             </div>
 
             <div class="col-md-6">
@@ -117,21 +117,21 @@
             <div class="col-md-3">
                 <label  class="text-body">Stock sem. min *</label>
                 <fieldset class="form-group mb-3">
-                    <input type="number" class="form-control border-dark" name="stock_sem_min" id="stock_sem_min">
+                    <input type="number" class="form-control border-dark" name="stock_sem_min" id="stock_sem_min" value="2">
                 </fieldset>
             </div>
 
             <div class="col-md-3">
                 <label  class="text-body">Stock sem. max. *</label>
                 <fieldset class="form-group mb-3">
-                    <input type="number" class="form-control border-dark" name="stock_sem_max" id="stock_sem_max">
+                    <input type="number" class="form-control border-dark" name="stock_sem_max" id="stock_sem_max" value="2">
                 </fieldset>
             </div>
 
             <div class="col-md-6">
                 <label  class="text-body">Stock mínimo en freezer. *</label>
                 <fieldset class="form-group mb-3">
-                    <input type="number" class="form-control border-dark" name="stock_min" id="stock_min">
+                    <input type="number" class="form-control border-dark" name="stock_min" id="stock_min" value="100">
                 </fieldset>
             </div>
 
@@ -236,10 +236,9 @@
             </div>
 
             <div class="col-md-3">
-                <label  class="text-body">Agrupación</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="senasa_id" >
-                        <option value="">Seleccione una opción</option>
+                        <option value="">Seleccione una Agrupación</option>
                         @foreach ($senasaDefinitions as $senasaDefinition)
                             <option value="{{$senasaDefinition->id}}">{{$senasaDefinition->product_name}}</option>
                         @endforeach

@@ -52,4 +52,8 @@ class ProductRepository extends BaseRepository
                     })
                     ->get();
     }
+
+    public function getByIdWith($id){
+        return $this->selectList()->where('id', $id)->first();
+    }
 }
