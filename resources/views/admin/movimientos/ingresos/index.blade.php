@@ -46,10 +46,11 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Fecha</th>
+                                            <th>Origen</th>
                                             <th>Tipo</th>
                                             <th>ComprobanteNro</th>
                                             <th>Estado</th>
-                                            <th>Actualización</th>
+                                            <th>Registro</th>
                                             <th>Editar</th>
                                         </tr>
                                     </thead>
@@ -75,18 +76,21 @@
         lengthMenu      : [[10, 25, 50, -1], [10, 25, 50, "Todos"]],        
         dom: '<"row"<"col-sm-6"B><"col-sm-6"fl>>tr<"bottom"<"row"<"col-sm-6"i><"col-sm-6"p>>><"clear">',  
         buttons: [{ extend: 'copy', text: 'copiar'},{ extend: 'excel', text: 'xls' },{ extend: 'pdf', text: 'pdf' },],
+        sorting:false,
+        bSort:false,
         statesave:true,
         processing: true,
         serverSide: true,
         ajax: "{{ route('ingresos.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
             {data: 'date'},
+            {data: 'origen'},
             {data: 'type'},
-            {data: 'voucher_number'},
+            {data: 'voucher_number',  'class':'text-center'},
             {data: 'status'},
             {data: 'updated_at'},
-            {data: 'edit', name: 'Editar', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'edit', name: 'Editar', 'class':'text-center', searchable: false},
         ]
     });
 </script>

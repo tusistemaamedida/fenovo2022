@@ -34,16 +34,7 @@
                         <input type="text" id="voucher_number" name="voucher_number" value="{{ $movement->voucher_number }}" class="form-control" required="true">
                     </div>
                     <div class="col-md-1 text-center">
-                        <label class="text-dark">Anular</label>
-                        <fieldset class="form-group">
-                            <form id="formData" action="{{ route('ingresos.destroy', ['id' => $movement->id])}}" method="POST">
-                                @csrf
-                                @method("DELETE")
-                                <button type="submit" title="Anular ingreso" class="btn btn-link btn-anular-ingreso">
-                                    <i class="fa fa-trash text-danger"></i>
-                                </button>
-                            </form>
-                        </fieldset>
+
                     </div>
                     <div class="col-md-1 text-center">
                         <label class="text-dark">Finalizar</label>
@@ -65,7 +56,7 @@
                         </div>
 
                     </div>
-                    <div class="col-4">
+                    <div class="col-8">
                         <div id="dataTemp">
                             @include('admin.movimientos.ingresos.detalleTemp')
                         </div>
@@ -132,7 +123,10 @@
         }
     }
 
-    const guardarItem = (product_id) => {
+    const guardarItem = (product_id, peso_unitario) => {
+
+        jQuery('#loader').removeClass('hidden');
+
         const movement_id = jQuery("#movement_id").val();
         const store_id = 1;
         let arrMovimientos = [];
@@ -141,10 +135,10 @@
             if(isNaN(parseFloat(jQuery(this).val()))){
                 valido = false;
             }else{                       
-                let unit_package = jQuery(this).attr("id");
+                let unit_package = parseFloat(jQuery(this).attr("id"));
                 let valor = parseFloat(jQuery(this).val());
                 let presentacion = parseFloat(jQuery(this).attr("id"));
-                let entry = valor*presentacion;
+                let entry = (valor*presentacion)*peso_unitario;
                 let egress= 0;
                 let balance=0;
                 if(entry > 0){
@@ -153,13 +147,14 @@
                     Movi.store_id= store_id;
                     Movi.product_id= product_id;
                     Movi.unit_package = unit_package;
+                    Movi.bultos = valor;
                     Movi.entry = entry;
                     Movi.balance = 0;
                     Movi.egress  = 0;
                     arrMovimientos.push(Movi);
                 }
             }
-        });  
+        }); 
                 
         jQuery.ajax({
             url: '{{ route('detalle-ingresos.store') }}',
@@ -176,6 +171,8 @@
                 }
             }
         })
+
+        jQuery('#loader').addClass('hidden');
     }
     
     const actualizarIngreso = ()=>{
