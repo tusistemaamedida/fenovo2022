@@ -85,7 +85,7 @@
                 </fieldset>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <label  class="text-body">Unidad de medida *</label>
                 <select class="js-example-basic-single js-states form-control bg-transparent" name="unit_type" id="unit_type">
                     <option value="K">Pesable</option>
@@ -93,7 +93,7 @@
                 </select>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <label  class="text-body">Peso por unidad *</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="text" class="form-control border-dark" name="unit_weight" id="unit_weight">
@@ -103,7 +103,7 @@
                 </fieldset>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <label  class="text-body">Unidad x bulto *</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="unit_package" id="unit_package" multiple="multiple" >
@@ -113,17 +113,6 @@
                     </select>
                 </fieldset>
             </div>
-
-            <div class="col-md-3">
-                <label  class="text-body">Peso bulto neto *</label>
-                <fieldset class="input-group form-group mb-3">
-                    <input type="number" class="form-control border-dark" name="net_weight" id="net_weight">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Kg.</span>
-                    </div>
-                </fieldset>
-            </div>
-
 
             <div class="col-md-3">
                 <label  class="text-body">Stock sem. min *</label>
