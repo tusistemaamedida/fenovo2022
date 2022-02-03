@@ -104,14 +104,18 @@ class ProductController extends Controller
 
     public function edit(Request $request){
         try {
-            $product = $this->productTypeRepository->getByIdWith('name', 'ASC');
+            $product = $this->productRepository->getByIdWith($request->id);
             $alicuotas = $this->alicuotaTypeRepository->get('value', 'DESC');
             $senasaDefinitions = $this->senasaDefinitionRepository->get('product_name', 'DESC');
             $categories = $this->productCategoryRepository->getActives('name', 'ASC');
             $types = $this->productTypeRepository->getActives('name', 'ASC');
             $proveedores = $this->proveedorRepository->getActives('name', 'ASC');
             if($product) return view('admin.products.edit', compact('alicuotas', 'categories', 'types', 'proveedores', 'senasaDefinitions','product'));
-            return redirect()->back()->with();
+            $notification = [
+                'message'    => 'El producto no existe !',
+                'alert-type' => 'error',
+            ];
+            return redirect()->route('products.list')->with($notification);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
