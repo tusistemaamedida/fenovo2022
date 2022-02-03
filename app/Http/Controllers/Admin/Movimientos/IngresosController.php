@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-
 use App\Models\Movement;
 use App\Models\MovementProduct;
-use App\Models\Proveedor;
-use App\Repositories\ProveedorRepository;
-use App\Repositories\ProductRepository;
 
-use Yajra\DataTables\Facades\DataTables;
+use App\Models\Proveedor;
+use App\Repositories\ProductRepository;
+use App\Repositories\ProveedorRepository;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class IngresosController extends Controller
 {
@@ -22,7 +22,7 @@ class IngresosController extends Controller
     public function __construct(ProveedorRepository $proveedorRepository, ProductRepository $productRepository)
     {
         $this->proveedorRepository = $proveedorRepository;
-        $this->productRepository = $productRepository;
+        $this->productRepository   = $productRepository;
     }
 
     public function index(Request $request)
@@ -31,11 +31,14 @@ class IngresosController extends Controller
             $movement = Movement::all()->sortByDesc('created_at');
             return Datatables::of($movement)
                 ->addIndexColumn()
+                ->addColumn('origen', function ($movement) {
+                    return $movement->origenData($movement->type);
+                })
                 ->editColumn('date', function ($movement) {
-                    return date("Y-m-d", strtotime($movement->date));
+                    return date('Y-m-d', strtotime($movement->date));
                 })
                 ->editColumn('type', function ($movement) {
-                    return ($movement->type);
+                    return $movement->type;
                 })
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
@@ -43,7 +46,7 @@ class IngresosController extends Controller
                 ->addColumn('edit', function ($movement) {
                     return '<a class="dropdown-item" href="' . route('ingresos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-edit"></i> </a>';
                 })
-                ->rawColumns(['date', 'type', 'edit'])
+                ->rawColumns(['origen', 'date', 'type', 'edit'])
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.index');
@@ -63,9 +66,9 @@ class IngresosController extends Controller
 
     public function edit(Request $request)
     {
-        $movement = Movement::find($request->id);
-        $productos = $this->productRepository->getByProveedorIdPluck($movement->from);
-        $proveedor = Proveedor::find($movement->from);
+        $movement    = Movement::find($request->id);
+        $productos   = $this->productRepository->getByProveedorIdPluck($movement->from);
+        $proveedor   = Proveedor::find($movement->from);
         $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'desc')->get();
         return view('admin.movimientos.ingresos.edit', compact('movement', 'proveedor', 'productos', 'movimientos'));
     }
@@ -93,10 +96,10 @@ class IngresosController extends Controller
 
     public function getProveedorIngreso(Request $request)
     {
-        $term = $request->term ?: '';
+        $term        = $request->term ?: '';
         $valid_names = [];
 
-        $proveedors =  $this->proveedorRepository->search($term);
+        $proveedors = $this->proveedorRepository->search($term);
         foreach ($proveedors as $proveedor) {
             $valid_names[] = ['id' => $proveedor->id, 'text' => $proveedor->displayName()];
         }
