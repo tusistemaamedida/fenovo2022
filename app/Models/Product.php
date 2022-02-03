@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $cod_fenovo
  * @property string|null $name
  * @property string|null $description
- * @property string|null $presentation
  * @property string|null $barcode
  * @property string|null $cod_cuenta_compra
  * @property string|null $cod_cuenta_venta
@@ -25,8 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $unit_type
  * @property float|null $unit_amount
  * @property float|null $unit_weight
- * @property float|null $net_weight
- * @property float|null $gross_weight
+ * @property float|null $porcentaje_bruto
  * @property float|null $stock_min
  * @property int|null $stock_actual
  * @property int|null $stock_sem_min
@@ -34,7 +32,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property float|null $hight
  * @property float|null $width
  * @property float|null $long
- * @property string|null $type_package
  * @property string|null $unit_package
  * @property int $package_palet
  * @property int $package_row
@@ -72,8 +69,7 @@ class Product extends Model
 		'cod_fenovo' => 'int',
 		'unit_amount' => 'float',
 		'unit_weight' => 'float',
-		'net_weight' => 'float',
-		'gross_weight' => 'float',
+		'porcentaje_bruto' => 'float',
 		'stock_min' => 'float',
 		'stock_actual' => 'int',
 		'stock_sem_min' => 'int',
@@ -108,8 +104,7 @@ class Product extends Model
 		'unit_type',
 		'unit_amount',
 		'unit_weight',
-		'net_weight',
-		'gross_weight',
+		'porcentaje_bruto',
 		'stock_min',
 		'stock_actual',
 		'stock_sem_min',
