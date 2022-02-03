@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('css')
+<style>
+    .table tbody tr td{
+        color: #1a3353;
+    font-weight: 500;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -19,86 +25,12 @@
 
                 @include('admin.movimientos.salidas.partials.form-select-cliente')
 
-                <div class="col-lg-12 col-xl-12">
-                    <div class="card card-custom gutter-b bg-white border-0" >
-                        <div class="card-body">
-                            @include('admin.movimientos.salidas.partials.form-select-product')
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="table-responsive"  id="session_products_table">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-12 col-xl-12">
-                    <div class="card card-custom gutter-b bg-white border-0" >
-                        <div class="card-body">
-                            <div class="row justify-content-end">
-                                <div class="col-12 col-md-3">
-                                <div>
-                                    <table class="table right-table mb-0">
-
-                                        <tbody>
-                                            <tr class="d-flex align-items-center justify-content-between">
-                                            <th class="border-0 font-size-h5 mb-0 font-size-bold text-dark">
-                                                    Subtotal
-                                            </th>
-                                            <td class="border-0 justify-content-end d-flex text-black-50 font-size-base">$750</td>
-
-                                            </tr>
-                                            <tr class="d-flex align-items-center justify-content-between">
-                                            <th class="border-0 font-size-h5 mb-0 font-size-bold text-dark">
-                                                    Discount(20%)
-                                            </th>
-                                            <td class="border-0 justify-content-end d-flex text-black-50 font-size-base">$900</td>
-
-                                            </tr>
-                                            <tr class="d-flex align-items-center justify-content-between">
-                                            <th class="border-0 font-size-h5 mb-0 font-size-bold text-dark">
-                                                Tax
-                                            </th>
-                                            <td class="border-0 justify-content-end d-flex text-black-50 font-size-base">10%</td>
-
-                                            </tr>
-                                            <tr class="d-flex align-items-center justify-content-between">
-                                                <th class="border-0 font-size-h5 mb-0 font-size-bold text-dark">
-
-                                                    Shipping Cost
-                                                </th>
-                                                <td class="border-0 justify-content-end d-flex text-black-50 font-size-base">100</td>
-
-                                            </tr>
-                                            <tr class="d-flex align-items-center justify-content-between">
-                                                <th class="border-0 font-size-h5 mb-0 font-size-bold text-dark">
-
-                                                    Coupon Code
-                                                </th>
-                                                <td class="border-0 justify-content-end d-flex text-black-50 font-size-base">20%</td>
-
-                                            </tr>
-                                            <tr class="d-flex align-items-center justify-content-between item-price">
-                                            <th class="border-0 font-size-h5 mb-0 font-size-bold text-dark" >
-                                                    TOTAL
-
-                                            </th>
-                                            <td class="border-0 justify-content-end d-flex text-dark font-size-base">$8100</td>
-
-                                            </tr>
-
-                                        </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <b style="width: 100%" id="session_products_table"></b>
             </div>
         </div>
+    </div>
+
+    @include('admin.movimientos.salidas.partials.modal-product-details')
 @endsection
 
 @section('js')
@@ -148,6 +80,42 @@
                 };
             },
         }
+    });
+
+    jQuery('#product_search').change(function(){
+        var elements = document.querySelectorAll('.is-invalid');
+        var id = jQuery("#product_search").val();
+        if(id != ''){
+            jQuery.ajax({
+                url: "{{route('get.presentaciones')}}",
+                type: 'GET',
+                data: { id },
+                beforeSend: function () {
+                    jQuery('#loader').removeClass('hidden');
+                },
+                success: function (data) {
+                    if (data['type'] == 'success') {
+                        jQuery("#insertByAjax").html(data['html']);
+                        jQuery('.editpopup').addClass('offcanvas-on');
+                    } else if(data['type'] != 'clear') {
+                        toastr.error(data['msj'], 'Verifique');
+                    }
+
+                    jQuery('#loader').addClass('hidden');
+                },
+                complete: function () {
+                    jQuery('#loader').addClass('hidden');
+                }
+            });
+        }
+    });
+
+    jQuery('#product_search').on('select2:open', function () {
+        closeModal()
+    });
+
+    jQuery('#close_modal_presentaciones').on('click', function () {
+        jQuery('#product_search').val(null).trigger('change');
     });
 
     jQuery('#to').change(function(){

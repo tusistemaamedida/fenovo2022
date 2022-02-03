@@ -60,14 +60,21 @@ class SalidasController extends Controller
     public function searchProducts(Request $request){
         $term = $request->term ?: '';
         $valid_names = [];
-
         $products = $this->productRepository->search($term);
 
         foreach ($products as $product) {
+            $disabled = '';
+            $text_no_stock = '';
             $stock = $product->stock();
-            if($stock > 0){
-                $valid_names[] = ['id' => $product->id, 'text' => $product->name .' ['.$stock.' '. $product->unit_type.']'];
+            if(!$stock){
+                $disabled = 'disabled';
+                $text_no_stock = ' -- SIN STOCK --';
             }
+
+            $valid_names[] = [
+                'id' => $product->id,
+                'text' => $product->name .' ['.$stock.' '. $product->unit_type.']'.$text_no_stock,
+                'disabled' => $disabled  ];
         }
 
         return \Response::json($valid_names);
@@ -88,6 +95,39 @@ class SalidasController extends Controller
     public function deleteSessionProduct(Request $request){
         try {
             $session_products = $this->sessionProductRepository->delete($request->input('id'));
+            return new JsonResponse([ 'type' => 'success', 'msj' => 'ok']);
+        } catch (\Exception $e) {
+            return \Response::json(['msj' => $e->getMessage(),'type' =>'error']);
+        }
+    }
+
+    public function getPresentaciones(Request $request){
+        try {
+            if($request->has('id') && $request->input('id') != ''){
+                $product = $this->productRepository->getById($request->input('id'));
+                if($product){
+                    $stock = $product->stock();
+                    $presentaciones = explode(',',$product->unit_package);
+                    return new JsonResponse([
+                        'type' => 'success',
+                        'html' => view('admin.movimientos.salidas.partials.inserByAjax', compact('stock','product','presentaciones'))->render()
+                    ]);
+                }
+                return \Response::json(['msj' => 'El producto no existe','type' =>'error']);
+            }
+            return \Response::json(['msj' => 'Limpiando...','type' =>'clear']);
+        } catch (\Exception $e) {
+            return \Response::json(['msj' => $e->getMessage(),'type' =>'error']);
+        }
+    }
+
+    public function storeSessionProduct(Request $request){
+        try {
+            $to = $request->input('to');
+            $quantity = $request->input('quantity');
+            if(!$to) return \Response::json(['msj' => 'Ingrese el cliente o tienda según corresponda.','type' =>'error','index' => 'to']);
+            if(!$quantity || $quantity == 0) return \Response::json(['msj' => 'Ingrese una cantidad.','type' =>'error','index' => 'quantity']);
+            dd($request->all());
             return new JsonResponse([ 'type' => 'success', 'msj' => 'ok']);
         } catch (\Exception $e) {
             return \Response::json(['msj' => $e->getMessage(),'type' =>'error']);

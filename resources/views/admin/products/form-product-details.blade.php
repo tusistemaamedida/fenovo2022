@@ -104,45 +104,9 @@
             </div>
 
             <div class="col-md-3">
-                <label  class="text-body">Stock sem. min *</label>
-                <fieldset class="form-group mb-3">
-                    <input type="number" class="form-control border-dark" name="stock_sem_min" id="stock_sem_min">
-                </fieldset>
-            </div>
-
-            <div class="col-md-3">
-                <label  class="text-body">Stock sem. max. *</label>
-                <fieldset class="form-group mb-3">
-                    <input type="number" class="form-control border-dark" name="stock_sem_max" id="stock_sem_max">
-                </fieldset>
-            </div>
-
-            <div class="col-md-6">
-                <label  class="text-body">Presentación</label>
-                <textarea type="text" name="presentation" id="presentation" class="form-control" ></textarea>
-            </div>
-
-            <div class="col-md-6">
-                <label  class="text-body">Stock mínimo en freezer. *</label>
-                <fieldset class="form-group mb-3">
-                    <input type="number" class="form-control border-dark" name="stock_min" id="stock_min">
-                </fieldset>
-            </div>
-
-            <div class="col-md-3">
-                <label  class="text-body">Tipo de bulto *</label>
-                <fieldset class="form-group mb-3">
-                    <select class="js-example-basic-single js-states form-control bg-transparent" name="type_package" id="type_package">
-                        <option value="1">Caja</option>
-                        <option value="2">Bolsa</option>
-                    </select>
-                </fieldset>
-            </div>
-
-            <div class="col-md-3">
                 <label  class="text-body">Unidad x bulto *</label>
                 <fieldset class="form-group mb-3">
-                    <select class="js-example-basic-single js-states form-control bg-transparent" name="type_package" id="type_package" multiple="multiple" >
+                    <select class="js-example-basic-single js-states form-control bg-transparent" name="unit_package" id="unit_package" multiple="multiple" >
                         @for ($i = 1; $i < 101; $i++)
                             <option value="{{$i}}">{{$i}}</option>
                         @endfor
@@ -160,13 +124,25 @@
                 </fieldset>
             </div>
 
+
             <div class="col-md-3">
-                <label  class="text-body">Peso bulto bruto</label>
-                <fieldset class="input-group form-group mb-3">
-                    <input type="number" class="form-control border-dark" name="gross_weight" id="gross_weight">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Kg.</span>
-                    </div>
+                <label  class="text-body">Stock sem. min *</label>
+                <fieldset class="form-group mb-3">
+                    <input type="number" class="form-control border-dark" name="stock_sem_min" id="stock_sem_min">
+                </fieldset>
+            </div>
+
+            <div class="col-md-3">
+                <label  class="text-body">Stock sem. max. *</label>
+                <fieldset class="form-group mb-3">
+                    <input type="number" class="form-control border-dark" name="stock_sem_max" id="stock_sem_max">
+                </fieldset>
+            </div>
+
+            <div class="col-md-6">
+                <label  class="text-body">Stock mínimo en freezer. *</label>
+                <fieldset class="form-group mb-3">
+                    <input type="number" class="form-control border-dark" name="stock_min" id="stock_min">
                 </fieldset>
             </div>
 
