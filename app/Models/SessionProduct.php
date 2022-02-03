@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class SessionProduct
- * 
+ *
  * @property int $id
  * @property string $list_id
  * @property int|null $store_id
@@ -68,4 +68,8 @@ class SessionProduct extends Model
 		'net_weight',
 		'gross_weight'
 	];
+
+    public function producto(){
+        return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
 }

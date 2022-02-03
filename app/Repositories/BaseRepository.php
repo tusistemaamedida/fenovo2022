@@ -32,5 +32,12 @@ abstract class BaseRepository {
         return $this->getModel()->create($data);
     }
 
+    public function all(){
+        return $this->getModel()->all();
+    }
+
+    public function getById($id){
+        return $this->newQuery()->where('id' ,$id)->first();
+    }
 
 }

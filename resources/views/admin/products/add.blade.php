@@ -52,7 +52,8 @@
                                 </li>
                             </ul>
                             <div class="row">
-                                <form style="width: 100%;margin-top: 15px;">
+                                <form style="width: 100%;margin-top: 15px;" method="POST" action="{{route('product.store')}}" id="formData">
+                                    @csrf
                                     <div class="col-12">
                                         <div class="tab-content" id="v-pills-tabContent1">
                                             <div class="tab-pane fade show active" id="detalle" role="tabpanel" aria-labelledby="home-tab-basic">
@@ -65,6 +66,9 @@
                                                 @include('admin.products.form-product-images')
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-12" style="float: right">
+                                        <button type="button" class="btn btn-primary btn-guardar" onclick="store('{{ route('product.store') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
                                     </div>
                                 </form>
                             </div>
@@ -215,9 +219,9 @@
                 },
                 success:function(data){
                     if(data['type'] == 'success'){
-                        jQuery("#costfenovo").val(data['costFenovo']);
-                        jQuery("#plist0neto").val(data['plist0Neto']);
-                        jQuery("#plist0iva").val(data['plist0Iva']);
+                        jQuery("#costfenovo").val(data['costfenovo']);
+                        jQuery("#plist0neto").val(data['plist0neto']);
+                        jQuery("#plist0iva").val(data['plist0iva']);
                         jQuery("#plist1").val(data['plist1']);
                         jQuery("#comlista1").val(data['comlista1']);
                         jQuery("#plist2").val(data['plist2']);
@@ -228,6 +232,8 @@
                         jQuery("#mup2").val(data['mup2']);
                         jQuery("#p2may").val(data['p2may']);
                         jQuery("#mupp2may").val(data['mupp2may']);
+                    }else{
+                        toastr.error(data['msj'],'ERROR!');
                     }
                     jQuery(spanId).html('')
                 },
@@ -238,13 +244,7 @@
                         lista_errores+=value+'<br />';
                         jQuery('#'+index).addClass('is-invalid');
                     });
-                    Swal.fire({
-                        title: "Error!",
-                        html: lista_errores,
-                        type: "error",
-                        confirmButtonClass: "btn btn-primary",
-                        buttonsStyling: !1
-                    }) ;
+                    toastr.error(lista_errores,'ERROR!');
                 },
                 complete: function () {
                     jQuery(spanId).html('')

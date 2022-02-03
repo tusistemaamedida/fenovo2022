@@ -83,17 +83,24 @@
 @section('js')
 
 <script>
-    jQuery(document).ready( function () {
-        jQuery('#productTable').dataTable( {
-        "pagingType": "simple_numbers",
-
-        "columnDefs": [ {
-          "targets"  : 'no-sort',
-          "orderable": false,
-        }]
+    var table = jQuery('.yajra-datatable').DataTable({
+        lengthMenu      : [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+        dom: '<"row"<"col-sm-6"B><"col-sm-6"fl>>tr<"bottom"<"row"<"col-sm-6"i><"col-sm-6"p>>><"clear">',
+        buttons: [{ extend: 'copy', text: 'copiar'},{ extend: 'excel', text: 'xls' },{ extend: 'pdf', text: 'pdf' },],
+        statesave:true,
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('products.list') }}",
+        columns: [
+            {data: 'cod_fenovo', 'class':'text-center col-1'},
+            {data: 'name'},
+            {data: 'costo'},
+            {data: 'precios_fenovo'},
+            {data: 'precios_tiendas'},
+            {data: 'proveedor'},
+            {data: 'acciones'}
+        ]
     });
-    });
-
 </script>
 
 @endsection
