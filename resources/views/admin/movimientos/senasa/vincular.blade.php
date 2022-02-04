@@ -19,30 +19,51 @@
 
         {!! Form::hidden('id', $senasa->id) !!}
 
-        <div class="row mb-5">
+        <div class="row">
             <div class="col-12">
-                <table class=" table text-center">
-                    <tr class=" bg-primary">
-                        <td class="col-1"> Habilitación nro </td>
-                        <td class="col-1"> Patente </td>
-                        <td class="col-1"> Precintos </td>
-                        <td class="col-1"> </td>
+                <table class=" table">
+                    <tr>
+                        <th class="w-25">
+                            <h4> Nro habilitación </h4>
+                        </th>
+                        <th>
+                            <h4> {{ $senasa->habilitacion_nro }} </h4>
+                        </th>
                     </tr>
                     <tr>
-                        <th> {{ $senasa->habilitacion_nro }} </th>
-                        <th> {{ $senasa->patente_nro }} </th>
-                        <th> {{ $senasa->precintos }} </th>
-                        <th> {!! Form::submit('actualizar', ['class' => 'link']) !!} </th>
+                        <th>
+                            Patente
+                        </th>
+                        <th>
+                            {{ $senasa->patente_nro }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            Precintos
+                        </th>
+                        <th>
+                            {{ $senasa->precintos }}
+                        </th>
                     </tr>
                 </table>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row text-center mt-4">
+            <div class="col-9">
+
+            </div>
+            <div class="col-3">
+                {!! Form::submit('actualizar', ['class' => 'link']) !!}
+            </div>
+        </div>
+
+        <div class="row mt-5">
             <div class="col-12">
-                <table class=" table table-hover table-striped  table-dark text-center">
+                <table class=" table table-hover table-striped table-light text-center">
                     <thead>
-                        <tr>
+                        <tr class=" bg-light-dark">
                             <td class="col-1">
                                 Fecha
                             </td>

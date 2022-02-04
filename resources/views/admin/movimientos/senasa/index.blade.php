@@ -49,6 +49,7 @@
                                             <th>Patente nro</th>
                                             <th>Precintos</th>
                                             <th>Vincular</th>
+                                            <th>Imprimir</th>
                                             <th>Editar</th>
                                         </tr>
                                     </thead>
@@ -87,6 +88,7 @@
             {data: 'patente_nro'},
             {data: 'precintos'},
             {data: 'vincular', 'class':'text-center', searchable: false},
+            {data: 'print', 'class':'text-center', searchable: false},
             {data: 'edit', 'class':'text-center', searchable: false},
         ]
     });

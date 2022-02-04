@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\Senasa;
 use App\Repositories\SenasaRepository;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -31,11 +32,14 @@ class SenasaController extends Controller
                 ->addColumn('vincular', function ($senasa) {
                     return '<a href="' . route('senasa.vincular', ['id' => $senasa->id]) . '"> <i class="fa fa-link"></i> </a>';
                 })
+                ->addColumn('print', function ($senasa) {
+                    return '<a href="' . route('senasa.print', ['id' => $senasa->id]) . '"> <i class="fa fa-print"></i> </a>';
+                })
                 ->addColumn('edit', function ($senasa) {
                     $ruta = 'edit(' . $senasa->id . ",'" . route('senasa.edit') . "')";
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
-                ->rawColumns(['edit', 'vincular'])
+                ->rawColumns(['print', 'edit', 'vincular'])
                 ->make(true);
         }
         return view('admin.movimientos.senasa.index');
@@ -112,5 +116,12 @@ class SenasaController extends Controller
         ];
 
         return redirect()->route('senasa.index')->with($notification);
+    }
+
+    public function print(Request $request)
+    {
+        $senasa = Senasa::find($request->id);
+        $pdf    = PDF::loadView('admin.movimientos.senasa.print-salida', compact('senasa'));
+        return $pdf->stream('senasa.pdf');
     }
 }
