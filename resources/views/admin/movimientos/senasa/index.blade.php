@@ -44,10 +44,10 @@
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
-                                            <th>Habilitacion nro</th>
-                                            <th>Patente nro</th>
+                                            <th>Patente</th>
+                                            <th>Habilitacion</th>
                                             <th>Precintos</th>
+                                            <th>Destino</th>
                                             <th>Vincular</th>
                                             <th>Imprimir</th>
                                             <th>Editar</th>
@@ -83,10 +83,10 @@
         serverSide: true,
         ajax: "{{ route('senasa.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
-            {data: 'habilitacion_nro'},
             {data: 'patente_nro'},
+            {data: 'habilitacion_nro'},
             {data: 'precintos'},
+            {data: 'destino'},
             {data: 'vincular', 'class':'text-center', searchable: false},
             {data: 'print', 'class':'text-center', searchable: false},
             {data: 'edit', 'class':'text-center', searchable: false},

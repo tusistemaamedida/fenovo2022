@@ -121,7 +121,7 @@ class SenasaController extends Controller
     public function print(Request $request)
     {
         $senasa = Senasa::find($request->id);
-        $pdf    = PDF::loadView('admin.movimientos.senasa.print-salida', compact('senasa'));
+        $pdf    = PDF::loadView('admin.movimientos.senasa.detalle-salida', compact('senasa'));
         return $pdf->stream('senasa.pdf');
     }
 }

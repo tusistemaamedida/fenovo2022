@@ -59,10 +59,26 @@
                                     </span>
                                     @enderror
                                 </div>
-
                             </div>
 
-                            <div class="form-group row align-items-center justify-content-between">
+
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-3">
+                                    <div id="g-recaptcha" style="transform:scale(0.85);transform-origin:0 0">
+                                        {!! htmlFormSnippet() !!}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row mt-1 mb-3">
+                                <div class="col-12">
+                                    @if($errors->has('g-recaptcha-response'))
+                                    <span class=" text-primary">{{ $errors->first('g-recaptcha-response') }}</span>
+                                    @endif
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row mt-5 align-items-center justify-content-between">
                                 <div class="col-6">
                                     <div class="form-check pl-4">
                                         <label class="form-check-label text-dark" for="exampleCheck1">
