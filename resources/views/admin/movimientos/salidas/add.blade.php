@@ -31,6 +31,7 @@
     </div>
 
     @include('admin.movimientos.salidas.partials.modal-product-details')
+    @include('admin.movimientos.salidas.partials.open-close-salida')
 @endsection
 
 @section('js')
@@ -111,11 +112,8 @@
     });
 
     jQuery('#product_search').on('select2:open', function () {
-        closeModal()
-    });
-
-    jQuery('#close_modal_presentaciones').on('click', function () {
-        jQuery('#product_search').val(null).trigger('change');
+        document.getElementById("unidades_a_enviar").reset();
+        jQuery('.editpopup').removeClass('offcanvas-on');
     });
 
     jQuery('#to').change(function(){
@@ -164,7 +162,9 @@
                 jQuery("#session_products_table").html('')
             },
             success:function(data){
-                jQuery("#session_products_table").html(data['html'])
+                jQuery("#session_products_table").html(data['html']);
+                jQuery("#btnOpenCerrarSalida").attr('disabled',false);
+                jQuery("#session_list_id").val(list_id);
             },
             error: function (data) {
             },
@@ -174,5 +174,101 @@
         });
     }
 
+</script>
+
+<script>
+    function verif(pres){
+        const max = parseInt(jQuery("#unidades_"+pres).attr("max"));
+        const value = parseInt(jQuery("#unidades_"+pres).val());
+        if(value > max){
+            toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
+            jQuery("#unidades_"+pres).val(max);
+            jQuery("#unidades_"+pres).focus();
+        };
+    }
+
+    jQuery("#sessionProductstore").click(function(e){
+        e.preventDefault();
+        guardarProductoEnSession()
+    })
+    function guardarProductoEnSession(){
+        var to_type = jQuery("#to_type").val();
+        var product_id = jQuery("#product_search").val();
+        var to = jQuery("#to").val();
+        var list_id = to_type+'_'+to;
+        var unidades = jQuery("#unidades_a_enviar").serializeArray();
+        var formData =  {list_id, product_id, unidades, to,to_type};
+        var url ="{{ route('store.session.product') }}";
+        var elements = document.querySelectorAll('.is-invalid');
+        jQuery.ajax({
+            url:url,
+            type:'POST',
+            data:formData,
+            beforeSend: function() {
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].classList.remove('is-invalid');
+                }
+                jQuery('#loader').removeClass('hidden');
+            },
+            success:function(data){
+                if (data['type'] == 'success') {
+                    document.getElementById("unidades_a_enviar").reset();
+                    jQuery('.editpopup').removeClass('offcanvas-on');
+                    cargarTablaProductos()
+                } else{
+                    jQuery('#' + data['index']).addClass('is-invalid');
+                    jQuery('#'+  data['index']).next().find('.select2-selection').addClass('is-invalid');
+                    toastr.error(data['msj'], 'Verifique');
+                }
+                jQuery('#product_search').val(null).trigger('change')
+                jQuery('#loader').addClass('hidden');
+            },
+            error: function (data) {
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
+            }
+        });
+    }
+
+    jQuery('#close_modal_presentaciones').on('click', function () {
+        document.getElementById("unidades_a_enviar").reset();
+        jQuery('.editpopup').removeClass('offcanvas-on');
+        jQuery('#product_search').val(null).trigger('change');
+    });
+
+    jQuery("#btnOpenCerrarSalida").click(function(e){
+        e.preventDefault();
+        jQuery('#closeSalida').addClass('offcanvas-on');
+    })
+    jQuery('#close_modal_salida').on('click', function () {
+        jQuery('#closeSalida').removeClass('offcanvas-on');
+    });
+
+    jQuery("#btnCloseSalida").click(function(){
+        jQuery('#loader').removeClass('hidden');
+    })
+
+    function changeInvoice(list_id,product_id){
+        jQuery.ajax({
+            url:"{{route('change.invoice.product')}}",
+            type:'POST',
+            data:{list_id,product_id},
+            beforeSend: function() {
+                jQuery('#loader').removeClass('hidden');
+            },
+            success:function(data){
+                if (data['type'] != 'success') {
+                    toastr.error(data['msj'], 'Verifique');
+                }
+                jQuery('#loader').addClass('hidden');
+            },
+            error: function (data) {
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
+            }
+        });
+    }
 </script>
 @endsection

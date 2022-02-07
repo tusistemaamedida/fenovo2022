@@ -25,11 +25,9 @@ class AddProduct extends FormRequest
             'proveedor_id'=> 'required',
             'unit_type'=> 'required',
             'unit_weight'=> 'required|numeric',
-            'type_package'=> 'required',
             'stock_sem_min'=> 'required|numeric',
             'stock_sem_max'=> 'required|numeric',
             'stock_min'=> 'required|numeric',
-            'net_weight'=> 'required|numeric',
             'plistproveedor'=> 'required|numeric',
         ];
     }

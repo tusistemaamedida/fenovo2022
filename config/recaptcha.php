@@ -17,7 +17,7 @@ return [
     'api_secret_key'               => env('RECAPTCHA_SECRET_KEY', '6LdxcnUUAAAAADI2DkqCkGZ1WAp4y8zzG9S2y-Ow'),
     'version'                      => 'v2',
     'curl_timeout'                 => 10,
-    'skip_ip'                      => [],
+    'skip_ip'                      => ['127.0.0.1'],
     'default_validation_route'     => 'biscolab-recaptcha/validate',
     'default_token_parameter_name' => 'token',
     'default_language'             => null,

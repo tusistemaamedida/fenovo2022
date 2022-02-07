@@ -13,4 +13,6 @@ Route::get('search-products', [SalidasController::class, 'searchProducts'])->nam
 Route::get('session-products-by-list-id', [SalidasController::class, 'getSessionProducts'])->name('get.session.products');
 Route::post('delete-session-product', [SalidasController::class, 'deleteSessionProduct'])->name('delete.item.session.produc');
 Route::post('store-session-product', [SalidasController::class, 'storeSessionProduct'])->name('store.session.product');
+Route::post('guardar-salida', [SalidasController::class, 'storeSalida'])->name('guardar.salida');
+Route::post('cambiar-facturacion', [SalidasController::class, 'changeInvoiceProduct'])->name('change.invoice.product');
 Route::get('get-presentaciones', [SalidasController::class, 'getPresentaciones'])->name('get.presentaciones');
