@@ -8,7 +8,7 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Ingreso de mercadería</li>
+                <li class="breadcrumb-item active" aria-current="page">Salida de mercadería</li>
             </ol>
         </nav>
     </div>
@@ -31,7 +31,7 @@
                         </fieldset>
                     </div>
                     <div class="col-md-4">
-                        <label class="text-body">Origen</label>
+                        <label class="text-body">Destino</label>
                         <fieldset class="form-group mb-3">
                             <strong>{{ $movement->origenData($movement->type) }}</strong>
                         </fieldset>
@@ -56,7 +56,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-xl-12">
                             <div id="dataConfirm">
-                                @include('admin.movimientos.ingresos.detalleShow')
+                                @include('admin.movimientos.salidas.detalleShow')
                             </div>
                         </div>
                     </div>

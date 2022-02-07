@@ -27,7 +27,8 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $movement = Movement::all()->sortByDesc('created_at');
+            $arrTypes = ['COMPRA'];
+            $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
             return Datatables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('origen', function ($movement) {

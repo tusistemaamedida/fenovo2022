@@ -4,7 +4,10 @@ use App\Http\Controllers\Admin\Movimientos\SalidasController;
 use Illuminate\Support\Facades\Route;
 
 // Salidas get.presentaciones
+
+Route::get('salidas', [SalidasController::class, 'index'])->name('salidas.index');
 Route::get('salidas/add', [SalidasController::class, 'add'])->name('salidas.add');
+Route::get('salidas/show', [SalidasController::class, 'show'])->name('salidas.show');
 Route::get('clientes/salidas', [SalidasController::class, 'getClienteSalida'])->name('get.cliente.salida');
 Route::get('search-products', [SalidasController::class, 'searchProducts'])->name('search.products');
 Route::get('session-products-by-list-id', [SalidasController::class, 'getSessionProducts'])->name('get.session.products');

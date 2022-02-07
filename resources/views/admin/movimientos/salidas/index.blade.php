@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Ingresos</li>
+                <li class="breadcrumb-item active" aria-current="page">Salidas</li>
             </ol>
         </nav>
     </div>
@@ -25,8 +25,8 @@
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{ route('stores.add') }}" class="ml-2">
-                                        <span class="bg-secondary h-30px font-size-h5 w-30px d-flex align-items-center justify-content-center  rounded-circle shadow-sm ">
+                                    <a href="{{ route('salidas.add') }}" class="ml-2">
+                                        <span class="bg-primary h-30px font-size-h5 w-30px d-flex align-items-center justify-content-center  rounded-circle shadow-sm ">
                                             <svg width="25px" height="25px" viewBox="0 0 16 16" class="bi bi-plus white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                             </svg>
@@ -45,10 +45,12 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Razon social</th>
-                                            <th>Cuit</th>
-                                            <th>Email</th>
-                                            @include('partials.table.head-action')
+                                            <th>Fecha</th>
+                                            <th>Origen</th>
+                                            <th>Tipo</th>
+                                            <th>Comprobante Nro</th>
+                                            <th>Registro</th>
+                                            <th>Detalle</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -70,19 +72,16 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        lengthMenu      : [[10, 25, 50, -1], [10, 25, 50, "Todos"]],        
-        dom: '<"row"<"col-sm-6"B><"col-sm-6"fl>>tr<"bottom"<"row"<"col-sm-6"i><"col-sm-6"p>>><"clear">',  
-        buttons: [{ extend: 'copy', text: 'copiar'},{ extend: 'excel', text: 'xls' },{ extend: 'pdf', text: 'pdf' },],
-        statesave:true,
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('stores.index') }}",
+        @include('partials.table.dom-button'),
+        ajax: "{{ route('salidas.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'razon_social'},
-            {data: 'cuit'},
-            {data: 'email'},
-            @include('partials.table.data-action')
+            {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
+            {data: 'date'},
+            {data: 'origen'},
+            {data: 'type'},
+            {data: 'voucher_number',  'class':'text-center'},
+            {data: 'updated_at'},
+            {data: 'edit', name: 'Editar', 'class':'text-center', searchable: false},
         ]
     });
 </script>
