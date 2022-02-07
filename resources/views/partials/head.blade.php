@@ -16,4 +16,7 @@
 	<link rel="stylesheet" type="text/css" href="{{asset('assets/css/toastr.min.css')}}">
 	<link href="{{asset('assets/api/select2/select2.min.css')}}" rel="stylesheet" />
 	<link rel="stylesheet" href="{{asset('assets/css/loading.css')}}">
+
+	{!! htmlScriptTagJsApi() !!}
+
 </head>

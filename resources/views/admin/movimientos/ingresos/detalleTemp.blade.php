@@ -17,7 +17,7 @@
     <div class="col-3"> <span class=" text-danger">Total </span></div>
     <div class="col-3"> <input type="number" class="form-control total text-center bg-transparent disabled" value="" readonly> </div>
     <div class="col-3"> {{ $producto->unit_type }} </div>
-    <div class="col-3"> <button id="btn-guardar-producto" onclick="guardarItem({{ $producto->id }})" class="d-none btn btn-sm btn-primary rounded-pill"> Guardar </button> </div>
+    <div class="col-3"> <button id="btn-guardar-producto" onclick="guardarItem('{{ $producto->id }}', '{{ $producto->unit_weight }}')" class="btn-link btn-outline-primary rounded-pill"> Guardar <i class=" fa fa-save text-primary"></i> </button> </div>
 </div>
 <div class="row">
     <div class="col-12">

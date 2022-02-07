@@ -44,11 +44,12 @@
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
-                                            <th>Habilitacion nro</th>
-                                            <th>Vincular</th>
-                                            <th>Patente nro</th>
+                                            <th>Patente</th>
+                                            <th>Habilitacion</th>
                                             <th>Precintos</th>
+                                            <th>Destino</th>
+                                            <th>Vincular</th>
+                                            <th>Imprimir</th>
                                             <th>Editar</th>
                                         </tr>
                                     </thead>
@@ -76,17 +77,19 @@
         lengthMenu      : [[10, 25, 50, -1], [10, 25, 50, "Todos"]],        
         dom: '<"row"<"col-sm-6"B><"col-sm-6"fl>>tr<"bottom"<"row"<"col-sm-6"i><"col-sm-6"p>>><"clear">',  
         buttons: [{ extend: 'copy', text: 'copiar'},{ extend: 'excel', text: 'xls' },{ extend: 'pdf', text: 'pdf' },],
+        bSort : false,
         statesave:true,
         processing: true,
         serverSide: true,
         ajax: "{{ route('senasa.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'habilitacion_nro'},
-            {data: 'vincular', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'patente_nro'},
+            {data: 'habilitacion_nro'},
             {data: 'precintos'},
-            {data: 'edit', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'destino'},
+            {data: 'vincular', 'class':'text-center', searchable: false},
+            {data: 'print', 'class':'text-center', searchable: false},
+            {data: 'edit', 'class':'text-center', searchable: false},
         ]
     });
 </script>
