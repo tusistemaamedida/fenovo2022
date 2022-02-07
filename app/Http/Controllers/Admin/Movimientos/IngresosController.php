@@ -12,7 +12,6 @@ use App\Repositories\ProveedorRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class IngresosController extends Controller
@@ -28,7 +27,8 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $movement = Movement::all()->sortByDesc('created_at');
+            $arrTypes = ['COMPRA'];
+            $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
             return Datatables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('origen', function ($movement) {
@@ -44,7 +44,7 @@ class IngresosController extends Controller
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
                 })
                 ->addColumn('edit', function ($movement) {
-                    return '<a class="dropdown-item" href="' . route('ingresos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-edit"></i> </a>';
+                    return '<a class="dropdown-item" href="' . route('ingresos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
                 })
                 ->rawColumns(['origen', 'date', 'type', 'edit'])
                 ->make(true);
@@ -73,11 +73,18 @@ class IngresosController extends Controller
         return view('admin.movimientos.ingresos.edit', compact('movement', 'proveedor', 'productos', 'movimientos'));
     }
 
+    public function show(Request $request)
+    {
+        $movement    = Movement::find($request->id);
+        $proveedor   = Proveedor::find($movement->from);
+        $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'desc')->get();
+        return view('admin.movimientos.ingresos.show', compact('movement', 'proveedor', 'movimientos'));
+    }
+
     public function destroy(Request $request)
     {
-        //DB::table('movements')->where('id', $request->id)->update(['status' => 'CANCELED']);
-        Movement::where('id', $request->id)->update(['status' => 'CANCELED']);
-        return redirect()->route('ingresos.index');
+        Movement::find($request->id)->delete();
+        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
     }
 
     public function getMovements(Request $request)

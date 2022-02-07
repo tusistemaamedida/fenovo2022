@@ -9,8 +9,9 @@ Route::get('ingresos', [IngresosController::class, 'index'])->name('ingresos.ind
 Route::get('ingresos/add', [IngresosController::class, 'add'])->name('ingresos.add');
 Route::post('ingresos/store', [IngresosController::class, 'store'])->name('ingresos.store');
 Route::get('ingresos/edit', [IngresosController::class, 'edit'])->name('ingresos.edit');
+Route::get('ingresos/show', [IngresosController::class, 'show'])->name('ingresos.show');
 Route::post('ingresos/update', [IngresosController::class, 'update'])->name('ingresos.update');
-Route::delete('ingresos/destroy', [IngresosController::class, 'destroy'])->name('ingresos.destroy');
+Route::post('ingresos/destroy', [IngresosController::class, 'destroy'])->name('ingresos.destroy');
 
 Route::get('ingresos/movimentos', [IngresosController::class, 'getMovements'])->name('get.movements.ingreso');
 Route::get('ingresos/proveedores', [IngresosController::class, 'getProveedorIngreso'])->name('get.proveedor.ingreso');

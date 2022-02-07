@@ -47,7 +47,7 @@
                 </div>
 
                 <div class="dropdown-menu dropdown-menu-right" style="min-width: 150px;">
-                    <a href="#" class="dropdown-item">
+                    <a href="{{ route('users.editProfile') }}" class="dropdown-item">
                         <span class="svg-icon svg-icon-xl svg-icon-primary mr-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
