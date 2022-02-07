@@ -64,22 +64,21 @@
 
                             <div class="form-group row">
                                 <div class="col-lg-2 col-3">
+                                </div>
+                                <div class="col-lg-10 col-9 pl-0">
                                     <div id="g-recaptcha" style="transform:scale(0.85);transform-origin:0 0">
                                         {!! htmlFormSnippet() !!}
+                                        @if($errors->has('g-recaptcha-response'))
+                                        <span class=" text-primary">{{ $errors->first('g-recaptcha-response') }}</span>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group row mt-1 mb-3">
-                                <div class="col-12">
-                                    @if($errors->has('g-recaptcha-response'))
-                                    <span class=" text-primary">{{ $errors->first('g-recaptcha-response') }}</span>
-                                    @endif
+
+                            <div class="form-group row mt-1 mb-4 align-items-center justify-content-between">
+                                <div class="col-lg-2 col-3">
                                 </div>
-                            </div>
-
-
-                            <div class="form-group row mt-5 align-items-center justify-content-between">
-                                <div class="col-6">
+                                <div class="col-lg-10 col-9 pl-0">
                                     <div class="form-check pl-4">
                                         <label class="form-check-label text-dark" for="exampleCheck1">
                                             <input type="checkbox" class="form-check-input ml--4" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
