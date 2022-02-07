@@ -7,6 +7,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 
+use App\Models\Movement;
+use App\Models\MovementProduct;
+
 use App\Repositories\CustomerRepository;
 use App\Repositories\StoreRepository;
 use App\Repositories\ProductRepository;
@@ -106,11 +109,32 @@ class SalidasController extends Controller
             if($request->has('id') && $request->input('id') != ''){
                 $product = $this->productRepository->getById($request->input('id'));
                 if($product){
-                    $stock = $product->stock();
+                    $stock_presentaciones = [];
                     $presentaciones = explode(',',$product->unit_package);
+
+                    for ($i=0; $i < count($presentaciones); $i++) {
+                        $bultos = 0; $bultos_en_session = 0;
+                        $presentacion = $presentaciones[$i];
+                        $stock_en_session = $this->sessionProductRepository->getCantidadTotalDeBultos($product->id,$presentacion);
+
+                        $stock = $product->stock($presentacion);
+                        $stock_presentaciones[$i]['presentacion'] = $presentacion;
+                        $stock_presentaciones[$i]['stock'] = $stock;
+                        // los bultos que hay disponibles se calcula dividiendo el balance por el peso del bulto
+                        $peso_por_bulto = $product->unit_weight * $presentacion;
+
+                        if($stock){
+                            $bultos = $stock / $peso_por_bulto;
+                        }
+                        if($stock_en_session){
+                            $bultos -=  $stock_en_session;
+                        }
+                        $stock_presentaciones[$i]['bultos'] = $bultos;
+                    }
                     return new JsonResponse([
                         'type' => 'success',
-                        'html' => view('admin.movimientos.salidas.partials.inserByAjax', compact('stock','product','presentaciones'))->render()
+                        'html' => view('admin.movimientos.salidas.partials.inserByAjax',
+                                  compact('stock_presentaciones','product','presentaciones'))->render()
                     ]);
                 }
                 return \Response::json(['msj' => 'El producto no existe','type' =>'error']);
@@ -123,12 +147,107 @@ class SalidasController extends Controller
 
     public function storeSessionProduct(Request $request){
         try {
+            $count_unidades_cero = 0;
             $to = $request->input('to');
-            $quantity = $request->input('quantity');
+            $to_type = $request->input('to_type');
+            $unidades = $request->input('unidades');
+            $product_id = $request->input('product_id');
+
             if(!$to) return \Response::json(['msj' => 'Ingrese el cliente o tienda según corresponda.','type' =>'error','index' => 'to']);
-            if(!$quantity || $quantity == 0) return \Response::json(['msj' => 'Ingrese una cantidad.','type' =>'error','index' => 'quantity']);
-            dd($request->all());
+            if(!$unidades || count($unidades) == 0) return \Response::json(['msj' => 'Ingrese una cantidad a enviar.','type' =>'error','index' => 'quantity']);
+            for ($i=0; $i < count($unidades); $i++) {
+                $unidad = $unidades[$i];
+                if($unidad['value'] == 0 || $unidad['value'] == '0') $count_unidades_cero++;
+            }
+            if(count($unidades) == $count_unidades_cero)  return \Response::json(['msj' => 'Ingrese una cantidad a enviar.','type' =>'error','index' => 'quantity']);
+            $insert_data = [];
+            $product = $this->productRepository->getByIdWith($product_id);
+            switch ($to_type) {
+                case 'VENTA':
+                    $insert_data['unit_price'] = $product->product_price->plist0;
+                    $insert_data['tasiva'] = $product->product_price->tasiva;
+                    break;
+                case 'TRASLADO':
+                    $insert_data['unit_price'] = 0;
+                    $insert_data['tasiva'] = 0;
+                    break;
+                case 'VENTACLIENTE':
+                    $customer = $this->customerRepository->getById($to);
+                    $listAssociates = [
+                        'L0' => $product->product_price->plist0,
+                        'L1' => $product->product_price->plist1,
+                        'L2' => $product->product_price->plist2,
+                    ];
+                    $insert_data['unit_price'] = $listAssociates[$customer->listprice_associate];
+                    $insert_data['tasiva'] = $product->product_price->tasiva;
+                    break;
+            }
+
+            $insert_data['list_id'] = $to_type."_".$to;
+            $insert_data['store_id'] = 1;
+            $insert_data['invoice'] = true;
+            $insert_data['product_id'] = $product_id;
+            for ($i=0; $i < count($unidades); $i++) {
+                $unidad = $unidades[$i];
+                $quantity = (float)$unidad['value'];
+                if($quantity > 0){
+                    $explode = explode('_',$unidad['name']);
+                    $insert_data['unit_package'] = (int)$explode[1];
+                    $stock_en_session = $this->sessionProductRepository->getCantidadTotalDeBultos($product_id,$insert_data['unit_package']);
+                    $insert_data['quantity'] = $quantity + $stock_en_session;
+                    $this->sessionProductRepository->updateOrCreate($insert_data);
+                }
+            }
             return new JsonResponse([ 'type' => 'success', 'msj' => 'ok']);
+        } catch (\Exception $e) {
+            return \Response::json(['msj' => $e->getMessage(),'type' =>'error']);
+        }
+    }
+
+    public function storeSalida(Request $request){
+        try {
+            $list_id = $request->input('session_list_id');
+            $explode = explode('_',$list_id);
+            $insert_data['type'] = $explode[0];
+            $insert_data['to'] = $explode[1];
+            $insert_data['date'] = now();
+            $insert_data['from'] = 1;
+            $insert_data['voucher_number'] = $request->input('voucher_number');
+
+            $movement = Movement::create($insert_data);
+            $session_products = $this->sessionProductRepository->getByListId($list_id);
+            foreach ($session_products as $product) {
+                $latest = MovementProduct::all()
+                    ->where('store_id', 1)
+                    ->where('product_id', $product->product_id)
+                    ->where('unit_package', $product->unit_package)
+                    ->sortByDesc('id')->first();
+
+                $balance = ($latest) ? $latest->balance - $product->quantity : 0;
+                MovementProduct::firstOrCreate([
+                    'store_id' => 1,
+                    'movement_id' => $movement->id,
+                    'product_id' => $product->product_id,
+                    'unit_package' => $product->unit_package], [
+                        'invoice' => $product->invoice,
+                        'entry' => 0,
+                        'egress' => $product->quantity,
+                        'balance' => $balance
+                    ]);
+            }
+
+            return redirect()->route('salidas.add');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error'=> $e->getMessage()])->withInput();
+        }
+    }
+
+    public function changeInvoiceProduct(Request $request){
+        try{
+            $session_product = $this->sessionProductRepository->getByListIdAndProduct($request->input('list_id'),$request->input('product_id'));
+            $session_product->invoice = !$session_product->invoice;
+            $session_product->save();
+            return \Response::json(['msj' => 'Facturación cambiada','type' =>'success']);
         } catch (\Exception $e) {
             return \Response::json(['msj' => $e->getMessage(),'type' =>'error']);
         }

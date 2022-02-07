@@ -13,7 +13,7 @@
                     </fieldset>
                 </div>
                 <div class="col-md-3">
-                    <label  class="text-body">Cliente</label>
+                    <label  class="text-body">Cliente/Tienda</label>
                     <fieldset class="form-group mb-3">
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="to" id="to"> </select>
                     </fieldset>
@@ -23,6 +23,10 @@
                     <fieldset class="form-group mb-3 d-flex">
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="product_search" id="product_search"> </select>
                     </fieldset>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn  btn-danger" id="btnOpenCerrarSalida" disabled style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
+                        <i class="fa fa-times"></i> Cerrar Salida</button>
                 </div>
             </div>
         </div>
