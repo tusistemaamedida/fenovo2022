@@ -51,7 +51,7 @@
                                             <th>ComprobanteNro</th>
                                             <th>Estado</th>
                                             <th>Registro</th>
-                                            <th>Editar</th>
+                                            <th>Ver</th>
                                         </tr>
                                     </thead>
                                     <tbody>

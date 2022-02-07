@@ -18,7 +18,6 @@
         <div class="card gutter-b bg-white border-0">
             <div class="card-body">
                 <div class="row">
-                    <input type="hidden" name="movement_id" id="movement_id" value={{ $movement->id }} />
                     <div class="col-md-4">
                         <label class="text-body">Fecha</label>
                         <input type="text" name="date" value="{{ date('d-m-Y',strtotime($movement->date)) }}" class="form-control datepicker mb-3" readonly>
@@ -34,61 +33,33 @@
                         <input type="text" id="voucher_number" name="voucher_number" value="{{ $movement->voucher_number }}" class="form-control" required="true">
                     </div>
                     <div class="col-md-1 text-center">
-                        <label class="text-dark">Anular</label>
-                        <fieldset class="form-group">
-                            <a href="javascript:void(0)" onclick="destroy_local('{{ $movement->id}}', '{{ route('ingresos.destroy') }}')" class="btn btn-link">
-                                <i class="fa fa-trash text-danger"></i>
-                            </a>
-                        </fieldset>
+
                     </div>
                     <div class="col-md-1 text-center">
-                        <label class="text-dark">Finalizar</label>
-                        <fieldset class="form-group">
-                            <a href="javascript:void(0)" class="btn btn-link btn-cerrar-ingreso">
-                                <i class="fa fa-lock text-primary"></i>
-                            </a>
-                        </fieldset>
+
                     </div>
                 </div>
+            </div>
 
-                <div class="row">
-                    <div class="col-4">
-                        <div class="row font-weight-bold">
-                            <div class="col-12"> Producto</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">{{ Form::select('product_id', $productos, null, ['id'=>'product_id', 'class' => 'js-example-basic-single form-control bg-transparent', 'placeholder'=>'Seleccione productos ...']) }}</div>
-                        </div>
-
-                    </div>
-                    <div class="col-8">
-                        <div id="dataTemp">
-                            @include('admin.movimientos.ingresos.detalleTemp')
+            <div class="card gutter-b bg-white border-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-xl-12">
+                            <div id="dataConfirm">
+                                @include('admin.movimientos.ingresos.detalleShow')
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card gutter-b bg-white border-0">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-12 col-xl-12">
-                        <div id="dataConfirm">
-                            @include('admin.movimientos.ingresos.detalleConfirm')
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-
     </div>
-</div>
-@endsection
+    @endsection
 
-@section('js')
-<script>
-    jQuery("#product_id").on('change', function(){
+    @section('js')
+    <script>
+        jQuery("#product_id").on('change', function(){
         const productId = jQuery("#product_id").val();
         jQuery.ajax({
             url: '{{ route('detalle-ingresos.check') }}',
@@ -222,33 +193,5 @@
         })
     }
 
-    const destroy_local = (id, route) => {
-    ymz.jq_confirm({
-        title: 'Eliminar',
-        text: "confirma borrar registro ?",
-        no_btn: "Cancelar",
-        yes_btn: "Confirma",
-        no_fn: function () {
-            return false;
-        },
-        yes_fn: function () {
-            jQuery.ajax({
-                url: route,
-                type: 'POST',
-                dataType: 'json',
-                data: { id: id },
-                success: function (data) {
-                    toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                    toastr.error("Eliminado ... ");                    
-                    let ruta = "{{ route('ingresos.index') }}";
-                    setTimeout(() => {
-                        window.location = ruta;
-                    }, 500);
-                }
-            });
-        }
-    });
-};
-
-</script>
-@endsection
+    </script>
+    @endsection
