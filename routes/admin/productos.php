@@ -8,5 +8,7 @@ Route::get('productos/add', [ProductController::class, 'add'])->name('product.ad
 Route::post('productos/store', [ProductController::class, 'store'])->name('product.store');
 Route::get('product-validate-code', [ProductController::class, 'validateCode'])->name('product.validate.code');
 Route::get('calculate-product-prices', [ProductController::class, 'calculateProductPrices'])->name('calculate.product.prices');
-Route::post('productos/destroy', [ProductController::class, 'destroy'])->name('products.destroy');
+Route::post('productos/destroy', [ProductController::class, 'destroy'])->name('product.destroy');
+Route::get('producto/edit', [ProductController::class, 'edit'])->name('product.edit');
+Route::post('producto/update', [ProductController::class, 'update'])->name('product.update');
 Route::get('productos/getProductByProveedor', [ProductController::class, 'getProductByProveedor'])->name('products.getProductByProveedor');

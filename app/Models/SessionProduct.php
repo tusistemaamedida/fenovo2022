@@ -53,20 +53,12 @@ class SessionProduct extends Model
 	protected $fillable = [
 		'list_id',
 		'store_id',
-		'movement_id',
 		'product_id',
-		'product_name',
-		'unit_type',
 		'unit_price',
-		'tasiva',
-		'senasa_id',
-		'senasa_name',
+        'tasiva',
 		'unit_package',
 		'quantity',
-		'state',
-		'invoice',
-		'net_weight',
-		'gross_weight'
+		'invoice'
 	];
 
     public function producto(){

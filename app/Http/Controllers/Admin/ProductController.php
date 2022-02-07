@@ -66,8 +66,8 @@ class ProductController extends Controller
                     return $product->proveedor->name;
                 })
                 ->addColumn('acciones', function ($producto) {
-                    $ruta = "destroy(" . $producto->id . ",'" . route('proveedors.destroy') . "')";
-                    $actions = '<a class="dropdown-item" href="'. route('proveedors.edit', ['id' => $producto->id]) . '"><i class="fa fa-edit"></i> Editar</a>';
+                    $ruta = "destroy(" . $producto->id . ",'" . route('product.destroy') . "')";
+                    $actions = '<a class="dropdown-item" href="'. route('product.edit', ['id' => $producto->id]) . '"><i class="fa fa-edit"></i> Editar</a>';
                     $actions .= '<a class="dropdown-item confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i>Eliminar</a></div>';
 
                     return $actions;
@@ -79,8 +79,7 @@ class ProductController extends Controller
         return view('admin.products.list');
     }
 
-    public function add()
-    {
+    public function add(){
         $alicuotas = $this->alicuotaTypeRepository->get('value', 'DESC');
         $senasaDefinitions = $this->senasaDefinitionRepository->get('product_name', 'DESC');
         $categories = $this->productCategoryRepository->getActives('name', 'ASC');
@@ -103,8 +102,26 @@ class ProductController extends Controller
        }
     }
 
-    public function validateCode(Request $request)
-    {
+    public function edit(Request $request){
+        try {
+            $product = $this->productRepository->getByIdWith($request->id);
+            $alicuotas = $this->alicuotaTypeRepository->get('value', 'DESC');
+            $senasaDefinitions = $this->senasaDefinitionRepository->get('product_name', 'DESC');
+            $categories = $this->productCategoryRepository->getActives('name', 'ASC');
+            $types = $this->productTypeRepository->getActives('name', 'ASC');
+            $proveedores = $this->proveedorRepository->getActives('name', 'ASC');
+            if($product) return view('admin.products.edit', compact('alicuotas', 'categories', 'types', 'proveedores', 'senasaDefinitions','product'));
+            $notification = [
+                'message'    => 'El producto no existe !',
+                'alert-type' => 'error',
+            ];
+            return redirect()->route('products.list')->with($notification);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function validateCode(Request $request){
         $data = $request->all();
         if ($data['cod_fenovo'] == '') return new JsonResponse(['msj' => 'Ingrese un Código Fenovo', 'type' => 'error']);
         if ($this->productRepository->existCode($data['cod_fenovo'])) return new JsonResponse(['msj' => 'El Código Fenovo ingresado ya existe', 'type' => 'error']);

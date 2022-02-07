@@ -29,7 +29,7 @@
 
                         <div class="card-header align-items-center  border-0">
                             <div class="card-title mb-0">
-                                <h3 class="card-label mb-0 font-weight-bold text-body">Agregar nuevo producto</h3>
+                                <h3 class="card-label mb-0 font-weight-bold text-body">Editar Producto</h3>
                             </div>
                         </div>
 
