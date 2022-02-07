@@ -217,6 +217,7 @@ class SalidasController extends Controller
             $movement = Movement::create($insert_data);
             $session_products = $this->sessionProductRepository->getByListId($list_id);
             foreach ($session_products as $product) {
+                // resta del balance de la store fenovo porque es salida
                 $latest = MovementProduct::all()
                     ->where('store_id', 1)
                     ->where('product_id', $product->product_id)
@@ -232,6 +233,25 @@ class SalidasController extends Controller
                         'invoice' => $product->invoice,
                         'entry' => 0,
                         'egress' => $product->quantity,
+                        'balance' => $balance
+                    ]);
+
+                // Suma al balance de la store to
+                $latest = MovementProduct::all()
+                    ->where('store_id', $insert_data['to'])
+                    ->where('product_id', $product->product_id)
+                    ->where('unit_package', $product->unit_package)
+                    ->sortByDesc('id')->first();
+
+                $balance = ($latest) ? $latest->balance + $product->quantity : $product->quantity;
+                MovementProduct::firstOrCreate([
+                    'store_id' => $insert_data['to'],
+                    'movement_id' => $movement->id,
+                    'product_id' => $product->product_id,
+                    'unit_package' => $product->unit_package], [
+                        'invoice' => $product->invoice,
+                        'entry' => $product->quantity,
+                        'egress' => 0,
                         'balance' => $balance
                     ]);
             }

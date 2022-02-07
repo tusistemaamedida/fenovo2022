@@ -32,3 +32,5 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
 Route::group(['namespace' => 'Admin', 'middleware' => ['auth']], function () {
     Route::any('filepicker', [FilepickerController::class, 'handle'])->name('filepicker');
 });
+
+//require __DIR__ . '/cron/routes.php';
