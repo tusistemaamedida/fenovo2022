@@ -37,4 +37,8 @@ class SessionProductRepository extends BaseRepository
             $data
         );
     }
+
+    public function deleteList($list_id){
+        return $this->newQuery()->where('list_id',$list_id)->delete();
+    }
 }

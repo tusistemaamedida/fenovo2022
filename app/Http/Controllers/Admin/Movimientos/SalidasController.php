@@ -235,7 +235,7 @@ class SalidasController extends Controller
                         'balance' => $balance
                     ]);
             }
-
+            $this->sessionProductRepository->deleteList($list_id);
             return redirect()->route('salidas.add');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error'=> $e->getMessage()])->withInput();
