@@ -12,8 +12,8 @@ use App\Repositories\ProductRepository;
 use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
 use Illuminate\Http\JsonResponse;
+
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -88,9 +88,8 @@ class SalidasController extends Controller
 
     public function show(Request $request)
     {
-        $movement    = Movement::find($request->id);
-        $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'desc')->get();
-        return view('admin.movimientos.salidas.show', compact('movement', 'movimientos'));
+        $movement = Movement::query()->where('id', $request->id)->with('movement_salida_products')->first();
+        return view('admin.movimientos.salidas.show', compact('movement'));
     }
 
     public function getClienteSalida(Request $request)
@@ -134,7 +133,7 @@ class SalidasController extends Controller
                 'disabled' => $disabled,  ];
         }
 
-        return new JsonResponse($valid_names);
+        return  new JsonResponse($valid_names);
     }
 
     public function getSessionProducts(Request $request)
@@ -146,7 +145,7 @@ class SalidasController extends Controller
                 'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products'))->render(),
             ]);
         } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+            return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -156,7 +155,7 @@ class SalidasController extends Controller
             $session_products = $this->sessionProductRepository->delete($request->input('id'));
             return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
         } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+            return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -197,7 +196,7 @@ class SalidasController extends Controller
                         )->render(),
                     ]);
                 }
-                return new JsonResponse(['msj' => 'El producto no existe', 'type' => 'error']);
+                return  new JsonResponse(['msj' => 'El producto no existe', 'type' => 'error']);
             }
             return new JsonResponse(['msj' => 'Limpiando...', 'type' => 'clear']);
         } catch (\Exception $e) {
@@ -315,14 +314,14 @@ class SalidasController extends Controller
 
                 $balance = ($latest) ? $latest->balance + $product->quantity : $product->quantity;
                 MovementProduct::firstOrCreate([
-                    'store_id' => $insert_data['to'],
-                    'movement_id' => $movement->id,
-                    'product_id' => $product->product_id,
-                    'unit_package' => $product->unit_package], [
-                        'invoice' => $product->invoice,
-                        'entry' => $product->quantity,
-                        'egress' => 0,
-                        'balance' => $balance
+                    'store_id'     => $insert_data['to'],
+                    'movement_id'  => $movement->id,
+                    'product_id'   => $product->product_id,
+                    'unit_package' => $product->unit_package, ], [
+                        'invoice'  => $product->invoice,
+                        'entry'    => $product->quantity,
+                        'egress'   => 0,
+                        'balance'  => $balance,
                     ]);
             }
             $this->sessionProductRepository->deleteList($list_id);
