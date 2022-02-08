@@ -88,9 +88,15 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary text-white font-weight-bold w-100 py-3" data-toggle="modal" data-target="#default">
-                                Login
-                            </button>
+                            <div class="form-group row">
+                                <div class="col-lg-2 col-3">
+                                </div>
+                                <div class="col-lg-10 col-9 pl-0">
+                                    <button type="submit" class="btn btn-primary text-white font-weight-bold w-100 py-3" data-toggle="modal" data-target="#default">
+                                        Login
+                                    </button>
+                                </div>
+                            </div>
                         </form>
 
                     </div>
