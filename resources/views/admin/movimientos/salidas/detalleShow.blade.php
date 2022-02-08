@@ -1,14 +1,15 @@
-@isset($movimientos)
+@isset($movement)
+
 <table class=" table table-hover table-striped table-sm text-center">
     <tr>
         <th>#</th>
         <th>Cod fenovo</th>
         <th>Producto</th>
         <th>Presentación</th>
-        <th>Bultos</th>
+        <th></th>
         <th>Kilos</th>
     </tr>
-    @foreach ($movimientos as $movimiento)
+    @foreach ($movement->movement_salida_products as $movimiento)
     <tr>
         <td>{{ $loop->iteration }}</td>
         <td>{{ $movimiento->product->cod_fenovo }} </td>
@@ -30,9 +31,9 @@
         <th></th>
         <th></th>
         <th></th>
+        <th></th>
         <th>Totales</th>
-        <th>{{ number_format($movimientos->sum('bultos'), 2)}}</th>
-        <th>{{ number_format($movimientos->sum('egress'), 2)}}</th>
+        <th>{{ $movement->movement_salida_products_total_kg[0]['suma'] }}</th>
     </tr>
 </table>
 @endisset

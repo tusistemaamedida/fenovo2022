@@ -12,8 +12,8 @@ use App\Repositories\ProductRepository;
 use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
 use Illuminate\Http\JsonResponse;
+
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -70,9 +70,8 @@ class SalidasController extends Controller
 
     public function show(Request $request)
     {
-        $movement    = Movement::find($request->id);
-        $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'desc')->get();
-        return view('admin.movimientos.salidas.show', compact('movement', 'movimientos'));
+        $movement = Movement::query()->where('id', $request->id)->with('movement_salida_products')->first();
+        return view('admin.movimientos.salidas.show', compact('movement'));
     }
 
     public function getClienteSalida(Request $request)
@@ -116,7 +115,7 @@ class SalidasController extends Controller
                 'disabled' => $disabled,  ];
         }
 
-        return Response::json($valid_names);
+        return  new JsonResponse($valid_names);
     }
 
     public function getSessionProducts(Request $request)
@@ -128,7 +127,7 @@ class SalidasController extends Controller
                 'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products'))->render(),
             ]);
         } catch (\Exception $e) {
-            return Response::json(['msj' => $e->getMessage(), 'type' => 'error']);
+            return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -138,7 +137,7 @@ class SalidasController extends Controller
             $session_products = $this->sessionProductRepository->delete($request->input('id'));
             return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
         } catch (\Exception $e) {
-            return Response::json(['msj' => $e->getMessage(), 'type' => 'error']);
+            return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -179,11 +178,11 @@ class SalidasController extends Controller
                         )->render(),
                     ]);
                 }
-                return Response::json(['msj' => 'El producto no existe', 'type' => 'error']);
+                return  new JsonResponse(['msj' => 'El producto no existe', 'type' => 'error']);
             }
-            return Response::json(['msj' => 'Limpiando...', 'type' => 'clear']);
+            return new JsonResponse(['msj' => 'Limpiando...', 'type' => 'clear']);
         } catch (\Exception $e) {
-            return Response::json(['msj' => $e->getMessage(), 'type' => 'error']);
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -197,10 +196,10 @@ class SalidasController extends Controller
             $product_id          = $request->input('product_id');
 
             if (!$to) {
-                return Response::json(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
+                return new JsonResponse(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
             }
             if (!$unidades || count($unidades) == 0) {
-                return Response::json(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
+                return new JsonResponse(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
             }
             for ($i = 0; $i < count($unidades); $i++) {
                 $unidad = $unidades[$i];
@@ -209,7 +208,7 @@ class SalidasController extends Controller
                 }
             }
             if (count($unidades) == $count_unidades_cero) {
-                return Response::json(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
+                return new JsonResponse(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
             }
             $insert_data = [];
             $product     = $this->productRepository->getByIdWith($product_id);
@@ -251,7 +250,7 @@ class SalidasController extends Controller
             }
             return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
         } catch (\Exception $e) {
-            return Response::json(['msj' => $e->getMessage(), 'type' => 'error']);
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -297,14 +296,14 @@ class SalidasController extends Controller
 
                 $balance = ($latest) ? $latest->balance + $product->quantity : $product->quantity;
                 MovementProduct::firstOrCreate([
-                    'store_id' => $insert_data['to'],
-                    'movement_id' => $movement->id,
-                    'product_id' => $product->product_id,
-                    'unit_package' => $product->unit_package], [
-                        'invoice' => $product->invoice,
-                        'entry' => $product->quantity,
-                        'egress' => 0,
-                        'balance' => $balance
+                    'store_id'     => $insert_data['to'],
+                    'movement_id'  => $movement->id,
+                    'product_id'   => $product->product_id,
+                    'unit_package' => $product->unit_package, ], [
+                        'invoice'  => $product->invoice,
+                        'entry'    => $product->quantity,
+                        'egress'   => 0,
+                        'balance'  => $balance,
                     ]);
             }
             $this->sessionProductRepository->deleteList($list_id);
@@ -320,9 +319,9 @@ class SalidasController extends Controller
             $session_product          = $this->sessionProductRepository->getByListIdAndProduct($request->input('list_id'), $request->input('product_id'));
             $session_product->invoice = !$session_product->invoice;
             $session_product->save();
-            return Response::json(['msj' => 'Facturación cambiada', 'type' => 'success']);
+            return new JsonResponse(['msj' => 'Facturación cambiada', 'type' => 'success']);
         } catch (\Exception $e) {
-            return Response::json(['msj' => $e->getMessage(), 'type' => 'error']);
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 }
