@@ -14,6 +14,7 @@ use App\Repositories\StoreRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
 {
@@ -32,6 +33,34 @@ class SalidasController extends Controller
         $this->customerRepository       = $customerRepository;
         $this->storeRepository          = $storeRepository;
         $this->sessionProductRepository = $sessionProductRepository;
+    }
+
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+            $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
+            return DataTables::of($movement)
+                ->addIndexColumn()
+                ->addColumn('origen', function ($movement) {
+                    return $movement->origenData($movement->type);
+                })
+                ->editColumn('date', function ($movement) {
+                    return date('Y-m-d', strtotime($movement->date));
+                })
+                ->editColumn('type', function ($movement) {
+                    return $movement->type;
+                })
+                ->editColumn('updated_at', function ($movement) {
+                    return date('Y-m-d H:i:s', strtotime($movement->updated_at));
+                })
+                ->addColumn('edit', function ($movement) {
+                    return '<a class="dropdown-item" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                })
+                ->rawColumns(['origen', 'date', 'type', 'edit'])
+                ->make(true);
+        }
+        return view('admin.movimientos.salidas.index');
     }
 
     public function add()
