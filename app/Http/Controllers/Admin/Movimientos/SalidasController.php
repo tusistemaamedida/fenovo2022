@@ -68,6 +68,13 @@ class SalidasController extends Controller
         return view('admin.movimientos.salidas.add');
     }
 
+    public function show(Request $request)
+    {
+        $movement    = Movement::find($request->id);
+        $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'desc')->get();
+        return view('admin.movimientos.salidas.show', compact('movement', 'movimientos'));
+    }
+
     public function getClienteSalida(Request $request)
     {
         $term        = $request->term ?: '';
