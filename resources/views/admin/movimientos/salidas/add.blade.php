@@ -36,6 +36,12 @@
 
 @section('js')
 <script>
+    jQuery(document).ready(function(){
+        @if(isset($destino))
+            cargarTablaProductos();
+        @endif
+    });
+
     jQuery("#to_type").change(function(){
         jQuery('#to').val(null).trigger('change');
     })

@@ -6,16 +6,18 @@
                     <label  class="text-body">Movimiento</label>
                     <fieldset class="form-group mb-3">
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="to_type" id="to_type">
-                            <option value="VENTA">Venta</option>
-                            <option value="TRASLADO">Traslado</option>
-                            <option value="VENTACLIENTE">Venta a cliente</option>
+                            <option value="VENTA" @if(isset($tipo) && $tipo == 'VENTA') selected @endif>Venta</option>
+                            <option value="TRASLADO" @if(isset($tipo) && $tipo == 'TRASLADO') selected @endif>Traslado</option>
+                            <option value="VENTACLIENTE" @if(isset($tipo) && $tipo == 'VENTACLIENTE') selected @endif>Venta a cliente</option>
                         </select>
                     </fieldset>
                 </div>
                 <div class="col-md-3">
                     <label  class="text-body">Cliente/Tienda</label>
                     <fieldset class="form-group mb-3">
-                        <select class="js-example-basic-single js-states form-control bg-transparent" name="to" id="to"> </select>
+                        <select class="js-example-basic-single js-states form-control bg-transparent" name="to" id="to">
+                            @if(isset($destino)) <option value="{{$destino->id}}">{{$destinoName}}</option>@endif
+                        </select>
                     </fieldset>
                 </div>
                 <div class="col-md-4">

@@ -16,8 +16,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
+use App\Traits\OriginDataTrait;
+
 class SalidasController extends Controller
 {
+    use OriginDataTrait;
+
     private $customerRepository;
     private $storeRepository;
     private $productRepository;
@@ -61,6 +65,32 @@ class SalidasController extends Controller
                 ->make(true);
         }
         return view('admin.movimientos.salidas.index');
+    }
+
+    public function pendientes(Request $request){
+        if ($request->ajax()) {
+            $pendientes = $this->sessionProductRepository->groupBy('list_id');
+            return DataTables::of($pendientes)
+                ->addIndexColumn()
+                ->addColumn('destino', function ($pendiente) {
+                    $explode = explode('_',$pendiente->list_id);
+                    return $pendiente::origenData($explode[0],$explode[1]);
+                })
+                ->addColumn('edit', function ($pendiente) {
+                    return '<a class="dropdown-item" href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-eye"></i> </a>';
+                })
+                ->rawColumns(['destino', 'edit'])
+                ->make(true);
+        }
+        return view('admin.movimientos.salidas.pendientes');
+    }
+
+    public function pendienteShow(Request $request){
+        $explode = explode('_',$request->input('list_id'));
+        $tipo = $explode[0];
+        $destino = $this::origenData($tipo,$explode[1],true);
+        $destinoName = $this::origenData($tipo,$explode[1]);
+        return view('admin.movimientos.salidas.add', compact('tipo','destino','destinoName'));
     }
 
     public function add()

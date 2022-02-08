@@ -6,6 +6,8 @@
 
 namespace App\Models;
 
+
+use App\Traits\OriginDataTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,6 +38,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class SessionProduct extends Model
 {
+    use OriginDataTrait;
 	protected $table = 'session_products';
 
 	protected $casts = [

@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\DB;
  */
 class Movement extends Model
 {
+
     protected $table = 'movements';
 
     public $timestamps = true;

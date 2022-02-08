@@ -33,12 +33,21 @@ class SessionProductRepository extends BaseRepository
 
     public function updateOrCreate($data){
         return $this->newQuery()->updateOrCreate(
-            ['product_id' => $data['product_id'], 'unit_package' => $data['unit_package'], 'store_id' => $data['store_id']],
+            [
+                'product_id' => $data['product_id'],
+                'unit_package' => $data['unit_package'],
+                'store_id' => $data['store_id'],
+                'list_id' => $data['list_id']
+            ],
             $data
         );
     }
 
     public function deleteList($list_id){
         return $this->newQuery()->where('list_id',$list_id)->delete();
+    }
+
+    public function groupBy($group){
+        return SessionProduct::groupBy($group)->get();
     }
 }
