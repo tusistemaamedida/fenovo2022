@@ -49,7 +49,7 @@ class UserController extends Controller
                     $ruta = 'destroy(' . $user->id . ",'" . route('users.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['rol', 'edit', 'edit', 'destroy'])
+                ->rawColumns(['rol', 'inactivo','edit', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.users.index');
