@@ -34,12 +34,17 @@
                         <input type="text" id="voucher_number" name="voucher_number" value="{{ $movement->voucher_number }}" class="form-control" required="true">
                     </div>
                     <div class="col-md-1 text-center">
-
+                        <label class="text-dark">Anular</label>
+                        <fieldset class="form-group">
+                            <a href="javascript:void(0)" onclick="destroy_local('{{ $movement->id}}', '{{ route('ingresos.destroy') }}')" class="btn btn-link">
+                                <i class="fa fa-trash text-danger"></i>
+                            </a>
+                        </fieldset>
                     </div>
                     <div class="col-md-1 text-center">
                         <label class="text-dark">Finalizar</label>
                         <fieldset class="form-group">
-                            <a href="{{ route('ingresos.index') }}" class="btn btn-link btn-cerrar-ingreso">
+                            <a href="javascript:void(0)" class="btn btn-link btn-cerrar-ingreso">
                                 <i class="fa fa-lock text-primary"></i>
                             </a>
                         </fieldset>
@@ -216,6 +221,34 @@
             }
         })
     }
+
+    const destroy_local = (id, route) => {
+    ymz.jq_confirm({
+        title: 'Eliminar',
+        text: "confirma borrar registro ?",
+        no_btn: "Cancelar",
+        yes_btn: "Confirma",
+        no_fn: function () {
+            return false;
+        },
+        yes_fn: function () {
+            jQuery.ajax({
+                url: route,
+                type: 'POST',
+                dataType: 'json',
+                data: { id: id },
+                success: function (data) {
+                    toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                    toastr.error("Eliminado ... ");                    
+                    let ruta = "{{ route('ingresos.index') }}";
+                    setTimeout(() => {
+                        window.location = ruta;
+                    }, 500);
+                }
+            });
+        }
+    });
+};
 
 </script>
 @endsection
