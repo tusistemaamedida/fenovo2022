@@ -4,8 +4,55 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c8919034a07527066ddf95cd4fefead",
+    "content-hash": "c7b6cb7e6725cec791f85b5b0d6aa630",
     "packages": [
+        {
+            "name": "afipsdk/afip.php",
+            "version": "v0.7.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AfipSDK/afip.php.git",
+                "reference": "957bc436ce0c3a54ea749600bdf364c8c905459d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AfipSDK/afip.php/zipball/957bc436ce0c3a54ea749600bdf364c8c905459d",
+                "reference": "957bc436ce0c3a54ea749600bdf364c8c905459d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Afip.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Afip SDK",
+                    "email": "afipsdk@gmail.com"
+                }
+            ],
+            "description": "Libreria para usar los Web Services de AFIP (Argentina) ",
+            "homepage": "https://github.com/afipsdk/afip.php",
+            "keywords": [
+                "afip",
+                "cae",
+                "contribuyente",
+                "facturacion-electronica",
+                "gratis",
+                "libreria",
+                "padron",
+                "soap"
+            ],
+            "time": "2021-12-10T01:00:33+00:00"
+        },
         {
             "name": "asm89/stack-cors",
             "version": "v2.1.1",
