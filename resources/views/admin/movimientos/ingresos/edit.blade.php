@@ -44,7 +44,7 @@
                     <div class="col-md-1 text-center">
                         <label class="text-dark">Finalizar</label>
                         <fieldset class="form-group">
-                            <a href="javascript:void(0)" class="btn btn-link btn-cerrar-ingreso">
+                            <a href="{{ route('ingresos.index') }}" class="btn btn-link btn-cerrar-ingreso">
                                 <i class="fa fa-lock text-primary"></i>
                             </a>
                         </fieldset>
