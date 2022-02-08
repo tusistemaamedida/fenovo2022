@@ -63,6 +63,24 @@ class SalidasController extends Controller
         return view('admin.movimientos.salidas.index');
     }
 
+    public function pendientes(Request $request){
+        if ($request->ajax()) {
+            $pendientes = $this->sessionProductRepository->groupBy('list_id');
+            return DataTables::of($pendientes)
+                ->addIndexColumn()
+                ->addColumn('destino', function ($pendiente) {
+                    $explode = explode('_',$pendiente->list_id);
+                    return $pendiente::origenData($explode[0],$explode[1]);
+                })
+                ->addColumn('edit', function ($pendiente) {
+                    return '<a class="dropdown-item" href="' . route('salidas.pendiente.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                })
+                ->rawColumns(['destino', 'edit'])
+                ->make(true);
+        }
+        return view('admin.movimientos.salidas.pendientes');
+    }
+
     public function add()
     {
         return view('admin.movimientos.salidas.add');
@@ -116,7 +134,7 @@ class SalidasController extends Controller
                 'disabled' => $disabled,  ];
         }
 
-        return Response::json($valid_names);
+        return new JsonResponse($valid_names);
     }
 
     public function getSessionProducts(Request $request)
@@ -128,7 +146,7 @@ class SalidasController extends Controller
                 'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products'))->render(),
             ]);
         } catch (\Exception $e) {
-            return Response::json(['msj' => $e->getMessage(), 'type' => 'error']);
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -138,7 +156,7 @@ class SalidasController extends Controller
             $session_products = $this->sessionProductRepository->delete($request->input('id'));
             return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
         } catch (\Exception $e) {
-            return Response::json(['msj' => $e->getMessage(), 'type' => 'error']);
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -179,11 +197,11 @@ class SalidasController extends Controller
                         )->render(),
                     ]);
                 }
-                return Response::json(['msj' => 'El producto no existe', 'type' => 'error']);
+                return new JsonResponse(['msj' => 'El producto no existe', 'type' => 'error']);
             }
-            return Response::json(['msj' => 'Limpiando...', 'type' => 'clear']);
+            return new JsonResponse(['msj' => 'Limpiando...', 'type' => 'clear']);
         } catch (\Exception $e) {
-            return Response::json(['msj' => $e->getMessage(), 'type' => 'error']);
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -197,10 +215,10 @@ class SalidasController extends Controller
             $product_id          = $request->input('product_id');
 
             if (!$to) {
-                return Response::json(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
+                return new JsonResponse(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
             }
             if (!$unidades || count($unidades) == 0) {
-                return Response::json(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
+                return new JsonResponse(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
             }
             for ($i = 0; $i < count($unidades); $i++) {
                 $unidad = $unidades[$i];
@@ -209,7 +227,7 @@ class SalidasController extends Controller
                 }
             }
             if (count($unidades) == $count_unidades_cero) {
-                return Response::json(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
+                return new JsonResponse(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
             }
             $insert_data = [];
             $product     = $this->productRepository->getByIdWith($product_id);
@@ -251,7 +269,7 @@ class SalidasController extends Controller
             }
             return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
         } catch (\Exception $e) {
-            return Response::json(['msj' => $e->getMessage(), 'type' => 'error']);
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
@@ -320,9 +338,9 @@ class SalidasController extends Controller
             $session_product          = $this->sessionProductRepository->getByListIdAndProduct($request->input('list_id'), $request->input('product_id'));
             $session_product->invoice = !$session_product->invoice;
             $session_product->save();
-            return Response::json(['msj' => 'Facturación cambiada', 'type' => 'success']);
+            return new JsonResponse(['msj' => 'Facturación cambiada', 'type' => 'success']);
         } catch (\Exception $e) {
-            return Response::json(['msj' => $e->getMessage(), 'type' => 'error']);
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 }

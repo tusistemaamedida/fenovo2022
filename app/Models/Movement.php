@@ -9,7 +9,6 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-
 /**
  * Class Movement
  *
@@ -29,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Movement extends Model
 {
+
     protected $table = 'movements';
 
     public $timestamps = true;
