@@ -22,6 +22,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/roles.php';
         require __DIR__ . '/admin/permissions.php';
         require __DIR__ . '/admin/utils.php';
+        require __DIR__ . '/admin/invoice.php';
         // Movimientos
         require __DIR__ . '/admin/movimientos/ingresos.php';
         require __DIR__ . '/admin/movimientos/salidas.php';
