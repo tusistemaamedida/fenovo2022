@@ -30,6 +30,8 @@ class MovementProduct extends Model
         'entry',
         'egress',
         'balance',
+        'unit_price',
+        'tasiva'
     ];
 
     public function movement()

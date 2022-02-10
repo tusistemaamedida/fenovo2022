@@ -312,6 +312,8 @@ class SalidasController extends Controller
                     'product_id'   => $product->product_id,
                     'unit_package' => $product->unit_package, ], [
                         'invoice'  => $product->invoice,
+                        'unit_price'  => $product->unit_price,
+                        'tasiva'  => $product->tasiva,
                         'entry'    => 0,
                         'egress'   => $product->quantity,
                         'balance'  => $balance,
@@ -331,6 +333,8 @@ class SalidasController extends Controller
                     'product_id'   => $product->product_id,
                     'unit_package' => $product->unit_package, ], [
                         'invoice'  => $product->invoice,
+                        'unit_price'  => $product->unit_price,
+                        'tasiva'  => $product->tasiva,
                         'entry'    => $product->quantity,
                         'egress'   => 0,
                         'balance'  => $balance,
