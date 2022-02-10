@@ -44,7 +44,7 @@ class Senasa extends Model
     {
         $arrProducto = [];
         foreach ($this->movements as $movement) {
-            foreach ($movement->movement_products as $movi) {
+            foreach ($movement->movement_salida_products as $movi) {
                 $producto = Product::find($movi->product_id);
                 if ($producto) {
                     $produ             = new stdClass();
