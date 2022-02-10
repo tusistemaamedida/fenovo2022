@@ -7,7 +7,6 @@ use App\Models\Store;
 use App\Models\Customer;
 
 trait OriginDataTrait {
-
     public function origenData($type,$id,$returnObject = false){
         switch ($type) {
             case 'COMPRA':
