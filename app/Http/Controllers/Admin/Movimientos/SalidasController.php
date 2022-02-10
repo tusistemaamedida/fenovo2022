@@ -309,17 +309,17 @@ class SalidasController extends Controller
 
                 $balance = ($latest) ? $latest->balance - ($product->producto->unit_weight * $product->unit_package * $product->quantity) : 0;
                 MovementProduct::firstOrCreate([
-                    'store_id'     => 1,
-                    'movement_id'  => $movement->id,
-                    'product_id'   => $product->product_id,
-                    'unit_package' => $product->unit_package, ], [
-                        'invoice'  => $product->invoice,
-                        'unit_price'  => $product->unit_price,
-                        'tasiva'  => $product->tasiva,
-                        'entry'    => 0,
-                        'bultos'   => $product->quantity,
-                        'egress'   => $product->producto->unit_weight * $product->unit_package * $product->quantity,
-                        'balance'  => $balance,
+                    'store_id'       => 1,
+                    'movement_id'    => $movement->id,
+                    'product_id'     => $product->product_id,
+                    'unit_package'   => $product->unit_package, ], [
+                        'invoice'    => $product->invoice,
+                        'unit_price' => $product->unit_price,
+                        'tasiva'     => $product->tasiva,
+                        'entry'      => 0,
+                        'bultos'     => $product->quantity,
+                        'egress'     => $product->producto->unit_weight * $product->unit_package * $product->quantity,
+                        'balance'    => $balance,
                     ]);
 
                 // Suma al balance de la store to
@@ -331,17 +331,17 @@ class SalidasController extends Controller
 
                 $balance = ($latest) ? $latest->balance + ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->producto->unit_weight * $product->unit_package * $product->quantity);
                 MovementProduct::firstOrCreate([
-                    'store_id'     => $insert_data['to'],
-                    'movement_id'  => $movement->id,
-                    'product_id'   => $product->product_id,
-                    'unit_package' => $product->unit_package, ], [
-                        'invoice'  => $product->invoice,
-                        'bultos'   => $product->quantity,
-                        'entry'    => $product->producto->unit_weight * $product->unit_package * $product->quantity,
-                        'unit_price'  => $product->unit_price,
-                        'tasiva'  => $product->tasiva,
-                        'egress'   => 0,
-                        'balance'  => $balance,
+                    'store_id'       => $insert_data['to'],
+                    'movement_id'    => $movement->id,
+                    'product_id'     => $product->product_id,
+                    'unit_package'   => $product->unit_package, ], [
+                        'invoice'    => $product->invoice,
+                        'bultos'     => $product->quantity,
+                        'entry'      => $product->producto->unit_weight * $product->unit_package * $product->quantity,
+                        'unit_price' => $product->unit_price,
+                        'tasiva'     => $product->tasiva,
+                        'egress'     => 0,
+                        'balance'    => $balance,
                     ]);
             }
             $this->sessionProductRepository->deleteList($list_id);
