@@ -9,7 +9,6 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Class Movement
@@ -30,7 +29,6 @@ use Illuminate\Support\Facades\DB;
  */
 class Movement extends Model
 {
-
     protected $table = 'movements';
 
     public $timestamps = true;
@@ -56,11 +54,6 @@ class Movement extends Model
     public function movement_salida_products()
     {
         return $this->hasMany(MovementProduct::class)->where('egress', '>', 0);
-    }
-
-    public function movement_salida_products_total_kg()
-    {
-        return  $this->movement_salida_products()->select(DB::raw('sum(egress) as suma'));
     }
 
     public function senasa()

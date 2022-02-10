@@ -6,7 +6,7 @@
         <th>Cod fenovo</th>
         <th>Producto</th>
         <th>Presentación</th>
-        <th></th>
+        <th>Bultos</th>
         <th>Kilos</th>
     </tr>
     @foreach ($movement->movement_salida_products as $movimiento)
@@ -31,9 +31,9 @@
         <th></th>
         <th></th>
         <th></th>
-        <th></th>
         <th>Totales</th>
-        <th>{{ $movement->movement_salida_products_total_kg[0]['suma'] }}</th>
+        <th>{{ number_format($movement->movement_salida_products->sum('bultos'),2) }}</th>
+        <th>{{ number_format($movement->movement_salida_products->sum('egress'),2) }}</th>
     </tr>
 </table>
 @endisset

@@ -1,26 +1,24 @@
 <footer>
-    <div class="mb-3 p-2 border border-3 border-dark border-dashed rounded-circle">
-        <div class="row mb-1">
-            <div class="col-12">
+    <table class="table table-borderless table-condensed table-sm">
+        <tr>
+            <td colspan="2">
                 En el camión patente Nro <strong>{{ $senasa->patente_nro }}</strong> habilitación SENASA Nro <strong>{{ $senasa->habilitacion_nro }}</strong> Precinto/s Nro <strong>{{ $senasa->precintos }}</strong>
-            </div>
-        </div>
-        <div class="row mb-1">
-            <div class="col-12">
-                Destino <strong>{{ $senasa->destino }}</strong>
-            </div>
-        </div>
-    </div>
-    <table width="100%">
-        <tr class="text-center">
-            <th colspan="2">
-                ESTE DOCUMENTO ES VALIDO POR {{ $senasa->dias_validez }} DIAS
-            </th>
+            </td>
         </tr>
         <tr>
-            <th colspan="2">
-                INTERVIENE
-            </th>
+            <td colspan="2">
+                Destino <strong>{{ $senasa->destino }}</strong>
+            </td>
+        </tr>
+        <tr class="text-center">
+            <td colspan="2">
+                ESTE DOCUMENTO ES VALIDO POR <strong> {{ $senasa->dias_validez }} </strong> DIAS
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong> INTERVIENE </strong>
+            </td>
         </tr>
         <tr class="text-center">
             <td>

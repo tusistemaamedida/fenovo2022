@@ -8,7 +8,7 @@
             </a>
         </div>
 
-        <div class="aside-menu-wrapper flex-column-fluid overflow-auto h-100" id="tc_aside_menu_wrapper">
+        <div class="aside-menu-wrapper flex-column-fluid overflow-auto h-100 bg-light-dark " id="tc_aside_menu_wrapper">
             <div id="tc_aside_menu" class="aside-menu  mb-5" data-menu-vertical="1" data-menu-scroll="1" data-menu-dropdown-timeout="500">
                 <div id="accordion">
                     <ul class="nav flex-column">

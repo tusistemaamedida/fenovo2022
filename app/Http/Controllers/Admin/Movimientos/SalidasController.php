@@ -11,12 +11,12 @@ use App\Repositories\ProductRepository;
 
 use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
-use Illuminate\Http\JsonResponse;
-
-use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
-
 use App\Traits\OriginDataTrait;
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
 {
@@ -67,14 +67,15 @@ class SalidasController extends Controller
         return view('admin.movimientos.salidas.index');
     }
 
-    public function pendientes(Request $request){
+    public function pendientes(Request $request)
+    {
         if ($request->ajax()) {
             $pendientes = $this->sessionProductRepository->groupBy('list_id');
             return DataTables::of($pendientes)
                 ->addIndexColumn()
                 ->addColumn('destino', function ($pendiente) {
-                    $explode = explode('_',$pendiente->list_id);
-                    return $pendiente::origenData($explode[0],$explode[1]);
+                    $explode = explode('_', $pendiente->list_id);
+                    return $pendiente::origenData($explode[0], $explode[1]);
                 })
                 ->addColumn('edit', function ($pendiente) {
                     return '<a class="dropdown-item" href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-eye"></i> </a>';
@@ -85,12 +86,13 @@ class SalidasController extends Controller
         return view('admin.movimientos.salidas.pendientes');
     }
 
-    public function pendienteShow(Request $request){
-        $explode = explode('_',$request->input('list_id'));
-        $tipo = $explode[0];
-        $destino = $this::origenData($tipo,$explode[1],true);
-        $destinoName = $this::origenData($tipo,$explode[1]);
-        return view('admin.movimientos.salidas.add', compact('tipo','destino','destinoName'));
+    public function pendienteShow(Request $request)
+    {
+        $explode     = explode('_', $request->input('list_id'));
+        $tipo        = $explode[0];
+        $destino     = $this::origenData($tipo, $explode[1], true);
+        $destinoName = $this::origenData($tipo, $explode[1]);
+        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
     }
 
     public function add()
@@ -305,7 +307,7 @@ class SalidasController extends Controller
                     ->where('unit_package', $product->unit_package)
                     ->sortByDesc('id')->first();
 
-                $balance = ($latest) ? $latest->balance - $product->quantity : 0;
+                $balance = ($latest) ? $latest->balance - ($product->producto->unit_weight * $product->unit_package * $product->quantity) : 0;
                 MovementProduct::firstOrCreate([
                     'store_id'     => 1,
                     'movement_id'  => $movement->id,
@@ -315,7 +317,8 @@ class SalidasController extends Controller
                         'unit_price'  => $product->unit_price,
                         'tasiva'  => $product->tasiva,
                         'entry'    => 0,
-                        'egress'   => $product->quantity,
+                        'bultos'   => $product->quantity,
+                        'egress'   => $product->producto->unit_weight * $product->unit_package * $product->quantity,
                         'balance'  => $balance,
                     ]);
 
@@ -326,16 +329,17 @@ class SalidasController extends Controller
                     ->where('unit_package', $product->unit_package)
                     ->sortByDesc('id')->first();
 
-                $balance = ($latest) ? $latest->balance + $product->quantity : $product->quantity;
+                $balance = ($latest) ? $latest->balance + ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->producto->unit_weight * $product->unit_package * $product->quantity);
                 MovementProduct::firstOrCreate([
                     'store_id'     => $insert_data['to'],
                     'movement_id'  => $movement->id,
                     'product_id'   => $product->product_id,
                     'unit_package' => $product->unit_package, ], [
                         'invoice'  => $product->invoice,
+                        'bultos'   => $product->quantity,
+                        'entry'    => $product->producto->unit_weight * $product->unit_package * $product->quantity,
                         'unit_price'  => $product->unit_price,
                         'tasiva'  => $product->tasiva,
-                        'entry'    => $product->quantity,
                         'egress'   => 0,
                         'balance'  => $balance,
                     ]);
