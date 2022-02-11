@@ -130,8 +130,6 @@
         });
     };
 
-
-
     jQuery("#product_id").on('change', function(){
         const productId = jQuery("#product_id").val();
         jQuery.ajax({
@@ -282,12 +280,10 @@
                     dataType: 'json',
                     data: { id: id },
                     success: function (data) {
-                        toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                        toastr.error("Eliminado ... ");                    
-                        let ruta = "{{ route('ingresos.index') }}";
-                        setTimeout(() => {
-                            window.location = ruta;
-                        }, 500);
+                        if (data['type'] == 'success') {                 
+                            let ruta = "{{ route('ingresos.index') }}";
+                            window.location = ruta;                           
+                        }
                     }
                 });
             }
@@ -310,12 +306,10 @@
                     dataType: 'json',
                     data: { id: id },
                     success: function (data) {
-                        toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                        toastr.info("Cerrando ... ");                    
-                        let ruta = "{{ route('ingresos.index') }}";
-                        setTimeout(() => {
+                        if (data['type'] == 'success') {                    
+                            let ruta = "{{ route('ingresos.index') }}";
                             window.location = ruta;
-                        }, 500);
+                        }
                     }
                 });
             }
