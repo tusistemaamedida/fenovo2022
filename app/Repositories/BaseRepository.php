@@ -40,4 +40,9 @@ abstract class BaseRepository {
         return $this->newQuery()->where('id' ,$id)->first();
     }
 
+    public function fill($id,$data){
+        $obj = $this->newQuery()->where('id',$id)->first();
+        $obj->fill($data);
+        return $obj->save();
+    }
 }

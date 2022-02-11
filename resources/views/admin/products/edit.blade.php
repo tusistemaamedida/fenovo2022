@@ -52,8 +52,11 @@
                                 </li>
                             </ul>
                             <div class="row">
-                                <form style="width: 100%;margin-top: 15px;" method="POST" action="{{route('product.store')}}" id="formData">
+                                <form style="width: 100%;margin-top: 15px;" method="POST" action="{{route('product.update')}}" id="formData">
                                     @csrf
+                                    @if (isset($product))
+                                        <input type="hidden" name="product_id" value="{{$product->id}}">
+                                    @endif
                                     <div class="col-12">
                                         <div class="tab-content" id="v-pills-tabContent1">
                                             <div class="tab-pane fade show active" id="detalle" role="tabpanel" aria-labelledby="home-tab-basic">
@@ -68,7 +71,7 @@
                                         </div>
                                     </div>
                                     <div class="col-12" style="float: right">
-                                        <button type="button" class="btn btn-primary btn-guardar" onclick="store('{{ route('product.store') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+                                        <button type="button" class="btn btn-primary" onclick="updateProduct('{{ route('product.update') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
                                     </div>
                                 </form>
                             </div>
@@ -83,4 +86,42 @@
 @section('js')
     @include('admin.products.images-js')
     @include('admin.products.calculated-prices-js')
+    <script>
+        function updateProduct(route){
+            var elements = document.querySelectorAll('.is-invalid');
+            var form = jQuery('#formData').serialize();
+
+            jQuery.ajax({
+                url: route,
+                type: 'POST',
+                data: form,
+                beforeSend: function () {
+                    for (var i = 0; i < elements.length; i++) {
+                        elements[i].classList.remove('is-invalid');
+                    }
+                    jQuery('#loader').removeClass('hidden');
+                },
+                success: function (data) {
+                    if (data['type'] == 'success') {
+                        toastr.info(data['msj'],'Registro');
+
+                    } else {
+                        toastr.error(data['html'], 'Verifique');
+                    }
+                },
+                error: function (data) {
+                    var lista_errores = "";
+                    var data = data.responseJSON;
+                    jQuery.each(data.errors, function (index, value) {
+                        lista_errores += value + '<br />';
+                        jQuery('#' + index).addClass('is-invalid');
+                    });
+                    toastr.error(lista_errores, 'Verifique');
+                },
+                complete: function () {
+                    jQuery('#loader').addClass('hidden');
+                }
+            });
+        };
+    </script>
 @endsection

@@ -120,9 +120,12 @@
             <div class="col-md-4">
                 <label  class="text-body">Unidad x bulto *</label>
                 <fieldset class="form-group mb-3">
-                    <select class="js-example-basic-single js-states form-control bg-transparent" name="unit_package" id="unit_package" multiple="multiple" >
+                    <select class="js-example-basic-single js-states form-control bg-transparent" name="unit_package[]" id="unit_package" multiple="multiple" >
                         @for ($i = 1; $i < 101; $i++)
-                            <option value="{{$i}}">{{$i}}</option>
+                            <option value="{{$i}}"
+                            @if(isset($product) && in_array($i,$unit_package)) selected @endif>
+                                {{$i}}
+                            </option>
                         @endfor
                     </select>
                 </fieldset>
