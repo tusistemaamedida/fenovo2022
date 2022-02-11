@@ -103,7 +103,10 @@ class IngresosController extends Controller
     public function close(Request $request)
     {
         Movement::find($request->id)->update(['status' => 'FINISHED']);
-        return new JsonResponse(['msj' => 'Cerrado ... ', 'type' => 'success']);
+        return new JsonResponse(
+            ['msj'     => 'Cerrado ... ',
+                'type' => 'success', ]
+        );
     }
 
     public function show(Request $request)
@@ -117,7 +120,10 @@ class IngresosController extends Controller
     public function destroy(Request $request)
     {
         Movement::find($request->id)->delete();
-        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
+        return new JsonResponse(
+            ['msj'     => 'Eliminado ... ',
+                'type' => 'success', ]
+        );
     }
 
     public function getMovements(Request $request)

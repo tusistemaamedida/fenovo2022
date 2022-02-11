@@ -45,7 +45,8 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Razon social</th>
+                                            <th>Cod Fenovo</th>
+                                            <th>Nombre referencial</th>
                                             <th>Cuit</th>
                                             <th>Email</th>
                                             @include('partials.table.head-action')
@@ -74,7 +75,8 @@
         ajax: "{{ route('stores.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'razon_social'},
+            {data: 'cod_fenovo'},
+            {data: 'description'},
             {data: 'cuit'},
             {data: 'email'},
             @include('partials.table.data-action')

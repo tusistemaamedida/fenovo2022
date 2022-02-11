@@ -1,4 +1,4 @@
-<div id="tc_header" class="header header-fixed">
+<div id="tc_header" class="header header-fixed bg-dark">
     <!--begin::Container-->
     <div class="container-fluid d-flex align-items-stretch justify-content-between">
         <!--begin::Header Menu Wrapper-->
@@ -7,9 +7,7 @@
             <div id="tc_header_menu" class="header-menu header-menu-mobile header-menu-layout-default">
                 <!--begin::Header Nav-->
                 <ul class="menu-nav">
-
                     <li class="menu-item menu-item-open menu-item-here menu-item-submenu menu-item-rel menu-item-open menu-item-here menu-item-active p-0" data-menu-toggle="click" aria-haspopup="true">
-
                         <div class="btn  btn-clean btn-dropdown mr-0 p-0" id="tc_aside_toggle">
                             <span class="svg-icon svg-icon-xl svg-icon-primary">
                                 <svg width="24px" height="24px" viewBox="0 0 16 16" class="bi bi-list" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -18,14 +16,24 @@
                             </span>
                         </div>
                     </li>
-
                 </ul>
                 <!--end::Header Nav-->
             </div>
             <!--end::Header Menu-->
         </div>
-        <!--end::Header Menu Wrapper-->
-        <!--begin::Topbar-->
+        <header class="pos-header">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-xl-12 col-lg-12 col-md-12">
+                        <div class="greeting-text">
+                            <h3 class="card-label mb-0 font-weight-bold">
+                                FENOVO S.A.
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
         <div class="topbar">
 
             <!--begin::user-->
@@ -66,7 +74,7 @@
                                     <line x1="12" y1="2" x2="12" y2="12"></line>
                                 </svg>
                             </span>
-                            <button type="submit" class="btn-link btn-light rounded-pill pull-left" style="border: none;">
+                            <button type="submit" class="rounded-pill pull-left" style="border: none;">
                                 Salir
                             </button>
                         </form>

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Movimientos;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\MovementProduct;
-
+use App\Models\Store;
 use App\Repositories\CustomerRepository;
 use App\Repositories\ProductRepository;
 
@@ -103,7 +103,8 @@ class SalidasController extends Controller
     public function show(Request $request)
     {
         $movement = Movement::query()->where('id', $request->id)->with('movement_salida_products')->first();
-        return view('admin.movimientos.salidas.show', compact('movement'));
+        $store    = Store::find($movement->to);
+        return view('admin.movimientos.salidas.show', compact('movement', 'store'));
     }
 
     public function getClienteSalida(Request $request)
@@ -246,7 +247,7 @@ class SalidasController extends Controller
             $product     = $this->productRepository->getByIdWith($product_id);
             switch ($to_type) {
                 case 'VENTA':
-                    $insert_data['unit_price'] = $product->product_price->plist0;
+                    $insert_data['unit_price'] = $product->product_price->plist0neto;
                     $insert_data['tasiva']     = $product->product_price->tasiva;
                     break;
                 case 'TRASLADO':
