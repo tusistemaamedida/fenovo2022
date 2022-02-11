@@ -11,16 +11,15 @@
 
 namespace Hazzard\Filepicker;
 
-use Intervention\Image\ImageManager;
 use Hazzard\Config\Repository as Config;
-use Symfony\Component\HttpFoundation\Request;
+use Hazzard\Filepicker\Exception\FileValidationException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Hazzard\Filepicker\Exception\FileValidationException;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\Exception\UploadException;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\HttpFoundation\Request;
 
 class BaseUploader
 {
@@ -29,12 +28,12 @@ class BaseUploader
      *
      * @var int
      */
-    const SORT_FILEMTIME_ASC = 1;
+    const SORT_FILEMTIME_ASC  = 1;
     const SORT_FILEMTIME_DESC = 2;
-    const SORT_FILESIZE_ASC = 3;
-    const SORT_FILESIZE_DESC = 4;
-    const SORT_FILENAME_ASC = 5;
-    const SORT_FILENAME_DESC = 6;
+    const SORT_FILESIZE_ASC   = 3;
+    const SORT_FILESIZE_DESC  = 4;
+    const SORT_FILENAME_ASC   = 5;
+    const SORT_FILENAME_DESC  = 6;
 
     /**
      * The configuration repository instance.
@@ -53,13 +52,13 @@ class BaseUploader
     /**
      * Create a new uploader instance.
      *
-     * @param  \Hazzard\Config\Repository $config
+     * @param  \Hazzard\Config\Repository            $config
      * @param  \Intervention\Image\ImageManager|null $imageManager
      * @return void
      */
     public function __construct(Config $config, $imageManager = null)
     {
-        $this->config = $config;
+        $this->config       = $config;
         $this->imageManager = $imageManager;
 
         $this->defaultConfig();
@@ -68,12 +67,11 @@ class BaseUploader
     /**
      * Upload the given file.
      *
-     * @param  \Symfony\Component\HttpFoundation\File\UploadedFile|array $file
-     * @param  string|null $name
-     * @return \Symfony\Component\HttpFoundation\File\File
-     *
+     * @param  \Symfony\Component\HttpFoundation\File\UploadedFile|array        $file
+     * @param  string|null                                                      $name
      * @throws \Hazzzard\Filepicker\Exception\FileValidationException
      * @throws \Symfony\Component\HttpFoundation\File\Exception\UploadException
+     * @return \Symfony\Component\HttpFoundation\File\File
      */
     public function upload($file, $name = null)
     {
@@ -85,7 +83,7 @@ class BaseUploader
             }
         }
 
-        if (! $file->isValid()) {
+        if (!$file->isValid()) {
             throw new UploadException($file->getErrorMessage());
         }
 
@@ -94,7 +92,7 @@ class BaseUploader
         $max = $this->config['max_number_of_files'];
 
         if ($max && $this->getTotal() >= $max) {
-            throw new UploadException($this->getErrorMessage('max_number_of_files', array($max)));
+            throw new UploadException($this->getErrorMessage('max_number_of_files', [$max]));
         }
 
         if ($this->config['overwrite']) {
@@ -128,12 +126,12 @@ class BaseUploader
     {
         if ($sort === static::SORT_FILENAME_ASC || $sort === static::SORT_FILENAME_DESC) {
             $files = $this->scanDir($sort == static::SORT_FILENAME_ASC ? 0 : 1);
-            $sort = null;
+            $sort  = null;
         } else {
             $files = $this->scanDir();
         }
 
-        if (! is_null($sort)) {
+        if (!is_null($sort)) {
             $files = $this->sortFiles($files, $sort);
         }
 
@@ -205,7 +203,7 @@ class BaseUploader
      */
     public function getImageVersions($filename)
     {
-        $files = array();
+        $files = [];
 
         foreach ($this->config['image_versions'] as $version => $options) {
             if (empty($version)) {
@@ -224,18 +222,17 @@ class BaseUploader
     /**
      * Create file download response.
      *
-     * @param  \Symfony\Component\HttpFoundation\File\File|string $file
-     * @param  string $version
-     * @param  bool   $prepare
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
+     * @param  \Symfony\Component\HttpFoundation\File\File|string                     $file
+     * @param  string                                                                 $version
+     * @param  bool                                                                   $prepare
      * @throws \Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function download($file, $version = null, $prepare = true)
     {
         $file = $this->createFile($file, $version);
 
-        $headers = array('X-Content-Type-Options' => 'nosniff');
+        $headers = ['X-Content-Type-Options' => 'nosniff'];
 
         if ($this->inlineFile($file->getFilename())) {
             $disposition = 'inline';
@@ -251,10 +248,9 @@ class BaseUploader
     /**
      * Delete file.
      *
-     * @param  string $filename
-     * @return bool
-     *
+     * @param  string                                                                 $filename
      * @throws \Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException
+     * @return bool
      */
     public function delete($filename, $version = null)
     {
@@ -272,17 +268,16 @@ class BaseUploader
     /**
      * Validate uploaded file.
      *
-     * @param  \Symfony\Component\HttpFoundation\File\UploadedFile $file
-     * @return bool
-     *
+     * @param  \Symfony\Component\HttpFoundation\File\UploadedFile    $file
      * @throws \Hazzzard\Filepicker\Exception\FileValidationException
+     * @return bool
      */
     public function validateFile(UploadedFile $file)
     {
         $maxSize = $this->config['max_file_size'];
         $minSize = $this->config['min_file_size'];
 
-        if (! $this->acceptedFile($file->getClientOriginalName())) {
+        if (!$this->acceptedFile($file->getClientOriginalName())) {
             throw new FileValidationException(
                 $this->getErrorMessage('file_not_accepted'),
                 FileValidationException::NOT_ACCEPTED
@@ -291,7 +286,7 @@ class BaseUploader
 
         if ($maxSize && $file->getSize() > $maxSize) {
             throw new FileValidationException(
-                $this->getErrorMessage('max_file_size', array($maxSize / 1024)),
+                $this->getErrorMessage('max_file_size', [$maxSize / 1024]),
                 FileValidationException::MAX_FILE_SIZE
             );
         }
@@ -303,7 +298,7 @@ class BaseUploader
             );
         }
 
-        if (! $this->imageFile($file->getClientOriginalName())) {
+        if (!$this->imageFile($file->getClientOriginalName())) {
             return true;
         }
 
@@ -312,36 +307,36 @@ class BaseUploader
         $minWidth  = $this->config['min_width'];
         $minHeight = $this->config['min_height'];
 
-        if (! ($maxWidth || $maxHeight || $minWidth || $minHeight)) {
+        if (!($maxWidth || $maxHeight || $minWidth || $minHeight)) {
             return true;
         }
 
-        list($width, $height) = $this->getImageSize($file);
+        [$width, $height] = $this->getImageSize($file);
 
         if ($maxWidth && $width > $maxWidth) {
             throw new FileValidationException(
-                $this->getErrorMessage('max_width', array($maxWidth)),
+                $this->getErrorMessage('max_width', [$maxWidth]),
                 FileValidationException::MAX_WIDTH
             );
         }
 
         if ($minWidth && $width < $minWidth) {
             throw new FileValidationException(
-                $this->getErrorMessage('min_width', array($minWidth)),
+                $this->getErrorMessage('min_width', [$minWidth]),
                 FileValidationException::MIN_WIDTH
             );
         }
 
         if ($maxHeight && $height > $maxHeight) {
             throw new FileValidationException(
-                $this->getErrorMessage('max_height', array($maxHeight)),
+                $this->getErrorMessage('max_height', [$maxHeight]),
                 FileValidationException::MAX_HEIGHT
             );
         }
 
         if ($minHeight && $height < $minHeight) {
             throw new FileValidationException(
-                $this->getErrorMessage('min_height', array($minHeight)),
+                $this->getErrorMessage('min_height', [$minHeight]),
                 FileValidationException::MIN_HEIGHT
             );
         }
@@ -352,7 +347,7 @@ class BaseUploader
     /**
      * Create image versions for the given file.
      *
-     * @param  string $filename
+     * @param  string                         $filename
      * @return \Intervention\Image\Image|null $image
      * @return void
      */
@@ -370,7 +365,7 @@ class BaseUploader
 
         foreach ($versions as $version => $options) {
             if (empty($options['raw'])) {
-                if (! $orientate && ! empty($options['auto_orient'])) {
+                if (!$orientate && !empty($options['auto_orient'])) {
                     $orientate = true;
                     $image->orientate();
                 }
@@ -379,7 +374,7 @@ class BaseUploader
             }
         }
 
-        if ($destroy && ! is_null($image)) {
+        if ($destroy && !is_null($image)) {
             $image->destroy();
         }
     }
@@ -387,13 +382,13 @@ class BaseUploader
     /**
      * Create image version.
      *
+     * @param  string                    $filename
+     * @param  string                    $version
+     * @param  array                     $options
      * @return \Intervention\Image\Image $image
-     * @param  string $filename
-     * @param  string $version
-     * @param  array  $options
      * @return bool
      */
-    protected function createImageVersion($image, $filename, $version, array $options = array())
+    protected function createImageVersion($image, $filename, $version, array $options = [])
     {
         $image->backup();
 
@@ -403,39 +398,39 @@ class BaseUploader
             }
         }
 
-        $width = isset($options['width']) ? $options['width'] : null;
-        $height = isset($options['height']) ? $options['height'] : null;
-        $maxWidth = isset($options['max_width']) ? $options['max_width'] : null;
-        $maxHeight = isset($options['max_height']) ? $options['max_height'] : null;
-        $quality = isset($options['quality']) ? $options['quality'] : null;
+        $width     = $options['width']      ?? null;
+        $height    = $options['height']     ?? null;
+        $maxWidth  = $options['max_width']  ?? null;
+        $maxHeight = $options['max_height'] ?? null;
+        $quality   = $options['quality']    ?? null;
 
         if ($width || $height) {
-            if (! $width) {
+            if (!$width) {
                 $width = $image->width() / ($image->height() / $height);
-            } elseif (! $height) {
+            } elseif (!$height) {
                 $height = $image->height() / ($image->width() / $width);
             }
 
             if (($image->width() / $image->height()) >= ($width / $height)) {
-                $newWidth = $image->width() / ($image->height() / $height);
+                $newWidth  = $image->width() / ($image->height() / $height);
                 $newHeight = $height;
             } else {
-                $newWidth = $width;
+                $newWidth  = $width;
                 $newHeight = $image->height() / ($image->width() / $width);
             }
 
             $image->resize(intval($newWidth), intval($newHeight));
             $image->crop(intval($width), intval($height));
         } elseif ($maxWidth || $maxHeight) {
-            if (! $maxWidth) {
+            if (!$maxWidth) {
                 $maxWidth = $image->width();
-            } elseif (! $maxHeight) {
+            } elseif (!$maxHeight) {
                 $maxHeight = $image->height();
             }
 
             $scale = min($maxWidth / $image->width(), $maxHeight / $image->height());
 
-            $newWidth = $image->width() * $scale;
+            $newWidth  = $image->width()  * $scale;
             $newHeight = $image->height() * $scale;
 
             if ($scale < 1) {
@@ -452,7 +447,7 @@ class BaseUploader
         }
 
         // $image->reset();
-        $command = new ResetCommand(array());
+        $command = new ResetCommand([]);
         $command->execute($image);
 
         return true;
@@ -469,7 +464,7 @@ class BaseUploader
     {
         $versionDir = $this->getPath(null, $version);
 
-        if (! is_dir($versionDir)) {
+        if (!is_dir($versionDir)) {
             @mkdir($versionDir, $this->config['mkdir_mode'], true);
         }
 
@@ -485,7 +480,7 @@ class BaseUploader
     public function deleteImageVersions($filename)
     {
         foreach ($this->config['image_versions'] as $version => $options) {
-            if (! empty($version)) {
+            if (!empty($version)) {
                 @unlink($this->getPath($filename, $version));
             }
         }
@@ -494,10 +489,9 @@ class BaseUploader
     /**
      * Create a file instance.
      *
-     * @param  string $filename
-     * @return \Symfony\Component\HttpFoundation\File\File
-     *
+     * @param  string                                                                 $filename
      * @throws \Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException
+     * @return \Symfony\Component\HttpFoundation\File\File
      */
     public function createFile($filename, $version = null)
     {
@@ -507,10 +501,9 @@ class BaseUploader
     /**
      * Create uploaded file instance.
      *
-     * @param  array $file
-     * @return \Symfony\Component\HttpFoundation\File\UploadedFile
-     *
+     * @param  array                                                                  $file
      * @throws \Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException
+     * @return \Symfony\Component\HttpFoundation\File\UploadedFile
      */
     public function createUploadedFile(array $file)
     {
@@ -539,7 +532,7 @@ class BaseUploader
         if ($version && $versionDir && $versionDir === $this->getPath()) {
             $ext = pathinfo($filename, PATHINFO_EXTENSION);
 
-            return substr($filename, 0, strlen($filename) - strlen($ext) - 1)."-$version.$ext";
+            return substr($filename, 0, strlen($filename) - strlen($ext) - 1) . "-$version.$ext";
         }
 
         return $filename;
@@ -559,8 +552,8 @@ class BaseUploader
             $name = preg_replace_callback(
                 '/(?:(?:([\d]+))?(\.[^.]+))?$/',
                 function ($matches) {
-                    $end  = isset($matches[1]) ? (int) $matches[1] + 1 : 1;
-                    $end .= isset($matches[2]) ? $matches[2] : '';
+                    $end = isset($matches[1]) ? (int)$matches[1] + 1 : 1;
+                    $end .= $matches[2] ?? '';
                     return $end;
                 },
                 $name,
@@ -580,7 +573,7 @@ class BaseUploader
     public function acceptedFile($file)
     {
         if ($types = $this->config['accept_file_types']) {
-            return preg_match('/\.('.$types.')$/i', $file) === 1;
+            return preg_match('/\.(' . $types . ')$/i', $file) === 1;
         }
 
         if ($types = $this->config['accept_file_types_regex']) {
@@ -588,7 +581,7 @@ class BaseUploader
         }
 
         if ($types = $this->config['reject_file_types']) {
-            return ! (preg_match('/\.('.$types.')$/i', $file) === 1);
+            return !(preg_match('/\.(' . $types . ')$/i', $file) === 1);
         }
 
         return true;
@@ -602,7 +595,7 @@ class BaseUploader
      */
     public function imageFile($file)
     {
-        return preg_match('/\.('.$this->config['image_file_types'].')$/i', $file) === 1;
+        return preg_match('/\.(' . $this->config['image_file_types'] . ')$/i', $file) === 1;
     }
 
     /**
@@ -613,18 +606,18 @@ class BaseUploader
      */
     public function inlineFile($file)
     {
-        return preg_match('/\.('.$this->config['inline_file_types'].')$/i', $file) === 1;
+        return preg_match('/\.(' . $this->config['inline_file_types'] . ')$/i', $file) === 1;
     }
 
     /**
      * Get the files inside upload directory.
      *
-     * @param  int $sortingOrder
+     * @param  int   $sortingOrder
      * @return array
      */
     protected function scanDir($sortingOrder = 0)
     {
-        $files = array();
+        $files = [];
 
         if (is_dir($directory = $this->getPath())) {
             foreach (scandir($directory, $sortingOrder) as $file) {
@@ -646,7 +639,7 @@ class BaseUploader
      */
     public function getPath($filename = null, $version = null)
     {
-        $dir = $this->config['upload_dir'];
+        $dir         = $this->config['upload_dir'];
         $versionPath = '';
 
         if ($version) {
@@ -655,7 +648,7 @@ class BaseUploader
             if ($versionDir) {
                 $dir = $versionDir;
             } else {
-                $versionPath = '/'.$version;
+                $versionPath = '/' . $version;
             }
         }
 
@@ -663,21 +656,20 @@ class BaseUploader
             $filename = $this->getFilename($this->normalize($filename), $version);
         }
 
-        return $dir.$versionPath.($filename ? '/'.$filename : '');
+        return $dir . $versionPath . ($filename ? '/' . $filename : '');
     }
 
     /**
      * Create a new file download response.
      *
-     * @param  \SplFileInfo|string $file
-     * @param  string $name
-     * @param  array  $headers
-     * @param  string $disposition
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
-     *
+     * @param  \SplFileInfo|string                                            $file
+     * @param  string                                                         $name
+     * @param  array                                                          $headers
+     * @param  string                                                         $disposition
      * @throws \Symfony\Component\HttpFoundation\File\Exception\FileException
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function createFileResponse($file, $name = null, $headers = array(), $disposition = 'attachment')
+    public function createFileResponse($file, $name = null, $headers = [], $disposition = 'attachment')
     {
         $response = new BinaryFileResponse($file, 200, $headers, true, $disposition);
 
@@ -702,10 +694,10 @@ class BaseUploader
      * @param  array  $params
      * @return string
      */
-    public function getErrorMessage($id, array $params = array())
+    public function getErrorMessage($id, array $params = [])
     {
         $message = $this->config->get("messages.$id", $id);
-        $params = array_merge(array($message), $params);
+        $params  = array_merge([$message], $params);
 
         if (count($params) < 2) {
             $params[1] = null;
@@ -728,7 +720,7 @@ class BaseUploader
 
         $image = new \Imagick($file->getPathname());
 
-        return array($image->getImageWidth(), $image->getImageHeight());
+        return [$image->getImageWidth(), $image->getImageHeight()];
     }
 
     /**
@@ -768,13 +760,13 @@ class BaseUploader
      */
     protected function defaultConfig()
     {
-        $defaults = array(
+        $defaults = [
             'debug' => false,
 
             'upload_dir' => null,
             'upload_url' => 'files',
-            'script_url' => 'http'.(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 's' : '').
-                            '://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'],
+            'script_url' => 'http' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 's' : '') .
+                            '://' . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'],
 
             'min_file_size' => 1,
             'max_file_size' => null,
@@ -786,42 +778,42 @@ class BaseUploader
             // 'accept_file_types' => '',
             // 'accept_file_types_regex' => '',
             'reject_file_types' => 'php|phtml|php3|php5|phps|cgi',
-            'image_file_types' => 'gif|jpg|jpeg|png',
+            'image_file_types'  => 'gif|jpg|jpeg|png',
             'inline_file_types' => 'gif|jpg|jpeg|png|pdf',
 
-            'min_width' => 1,
+            'min_width'  => 1,
             'min_height' => 1,
-            'max_width' => null,
+            'max_width'  => null,
             'max_height' => null,
 
-            'image_versions' => array(
-                '' => array(
+            'image_versions' => [
+                '' => [
                     // 'raw' => false,
                     'auto_orient' => true,
-                )
-            ),
+                ],
+            ],
 
             'mkdir_mode' => 0777,
 
             'sort' => static::SORT_FILEMTIME_ASC,
 
-            'messages' => array(
-                'max_width' => 'Image exceeds maximum width of %d pixels.',
-                'min_width' => 'Image requires a minimum width of %d pixels.',
-                'max_height' => 'Image exceeds maximum height of %d pixels.',
-                'min_height' => 'Image requires a minimum height of %d pixels.',
-                'max_file_size' => 'The file size is too big (limit is %d KB).',
-                'min_file_size' => 'The file size is too small.',
+            'messages' => [
+                'max_width'           => 'Image exceeds maximum width of %d pixels.',
+                'min_width'           => 'Image requires a minimum width of %d pixels.',
+                'max_height'          => 'Image exceeds maximum height of %d pixels.',
+                'min_height'          => 'Image requires a minimum height of %d pixels.',
+                'max_file_size'       => 'The file size is too big (limit is %d KB).',
+                'min_file_size'       => 'The file size is too small.',
                 'max_number_of_files' => 'Maximum number of %d files exceeded.',
-                'file_not_accepted' => 'The file type is not accepted.',
-                'abort' => 'The operation was aborted.',
-                'error' => 'Oops! Something went wrong.',
-                'not_found' => 'File not found.',
-            )
-        );
+                'file_not_accepted'   => 'The file type is not accepted.',
+                'abort'               => 'The operation was aborted.',
+                'error'               => 'Oops! Something went wrong.',
+                'not_found'           => 'File not found.',
+            ],
+        ];
 
         foreach ($defaults as $key => $value) {
-            if (! $this->config->has($key)) {
+            if (!$this->config->has($key)) {
                 $this->config[$key] = $value;
             }
         }

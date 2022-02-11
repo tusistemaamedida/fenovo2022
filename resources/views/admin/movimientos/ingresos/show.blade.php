@@ -36,7 +36,7 @@
                             <strong>{{ $movement->origenData($movement->type) }}</strong>
                         </fieldset>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 text-center">
                         <label class="text-dark">Nro Comprobante</label>
                         <fieldset class="form-group mb-3">
                             <strong>{{ $movement->voucher_number }}</strong>

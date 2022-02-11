@@ -118,8 +118,6 @@ class SenasaController extends Controller
         return redirect()->route('senasa.index')->with($notification);
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////
-
     public function print(Request $request)
     {
         $senasa      = Senasa::find($request->id);

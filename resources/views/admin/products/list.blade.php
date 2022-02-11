@@ -64,7 +64,7 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        @include('partials.table.dom-button'),
+        @include('partials.table.dom-button'),    
         ajax: "{{ route('products.list') }}",
         columns: [
             {data: 'cod_fenovo', 'class':'text-center col-1'},

@@ -3,8 +3,8 @@
 
         <div class="brand flex-column-auto" id="tc_brand">
             <a href="{{route('inicio')}}" class="brand-logo">
-                <div class="brand-image"><img style="height: 40px;margin-right:20px" alt="fenovo" src="{{asset('assets/images/misc/logo.png')}}" /></div>
-                <span class="brand-text"><img style="height: 40px;margin-right:20px" alt="fenovo" src="{{asset('assets/images/misc/logo.png')}}" /></span>
+                <div class="brand-image"><img alt="FTK" src="{{asset('favicon.ico')}}"></div>
+                <span class="brand-text"><img style="height: 30px" alt="fenovo" src="{{asset('assets/images/misc/logo.png')}}" /></span>
             </a>
         </div>
 
@@ -57,6 +57,18 @@
                                             <span class="nav-text">Ingresos</span>
                                         </a>
                                     </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{route('salidas.pendientes')}}" class="nav-link sub-nav-link @if(Route::is('salidas.pendientes')) active @endif">
+                                            <span class="svg-icon nav-icon d-flex justify-content-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="10px" height="10px" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                                </svg>
+                                            </span>
+                                            <span class="nav-text">Salidas</span>
+                                        </a>
+                                    </li>
+
                                     <li class="nav-item">
                                         <a href="{{route('salidas.index')}}" class="nav-link sub-nav-link @if(Route::is('salidas.index')) active @endif">
                                             <span class="svg-icon nav-icon d-flex justify-content-center">
@@ -68,16 +80,6 @@
                                         </a>
                                     </li>
 
-                                    <li class="nav-item">
-                                        <a href="{{route('salidas.pendientes')}}" class="nav-link sub-nav-link @if(Route::is('salidas.pendientes')) active @endif">
-                                            <span class="svg-icon nav-icon d-flex justify-content-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="10px" height="10px" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
-                                                    <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                                </svg>
-                                            </span>
-                                            <span class="nav-text">Salidas Pendientes</span>
-                                        </a>
-                                    </li>
                                     <li class="nav-item">
                                         <a href="{{route('senasa.index')}}" class="nav-link sub-nav-link @if(Route::is('senasa.*')) active @endif">
                                             <span class="svg-icon nav-icon d-flex justify-content-center">

@@ -29,9 +29,9 @@
                             <input type="text" name="from" value="{{ $proveedor->name }}" class="form-control mb-3" readonly>
                         </fieldset>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 text-center">
                         <label class="text-dark">Nro Comprobante</label>
-                        <input type="text" id="voucher_number" name="voucher_number" value="{{ $movement->voucher_number }}" class="form-control" required="true">
+                        <input type="text" id="voucher_number" name="voucher_number" value="{{ $movement->voucher_number }}" class="form-control text-center" required="true">
                     </div>
                     <div class="col-md-1 text-center">
                         <label class="text-dark">Anular</label>
@@ -44,7 +44,7 @@
                     <div class="col-md-1 text-center">
                         <label class="text-dark">Finalizar</label>
                         <fieldset class="form-group">
-                            <a href="{{ route('ingresos.index') }}" class="btn btn-link btn-cerrar-ingreso">
+                            <a href="javascript:void(0)" onclick="close_compra('{{ $movement->id}}', '{{ route('ingresos.close') }}')" class="btn btn-link btn-cerrar-ingreso">
                                 <i class="fa fa-lock text-primary"></i>
                             </a>
                         </fieldset>
@@ -57,7 +57,9 @@
                             <div class="col-12"> Producto</div>
                         </div>
                         <div class="row">
-                            <div class="col-12">{{ Form::select('product_id', $productos, null, ['id'=>'product_id', 'class' => 'js-example-basic-single form-control bg-transparent', 'placeholder'=>'Seleccione productos ...']) }}</div>
+                            <div class="col-12">
+                                {{ Form::select('product_id', $productos, null, ['id'=>'product_id', 'class' => 'js-example-basic-single form-control bg-transparent', 'placeholder'=>'Seleccione productos ...']) }}
+                            </div>
                         </div>
 
                     </div>
@@ -84,10 +86,52 @@
 
     </div>
 </div>
+
+@include('admin.movimientos.ingresos.modal')
+
 @endsection
 
 @section('js')
 <script>
+    const editarProducto = (id) => {
+        var elements = document.querySelectorAll('.is-invalid');
+        jQuery.ajax({
+            url: '{{ route('ingresos.editProduct') }}',
+            type: 'GET',
+            data: { id },
+            success: function (data) {
+                if (data['type'] == 'success') {
+                    jQuery("#insertByAjax").html(data['html']);
+                    jQuery("#unit_package").select2({});
+                    jQuery(".btn-actualizar").show()
+                    jQuery('.editpopup').addClass('offcanvas-on');
+                } else {
+                    toastr.error(data['html'], 'Verifique');
+                }
+            }
+        });
+    }
+
+    const actualizarProducto = () => {
+        var form = jQuery('#formData').serialize();
+        jQuery.ajax({
+            url: '{{ route('ingresos.updateProduct') }}',
+            type: 'POST',
+            data: form,
+            success: function (data) {
+                if (data['type'] == 'success') {
+                    toastr.info('Actualizado', 'Registro');
+                    jQuery('.editpopup').removeClass('offcanvas-on');
+                    jQuery("#product_id").val(null).trigger('change');
+                } else {
+                    toastr.error(data['html'], 'Verifique');
+                }
+            },
+        });
+    };
+
+
+
     jQuery("#product_id").on('change', function(){
         const productId = jQuery("#product_id").val();
         jQuery.ajax({
@@ -223,32 +267,60 @@
     }
 
     const destroy_local = (id, route) => {
-    ymz.jq_confirm({
-        title: 'Eliminar',
-        text: "confirma borrar registro ?",
-        no_btn: "Cancelar",
-        yes_btn: "Confirma",
-        no_fn: function () {
-            return false;
-        },
-        yes_fn: function () {
-            jQuery.ajax({
-                url: route,
-                type: 'POST',
-                dataType: 'json',
-                data: { id: id },
-                success: function (data) {
-                    toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                    toastr.error("Eliminado ... ");                    
-                    let ruta = "{{ route('ingresos.index') }}";
-                    setTimeout(() => {
-                        window.location = ruta;
-                    }, 500);
-                }
-            });
-        }
-    });
-};
+        ymz.jq_confirm({
+            title: 'Eliminar',
+            text: "confirma borrar registro ?",
+            no_btn: "Cancelar",
+            yes_btn: "Confirma",
+            no_fn: function () {
+                return false;
+            },
+            yes_fn: function () {
+                jQuery.ajax({
+                    url: route,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: id },
+                    success: function (data) {
+                        toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                        toastr.error("Eliminado ... ");                    
+                        let ruta = "{{ route('ingresos.index') }}";
+                        setTimeout(() => {
+                            window.location = ruta;
+                        }, 500);
+                    }
+                });
+            }
+        });
+    };
+
+    const close_compra = (id, route) => {
+        ymz.jq_confirm({
+            title: 'Compra ',
+            text: "Confirma el cierre de la  compra ?",
+            no_btn: "Cancelar",
+            yes_btn: "Confirma",
+            no_fn: function () {
+                return false;
+            },
+            yes_fn: function () {
+                jQuery.ajax({
+                    url: route,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: id },
+                    success: function (data) {
+                        toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                        toastr.info("Cerrando ... ");                    
+                        let ruta = "{{ route('ingresos.index') }}";
+                        setTimeout(() => {
+                            window.location = ruta;
+                        }, 500);
+                    }
+                });
+            }
+        });
+    };
 
 </script>
 @endsection
