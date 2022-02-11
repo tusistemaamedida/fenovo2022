@@ -17,6 +17,7 @@ use App\Repositories\SenasaDefinitionRepository;
 use App\Repositories\ProductPriceRepository;
 use App\Http\Requests\Products\CalculatePrices;
 use App\Http\Requests\Products\AddProduct;
+use App\Http\Requests\Products\UpdateProduct;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -91,6 +92,7 @@ class ProductController extends Controller
     public function store(AddProduct $request){
        try {
             $data = $request->all();
+            $data['unit_package'] = implode(",", $data['unit_package'] );
             $preciosCalculados =  $this->calcularPrecios($request);
             $data = array_merge($data, $preciosCalculados);
             $producto_nuevo = $this->productRepository->create($data);
@@ -110,7 +112,8 @@ class ProductController extends Controller
             $categories = $this->productCategoryRepository->getActives('name', 'ASC');
             $types = $this->productTypeRepository->getActives('name', 'ASC');
             $proveedores = $this->proveedorRepository->getActives('name', 'ASC');
-            if($product) return view('admin.products.edit', compact('alicuotas', 'categories', 'types', 'proveedores', 'senasaDefinitions','product'));
+            $unit_package = explode(',',$product->unit_package);
+            if($product) return view('admin.products.edit', compact('alicuotas', 'categories', 'types', 'proveedores', 'senasaDefinitions','product','unit_package'));
             $notification = [
                 'message'    => 'El producto no existe !',
                 'alert-type' => 'error',
@@ -120,6 +123,22 @@ class ProductController extends Controller
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
+
+    public function update(UpdateProduct $request){
+        try {
+             $data = $request->except('_token');
+             $product_id = $data['product_id'];
+             $data['unit_package'] = implode(",", $data['unit_package'] );
+             $producto_actualizado = $this->productRepository->fill($product_id,$data);
+             $preciosCalculados =  $this->calcularPrecios($request);
+             $data = array_merge($data, $preciosCalculados);
+             $producto = $this->productRepository->getByIdWith($product_id);
+             $this->productPriceRepository->fill($producto->product_price->id,$data);
+             return new JsonResponse(['type' => 'success','msj' =>'Producto actualizado correctamente!']);
+        } catch (\Exception $e) {
+             return new JsonResponse(['type' => 'error','msj' => $e->getMessage()]);
+        }
+     }
 
     public function validateCode(Request $request){
         $data = $request->all();
