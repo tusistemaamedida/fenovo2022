@@ -9,7 +9,7 @@
                         <li> <span class="nav-text"> ... </span> </li>
 
                         <li class="nav-item">
-                            <a href="{{route('inicio')}}" class="nav-link">
+                            <a href="#" class="nav-link">
                                 <span class="svg-icon nav-icon"> <br /> </span>
                             </a>
                         </li>

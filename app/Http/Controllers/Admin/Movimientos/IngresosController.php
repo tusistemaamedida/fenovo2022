@@ -37,8 +37,8 @@ class IngresosController extends Controller
                 ->editColumn('date', function ($movement) {
                     return date('Y-m-d', strtotime($movement->date));
                 })
-                ->editColumn('type', function ($movement) {
-                    return $movement->type;
+                ->addColumn('items', function ($movement) {
+                    return count($movement->movement_products);
                 })
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
@@ -48,7 +48,7 @@ class IngresosController extends Controller
                     ? '<a class="dropdown-item" href="' . route('ingresos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-edit text-primary"></i> </a>'
                     : '<a class="dropdown-item" href="' . route('ingresos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
                 })
-                ->rawColumns(['origen', 'date', 'type', 'edit'])
+                ->rawColumns(['origen', 'date', 'items', 'edit'])
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.index');

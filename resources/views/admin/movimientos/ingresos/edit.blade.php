@@ -20,32 +20,32 @@
                 <div class="row">
                     <input type="hidden" name="movement_id" id="movement_id" value={{ $movement->id }} />
                     <div class="col-md-4">
-                        <label class="text-body">Fecha</label>
-                        <input type="text" name="date" value="{{ date('d-m-Y',strtotime($movement->date)) }}" class="form-control datepicker mb-3" readonly>
-                    </div>
-                    <div class="col-md-4">
                         <label class="text-body">Proveedor</label>
                         <fieldset class="form-group mb-3">
                             <input type="text" name="from" value="{{ $proveedor->name }}" class="form-control mb-3" readonly>
                         </fieldset>
                     </div>
+                    <div class="col-md-4">
+                        <label class="text-body">Fecha</label>
+                        <input type="text" name="date" value="{{ date('d-m-Y',strtotime($movement->date)) }}" class="form-control datepicker mb-3" readonly>
+                    </div>
                     <div class="col-md-2 text-center">
                         <label class="text-dark">Nro Comprobante</label>
-                        <input type="text" id="voucher_number" name="voucher_number" value="{{ $movement->voucher_number }}" class="form-control text-center" required="true">
+                        <input type="text" id="voucher_number" name="voucher_number" value="{{ $movement->voucher_number }}" class="form-control text-center" readonly>
+                    </div>
+                    <div class="col-md-1 text-center">
+                        <label class="text-dark font-size-bold">Cerrar</label>
+                        <fieldset class="form-group">
+                            <a href="javascript:void(0)" onclick="close_compra('{{ $movement->id}}', '{{ route('ingresos.close') }}')" class="btn btn-link btn-cerrar-ingreso">
+                                <i class="fa fa-lock text-primary"></i>
+                            </a>
+                        </fieldset>
                     </div>
                     <div class="col-md-1 text-center">
                         <label class="text-dark">Anular</label>
                         <fieldset class="form-group">
                             <a href="javascript:void(0)" onclick="destroy_local('{{ $movement->id}}', '{{ route('ingresos.destroy') }}')" class="btn btn-link">
-                                <i class="fa fa-trash text-danger"></i>
-                            </a>
-                        </fieldset>
-                    </div>
-                    <div class="col-md-1 text-center">
-                        <label class="text-dark">Finalizar</label>
-                        <fieldset class="form-group">
-                            <a href="javascript:void(0)" onclick="close_compra('{{ $movement->id}}', '{{ route('ingresos.close') }}')" class="btn btn-link btn-cerrar-ingreso">
-                                <i class="fa fa-lock text-primary"></i>
+                                <i class="fa fa-trash"></i>
                             </a>
                         </fieldset>
                     </div>
@@ -93,6 +93,25 @@
 
 @section('js')
 <script>
+    jQuery( document ).ready(function() {
+        jQuery("#product_id").select2('open')
+    });
+
+    jQuery("#product_id").on('change', function(){
+        const productId = jQuery("#product_id").val();
+        jQuery.ajax({
+            url: '{{ route('detalle-ingresos.check') }}',
+            type: 'POST',
+            data: {productId},
+            success: function (data) {
+                if (data['type'] == 'success') {
+                    jQuery("#dataTemp").html(data['html']);
+                    jQuery(".calculate").first().select();
+                }
+            },
+        });
+    })
+
     const editarProducto = (id) => {
         var elements = document.querySelectorAll('.is-invalid');
         jQuery.ajax({
@@ -103,7 +122,6 @@
                 if (data['type'] == 'success') {
                     jQuery("#insertByAjax").html(data['html']);
                     jQuery("#unit_package").select2({});
-                    jQuery(".btn-actualizar").show()
                     jQuery('.editpopup').addClass('offcanvas-on');
                 } else {
                     toastr.error(data['html'], 'Verifique');
@@ -122,27 +140,14 @@
                 if (data['type'] == 'success') {
                     toastr.info('Actualizado', 'Registro');
                     jQuery('.editpopup').removeClass('offcanvas-on');
-                    jQuery("#product_id").val(null).trigger('change');
+                    jQuery("#dataTemp").html('');
+                    jQuery("#product_id").val(null).trigger('change').select2('open');
                 } else {
                     toastr.error(data['html'], 'Verifique');
                 }
             },
         });
     };
-
-    jQuery("#product_id").on('change', function(){
-        const productId = jQuery("#product_id").val();
-        jQuery.ajax({
-            url: '{{ route('detalle-ingresos.check') }}',
-            type: 'POST',
-            data: {productId},
-            success: function (data) {
-                if (data['type'] == 'success') {
-                    jQuery("#dataTemp").html(data['html']);
-                }
-            },
-        });
-    })
 
     const sumar = () => {
         let total = 0;
@@ -211,7 +216,8 @@
 
                 if (data['type'] == 'success') {
                     actualizarIngreso();
-                    jQuery('#btn-guardar-producto').addClass("d-none");
+                    jQuery("#dataTemp").html('');
+                    jQuery("#product_id").val(null).trigger('change').select2('open');
                 }
                 if (data['type'] !== 'success') {
                     toastr.error(data['msj'], 'Verifique');
