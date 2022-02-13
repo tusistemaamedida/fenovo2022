@@ -26,23 +26,23 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label class="text-body">Fecha</label>
-                                <input type="date" name="date" value="{{ date('Y-m-d', strtotime(now())) }}" class="form-control datepicker mb-3" autofocus>
-                            </div>
-                            <div class="col-md-4">
                                 <label class="text-body">Proveedor</label>
                                 <fieldset class="form-group mb-3">
                                     {{ Form::select('from', $proveedores, null, ['class' => 'js-example-basic-single form-control bg-transparent proveedor', 'placeholder'=>'seleccione ...', 'required' => 'true']) }}
                                 </fieldset>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="text-body">Fecha</label>
+                                <input type="date" name="date" value="{{ date('Y-m-d', strtotime(now())) }}" class="form-control datepicker mb-3" autofocus>
                             </div>
                             <div class="col-md-2">
                                 <label class="text-dark">Nro Comprobante</label>
                                 <input type="text" id="voucher_number" name="voucher_number" value="" class="form-control" required="true">
                             </div>
                             <div class="col-md-2 text-center">
-                                <label class="text-dark">&nbsp;</label>
+                                <label class="text-dark">Guardar</label>
                                 <fieldset class="form-group mb-3">
-                                    <button type="submit" class="btn btn-primary btn-guardar-ingreso text-white"><i class="fa fa-save"></i> </button>
+                                    <button type="submit" class="btn btn-link btn-guardar-ingreso text-primary"><i class="fa fa-save"></i> </button>
                                 </fieldset>
                             </div>
                         </div>
@@ -67,6 +67,10 @@
 
     @section('js')
     <script>
+        jQuery( document ).ready(function() {
+            jQuery(".proveedor").select2('open')
+        });
+
         jQuery(".proveedor").on('change',function(){
             const id = this.value;
             jQuery.ajax({
