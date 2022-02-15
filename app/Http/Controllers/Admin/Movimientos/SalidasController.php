@@ -195,7 +195,7 @@ class SalidasController extends Controller
                         // los bultos que hay disponibles se calcula dividiendo el balance por el peso del bulto
                         $peso_por_bulto = $product->unit_weight * $presentacion;
 
-                        dd($peso_por_bulto,$stock,$stock_en_session);
+                        //dd($peso_por_bulto,$stock,$stock_en_session);
                         if ($stock) {
                             $bultos = $stock / $peso_por_bulto;
                         }
