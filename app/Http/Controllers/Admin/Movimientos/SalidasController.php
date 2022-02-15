@@ -277,7 +277,7 @@ class SalidasController extends Controller
                 if ($quantity > 0) {
                     $explode                     = explode('_', $unidad['name']);
                     $insert_data['unit_package'] = (int)$explode[1];
-                    $stock_en_session            = $this->sessionProductRepository->getCantidadTotalDeBultos($product_id, $insert_data['unit_package']);
+                    $stock_en_session            = $this->sessionProductRepository->getCantidadTotalDeBultosByListId($product_id, $insert_data['unit_package'],$insert_data['list_id']);
                     $insert_data['quantity']     = $quantity + $stock_en_session;
                     $this->sessionProductRepository->updateOrCreate($insert_data);
                 }

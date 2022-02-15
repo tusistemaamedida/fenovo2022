@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade as PDF;
 use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\InvoicesRepository;
 use App\Models\Movement;
+use App\Models\MovementProduct;
 use App\Models\Store;
 use App\Models\Customer;
 use App\Models\Iibb;
@@ -41,7 +43,6 @@ class InvoiceController extends Controller
     }
 
     public function index(Request $request){
-
         if ($request->ajax()) {
             $invoices = $this->invoiceRepository->all();
             return Datatables::of($invoices)
@@ -58,6 +59,19 @@ class InvoiceController extends Controller
         }
 
         return view('admin.invoice.list');
+    }
+
+    public function generateInvoicePdf(Request $request){
+        $movement_id = 525;
+        $invoice = $this->invoiceRepository->getByMovement($movement_id);
+        if(!is_null($invoice->cae)){
+            $productos = MovementProduct::where('movement_id',$movement_id)->where('invoice',1)->get();
+            $view =  \View::make('print.invoice',compact('invoice'))->render();
+            $pdf = \App::make('dompdf.wrapper');
+            $pdf->setPaper([0, 0, 360, 560], 'portrait');
+            $pdf->loadHTML($view);
+            return $pdf->stream('opf-'.$opf->id.'.pdf');
+        }
     }
 
     public function create(Request $request){

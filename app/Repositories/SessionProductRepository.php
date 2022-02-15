@@ -31,6 +31,15 @@ class SessionProductRepository extends BaseRepository
                                 ->sum('quantity');
     }
 
+    public function getCantidadTotalDeBultosByListId($product_id,$unit_package = null,$list_id){
+        return $this->newQuery()->where('product_id',$product_id)
+                                ->where('list_id',$list_id)
+                                ->when($unit_package, function ($q, $unit_package) {
+                                    $q->where('unit_package', $unit_package);
+                                })
+                                ->sum('quantity');
+    }
+
     public function updateOrCreate($data){
         return $this->newQuery()->updateOrCreate(
             [
