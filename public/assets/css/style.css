@@ -20215,4 +20215,8 @@ input[type="radio"].radio-warning:checked + .custom-control-label:before {
     display: none;
 }
 
+.dataTables_wrapper .dataTables_paginate .paginate_button{
+    padding: 0 !important;
+}
+
 /*# sourceMappingURL=style.css.map */
