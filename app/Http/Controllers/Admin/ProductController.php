@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
-use File;
 use App\Http\Requests\Products\AddProduct;
-use App\Http\Requests\Products\CalculatePrices;
 
+use App\Http\Requests\Products\CalculatePrices;
 use App\Http\Requests\Products\UpdateProduct;
+
+use App\Models\Movement;
+use App\Models\MovementProduct;
 use App\Models\Product;
 use App\Repositories\AlicuotaTypeRepository;
 use App\Repositories\ProductCategoryRepository;
@@ -17,11 +17,10 @@ use App\Repositories\ProductPriceRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProducTypeRepository;
 use App\Repositories\ProveedorRepository;
-use App\Repositories\SenasaDefinitionRepository;
 
-use App\Models\Movement;
-use App\Models\MovementProduct;
+use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -59,7 +58,7 @@ class ProductController extends Controller
             return Datatables::of($productos)
                 ->addIndexColumn()
                 ->addColumn('costo', function ($product) {
-                    return '$' . $product->product_price->costfenovo;
+                    return '$' . $product->product_price->plist0neto;
                 })
                 ->addColumn('stock', function ($product) {
                     return $product->stock();
@@ -363,111 +362,110 @@ class ProductController extends Controller
         }
     }
 
-    public function importFromCsv(){
+    public function importFromCsv()
+    {
         try {
             $filepath = public_path('/imports/FROZEN.TXT');
-            $file = fopen($filepath,"r");
+            $file     = fopen($filepath, 'r');
 
-            $importData_arr = array();
-            $i = 0;
+            $importData_arr = [];
+            $i              = 0;
 
-            while (($filedata = fgetcsv($file, 0, ",")) !== FALSE) {
-                $num = count($filedata );
-                for ($c=0; $c < $num; $c++) {
-                    $importData_arr[$i][] = $filedata [$c];
+            while (($filedata = fgetcsv($file, 0, ',')) !== false) {
+                $num = count($filedata);
+                for ($c = 0; $c < $num; $c++) {
+                    $importData_arr[$i][] = $filedata[$c];
                 }
                 $i++;
             }
             fclose($file);
-            foreach($importData_arr as $importData){
-                $data = [];
-                $proveedor = $this->proveedorRepository->getByName($importData[2]);
-                $insertData = array(
-                    "cod_fenovo"   => $importData[0],
-                    "cod_proveedor"=> $importData[1],
-                    "name"         => $importData[3],
-                    "proveedor_id" => $proveedor->id,
-                    "categorie_id" => 1,
-                    "barcode"      => $importData[16],
-                    "unit_type"    => $importData[18],
-                    "unit_weight"  => $importData[19],
-                    "unit_package" => $importData[17],
-                    "package_palet"=> $importData[22],
-                    "package_row"  => $importData[23]
-                );
+            foreach ($importData_arr as $importData) {
+                $data       = [];
+                $proveedor  = $this->proveedorRepository->getByName($importData[2]);
+                $insertData = [
+                    'cod_fenovo'    => $importData[0],
+                    'cod_proveedor' => $importData[1],
+                    'name'          => $importData[3],
+                    'proveedor_id'  => $proveedor->id,
+                    'categorie_id'  => 1,
+                    'barcode'       => $importData[16],
+                    'unit_type'     => $importData[18],
+                    'unit_weight'   => $importData[19],
+                    'unit_package'  => $importData[17],
+                    'package_palet' => $importData[22],
+                    'package_row'   => $importData[23],
+                ];
                 $producto_nuevo = $this->productRepository->create($insertData);
 
-                $data = array(
+                $data = [
                     'product_id'        => $producto_nuevo->id,
-                    "plistproveedor"    => $importData[4],
-                    "descproveedor"     => $importData[5],
-                    "costfenovo"        => $importData[6],
-                    "mupfenovo"         => $importData[7],
-                    "tasiva"            => $importData[15],
-                    "plist0neto"        => $importData[8],
-                    'plist0iva'         => $importData[8] * ($importData[15] / 100 +1),
-                    "contribution_fund" => 0.5,
-                    "plist1"            => $importData[10],
-                    "muplist1"          => $importData[9],
-                    "plist2"            => $importData[12],
-                    "muplist2"          => $importData[11],
-                    "p1tienda"          => $importData[21],
-                    "mup1"              => $importData[20],
-                    "descp1"            => $importData[14],
-                    "cantmay1"          => $importData[13]
-                );
+                    'plistproveedor'    => $importData[4],
+                    'descproveedor'     => $importData[5],
+                    'costfenovo'        => $importData[6],
+                    'mupfenovo'         => $importData[7],
+                    'tasiva'            => $importData[15],
+                    'plist0neto'        => $importData[8],
+                    'plist0iva'         => $importData[8] * ($importData[15] / 100 + 1),
+                    'contribution_fund' => 0.5,
+                    'plist1'            => $importData[10],
+                    'muplist1'          => $importData[9],
+                    'plist2'            => $importData[12],
+                    'muplist2'          => $importData[11],
+                    'p1tienda'          => $importData[21],
+                    'mup1'              => $importData[20],
+                    'descp1'            => $importData[14],
+                    'cantmay1'          => $importData[13],
+                ];
                 $this->productPriceRepository->create($data);
-
             }
 
             $filepath = public_path('/imports/ST.TXT');
-            $file = fopen($filepath,"r");
+            $file     = fopen($filepath, 'r');
 
-            $importData_arr2 = array();
-            $i = 0;
+            $importData_arr2 = [];
+            $i               = 0;
 
-            while (($filedata2 = fgetcsv($file, 0, ",")) !== FALSE) {
-                $num = count($filedata2 );
-                for ($c=0; $c < $num; $c++) {
-                    $importData_arr2[$i][] = $filedata2 [$c];
+            while (($filedata2 = fgetcsv($file, 0, ',')) !== false) {
+                $num = count($filedata2);
+                for ($c = 0; $c < $num; $c++) {
+                    $importData_arr2[$i][] = $filedata2[$c];
                 }
                 $i++;
             }
             fclose($file);
 
             $movement = Movement::create([
-                'date' => now(),
-                'type' => 'COMPRA',
-                'from' => 1,
-                'to' => 1,
-                'status' => 'CREATED',
+                'date'           => now(),
+                'type'           => 'COMPRA',
+                'from'           => 1,
+                'to'             => 1,
+                'status'         => 'CREATED',
                 'voucher_number' => '00001',
             ]);
             $code_not_found = [];
-            foreach($importData_arr2 as $importData){
-                $cod_fenovo   = $importData[0];
-                $balance = $importData[1];
-                $product = $this->productRepository->getByCodeFenovo($cod_fenovo);
-                if($product){
+            foreach ($importData_arr2 as $importData) {
+                $cod_fenovo = $importData[0];
+                $balance    = $importData[1];
+                $product    = $this->productRepository->getByCodeFenovo($cod_fenovo);
+                if ($product) {
                     MovementProduct::create([
-                        'store_id' => 1,
-                        'movement_id' => $movement->id,
-                        'product_id' => $product->id,
+                        'store_id'     => 1,
+                        'movement_id'  => $movement->id,
+                        'product_id'   => $product->id,
                         'unit_package' => $product->unit_package,
-                        'invoice' => 1,
-                        'entry' => $balance,
-                        'egress' => 0,
-                        'balance' => $balance,
-                        'unit_price'=>$product->product_price->costfenovo,
-                        'tasiva' => $product->product_price->tasiva
+                        'invoice'      => 1,
+                        'entry'        => $balance,
+                        'egress'       => 0,
+                        'balance'      => $balance,
+                        'unit_price'   => $product->product_price->costfenovo,
+                        'tasiva'       => $product->product_price->tasiva,
                     ]);
-                }else{
-                    array_push($code_not_found,$cod_fenovo);
+                } else {
+                    array_push($code_not_found, $cod_fenovo);
                 }
             }
             dd($code_not_found);
             return redirect()->route('products.list');
-
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
