@@ -349,7 +349,7 @@ class ProductController extends Controller
 
     public function importFromCsv(){
         try {
-            $filepath = public_path('/imports/FROZEN.txt');
+            $filepath = public_path('/imports/FROZEN.TXT');
             $file = fopen($filepath,"r");
 
             $importData_arr = array();
@@ -404,7 +404,7 @@ class ProductController extends Controller
 
             }
 
-            $filepath = public_path('/imports/ST.txt');
+            $filepath = public_path('/imports/ST.TXT');
             $file = fopen($filepath,"r");
 
             $importData_arr2 = array();
