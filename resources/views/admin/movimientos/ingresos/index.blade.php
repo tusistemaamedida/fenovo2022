@@ -46,10 +46,10 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Fecha</th>
-                                            <th>Origen</th>
-                                            <th>Tipo</th>
-                                            <th>Comprobante Nro</th>
-                                            <th>Registro</th>
+                                            <th>Proveedor</th>
+                                            <th>Items</th>
+                                            <th>ComprobanteNro</th>
+                                            <th>Actualización</th>
                                             <th>Detalle</th>
                                         </tr>
                                     </thead>
@@ -78,7 +78,7 @@
             {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
             {data: 'date'},
             {data: 'origen'},
-            {data: 'type'},
+            {data: 'items'},
             {data: 'voucher_number',  'class':'text-center'},
             {data: 'updated_at'},
             {data: 'edit', name: 'Editar', 'class':'text-center', searchable: false},

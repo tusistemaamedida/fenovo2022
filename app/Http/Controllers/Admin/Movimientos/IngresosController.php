@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Movimientos;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\MovementProduct;
-
+use App\Models\Product;
 use App\Models\Proveedor;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProveedorRepository;
@@ -37,16 +37,18 @@ class IngresosController extends Controller
                 ->editColumn('date', function ($movement) {
                     return date('Y-m-d', strtotime($movement->date));
                 })
-                ->editColumn('type', function ($movement) {
-                    return $movement->type;
+                ->addColumn('items', function ($movement) {
+                    return count($movement->movement_products);
                 })
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
                 })
                 ->addColumn('edit', function ($movement) {
-                    return '<a class="dropdown-item" href="' . route('ingresos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                    return ($movement->status == 'CREATED')
+                    ? '<a class="dropdown-item" href="' . route('ingresos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-edit text-primary"></i> </a>'
+                    : '<a class="dropdown-item" href="' . route('ingresos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
                 })
-                ->rawColumns(['origen', 'date', 'type', 'edit'])
+                ->rawColumns(['origen', 'date', 'items', 'edit'])
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.index');
@@ -69,28 +71,65 @@ class IngresosController extends Controller
         $movement    = Movement::find($request->id);
         $productos   = $this->productRepository->getByProveedorIdPluck($movement->from);
         $proveedor   = Proveedor::find($movement->from);
-        $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'desc')->get();
+        $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
         return view('admin.movimientos.ingresos.edit', compact('movement', 'proveedor', 'productos', 'movimientos'));
+    }
+
+    public function editProduct(Request $request)
+    {
+        try {
+            $product      = Product::find($request->id);
+            $unit_package = explode(',', $product->unit_package);
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.movimientos.ingresos.insertByAjax', compact('product', 'unit_package'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function updateProduct(Request $request)
+    {
+        try {
+            $data['unit_package'] = implode(',', $request->unit_package);
+            Product::find($request->product_id)->update($data);
+            return new JsonResponse(['msj' => 'Actualización correcta !', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function close(Request $request)
+    {
+        Movement::find($request->id)->update(['status' => 'FINISHED']);
+        return new JsonResponse(
+            ['msj'     => 'Cerrado ... ',
+                'type' => 'success', ]
+        );
     }
 
     public function show(Request $request)
     {
         $movement    = Movement::find($request->id);
         $proveedor   = Proveedor::find($movement->from);
-        $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'desc')->get();
+        $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
         return view('admin.movimientos.ingresos.show', compact('movement', 'proveedor', 'movimientos'));
     }
 
     public function destroy(Request $request)
     {
         Movement::find($request->id)->delete();
-        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
+        return new JsonResponse(
+            ['msj'     => 'Eliminado ... ',
+                'type' => 'success', ]
+        );
     }
 
     public function getMovements(Request $request)
     {
         try {
-            $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'desc')->get();
+            $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
             return new JsonResponse([
                 'data' => $movimientos,
                 'type' => 'success',

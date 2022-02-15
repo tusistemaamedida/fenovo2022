@@ -47,9 +47,7 @@
                     <div class="col-12 ">
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
-                                <div class=" table-responsive" id="printableTable">
-                                    @include('admin.products.table-products')
-                                </div>
+                                @include('admin.products.table-products')
                             </div>
                         </div>
                     </div>
@@ -64,16 +62,18 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        @include('partials.table.dom-button'),
+        @include('partials.table.dom-button'),    
         ajax: "{{ route('products.list') }}",
         columns: [
-            {data: 'cod_fenovo', 'class':'text-center col-1'},
-            {data: 'name'},
-            {data: 'costo'},
-            {data: 'precios_fenovo'},
-            {data: 'precios_tiendas'},
-            {data: 'proveedor'},
-            {data: 'acciones'}
+            {data: 'cod_fenovo', 'class':'text-center col-1', orderable: false},
+            {data: 'name', orderable: false},
+            {data: 'stock', orderable: false, searchable: false},
+            {data: 'costo', orderable: false, searchable: false},
+            {data: 'precios_fenovo', orderable: false, searchable: false},
+            {data: 'precios_tiendas', orderable: false, searchable: false},
+            {data: 'proveedor', orderable: false},
+            {data: 'editar', class:'text-center', orderable: false, searchable: false},
+            {data: 'borrar', class:'text-center', orderable: false, searchable: false},
         ]
     });
 </script>

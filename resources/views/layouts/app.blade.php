@@ -5,7 +5,7 @@
 
 @yield('css')
 
-<body id="tc_body" class="@auth header-fixed header-mobile-fixed subheader-enabled aside-enabled aside-fixed pace-done pace-done aside-minimize @endauth">
+<body id="tc_body" class="@auth header-fixed header-mobile-fixed aside-fixed pace-done aside-minimize @endauth">
     @auth
     @include('partials.head-mobile')
     <div class="d-flex flex-column flex-root">

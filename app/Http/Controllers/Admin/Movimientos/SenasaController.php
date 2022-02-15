@@ -112,7 +112,7 @@ class SenasaController extends Controller
         $senasa->movements()->sync($request->get('movements'));
         $notification = [
             'message'    => 'Relacion actualizada !',
-            'alert-type' => 'warning',
+            'alert-type' => 'info',
         ];
 
         return redirect()->route('senasa.index')->with($notification);
@@ -120,8 +120,9 @@ class SenasaController extends Controller
 
     public function print(Request $request)
     {
-        $senasa = Senasa::find($request->id);
-        $pdf    = PDF::loadView('admin.movimientos.senasa.detalle-salida', compact('senasa'));
+        $senasa      = Senasa::find($request->id);
+        $movimientos = $senasa->productos_senasa($request->id);
+        $pdf         = PDF::loadView('admin.movimientos.senasa.detalle-salida', compact('senasa', 'movimientos'));
         return $pdf->stream('senasa.pdf');
     }
 }

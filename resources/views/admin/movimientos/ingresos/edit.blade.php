@@ -20,32 +20,32 @@
                 <div class="row">
                     <input type="hidden" name="movement_id" id="movement_id" value={{ $movement->id }} />
                     <div class="col-md-4">
-                        <label class="text-body">Fecha</label>
-                        <input type="text" name="date" value="{{ date('d-m-Y',strtotime($movement->date)) }}" class="form-control datepicker mb-3" readonly>
-                    </div>
-                    <div class="col-md-4">
                         <label class="text-body">Proveedor</label>
                         <fieldset class="form-group mb-3">
                             <input type="text" name="from" value="{{ $proveedor->name }}" class="form-control mb-3" readonly>
                         </fieldset>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
+                        <label class="text-body">Fecha</label>
+                        <input type="text" name="date" value="{{ date('d-m-Y',strtotime($movement->date)) }}" class="form-control datepicker mb-3" readonly>
+                    </div>
+                    <div class="col-md-2 text-center">
                         <label class="text-dark">Nro Comprobante</label>
-                        <input type="text" id="voucher_number" name="voucher_number" value="{{ $movement->voucher_number }}" class="form-control" required="true">
+                        <input type="text" id="voucher_number" name="voucher_number" value="{{ $movement->voucher_number }}" class="form-control text-center" readonly>
+                    </div>
+                    <div class="col-md-1 text-center">
+                        <label class="text-dark font-size-bold">Cerrar</label>
+                        <fieldset class="form-group">
+                            <a href="javascript:void(0)" onclick="close_compra('{{ $movement->id}}', '{{ route('ingresos.close') }}')" class="btn btn-link btn-cerrar-ingreso">
+                                <i class="fa fa-lock text-primary"></i>
+                            </a>
+                        </fieldset>
                     </div>
                     <div class="col-md-1 text-center">
                         <label class="text-dark">Anular</label>
                         <fieldset class="form-group">
                             <a href="javascript:void(0)" onclick="destroy_local('{{ $movement->id}}', '{{ route('ingresos.destroy') }}')" class="btn btn-link">
-                                <i class="fa fa-trash text-danger"></i>
-                            </a>
-                        </fieldset>
-                    </div>
-                    <div class="col-md-1 text-center">
-                        <label class="text-dark">Finalizar</label>
-                        <fieldset class="form-group">
-                            <a href="{{ route('ingresos.index') }}" class="btn btn-link btn-cerrar-ingreso">
-                                <i class="fa fa-lock text-primary"></i>
+                                <i class="fa fa-trash"></i>
                             </a>
                         </fieldset>
                     </div>
@@ -57,7 +57,9 @@
                             <div class="col-12"> Producto</div>
                         </div>
                         <div class="row">
-                            <div class="col-12">{{ Form::select('product_id', $productos, null, ['id'=>'product_id', 'class' => 'js-example-basic-single form-control bg-transparent', 'placeholder'=>'Seleccione productos ...']) }}</div>
+                            <div class="col-12">
+                                {{ Form::select('product_id', $productos, null, ['id'=>'product_id', 'class' => 'js-example-basic-single form-control bg-transparent', 'placeholder'=>'Seleccione productos ...']) }}
+                            </div>
                         </div>
 
                     </div>
@@ -84,10 +86,17 @@
 
     </div>
 </div>
+
+@include('admin.movimientos.ingresos.modal')
+
 @endsection
 
 @section('js')
 <script>
+    jQuery( document ).ready(function() {
+        jQuery("#product_id").select2('open')
+    });
+
     jQuery("#product_id").on('change', function(){
         const productId = jQuery("#product_id").val();
         jQuery.ajax({
@@ -97,10 +106,48 @@
             success: function (data) {
                 if (data['type'] == 'success') {
                     jQuery("#dataTemp").html(data['html']);
+                    jQuery(".calculate").first().select();
                 }
             },
         });
     })
+
+    const editarProducto = (id) => {
+        var elements = document.querySelectorAll('.is-invalid');
+        jQuery.ajax({
+            url: '{{ route('ingresos.editProduct') }}',
+            type: 'GET',
+            data: { id },
+            success: function (data) {
+                if (data['type'] == 'success') {
+                    jQuery("#insertByAjax").html(data['html']);
+                    jQuery("#unit_package").select2({});
+                    jQuery('.editpopup').addClass('offcanvas-on');
+                } else {
+                    toastr.error(data['html'], 'Verifique');
+                }
+            }
+        });
+    }
+
+    const actualizarProducto = () => {
+        var form = jQuery('#formData').serialize();
+        jQuery.ajax({
+            url: '{{ route('ingresos.updateProduct') }}',
+            type: 'POST',
+            data: form,
+            success: function (data) {
+                if (data['type'] == 'success') {
+                    toastr.info('Actualizado', 'Registro');
+                    jQuery('.editpopup').removeClass('offcanvas-on');
+                    jQuery("#dataTemp").html('');
+                    jQuery("#product_id").val(null).trigger('change').select2('open');
+                } else {
+                    toastr.error(data['html'], 'Verifique');
+                }
+            },
+        });
+    };
 
     const sumar = () => {
         let total = 0;
@@ -169,7 +216,8 @@
 
                 if (data['type'] == 'success') {
                     actualizarIngreso();
-                    jQuery('#btn-guardar-producto').addClass("d-none");
+                    jQuery("#dataTemp").html('');
+                    jQuery("#product_id").val(null).trigger('change').select2('open');
                 }
                 if (data['type'] !== 'success') {
                     toastr.error(data['msj'], 'Verifique');
@@ -223,32 +271,56 @@
     }
 
     const destroy_local = (id, route) => {
-    ymz.jq_confirm({
-        title: 'Eliminar',
-        text: "confirma borrar registro ?",
-        no_btn: "Cancelar",
-        yes_btn: "Confirma",
-        no_fn: function () {
-            return false;
-        },
-        yes_fn: function () {
-            jQuery.ajax({
-                url: route,
-                type: 'POST',
-                dataType: 'json',
-                data: { id: id },
-                success: function (data) {
-                    toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                    toastr.error("Eliminado ... ");                    
-                    let ruta = "{{ route('ingresos.index') }}";
-                    setTimeout(() => {
-                        window.location = ruta;
-                    }, 500);
-                }
-            });
-        }
-    });
-};
+        ymz.jq_confirm({
+            title: 'Eliminar',
+            text: "confirma borrar registro ?",
+            no_btn: "Cancelar",
+            yes_btn: "Confirma",
+            no_fn: function () {
+                return false;
+            },
+            yes_fn: function () {
+                jQuery.ajax({
+                    url: route,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: id },
+                    success: function (data) {
+                        if (data['type'] == 'success') {                 
+                            let ruta = "{{ route('ingresos.index') }}";
+                            window.location = ruta;                           
+                        }
+                    }
+                });
+            }
+        });
+    };
+
+    const close_compra = (id, route) => {
+        ymz.jq_confirm({
+            title: 'Compra ',
+            text: "Confirma el cierre de la  compra ?",
+            no_btn: "Cancelar",
+            yes_btn: "Confirma",
+            no_fn: function () {
+                return false;
+            },
+            yes_fn: function () {
+                jQuery.ajax({
+                    url: route,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: id },
+                    success: function (data) {
+                        if (data['type'] == 'success') {                    
+                            let ruta = "{{ route('ingresos.index') }}";
+                            window.location = ruta;
+                        }
+                    }
+                });
+            }
+        });
+    };
 
 </script>
 @endsection

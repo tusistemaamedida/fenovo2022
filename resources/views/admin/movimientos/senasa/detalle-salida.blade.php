@@ -3,57 +3,38 @@
 @section('title', 'Salida Senasa')
 
 @section('css')
-<style>
-    header {
-        line-height: 0.6cm;
-        position: fixed;
-        top: 0.7cm;
-        left: 1.5cm;
-        right: 1.5cm;
-        height: 7cm;
-    }
 
-    footer {
-        position: fixed;
-        bottom: 0.7cm;
-        left: 1cm;
-        right: 1.5cm;
-        height: 5cm;
-    }
-
-    .pagenum:before {
-        content: counter(page);
-    }
-
-    table {
-        border-collapse: collapse;
-    }
-</style>
 @endsection
 
 @section('content')
 
 @include('admin.movimientos.senasa.header-salida')
 
-<div class="row">
-    <div class="col-12">
-        <br />
-    </div>
-</div>
+<table class="table table-condensed table-sm">
+    <tr>
+        <td style="width: 30%">LUGAR DE EMISION</td>
+        <td class=" text-center" style="width: 10%">DIA</td>
+        <td class=" text-center" style="width: 10%">MES</td>
+        <td class=" text-center" style="width: 10%">AÑO</td>
+        <td class=" text-center" style="width: 15%">H.SALIDA</td>
+        <td class=" text-center" style="width: 5%">TEMP</td>
+    </tr>
+    <tr>
+        <td><strong>PARANA - ENTRE RIOS</strong></td>
+        <th class=" text-center">{{ date('d', strtotime($senasa->fecha_salida)) }}</th>
+        <th class=" text-center">{{ date('m', strtotime($senasa->fecha_salida)) }}</th>
+        <th class=" text-center">{{ date('Y', strtotime($senasa->fecha_salida)) }}</th>
+        <th class=" text-center">{{ $senasa->hora_salida }}</th>
+        <th class=" text-center">-18 ºC</th>
+    </tr>
+    <tr>
+        <td colspan="6">
+            Autorízase al estableciento Nro Oficial <strong> 5241 FENOVO S.A.</strong> a transportar los siguientes productos inspeccionados
+        </td>
+    </tr>
+</table>
 
-<div class="row mt-2">
-    <div class="col-12">
-        Autorízase al estableciento Nro Oficial <strong> 5241 FENOVO S.A.</strong> a transportar los siguientes productos inspeccionados
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <br />
-    </div>
-</div>
-
-<table class="table table-bordered table-condensed">
+<table class="table ">
     <tr>
         <th class="text-center" style="width: 5%; ">Cant</th>
         <th class="text-center" style="width: 50%;">Descripción</th>
@@ -61,11 +42,11 @@
         <th class="text-center" style="width: 10%;">P.Bruto</th>
         <th class="text-center" style="width: 5%;">UM</th>
     </tr>
-    @foreach($senasa->productos_senasa() as $movimiento)
+    @foreach($movimientos as $movimiento)
     <tr>
         <td class="text-center">{{ $movimiento->bultos }}</td>
         <td>{{ $movimiento->name }}</td>
-        <td class="text-center">{{ number_format($movimiento->peso,2) }}</td>
+        <td class="text-center">{{ number_format($movimiento->kilos,2) }}</td>
         <td class="text-center"></td>
         <td class="text-center"></td>
     </tr>
@@ -75,9 +56,9 @@
     </tr>
     <tr>
         <td></td>
-        <td class="text-center">Totales</td>
-        <td class="text-center"> <strong> {{ $senasa->total_senasa() }}</strong></td>
-        <td></td>
+        <th class="text-center">Totales</th>
+        <td class="text-center"> <strong> {{ number_format($movimientos->sum('kilos'),2) }}</strong></td>
+        <td class="text-center"> </td>
         <td class="text-center"> Kg. </td>
     </tr>
 </table>

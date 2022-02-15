@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use stdClass;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class Senasa
@@ -40,34 +40,21 @@ class Senasa extends Model
         return $this->belongsToMany(Movement::class);
     }
 
-    public function productos_senasa()
+    public function productos_senasa($id)
     {
-        $arrProducto = [];
-        foreach ($this->movements as $movement) {
-            foreach ($movement->movement_salida_products as $movi) {
-                $producto = Product::find($movi->product_id);
-                if ($producto) {
-                    $produ             = new stdClass();
-                    $produ->bultos     = $movi->bultos;
-                    $produ->peso       = $movi->egress;
-                    $produ->cod_fenovo = $producto->cod_fenovo;
-                    $produ->name       = $producto->name;
-                    $produ->senasa     = $producto->senasa_definition->product_name;
-                    array_push($arrProducto, $produ);
-                }
-            }
-        }
-        return $arrProducto;
-    }
+        $productos = DB::table('senasa as t1')
+            ->join('movement_senasa as t2', 't1.id', '=', 't2.senasa_id')
+            ->join('movements as t3', 't3.id', '=', 't2.movement_id')
+            ->join('movement_products as t4', 't4.movement_id', '=', 't3.id')
+            ->join('products as t5', 't4.product_id', '=', 't5.id')
+            ->join('senasa_definitions as t6', 't5.senasa_id', '=', 't6.id')
+            ->select([DB::raw('t6.product_name as name'), DB::raw('SUM(t4.bultos) as bultos'), DB::raw('SUM(t4.egress) as kilos')])
+            ->groupBy('t5.senasa_id')
+            ->orderBy('t5.name', 'ASC')
+            ->where('t4.egress', '>', 0)
+            ->where('t1.id', '=', $id)
+            ->where('t5.senasa_id', '!=', null)->get();
 
-    public function total_senasa()
-    {
-        $total = 0;
-        foreach ($this->movements as $movement) {
-            foreach ($movement->movement_products as $movi) {
-                $total = $total + $movi->egress;
-            }
-        }
-        return $total;
+        return $productos;
     }
 }

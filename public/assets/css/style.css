@@ -3459,7 +3459,7 @@ input[type="button"].btn-block {
 }
 .btn-group > .btn:hover,
 .btn-group-vertical > .btn:hover {
-    z-index: 1;
+    z-index: -1;
 }
 .btn-group > .btn:focus,
 .btn-group > .btn:active,
@@ -16600,8 +16600,8 @@ select.form-control:not([multiple="multiple"]) {
 .select2-container--default .select2-selection--single,
 .select2-container--default .select2-selection--multiple {
     background-color: transparent !important;
-    border: 1px solid ;
-    border-color: #cccfd3 ;
+    border: 1px solid;
+    border-color: #cccfd3;
 }
 
 .select2-container--default
@@ -18767,7 +18767,7 @@ body {
     height: 32px !important;
     display: flex !important;
     align-items: center !important;
-    border-color: #cccfd3 ;
+    border-color: #cccfd3;
 }
 
 .ms-choice {

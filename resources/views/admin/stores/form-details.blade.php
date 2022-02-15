@@ -8,31 +8,27 @@
 
 <div class="form-group">
     <div class="row">
-        <div class="col-4">
-            <label class="text-dark">Cod Fenovo</label>
-            <input type="text" id="cod_fenovo" name="cod_fenovo" @if (isset($store)) value="{{$store->cod_fenovo}}" @else value="" @endif class="form-control" required autofocus>
+        <div class="col-12">
+            <label class="text-dark">Descripción</label>
+            <input type="text" id="description" name="description" @if (isset($store)) value="{{$store->description}}" @else value="" @endif class="form-control" autofocus required>
         </div>
     </div>
 </div>
 
 <div class="form-group">
     <div class="row">
+        <div class="col-2">
+            <label class="text-dark">Cod Fenovo</label>
+            <input type="text" id="cod_fenovo" name="cod_fenovo" @if (isset($store)) value="{{$store->cod_fenovo}}" @else value="" @endif class="form-control" required>
+        </div>
+
         <div class="col-6">
             <label class="text-dark">Razón social </label>
             <input type="text" id="razon_social" name="razon_social" @if (isset($store)) value="{{$store->razon_social}}" @else value="" @endif class="form-control">
         </div>
-        <div class="col-6">
+        <div class="col-4">
             <label class="text-dark">Contacto</label>
             <input type="text" id="responsable" name="responsable" @if (isset($store)) value="{{$store->responsable}}" @else value="" @endif class="form-control">
-        </div>
-    </div>
-</div>
-
-<div class="form-group">
-    <div class="row">
-        <div class="col-12">
-            <label class="text-dark">Descripción breve (opcional)</label>
-            <input type="text" id="description" name="description" @if (isset($store)) value="{{$store->description}}" @else value="" @endif class="form-control">
         </div>
     </div>
 </div>
