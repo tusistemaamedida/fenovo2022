@@ -92,7 +92,8 @@ class SalidasController extends Controller
         $tipo        = $explode[0];
         $destino     = $this::origenData($tipo, $explode[1], true);
         $destinoName = $this::origenData($tipo, $explode[1]);
-        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
+        $flete       = ($destino->delivery_percentage > 0) ? $destino->delivery_percentage : 3;
+        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName', 'flete'));
     }
 
     public function add()
@@ -202,7 +203,7 @@ class SalidasController extends Controller
                         if ($stock_en_session) {
                             $bultos -= $stock_en_session;
                         }
-                        $stock_presentaciones[$i]['bultos'] = (int) $bultos;
+                        $stock_presentaciones[$i]['bultos'] = (int)$bultos;
                     }
                     return new JsonResponse([
                         'type' => 'success',
@@ -298,6 +299,7 @@ class SalidasController extends Controller
             $insert_data['date']           = now();
             $insert_data['from']           = 1;
             $insert_data['voucher_number'] = $request->input('voucher_number');
+            $insert_data['flete']          = $request->input('flete');
 
             $movement         = Movement::create($insert_data);
             $session_products = $this->sessionProductRepository->getByListId($list_id);

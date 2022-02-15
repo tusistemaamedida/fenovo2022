@@ -81,7 +81,9 @@
                                     <th class="border-0  header-heading" scope="col"></th>
                                     <th class="border-0  header-heading" scope="col">${{number_format($total_iva, 2, ',', '');}}</th>
                                     <th class="border-0  header-heading" scope="col">${{number_format($subtotal, 2, ',', '');}}</th>
-                                    <th class="border-0  header-heading" scope="col"></th>
+                                    <th class="border-0  header-heading" scope="col">
+                                        <input name="subTotal" id="subTotal" value="{{ $subtotal +$total_iva }}">
+                                    </th>
                                     <th class="border-0  header-heading" scope="col" style="float: right;">Total: ${{number_format($subtotal +$total_iva , 2, ',', '');}} </th>
                                 </tr>
                             </tfoot>
