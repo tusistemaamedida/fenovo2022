@@ -27,6 +27,16 @@ class SessionProductRepository extends BaseRepository
         return $this->newQuery()->where('id', $id)->delete();
     }
 
+    public function getCantidadTotalDeBultosByListId($product_id, $unit_package = null, $list_id)
+    {
+        return $this->newQuery()->where('product_id', $product_id)
+                                ->where('list_id', $list_id)
+                                ->when($unit_package, function ($q, $unit_package) {
+                                    $q->where('unit_package', $unit_package);
+                                })
+                                ->sum('quantity');
+    }
+
     public function getCantidadTotalDeBultos($product_id, $unit_package = null, $store_id = 1)
     {
         return $this->newQuery()->where('product_id', $product_id)
@@ -37,26 +47,8 @@ class SessionProductRepository extends BaseRepository
                                 ->sum('quantity');
     }
 
-
-    public function getCantidadTotalDeBultosByListId($product_id,$unit_package = null,$list_id){
-        return $this->newQuery()->where('product_id',$product_id)
-                                ->where('list_id',$list_id)
-                                ->when($unit_package, function ($q, $unit_package) {
-                                    $q->where('unit_package', $unit_package);
-                                })
-                                ->sum('quantity');
-    }
-  
-  public function getCantidadTotalDeBultos($product_id, $unit_package = null, $store_id = 1){
-        return $this->newQuery()->where('product_id', $product_id)
-                                ->where('store_id', $store_id)
-                                ->when($unit_package, function ($q, $unit_package) {
-                                    $q->where('unit_package', $unit_package);
-                                })
-                                ->sum('quantity');
-    }
-
-    public function updateOrCreate($data){
+    public function updateOrCreate($data)
+    {
         return $this->newQuery()->updateOrCreate(
             [
                 'product_id'   => $data['product_id'],
