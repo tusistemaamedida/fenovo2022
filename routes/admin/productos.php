@@ -12,3 +12,5 @@ Route::post('productos/destroy', [ProductController::class, 'destroy'])->name('p
 Route::get('producto/edit', [ProductController::class, 'edit'])->name('product.edit');
 Route::post('producto/update', [ProductController::class, 'update'])->name('product.update');
 Route::get('productos/getProductByProveedor', [ProductController::class, 'getProductByProveedor'])->name('products.getProductByProveedor');
+
+Route::get('importar', [ProductController::class, 'importFromCsv'])->name('import.products');

@@ -201,7 +201,7 @@ class SalidasController extends Controller
                         if ($stock_en_session) {
                             $bultos -= $stock_en_session;
                         }
-                        $stock_presentaciones[$i]['bultos'] = $bultos;
+                        $stock_presentaciones[$i]['bultos'] = (int)$bultos;
                     }
                     return new JsonResponse([
                         'type' => 'success',
