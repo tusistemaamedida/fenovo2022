@@ -199,6 +199,7 @@ class SalidasController extends Controller
                             $bultos = $stock / $peso_por_bulto;
                         }
                         if ($stock_en_session) {
+                            dd($stock_en_session);
                             $bultos -= $stock_en_session;
                         }
                         $stock_presentaciones[$i]['bultos'] = $bultos;
