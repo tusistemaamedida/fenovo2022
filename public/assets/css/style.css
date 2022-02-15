@@ -20218,5 +20218,8 @@ input[type="radio"].radio-warning:checked + .custom-control-label:before {
 .dataTables_wrapper .dataTables_paginate .paginate_button{
     padding: 0 !important;
 }
+.dataTables_wrapper .dataTables_paginate .paginate_button{
+    border: 0px !important;
+}
 
 /*# sourceMappingURL=style.css.map */
