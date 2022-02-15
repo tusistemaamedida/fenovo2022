@@ -19,10 +19,13 @@
         </div>
 
         <div class="row mt-5">
-            <div class="col-12">
-                <label class="text-dark">Flete <strong>@if(isset($flete)) {{ $flete }} @endif </strong> %</label>
-                <input type="text" name="flete" id="flete" value="0" class="form-control">
+            <div class="col-6">
+                <label class="text-dark">Flete <strong> <span id="montoFlete"></span> </strong> % </label>
             </div>
+            <div class="col-6">
+                <input type="text" name="flete" id="flete" value="0" class="form-control text-center">
+            </div>
+
         </div>
 
         <div class="row mt-5">

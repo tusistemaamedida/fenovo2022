@@ -47,7 +47,7 @@
         <th></th>
         <th></th>
         <th>FLETE ( {{ number_format($store->delivery_percentage,2) }} %)</th>
-        <th>{{ number_format($subtotal*($store->delivery_percentage/100),2) }}</th>
+        <th>{{ number_format($movement->flete, 2) }}</th>
         <th></th>
         <th></th>
     </tr>
