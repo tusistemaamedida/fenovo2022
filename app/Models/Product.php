@@ -166,7 +166,7 @@ class Product extends Model
 	}
 
     public function stock($unit_package = null,$store_id = 1){
-        $stock = 0;
+        $stock = 0.0;
         $movement_product = MovementProduct::where('product_id',$this->id)
                                             ->where('store_id',$store_id)
                                             ->when($unit_package, function ($q, $unit_package) {
@@ -175,7 +175,6 @@ class Product extends Model
                                             ->latest()
                                             ->first();
         if($movement_product){
-            dd($movement_product);
             $stock = (float) $movement_product->balance;
         }
         return $stock;
