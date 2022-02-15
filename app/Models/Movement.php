@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $to
  * @property string|null $status
  * @property string|null $voucher_number
+ * @property float|null  $flete
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -44,6 +45,7 @@ class Movement extends Model
         'to',
         'status',
         'voucher_number',
+        'flete',
     ];
 
     public function movement_products()

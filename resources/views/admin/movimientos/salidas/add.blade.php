@@ -2,36 +2,36 @@
 
 @section('css')
 <style>
-    .table tbody tr td{
+    .table tbody tr td {
         color: #1a3353;
-    font-weight: 500;
+        font-weight: 500;
     }
 </style>
 @endsection
 
 @section('content')
-    <div class="subheader py-2 py-lg-6 subheader-solid">
-        <div class="container-fluid">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                    <li class="breadcrumb-item active" aria-current="page">Salida de mercadería</li>
-                </ol>
-            </nav>
+<div class="subheader py-2 py-lg-6 subheader-solid">
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-white mb-0 px-0 py-2">
+                <li class="breadcrumb-item active" aria-current="page">Salida de mercadería</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="row">
+
+            @include('admin.movimientos.salidas.partials.form-select-cliente')
+
+            <b style="width: 100%" id="session_products_table"></b>
         </div>
     </div>
-    <div class="d-flex flex-column-fluid">
-        <div class="container-fluid">
-            <div class="row">
+</div>
 
-                @include('admin.movimientos.salidas.partials.form-select-cliente')
-
-                <b style="width: 100%" id="session_products_table"></b>
-            </div>
-        </div>
-    </div>
-
-    @include('admin.movimientos.salidas.partials.modal-product-details')
-    @include('admin.movimientos.salidas.partials.open-close-salida')
+@include('admin.movimientos.salidas.partials.modal-product-details')
+@include('admin.movimientos.salidas.partials.open-close-salida')
 @endsection
 
 @section('js')
@@ -245,6 +245,12 @@
 
     jQuery("#btnOpenCerrarSalida").click(function(e){
         e.preventDefault();
+        let flete = 0;
+        @if (isset($flete))
+            let flete = parseFloat({{ $flete }}/100);    
+        @endif
+        let montoFlete = parseFloat(jQuery("#subTotal").val()*flete).toFixed(2);
+        jQuery("#flete").val(montoFlete);
         jQuery('#closeSalida').addClass('offcanvas-on');
     })
     jQuery('#close_modal_salida').on('click', function () {
