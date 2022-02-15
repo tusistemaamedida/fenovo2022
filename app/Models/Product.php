@@ -170,12 +170,14 @@ class Product extends Model
         $movement_product = MovementProduct::where('product_id',$this->id)
                                             ->where('store_id',$store_id)
                                             ->when($unit_package, function ($q, $unit_package) {
-                                                dd($unit_package);
                                                 $q->where('unit_package', $unit_package);
                                             })
                                             ->latest()
                                             ->first();
-        if($movement_product) $stock = (float) $movement_product->balance;
+        if($movement_product){
+            dd($movement_product);
+            $stock = (float) $movement_product->balance;
+        }
         return $stock;
     }
 }
