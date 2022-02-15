@@ -56,4 +56,8 @@ class ProductRepository extends BaseRepository
     public function getByIdWith($id){
         return $this->selectList()->where('id', $id)->first();
     }
+
+    public function getByCodeFenovo($cod_fenovo){
+        return $this->selectList()->where('cod_fenovo', $cod_fenovo)->first();
+    }
 }

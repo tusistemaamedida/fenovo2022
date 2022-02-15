@@ -42,4 +42,8 @@ class ProveedorRepository extends BaseRepository
             })
             ->get();
     }
+
+    public function getByName($name){
+        return $this->newQuery()->where('name', $name)->first();
+    }
 }
