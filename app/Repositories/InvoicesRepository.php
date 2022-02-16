@@ -11,6 +11,6 @@ class InvoicesRepository extends BaseRepository {
     }
 
     public function getByMovement($id){
-        return $this->newQuery()->where('movement_id',$id)->with('products')->first();
+        return $this->newQuery()->where('movement_id',$id)->first();
     }
 }

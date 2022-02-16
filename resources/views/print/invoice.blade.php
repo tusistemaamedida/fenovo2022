@@ -121,10 +121,6 @@
     border-bottom: 1px solid #999797;
   }
 
-  .table-productos {
-    height: 100%;
-  }
-
   /* TABLE PRODUCTOS */
   .table-productos .cabecera {
     background-color: #999797;
@@ -138,7 +134,6 @@
   }
 
   footer {
-    position: absolute;
     bottom: 0;
   }
 
@@ -167,17 +162,17 @@
     <table class="table-emisor">
       <tr>
         <th class="emisor">
-          <img src="data:image/jpeg;base64,{{logo_fenovo}}" width="65%">
+          <img src="{{public_path('logo_fenovo.jpg')}}" width="65%">
         </th>
         <th class="codigo">
-          <span class="valor">{{ @root.ivaTypeAfip.code }}</span><br> <!-- Tipo de factura -->
-          <span class="descripcion">COD. 0{{ @root.ivaTypeAfip.afip_id }}</span>
+          <span class="valor">{{ $voucherType->code }}</span><br> <!-- Tipo de factura -->
+          <span class="descripcion">COD. 0{{ $voucherType->afip_id }}</span>
         </th>
         <th class="factura">
           <span style="font-size: 18px;">
             FACTURA ELECTRÓNICA <br>
             N°: {{ $invoice->voucher_number }} <br>
-            Fecha: {{date_today}}
+            Fecha: {{\Carbon\Carbon::parse(now())->format('d/m/y H:i')}}
             <!-- fecha de impresion -->
           </span>
         </th>
@@ -200,19 +195,19 @@
         </td>
 
         <td class="factura">
-          <span style="font-size:12px; line-height: 28px;">C.U.I.T.:&nbsp;</span><span
-            style="font-size:12px;float: right;line-height: 28px;"> 30-70959940-9</span><br>
-          <span style="font-size:12px; line-height: 28px;">Ingresos Brutos:&nbsp;</span><span
-            style="font-size:12px;float: right;line-height: 28px;"> 30-70959940-9</span><br>
-          <span style="font-size:12px; line-height: 28px;">Inicio de Actividades:&nbsp;</span><span
-            style="font-size:12px;float: right;line-height: 28px;"> 19/04/2006</span>
+          <p style="margin: 0;padding:0"><span style="font-size:12px; ">C.U.I.T.:&nbsp;</span>
+          <span style="font-size:12px;float: right; text-align:right"> 30-70959940-9</span><br>
+            <span style="font-size:12px; ">Ingresos Brutos:</span>
+          <span style="font-size:12px;float: right; text-align:right"> 30-70959940-9</span><br>
+           <span style="font-size:12px; ">Inicio de Actividades:&nbsp;</span>
+          <span style="font-size:12px;float: right; text-align:right"> 19/04/2006</span></p>
         </td>
       </tr>
     </table>
 
     <table class="table-periodo">
       <tr>
-        <td style="border-left: 1px solid #999797;border-bottom: 1px solid #999797;">
+        <td style="border-left: 1px solid #999797;border-bottom: 1px solid #999797;border-right: 1px solid #999797;">
           <span style="font-size:13px; font-weight: bold;line-height: 18px;">Señores: </span>
           <span style="font-size:13px;line-height: 18px;"> {{$invoice->client_name}} </span><br>
           <span style="font-size:13px; font-weight: bold;line-height: 18px;">Dirección: </span>
@@ -221,7 +216,7 @@
       </tr>
 
       <tr>
-        <td style="border-left: 1px solid #999797;border-bottom: 1px solid #999797;">
+        <td style="border-left: 1px solid #999797;border-bottom: 1px solid #999797;border-right: 1px solid #999797;">
           <span style="font-size:13px; font-weight: bold;line-height: 18px;">Condición de venta: </span>
           <span style="font-size:13px;line-height: 18px;"> Cuenta corriente </span>
         </td>
@@ -236,14 +231,14 @@
           <span style="font-size:13px;line-height: 18px;"> {{$invoice->client_iva_type}} </span>
         </td>
 
-        <td style="border-left: 1px solid #999797;border-bottom: 1px solid #999797; width: 50%;">
+        <td style="border-left: 1px solid #999797;border-bottom: 1px solid #999797; width: 50%;border-right: 1px solid #999797;">
           <span style="font-size:13px; font-weight: bold;line-height: 18px;">C.U.I.T.: </span>
           <span style="font-size:13px;line-height: 18px;"> {{$invoice->client_cuit}} </span>
         </td>
       </tr>
     </table>
 
-    <table class="table-productos" cellpadding="0px" cellspacing="0" style="height:100%;margin-top:2px;border-bottom: 1px solid #999797;">
+    <table class="table-productos" cellpadding="0px" cellspacing="0" style="margin-top:2px;border-bottom: 1px solid #999797;">
       <tr class="cabecera">
         <th style="font-size:12px;width: 20px;">Cant.</th>
         <th style="font-size:12px; ">Producto / Servicio</th>
@@ -251,47 +246,50 @@
         <th style="font-size:12px; width: 70px; ">Precio Unit.</th>
         <th style="font-size:12px; width: 70px; ">Importe</th>
       </tr>
-      {{#each products_array}}
+      @foreach ($array_productos as $p)
         <tr style="border-bottom: 0px;" height="10px" >
-          <td style="font-size:12px;text-align: right;"><span class="{{class}}">{{cant}}</span></td>
-          <td style="font-size:12px;text-align: left;"><span class="{{class}}">{{unity}} {{name}}</span></td>
-          <td style="font-size:12px;text-align: center;"><span class="{{class}}">{{iva}}</span></td>
-          <td style="font-size:12px;text-align: right;"><span class="{{class}}">{{unit_price}}</span></td>
-          <td style="font-size:12px;text-align: right;"><span class="{{class}}">{{total}}</span></td>
+          <td style="font-size:12px;text-align: right;"><span class="{{$p->class}}">{{$p->cant}}</span></td>
+          <td style="font-size:12px;text-align: left;"><span class="{{$p->class}}">{{$p->unity}} {{$p->name}}</span></td>
+          <td style="font-size:12px;text-align: center;"><span class="{{$p->class}}">{{$p->iva}}</span></td>
+          <td style="font-size:12px;text-align: right;"><span class="{{$p->class}}">{{$p->unit_price}}</span></td>
+          <td style="font-size:12px;text-align: right;"><span class="{{$p->class}}">{{$p->total}}</span></td>
         </tr>
-      {{/each}}
+        @endforeach
     </table>
 
     <footer style="height:150px;border: 1px solid #999797;">
       <table>
         <tr style="padding: 0;">
           <td style=" text-align: left; width: 140px; ">
-            <img src="{{qr_code}}" style="padding: 0; width: 100%; ">
+             <img src="{{$qr_url}}" style="padding: 0; width: 100%; ">
           </td>
           <td style="text-align: left; width: 240px; padding: 0px 10px;">
-            <span style="font-size:12px;font-weight:bold;line-height: 18px;">Fec. Vto. de CAE: {{date_expiration}}</span><br>
+            <span style="font-size:12px;font-weight:bold;line-height: 18px;">
+                Fec. Vto. de CAE: {{\Carbon\Carbon::parse($invoice->date_expiration)->format('d/m/Y')}}
+            </span><br>
             <span style="font-size:12px;font-weight:bold;line-height: 18px;">CAE: {{$invoice->cae}}</span><br><br>
-            <img src="data:image/jpeg;base64,{{logo_afip}}" width="40%"><br>
-            <span style="font-size:14px;font-weight:bold">Comprobante Autorizado</span>
+            <img src="{{public_path('afip.png')}}" width="40%"><br>
+            <span style="font-size:14px;font-weight:bold">Comprobante Autorizado</span><br>
+            <span style="font-size:12px;float:right;margin-top:20px">Pag. 1</span>
           </td>
 
           <td style="text-align:left; width: 140px;">
 
             <span style="font-size:14px; font-weight: bold;line-height: 22px;">Importe Neto</span><br>
-            {{#each alicuotas_array}}
-              <span style="font-size:14px; font-weight: bold;line-height: 22px;">I.V.A {{name}}</span><br>
-            {{/each}}
-            <span style="font-size:14px; font-weight: bold;line-height: 22px;">Perc IB {{iibb}}%</span><br>
+            @foreach ($alicuotas_array as $item)
+              <span style="font-size:14px; font-weight: bold;line-height: 22px;">I.V.A {{$item->name}}</span><br>
+            @endforeach
+            <span style="font-size:14px; font-weight: bold;line-height: 22px;">Perc IB {{round($invoice->iibb,2)}}%</span><br>
             <span style="font-size:14px; font-weight: bold;line-height: 22px;">Total Final</span>
           </td>
 
-          <td style="text-align:right; padding-right: 15px; width: 143px;">
-            <span style="font-size:13px;line-height: 22px;">{{imp_neto}} </span><br>
-            {{#each alicuotas_array}}
-              <span style="font-size:13px;line-height: 22px;">{{value}} </span><br>
-            {{/each}}
-            <span style="font-size:13px;line-height: 22px;">{{iibb_importe}} </span><br>
-            <span style="font-size:13px;line-height: 22px;">{{imp_total}}</span>
+          <td style="text-align:right;  width: 143px;">
+            <span style="font-size:13px;line-height: 22px;margin-right:32px">${{number_format($invoice->imp_neto, 2, ',', '.')}} </span><br>
+            @foreach ($alicuotas_array as $item)
+              <span style="font-size:13px;line-height: 22px;text-align:right">${{$item->value}} </span><br>
+            @endforeach
+            <span style="font-size:13px;line-height: 22px;text-align:right">${{number_format($invoice->imp_tot_conc, 2, ',', '.')}} </span><br>
+            <span style="font-size:13px;line-height: 22px;text-align:right">${{number_format($invoice->imp_total, 2, ',', '.')}}</span>
           </td>
         </tr>
       </table>

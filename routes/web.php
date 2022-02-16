@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\FilepickerController;
-
+use App\Http\Controllers\Admin\InvoiceController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -34,4 +34,6 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth']], function () {
     Route::any('filepicker', [FilepickerController::class, 'handle'])->name('filepicker');
 });
 
+
+Route::get('factura-electronica/{movment_id}', [InvoiceController::class, 'generateInvoicePdf'])->name('ver.fe');
 //require __DIR__ . '/cron/routes.php';
