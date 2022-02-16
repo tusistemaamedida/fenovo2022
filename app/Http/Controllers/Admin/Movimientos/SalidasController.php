@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Movimientos;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\MovementProduct;
+use App\Models\SessionProduct;
 use App\Models\Store;
 use App\Repositories\CustomerRepository;
 use App\Repositories\ProductRepository;
@@ -46,7 +47,7 @@ class SalidasController extends Controller
             $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
             return DataTables::of($movement)
                 ->addIndexColumn()
-                ->addColumn('origen', function ($movement) {
+                ->addColumn('destino', function ($movement) {
                     return $movement->origenData($movement->type);
                 })
                 ->editColumn('date', function ($movement) {
@@ -171,6 +172,17 @@ class SalidasController extends Controller
         }
     }
 
+    public function getFleteSessionProducts(Request $request)
+    {
+        try {
+            return new JsonResponse([
+                'flete' => $this->sessionProductRepository->getFlete($request->input('list_id')),
+            ]);
+        } catch (\Exception $e) {
+            return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
     public function deleteSessionProduct(Request $request)
     {
         try {
@@ -209,7 +221,7 @@ class SalidasController extends Controller
                         if ($stock_en_session) {
                             $bultos -= $stock_en_session;
                         }
-                        $stock_presentaciones[$i]['bultos'] = (int) $bultos;
+                        $stock_presentaciones[$i]['bultos'] = (int)$bultos;
                     }
                     return new JsonResponse([
                         'type' => 'success',
@@ -295,6 +307,16 @@ class SalidasController extends Controller
         }
     }
 
+    public function storeSessionProductItem(Request $request)
+    {
+        try {
+            SessionProduct::find($request->id)->update(['quantity' => $request->quantity]);
+            return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
     public function storeSalida(Request $request)
     {
         try {
@@ -305,6 +327,7 @@ class SalidasController extends Controller
             $insert_data['date']           = now();
             $insert_data['from']           = 1;
             $insert_data['voucher_number'] = $request->input('voucher_number');
+            $insert_data['flete']          = (float)$request->input('flete');
 
             $movement         = Movement::create($insert_data);
             $session_products = $this->sessionProductRepository->getByListId($list_id);

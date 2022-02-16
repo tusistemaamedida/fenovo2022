@@ -46,7 +46,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Fecha</th>
-                                            <th>Origen</th>
+                                            <th>Destino</th>
                                             <th>Tipo</th>
                                             <th>Comprobante Nro</th>
                                             <th>Registro</th>
@@ -77,7 +77,7 @@
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
             {data: 'date'},
-            {data: 'origen'},
+            {data: 'destino'},
             {data: 'type'},
             {data: 'voucher_number',  'class':'text-center'},
             {data: 'updated_at'},

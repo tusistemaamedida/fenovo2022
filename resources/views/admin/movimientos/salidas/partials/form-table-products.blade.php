@@ -16,6 +16,7 @@
                                     <th class="border-0  header-heading" scope="col">IVA</th>
                                     <th class="border-0  header-heading" scope="col">Subtotal</th>
                                     <th class="border-0  header-heading" scope="col">Factura</th>
+                                    <th class="border-0  header-heading" scope="col">Edita</th>
                                     <th class="border-0  header-heading text-right" scope="col"></th>
                                 </tr>
                             </thead>
@@ -42,24 +43,28 @@
 
                                 <tr class="">
                                     <td class="">{{ $i }}</td>
-                                    <td class="">{{$session_product->producto->name}}</td>
+                                    <td class="">{{$session_product->producto->cod_fenovo}} {{$session_product->producto->name}}</td>
                                     <td class="">{{$session_product->unit_package}}</td>
                                     <td class="">{{$session_product->quantity}}</td>
                                     <td class="">{{$session_product->producto->unit_weight * $session_product->unit_package * $session_product->quantity}}</td>
                                     <td class="">${{ number_format($session_product->unit_price, 2, ',', '')}}</td>
                                     <td class="">{{ number_format($session_product->producto->product_price->tasiva,2)}} %</td>
                                     <td class="">${{ $subtotal_product_format }}</td>
-                                    <td class="" style="text-align: center">
+                                    <td class="text-center">
                                         <fieldset>
                                             <div class="checkbox">
                                                 <input type="checkbox" class="checkbox-input" onclick="changeInvoice('{{$session_product->list_id}}',{{$session_product->producto->id}})" id="invoice-{{$session_product->producto->id}}" @if($session_product->invoice) checked="" @endif name="invoice-{{$session_product->producto->id}}">
                                             </div>
                                         </fieldset>
                                     </td>
-
-                                    <td class="text-right">
+                                    <td class=" text-center">
+                                        <a href="javascript:void(0)" onclick="editarMovimiento('{{$session_product->id}}', '{{$session_product->quantity}}', '{{$session_product->producto->cod_fenovo}}')">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                    <td class=" text-center">
                                         <button type="button" onclick="deleteItemSession({{$session_product->id}},'{{route('delete.item.session.produc')}}')" class="btn btn-link confirm-delete" title="Eliminar">
-                                            <i class="fas fa-trash-alt"></i> Quitar
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -68,7 +73,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="10">
+                                    <td colspan="11">
                                         <hr />
                                     </td>
                                 </tr>
@@ -82,7 +87,10 @@
                                     <th class="border-0  header-heading" scope="col">${{number_format($total_iva, 2, ',', '');}}</th>
                                     <th class="border-0  header-heading" scope="col">${{number_format($subtotal, 2, ',', '');}}</th>
                                     <th class="border-0  header-heading" scope="col"></th>
-                                    <th class="border-0  header-heading" scope="col" style="float: right;">Total: ${{number_format($subtotal +$total_iva , 2, ',', '');}} </th>
+                                    <th class="border-0  header-heading" scope="col">
+                                        <input type="hidden" name="subTotal" id="subTotal" value="{{ $subtotal +$total_iva }}">
+                                    </th>
+                                    <th class="border-0  header-heading" scope="col" style="float: right;">$ {{number_format($subtotal +$total_iva , 2, ',', '');}} </th>
                                 </tr>
                             </tfoot>
                         </table>

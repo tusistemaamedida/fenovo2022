@@ -2,36 +2,38 @@
 
 @section('css')
 <style>
-    .table tbody tr td{
+    .table tbody tr td {
         color: #1a3353;
-    font-weight: 500;
+        font-weight: 500;
     }
 </style>
 @endsection
 
 @section('content')
-    <div class="subheader py-2 py-lg-6 subheader-solid">
-        <div class="container-fluid">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                    <li class="breadcrumb-item active" aria-current="page">Salida de mercadería</li>
-                </ol>
-            </nav>
+<div class="subheader py-2 py-lg-6 subheader-solid">
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-white mb-0 px-0 py-2">
+                <li class="breadcrumb-item active" aria-current="page">Salida de mercadería</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="row">
+            @include('admin.movimientos.salidas.partials.form-select-cliente')
+            <b style="width: 100%" id="session_products_table"></b>
         </div>
     </div>
-    <div class="d-flex flex-column-fluid">
-        <div class="container-fluid">
-            <div class="row">
+</div>
 
-                @include('admin.movimientos.salidas.partials.form-select-cliente')
+@include('admin.movimientos.salidas.partials.modal-product-details')
 
-                <b style="width: 100%" id="session_products_table"></b>
-            </div>
-        </div>
-    </div>
+@include('admin.movimientos.salidas.partials.open-close-salida')
 
-    @include('admin.movimientos.salidas.partials.modal-product-details')
-    @include('admin.movimientos.salidas.partials.open-close-salida')
+@include('admin.movimientos.salidas.modalMovimiento')
+
 @endsection
 
 @section('js')
@@ -41,6 +43,42 @@
             cargarTablaProductos();
         @endif
     });
+
+    const editarMovimiento = (id, quantity, cod_fenovo) => {
+
+        jQuery("#session_product_id").val(id);
+        jQuery("#session_product_quantity").val(quantity);
+        jQuery("#mov_cod_fenovo").html(cod_fenovo);
+        jQuery('.movimientoPopup').addClass('offcanvas-on');
+    }
+
+    const actualizarMovimiento = () =>{
+        var url ="{{ route('store.session.product.item') }}";
+        jQuery.ajax({
+            url:url,
+            type:'POST',
+            data:{
+                id: jQuery("#session_product_id").val(),
+                quantity: jQuery("#session_product_quantity").val()
+            },
+            beforeSend: function() {
+                jQuery('#loader').removeClass('hidden');
+            },
+            success:function(data){
+                jQuery('.movimientoPopup').removeClass('offcanvas-on');
+                jQuery('#to').val(jQuery('#to').val()).trigger('change');
+            },
+            error: function (data) {
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
+            }
+        });
+    }
+
+    const cerrarModal = () =>{
+        jQuery('.movimientoPopup').removeClass('offcanvas-on');
+    }
 
     jQuery("#to_type").change(function(){
         jQuery('#to').val(null).trigger('change');
@@ -118,7 +156,7 @@
     });
 
     jQuery('#product_search').on('select2:open', function () {
-        document.getElementById("unidades_a_enviar").reset();
+        //document.getElementById("unidades_a_enviar").reset();
         jQuery('.editpopup').removeClass('offcanvas-on');
     });
 
@@ -177,6 +215,26 @@
             complete: function () {
                 jQuery('#loader').addClass('hidden');
             }
+        });
+    }
+
+    function cargarFlete(){
+        var to_type = jQuery("#to_type").val();
+        var to = jQuery("#to").val();
+        var list_id = to_type+'_'+to;
+        var formData =  {list_id};
+        var url ="{{ route('get.flete.session.products') }}";
+        jQuery.ajax({
+            url:url,
+            type:'GET',
+            data:formData,
+            success:function(data){
+                jQuery("#montoFlete").html(data['flete']);
+                let flete = parseFloat(data['flete']/100);          
+                jQuery("#flete").val(parseFloat(jQuery("#subTotal").val()*flete).toFixed(2));
+            },
+            error: function (data) {
+            },
         });
     }
 
@@ -245,6 +303,7 @@
 
     jQuery("#btnOpenCerrarSalida").click(function(e){
         e.preventDefault();
+        cargarFlete()
         jQuery('#closeSalida').addClass('offcanvas-on');
     })
     jQuery('#close_modal_salida').on('click', function () {
