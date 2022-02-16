@@ -65,7 +65,7 @@
         @include('partials.table.dom-button'),    
         ajax: "{{ route('products.list') }}",
         columns: [
-            {data: 'cod_fenovo', 'class':'text-center col-1', orderable: false},
+            {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},
             {data: 'stock', orderable: false, searchable: false},
             {data: 'costo', orderable: false, searchable: false},

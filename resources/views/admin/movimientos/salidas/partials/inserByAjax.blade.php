@@ -13,28 +13,18 @@
                 </tr>
             </thead>
             <tbody>
-                @for ($i = 0; $i < count($stock_presentaciones); $i++)
-                    <tr>
-                        <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
-                        <td>{{$stock_presentaciones[$i]['stock']}}</td>
-                        <td>{{$stock_presentaciones[$i]['bultos']}}</td>
-                        <td>
-                            <input type="number"
-                                name="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
-                                id="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
-                                class="form-control"
-                                @if($stock_presentaciones[$i]['stock'] == 0) disabled @endif
-                                max="{{$stock_presentaciones[$i]['bultos']}}"
-                                value="0"
-                                onkeyup="verif({{$stock_presentaciones[$i]['presentacion']}})">
-                        </td>
+                @for ($i = 0; $i < count($stock_presentaciones); $i++) <tr>
+                    <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
+                    <td>{{$stock_presentaciones[$i]['stock']}}</td>
+                    <td>{{$stock_presentaciones[$i]['bultos']}}</td>
+                    <td>
+                        <input type="number" name="unidades_{{(int)$stock_presentaciones[$i]['presentacion']}}" id="unidades_{{(int)$stock_presentaciones[$i]['presentacion']}}" class="form-control" @if($stock_presentaciones[$i]['stock']==0) disabled @endif max="{{$stock_presentaciones[$i]['bultos']}}" value="0" onkeyup="verif({{(int)$stock_presentaciones[$i]['presentacion']}})">
+                    </td>
                     </tr>
-                @endfor
+                    @endfor
             </tbody>
         </table>
     </form>
     <br>
 </div>
 <br>
-
-
