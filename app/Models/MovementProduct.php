@@ -12,7 +12,7 @@ class MovementProduct extends Model
         'movement_id'  => 'int',
         'store_id'     => 'int',
         'product_id'   => 'int',
-        'unit_package' => 'int',
+        'unit_package' => 'float',
         'invoice'      => 'bool',
         'bultos'       => 'int',
         'entry'        => 'float',
@@ -31,7 +31,7 @@ class MovementProduct extends Model
         'egress',
         'balance',
         'unit_price',
-        'tasiva'
+        'tasiva',
     ];
 
     public function movement()

@@ -100,7 +100,7 @@ class ProductController extends Controller
     {
         try {
             $data                 = $request->all();
-            $data['unit_package'] = implode(',', $data['unit_package']);
+            $data['unit_package'] = implode('|', $data['unit_package']);
             $preciosCalculados    = $this->calcularPrecios($request);
             $data                 = array_merge($data, $preciosCalculados);
             $producto_nuevo       = $this->productRepository->create($data);
@@ -121,7 +121,7 @@ class ProductController extends Controller
             $categories        = $this->productCategoryRepository->getActives('name', 'ASC');
             $types             = $this->productTypeRepository->getActives('name', 'ASC');
             $proveedores       = $this->proveedorRepository->getActives('name', 'ASC');
-            $unit_package      = explode(',', $product->unit_package);
+            $unit_package      = explode('|', $product->unit_package);
             if ($product) {
                 return view('admin.products.edit', compact('alicuotas', 'categories', 'types', 'proveedores', 'senasaDefinitions', 'product', 'unit_package'));
             }
@@ -140,7 +140,7 @@ class ProductController extends Controller
         try {
             $data                 = $request->except('_token');
             $product_id           = $data['product_id'];
-            $data['unit_package'] = implode(',', $data['unit_package']);
+            $data['unit_package'] = implode('|', $data['unit_package']);
             $producto_actualizado = $this->productRepository->fill($product_id, $data);
             $preciosCalculados    = $this->calcularPrecios($request);
             $data                 = array_merge($data, $preciosCalculados);

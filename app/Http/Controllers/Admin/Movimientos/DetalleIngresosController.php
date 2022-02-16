@@ -37,7 +37,7 @@ class DetalleIngresosController extends Controller
         try {
             $productId      = $request->productId;
             $producto       = Product::find($productId);
-            $presentaciones = explode(',', $producto->unit_package);
+            $presentaciones = explode('|', $producto->unit_package);
             return new JsonResponse([
                 'type' => 'success',
                 'html' => view('admin.movimientos.ingresos.detalleTemp', compact('producto', 'presentaciones'))->render(),

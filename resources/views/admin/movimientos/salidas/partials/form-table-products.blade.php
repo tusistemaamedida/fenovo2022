@@ -44,7 +44,7 @@
                                 <tr class="">
                                     <td class="">{{ $i }}</td>
                                     <td class="">{{$session_product->producto->cod_fenovo}} {{$session_product->producto->name}}</td>
-                                    <td class="">{{$session_product->unit_package}}</td>
+                                    <td class="">{{number_format($session_product->unit_package,2)}}</td>
                                     <td class="">{{$session_product->quantity}}</td>
                                     <td class="">{{$session_product->producto->unit_weight * $session_product->unit_package * $session_product->quantity}}</td>
                                     <td class="">${{ number_format($session_product->unit_price, 2, ',', '')}}</td>
