@@ -129,7 +129,7 @@ class InvoiceController extends Controller
                     ]);
                 }
 
-                return redirect()->route('factura-electronica', ['movement_id' => $movement_id]);
+                return redirect()->route('ver.fe', ['movement_id' => $movement_id]);
             }else{
                 if(isset($invoice)) $this->invoiceRepository->fill($invoice->id,[ 'error' => $result['error'] ]);
                 return $result['error'];
