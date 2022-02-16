@@ -61,13 +61,12 @@ class SalidasController extends Controller
                 })
                 ->addColumn('acciones', function ($movement) {
                     $links = '<a class="flex-button" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
-                    if($movement->invoice){
+                    if ($movement->invoice) {
                         $links .= '<a class="flex-button" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
-                    }else{
+                    } else {
                         $links .= '<a class="flex-button" target="_blank" href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
                     }
                     return $links;
-
                 })
                 ->rawColumns(['origen', 'date', 'type', 'acciones'])
                 ->make(true);
@@ -85,10 +84,13 @@ class SalidasController extends Controller
                     $explode = explode('_', $pendiente->list_id);
                     return $pendiente::origenData($explode[0], $explode[1]);
                 })
+                ->addColumn('items', function ($pendiente) {
+                    return count(SessionProduct::query()->where('list_id', $pendiente->list_id)->get());
+                })
                 ->addColumn('edit', function ($pendiente) {
                     return '<a href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-clock"></i> </a>';
                 })
-                ->rawColumns(['destino', 'edit'])
+                ->rawColumns(['items', 'destino', 'edit'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.pendientes');
