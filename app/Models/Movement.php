@@ -76,4 +76,9 @@ class Movement extends Model
                 return $customer->razon_social;
         }
     }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class)->whereNotNull('cae');
+    }
 }

@@ -72,7 +72,7 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        @include('partials.table.dom-button'),
+
         ajax: "{{ route('salidas.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
@@ -81,7 +81,7 @@
             {data: 'type'},
             {data: 'voucher_number',  'class':'text-center'},
             {data: 'updated_at'},
-            {data: 'edit', name: 'Editar', 'class':'text-center', searchable: false},
+            {data: 'acciones','class':'flex'},
         ]
     });
 </script>

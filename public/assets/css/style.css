@@ -20222,4 +20222,16 @@ input[type="radio"].radio-warning:checked + .custom-control-label:before {
     border: 0px !important;
 }
 
+.flex{
+    display: flex;
+    margin: 0 10px;;
+}
+
+.flex-button{
+    display: flex;
+    margin: 0 10px;
+    font-size: 14px;
+    float: right;
+}
+
 /*# sourceMappingURL=style.css.map */

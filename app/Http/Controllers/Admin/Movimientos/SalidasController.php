@@ -58,10 +58,17 @@ class SalidasController extends Controller
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
                 })
-                ->addColumn('edit', function ($movement) {
-                    return '<a class="dropdown-item" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                ->addColumn('acciones', function ($movement) {
+                    $links = '<a class="flex-button" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                    if($movement->invoice){
+                        $links .= '<a class="flex-button" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
+                    }else{
+                        $links .= '<a class="flex-button" target="_blank" href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
+                    }
+                    return $links;
+
                 })
-                ->rawColumns(['origen', 'date', 'type', 'edit'])
+                ->rawColumns(['origen', 'date', 'type', 'acciones'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.index');
