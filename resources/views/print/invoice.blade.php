@@ -283,13 +283,13 @@
             <span style="font-size:14px; font-weight: bold;line-height: 22px;">Total Final</span>
           </td>
 
-          <td style="text-align:right; padding-right: 15px; width: 143px;">
-            <span style="font-size:13px;line-height: 22px;float:right">${{number_format($invoice->imp_neto, 2, ',', '.')}} </span><br>
+          <td style="text-align:right;  width: 143px;">
+            <span style="font-size:13px;line-height: 22px;">${{number_format($invoice->imp_neto, 2, ',', '.')}} </span><br>
             @foreach ($alicuotas_array as $item)
-              <span style="font-size:13px;line-height: 22px;float:right">${{$item->value}} </span><br>
+              <span style="font-size:13px;line-height: 22px;">${{$item->value}} </span><br>
             @endforeach
-            <span style="font-size:13px;line-height: 22px;float:right">${{number_format($invoice->imp_tot_conc, 2, ',', '.')}} </span><br>
-            <span style="font-size:13px;line-height: 22px;float:right">${{number_format($invoice->imp_total, 2, ',', '.')}}</span>
+            <span style="font-size:13px;line-height: 22px;">${{number_format($invoice->imp_tot_conc, 2, ',', '.')}} </span><br>
+            <span style="font-size:13px;line-height: 22px;">${{number_format($invoice->imp_total, 2, ',', '.')}}</span>
           </td>
         </tr>
       </table>
