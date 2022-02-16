@@ -129,7 +129,7 @@ class InvoiceController extends Controller
                     ]);
                 }
 
-                $this->generateInvoicePdf($movement_id);
+                return $this->generateInvoicePdf($movement_id);
             }else{
                 if(isset($invoice)) $this->invoiceRepository->fill($invoice->id,[ 'error' => $result['error'] ]);
                 return $result['error'];
