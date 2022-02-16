@@ -15,9 +15,9 @@
         <td> {{ $loop->iteration }}</td>
         <td> {{ $movimiento->product->name }}</td>
         <td class="text-center font-italic"> {{ $movimiento->product->cod_fenovo }} </td>
-        <td class="text-center font-italic"> {{ $movimiento->unit_package }} </td>
+        <td class="text-center font-italic"> {{ number_format($movimiento->unit_package,2) }} </td>
         <td class="text-center"> {{ $movimiento->bultos }}</td>
-        <td class="text-center"> {{ number_format($movimiento->entry,2) }} </td>
+        <td class="text-center"> {{ $movimiento->entry }} </td>
         <td> <a href="#" onclick="borrarDetalle('{{ $movimiento->movement_id}}', '{{ $movimiento->product_id }}')"><i class="fa fa-trash"></i></a> </td>
         <td> </td>
     </tr>

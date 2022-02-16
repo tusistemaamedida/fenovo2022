@@ -18,7 +18,7 @@
                     <td>{{$stock_presentaciones[$i]['stock']}}</td>
                     <td>{{$stock_presentaciones[$i]['bultos']}}</td>
                     <td>
-                        <input type="number" name="unidades_{{(int)$stock_presentaciones[$i]['presentacion']}}" id="unidades_{{(int)$stock_presentaciones[$i]['presentacion']}}" class="form-control" @if($stock_presentaciones[$i]['stock']==0) disabled @endif max="{{$stock_presentaciones[$i]['bultos']}}" value="0" onkeyup="verif({{(int)$stock_presentaciones[$i]['presentacion']}})">
+                        <input type="number" name="unidades_{{(float)$stock_presentaciones[$i]['presentacion']}}" id="unidades_{{(float)$stock_presentaciones[$i]['presentacion']}}" class="form-control" @if($stock_presentaciones[$i]['stock']==0) disabled @endif max="{{$stock_presentaciones[$i]['bultos']}}" value="0" onkeyup="verif({{(float)$stock_presentaciones[$i]['presentacion']}})">
                     </td>
                     </tr>
                     @endfor

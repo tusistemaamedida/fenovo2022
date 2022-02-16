@@ -79,7 +79,7 @@ class IngresosController extends Controller
     {
         try {
             $product      = Product::find($request->id);
-            $unit_package = explode(',', $product->unit_package);
+            $unit_package = explode('|', $product->unit_package);
             return new JsonResponse([
                 'type' => 'success',
                 'html' => view('admin.movimientos.ingresos.insertByAjax', compact('product', 'unit_package'))->render(),
@@ -92,7 +92,7 @@ class IngresosController extends Controller
     public function updateProduct(Request $request)
     {
         try {
-            $data['unit_package'] = implode(',', $request->unit_package);
+            $data['unit_package'] = implode('|', $request->unit_package);
             Product::find($request->product_id)->update($data);
             return new JsonResponse(['msj' => 'Actualización correcta !', 'type' => 'success']);
         } catch (\Exception $e) {

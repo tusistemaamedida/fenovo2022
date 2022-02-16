@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float|null  $tasiva
  * @property int|null    $senasa_id
  * @property string|null $senasa_name
- * @property string|null $unit_package
+ * @property float|null  $unit_package
  * @property float|null  $quantity
  * @property string|null $state
  * @property bool|null   $invoice
@@ -44,6 +44,7 @@ class SessionProduct extends Model
         'store_id'     => 'int',
         'product_id'   => 'int',
         'unit_price'   => 'float',
+        'unit_package' => 'float',
         'tasiva'       => 'float',
         'senasa_id'    => 'int',
         'quantity'     => 'float',

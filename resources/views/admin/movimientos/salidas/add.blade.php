@@ -246,8 +246,9 @@
 
 <script>
     function verif(pres){
-        const max = parseInt(jQuery("#unidades_"+pres).attr("max"));
-        const value = parseInt(jQuery("#unidades_"+pres).val());
+        
+        const max = parseFloat(document.getElementById("unidades_"+pres).max);
+        const value = parseFloat(document.getElementById("unidades_"+pres).value);
         if(value > max){
             toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
             jQuery("#unidades_"+pres).val(max);
@@ -259,6 +260,7 @@
         e.preventDefault();
         guardarProductoEnSession()
     })
+
     function guardarProductoEnSession(){
         var to_type = jQuery("#to_type").val();
         var product_id = jQuery("#product_search").val();
