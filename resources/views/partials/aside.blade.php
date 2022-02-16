@@ -40,7 +40,7 @@
                         <li class="nav-item">
                             <a href="{{route('salidas.pendientes')}}" class="nav-link">
                                 <span class="svg-icon nav-icon"> <i class="fas fa-arrow-alt-circle-right text-secondary"></i> </span>
-                                <span class="nav-text">Salidas.Pendientes</span>
+                                <span class="nav-text">Salidas</span>
                             </a>
                         </li>
 

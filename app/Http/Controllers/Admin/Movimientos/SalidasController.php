@@ -79,7 +79,7 @@ class SalidasController extends Controller
                     return $pendiente::origenData($explode[0], $explode[1]);
                 })
                 ->addColumn('edit', function ($pendiente) {
-                    return '<a class="dropdown-item" href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-eye"></i> </a>';
+                    return '<a href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-clock"></i> </a>';
                 })
                 ->rawColumns(['destino', 'edit'])
                 ->make(true);
@@ -145,7 +145,7 @@ class SalidasController extends Controller
 
             $valid_names[] = [
                 'id'       => $product->id,
-                'text'     => $product->name . ' [' . $stock . ' ' . $product->unit_type . ']' . $text_no_stock,
+                'text'     => $product->name . ' [' . $product->cod_fenovo . ']' . $text_no_stock,
                 'disabled' => $disabled,  ];
         }
 
@@ -191,23 +191,22 @@ class SalidasController extends Controller
         try {
             if ($request->has('id') && $request->input('id') != '') {
                 $product = $this->productRepository->getById($request->input('id'));
+                $list_id = $request->input('list_id');
                 if ($product) {
                     $stock_presentaciones = [];
                     $presentaciones       = explode(',', $product->unit_package);
 
                     for ($i = 0; $i < count($presentaciones); $i++) {
-                        $bultos            = 0;
-                        $bultos_en_session = 0;
-                        $presentacion      = $presentaciones[$i];
-                        $stock_en_session  = $this->sessionProductRepository->getCantidadTotalDeBultos($product->id, $presentacion);
-
+                        $bultos                                   = 0;
+                        $bultos_en_session                        = 0;
+                        $presentacion                             = $presentaciones[$i];
+                        $stock_en_session                         = $this->sessionProductRepository->getCantidadTotalDeBultosByListId($product->id, $presentacion, $list_id);
                         $stock                                    = $product->stock($presentacion);
                         $stock_presentaciones[$i]['presentacion'] = $presentacion;
                         $stock_presentaciones[$i]['stock']        = $stock;
                         // los bultos que hay disponibles se calcula dividiendo el balance por el peso del bulto
                         $peso_por_bulto = $product->unit_weight * $presentacion;
 
-                        //dd($peso_por_bulto,$stock,$stock_en_session);
                         if ($stock) {
                             $bultos = $stock / $peso_por_bulto;
                         }
@@ -289,7 +288,7 @@ class SalidasController extends Controller
                 if ($quantity > 0) {
                     $explode                     = explode('_', $unidad['name']);
                     $insert_data['unit_package'] = (int)$explode[1];
-                    $stock_en_session            = $this->sessionProductRepository->getCantidadTotalDeBultosByListId($product_id, $insert_data['unit_package'],$insert_data['list_id']);
+                    $stock_en_session            = $this->sessionProductRepository->getCantidadTotalDeBultosByListId($product_id, $insert_data['unit_package'], $insert_data['list_id']);
                     $insert_data['quantity']     = $quantity + $stock_en_session;
                     $this->sessionProductRepository->updateOrCreate($insert_data);
                 }

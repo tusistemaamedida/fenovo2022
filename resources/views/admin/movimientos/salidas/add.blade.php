@@ -130,11 +130,16 @@
     jQuery('#product_search').change(function(){
         var elements = document.querySelectorAll('.is-invalid');
         var id = jQuery("#product_search").val();
+
+        var to_type = jQuery("#to_type").val();
+        var to = jQuery("#to").val();
+        var list_id = to_type+'_'+to;
+
         if(id != ''){
             jQuery.ajax({
                 url: "{{route('get.presentaciones')}}",
                 type: 'GET',
-                data: { id },
+                data: { id, list_id },
                 beforeSend: function () {
                     jQuery('#loader').removeClass('hidden');
                 },
@@ -156,7 +161,6 @@
     });
 
     jQuery('#product_search').on('select2:open', function () {
-        //document.getElementById("unidades_a_enviar").reset();
         jQuery('.editpopup').removeClass('offcanvas-on');
     });
 
