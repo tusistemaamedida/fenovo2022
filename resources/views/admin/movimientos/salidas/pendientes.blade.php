@@ -46,6 +46,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Identificación</th>
+                                            <th>Items</th>
                                             <th>Destino</th>
                                             <th>Detalle</th>
                                         </tr>
@@ -70,10 +71,12 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.dom-button'),
+        ordering: false,
         ajax: "{{ route('salidas.pendientes') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
             {data: 'list_id'},
+            {data: 'items'},
             {data: 'destino'},
             {data: 'edit', name: 'Editar', 'class':'text-center', searchable: false},
         ]
