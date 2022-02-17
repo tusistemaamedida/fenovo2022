@@ -186,11 +186,11 @@
                 dataType: 'json',
                 data: { id: id },
                 success: function (data) {
-                    toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                    toastr.success("Eliminado ... ");
-                    setTimeout(() => {
+                    if (data['type'] == 'success') {
+                        toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                        toastr.info("Eliminado ... ");
                         cargarTablaProductos();
-                    }, 500);
+                    }                    
                 }
             });
         }
