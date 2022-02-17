@@ -128,6 +128,7 @@
     });
 
     jQuery('#product_search').change(function(){
+
         var elements = document.querySelectorAll('.is-invalid');
         var id = jQuery("#product_search").val();
 
@@ -145,6 +146,7 @@
                 },
                 success: function (data) {
                     if (data['type'] == 'success') {
+                        
                         jQuery("#insertByAjax").html(data['html']);
                         jQuery('.editpopup').addClass('offcanvas-on');
                     } else if(data['type'] != 'clear') {
@@ -242,9 +244,6 @@
         });
     }
 
-</script>
-
-<script>
     function verif(pres){
         
         const max = parseFloat(document.getElementById("unidades_"+pres).max);
