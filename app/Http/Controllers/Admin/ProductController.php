@@ -122,6 +122,7 @@ class ProductController extends Controller
             $types             = $this->productTypeRepository->getActives('name', 'ASC');
             $proveedores       = $this->proveedorRepository->getActives('name', 'ASC');
             $unit_package      = explode('|', $product->unit_package);
+
             if ($product) {
                 return view('admin.products.edit', compact('alicuotas', 'categories', 'types', 'proveedores', 'senasaDefinitions', 'product', 'unit_package'));
             }
