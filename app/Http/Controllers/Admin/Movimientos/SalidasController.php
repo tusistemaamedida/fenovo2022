@@ -209,7 +209,7 @@ class SalidasController extends Controller
                         $bultos                                   = 0;
                         $bultos_en_session                        = 0;
                         $presentacion                             = $presentaciones[$i];
-                        $stock_en_session                         = $this->sessionProductRepository->getCantidadTotalDeBultosByListId($product->id, $presentacion, $list_id);
+                        $stock_en_session                         = $this->sessionProductRepository->getCantidadTotalDeBultos($product->id, $presentacion);
                         $stock                                    = $product->stock($presentacion);
                         $stock_presentaciones[$i]['presentacion'] = $presentacion;
                         $stock_presentaciones[$i]['stock']        = $stock;

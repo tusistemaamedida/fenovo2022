@@ -67,7 +67,10 @@ class SessionProductRepository extends BaseRepository
 
     public function groupBy($group)
     {
-        return SessionProduct::groupBy($group)->get();
+        return SessionProduct::select()
+        ->orderBy('created_at', 'ASC')
+        ->get()
+        ->unique($group);
     }
 
     public function getFlete($list_id)
