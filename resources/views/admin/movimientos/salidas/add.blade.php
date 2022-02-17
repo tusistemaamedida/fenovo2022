@@ -128,6 +128,7 @@
     });
 
     jQuery('#product_search').change(function(){
+
         var elements = document.querySelectorAll('.is-invalid');
         var id = jQuery("#product_search").val();
 
@@ -145,6 +146,7 @@
                 },
                 success: function (data) {
                     if (data['type'] == 'success') {
+                        
                         jQuery("#insertByAjax").html(data['html']);
                         jQuery('.editpopup').addClass('offcanvas-on');
                     } else if(data['type'] != 'clear') {
@@ -184,11 +186,11 @@
                 dataType: 'json',
                 data: { id: id },
                 success: function (data) {
-                    toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                    toastr.success("Eliminado ... ");
-                    setTimeout(() => {
+                    if (data['type'] == 'success') {
+                        toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                        toastr.info("Eliminado ... ");
                         cargarTablaProductos();
-                    }, 500);
+                    }                    
                 }
             });
         }
@@ -242,9 +244,6 @@
         });
     }
 
-</script>
-
-<script>
     function verif(pres){
         
         const max = parseFloat(document.getElementById("unidades_"+pres).max);

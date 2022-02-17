@@ -21,3 +21,5 @@ Route::post('store-session-product-item', [SalidasController::class, 'storeSessi
 Route::post('guardar-salida', [SalidasController::class, 'storeSalida'])->name('guardar.salida');
 Route::post('cambiar-facturacion', [SalidasController::class, 'changeInvoiceProduct'])->name('change.invoice.product');
 Route::get('get-presentaciones', [SalidasController::class, 'getPresentaciones'])->name('get.presentaciones');
+
+Route::post('salidas-pendiente/destroy', [SalidasController::class, 'pendienteDestroy'])->name('salidas.pendiente.destroy');
