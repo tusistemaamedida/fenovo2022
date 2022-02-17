@@ -43,7 +43,7 @@
                             <div class="card-body">
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
-                                        <tr>
+                                        <tr class="bg-dark text-white">
                                             <th>Patente</th>
                                             <th>Habilitacion</th>
                                             <th>Precintos</th>

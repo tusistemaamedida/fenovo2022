@@ -43,7 +43,7 @@
                             <div class="card-body">
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
-                                        <tr>
+                                        <tr class="bg-dark text-white">
                                             <th>Actualización</th>
                                             <th>Proveedor</th>
                                             <th>Items</th>
