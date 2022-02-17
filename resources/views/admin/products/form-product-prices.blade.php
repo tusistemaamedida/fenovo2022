@@ -68,14 +68,14 @@
             </div>
 
             <div class="col-md-4">
-                <label  class="text-body">IVA *</label>
+                <label  class="text-body">IVA *{{$product->product_price->tasiva}}</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="tasiva" id="tasiva">
                         @foreach ($alicuotas as $alicuota)
                             <option value="{{$alicuota->value}}"
-                                @if(isset($product) && (($product->product_price->tasiva *100) == $alicuota->value))
+                                @if(isset($product) && ((float)$product->product_price->tasiva == (float)$alicuota->value*100))
                                     selected
-                                 @elseif($alicuota->value *100 == 21)
+                                 @elseif($alicuota->value * 100 == 21)
                                     selected
                                 @endif>
                                     {{$alicuota->description}}

@@ -221,6 +221,7 @@ class ProductController extends Controller
                 'mup2'       => $mup2,
                 'p2may'      => $p2may,
                 'mupp2may'   => $mupp2may,
+                'tasiva'     => $tasiva
             ];
         } catch (\Exception $th) {
             return ['type' => 'error', 'msj' => $th->getMessage()];
