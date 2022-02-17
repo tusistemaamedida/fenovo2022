@@ -110,10 +110,19 @@
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="unit_package[]" id="unit_package" multiple="multiple">
 
-                        @for ($i = 1; $i < 101; $i +=0.5) <option value="{{$i}}" @if(isset($product) && in_array($i,$unit_package)) selected @endif>
+                        @for ($i = 1; $i < 101; $i +=0.5) <option value="{{$i}}">
                             {{$i}}
                             </option>
                             @endfor
+
+                            @if(isset($product))
+                            @foreach ( $unit_package as $unit )
+                            <option value="{{$unit}}" selected>
+                                {{$unit}}
+                            </option>
+                            @endforeach
+                            @endif
+
 
                     </select>
                 </fieldset>
