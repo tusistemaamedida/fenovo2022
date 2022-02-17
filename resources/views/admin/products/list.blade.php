@@ -37,10 +37,7 @@
                                     </a>
                                 </div>
                             </div>
-
                         </div>
-
-
                     </div>
                 </div>
                 <div class="row">
@@ -65,6 +62,7 @@
         @include('partials.table.dom-button'),    
         ajax: "{{ route('products.list') }}",
         columns: [
+            
             {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},
             {data: 'stock', orderable: false, searchable: false},
