@@ -80,17 +80,25 @@ class SalidasController extends Controller
             $pendientes = $this->sessionProductRepository->groupBy('list_id');
             return DataTables::of($pendientes)
                 ->addIndexColumn()
+                ->addColumn('actualizacion', function ($pendiente) {
+                    return date('d-m-Y H:i:s', strtotime($pendiente->updated_at));
+                })
                 ->addColumn('destino', function ($pendiente) {
                     $explode = explode('_', $pendiente->list_id);
                     return $pendiente::origenData($explode[0], $explode[1]);
                 })
                 ->addColumn('items', function ($pendiente) {
-                    return count(SessionProduct::query()->where('list_id', $pendiente->list_id)->get());
+                    $count = count(SessionProduct::query()->where('list_id', $pendiente->list_id)->get());
+                    return '<span class="badge badge-primary">' . $count . '</span>';
+                })
+                ->addColumn('destroy', function ($pendiente) {
+                    $ruta = 'eliminarPendiente(' . $pendiente->id . ",'" . route('salidas.pendiente.destroy') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
                 ->addColumn('edit', function ($pendiente) {
                     return '<a href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-clock"></i> </a>';
                 })
-                ->rawColumns(['items', 'destino', 'edit'])
+                ->rawColumns(['actualizacion', 'items', 'destino', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.pendientes');
@@ -394,5 +402,16 @@ class SalidasController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
+    }
+
+    public function pendienteDestroy(Request $request)
+    {
+        SessionProduct::find($request->id)->delete();
+        return new JsonResponse(
+            [
+                'msj'  => 'Eliminado ... ',
+                'type' => 'success',
+            ]
+        );
     }
 }

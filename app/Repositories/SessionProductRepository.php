@@ -68,7 +68,7 @@ class SessionProductRepository extends BaseRepository
     public function groupBy($group)
     {
         return SessionProduct::select()
-        ->orderBy('created_at', 'ASC')
+        ->orderBy('updated_at', 'DESC')
         ->get()
         ->unique($group);
     }

@@ -44,11 +44,12 @@
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
                                         <tr>
-                                            <th>No</th>
+                                            <th>Actualización</th>
                                             <th>Identificación</th>
                                             <th>Items</th>
                                             <th>Destino</th>
                                             <th>Detalle</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -74,13 +75,46 @@
         ordering: false,
         ajax: "{{ route('salidas.pendientes') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
+            {data: 'actualizacion', 'class':'text-center', searchable: false},
             {data: 'list_id'},
-            {data: 'items'},
+            {data: 'items', 'class':'text-center', searchable: false},
             {data: 'destino'},
-            {data: 'edit', name: 'Editar', 'class':'text-center', searchable: false},
+            {data: 'edit', 'class':'text-center', searchable: false},
+            {data: 'destroy', 'class':'text-center', searchable: false},
+
         ]
     });
+
+    const eliminarPendiente = (id, route) => {
+
+
+        ymz.jq_confirm({
+            title: 'Eliminar',
+            text: "confirma borrar registro ?",
+            no_btn: "Cancelar",
+            yes_btn: "Confirma",
+            no_fn: function () {
+                return false;
+            },
+            yes_fn: function () {
+                jQuery.ajax({
+                    url: route,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: id },
+                    success: function (data) {
+                        if (data['type'] == 'success') {
+                            table.ajax.reload();
+                            toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                            toastr.info("Eliminado ... ");
+                        }
+                    }
+                });
+            }
+        });
+    };
+
+
 </script>
 
 @endsection

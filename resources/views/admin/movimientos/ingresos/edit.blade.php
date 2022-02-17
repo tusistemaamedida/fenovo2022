@@ -262,7 +262,7 @@
                         if (data['type'] == 'success') {
                             jQuery("#dataConfirm").html(data['html']);
                             toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                            toastr.error("Eliminado ... ");
+                            toastr.info("Eliminado ... ");
                         }
                     }
                 })
