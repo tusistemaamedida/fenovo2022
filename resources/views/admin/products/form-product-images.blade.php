@@ -25,7 +25,11 @@
                     </tr>
                 </thead>
                 <tbody class="files"></tbody>
-                <tfoot><tr><td colspan="5">No hay imágenes.</td></tr></tfoot>
+                <tfoot>
+                    <tr>
+                        <td colspan="5">No hay imágenes.</td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
 
@@ -35,7 +39,7 @@
         <!-- Drop Window -->
         <div class="drop-window">
             <div class="drop-window-content">
-                <h3><i class="fa fa-upload"></i> Drop files to upload</h3>
+                <h3><i class="fa fa-upload"></i> Arrastre aqui los archivos</h3>
             </div>
         </div>
     </div>
@@ -46,11 +50,11 @@
             <div class="modal-header">
                 <h3 class="modal-title" id="myModalLabel1">Realizar selección</h3>
                 <button type="button" class="close rounded-pill btn btn-sm btn-icon btn-light btn-hover-primary m-0" data-dismiss="modal" aria-label="Close">
-                  <svg width="20px" height="20px" viewBox="0 0 16 16" class="bi bi-x" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path>
-                  </svg>
+                    <svg width="20px" height="20px" viewBox="0 0 16 16" class="bi bi-x" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path>
+                    </svg>
                 </button>
-              </div>
+            </div>
             <div class="modal-body">
                 <div class="alert alert-warning crop-loading">Cargando imágen...</div>
                 <div class="crop-preview"></div>

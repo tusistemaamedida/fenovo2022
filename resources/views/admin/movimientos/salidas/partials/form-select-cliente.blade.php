@@ -24,9 +24,20 @@
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="product_search" id="product_search"> </select>
                     </fieldset>
                 </div>
-                <div class="col-md-2">
+
+                <div class="col-md-1 text-center">
+                    <a onclick="printPendiente()" class="btn btn-primary" style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
+                        <i class="fa fa-print"></i>
+                    </a>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-danger" id="btnOpenCerrarSalida" disabled style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
+                        <i class="fa fa-times"></i> Cerrar Salida
+                    </button>
+                
                     <button type="button" class="btn btn-danger" id="btnOpenCerrarNC" disabled style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
                         <i class="fa fa-times"></i> Cerrar Nota de crédito</button>
+
                 </div>
             </div>
         </div>

@@ -11,8 +11,10 @@ use App\Repositories\CustomerRepository;
 use App\Repositories\ProductRepository;
 
 use App\Repositories\SessionProductRepository;
+
 use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
+use Barryvdh\DomPDF\Facade as PDF;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -98,7 +100,10 @@ class SalidasController extends Controller
                 ->addColumn('edit', function ($pendiente) {
                     return '<a href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-clock"></i> </a>';
                 })
-                ->rawColumns(['actualizacion', 'items', 'destino', 'edit', 'destroy'])
+                ->addColumn('print', function ($pendiente) {
+                    return '<a href="' . route('salidas.pendiente.print', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-print"></i> </a>';
+                })
+                ->rawColumns(['actualizacion', 'items', 'destino', 'edit', 'destroy', 'print'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.pendientes');
@@ -111,6 +116,16 @@ class SalidasController extends Controller
         $destino     = $this::origenData($tipo, $explode[1], true);
         $destinoName = $this::origenData($tipo, $explode[1]);
         return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
+    }
+
+    public function pendientePrint(Request $request)
+    {
+        $session_products = SessionProduct::query()->where('list_id', $request->input('list_id'))->get();
+        $explode          = explode('_', $request->input('list_id'));
+        $tipo             = $explode[0];
+        $destino          = $this::origenData($tipo, $explode[1], true);
+        $pdf              = PDF::loadView('admin.movimientos.salidas.salidas-detalle', compact('session_products', 'destino'));
+        return $pdf->stream('salidas.pdf');
     }
 
     public function add()
