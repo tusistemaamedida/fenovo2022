@@ -49,6 +49,7 @@
                                             <th>Items</th>
                                             <th>Destino</th>
                                             <th>Detalle</th>
+                                            <th>Print</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -80,6 +81,7 @@
             {data: 'items', 'class':'text-center', searchable: false},
             {data: 'destino'},
             {data: 'edit', 'class':'text-center', searchable: false},
+            {data: 'print', 'class':'text-center', searchable: false},
             {data: 'destroy', 'class':'text-center', searchable: false},
 
         ]

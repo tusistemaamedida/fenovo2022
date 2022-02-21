@@ -112,8 +112,7 @@
                 },
                 success: function (data) {
                     if (data['type'] == 'success') {
-                        toastr.info(data['msj'],'Registro');
-
+                        toastr.info(data['msj'],'Actualización');                        
                     } else {
                         toastr.error(data['html'], 'Verifique');
                     }
@@ -129,6 +128,10 @@
                 },
                 complete: function () {
                     jQuery('#loader').addClass('hidden');
+                    setTimeout(() => {
+                        window.location= '{{ route('products.list') }}';    
+                    }, 500);
+                    
                 }
             });
         };

@@ -4,9 +4,7 @@
             <th>Codigo</th>
             <th>Producto</th>
             <th>Stock</th>
-            <th>Costo</th>
-            <th>Precios</th>
-            <th>Tiendas</th>
+            <th>Tipo senasa</th>
             <th>Proveedor</th>
             <th></th>
             <th></th>

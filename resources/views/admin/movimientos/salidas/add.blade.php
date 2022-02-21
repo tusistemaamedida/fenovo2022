@@ -197,6 +197,14 @@
     });
     }
 
+    const printPendiente = ()=>{
+        var to_type = jQuery("#to_type").val();
+        var to = jQuery("#to").val();
+        var list_id = to_type+'_'+to;
+        var url = "{{route('salidas.pendiente.print', '')}}"+"?list_id="+list_id;
+        window.location = url;
+    }
+
     function cargarTablaProductos(){
         var to_type = jQuery("#to_type").val();
         var to = jQuery("#to").val();

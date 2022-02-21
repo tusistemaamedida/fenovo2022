@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Product
  *
- * @property int $id
- * @property int $cod_fenovo
+ * @property int         $id
+ * @property int         $cod_fenovo
  * @property string|null $name
  * @property string|null $description
  * @property string|null $barcode
@@ -22,160 +22,167 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $cod_cuenta_venta
  * @property string|null $cod_proveedor
  * @property string|null $unit_type
- * @property float|null $unit_amount
- * @property float|null $unit_weight
- * @property float|null $porcentaje_bruto
- * @property float|null $stock_min
- * @property int|null $stock_actual
- * @property int|null $stock_sem_min
- * @property int|null $stock_sem_max
- * @property float|null $hight
- * @property float|null $width
- * @property float|null $long
+ * @property float|null  $unit_amount
+ * @property float|null  $unit_weight
+ * @property float|null  $porcentaje_bruto
+ * @property float|null  $stock_min
+ * @property int|null    $stock_actual
+ * @property int|null    $stock_sem_min
+ * @property int|null    $stock_sem_max
+ * @property float|null  $hight
+ * @property float|null  $width
+ * @property float|null  $long
  * @property string|null $unit_package
- * @property int $package_palet
- * @property int $package_row
+ * @property int         $package_palet
+ * @property int         $package_row
  * @property string|null $currency
- * @property int $online_sale
+ * @property int         $online_sale
  * @property string|null $fragility
  * @property Carbon|null $expiration_date
  * @property Carbon|null $publication_date
  * @property string|null $publication_state
  * @property string|null $publication_log
- * @property int|null $proveedor_id
- * @property int|null $categorie_id
- * @property int|null $type_id
- * @property int|null $senasa_id
- * @property int $active
- * @property int $is_senasa
+ * @property int|null    $proveedor_id
+ * @property int|null    $categorie_id
+ * @property int|null    $type_id
+ * @property int|null    $senasa_id
+ * @property int         $active
+ * @property int         $is_senasa
  * @property Carbon|null $updated_at
  * @property Carbon|null $created_at
  *
- * @property ProductCategory|null $product_category
- * @property Proveedor|null $proveedor
- * @property SenasaDefinition|null $senasa_definition
- * @property ProductType|null $product_type
+ * @property ProductCategory|null      $product_category
+ * @property Proveedor|null            $proveedor
+ * @property SenasaDefinition|null     $senasa_definition
+ * @property ProductType|null          $product_type
  * @property Collection|ProductImage[] $product_images
- * @property ProductNutricional $product_nutricional
- * @property ProductPrice $product_price
+ * @property ProductNutricional        $product_nutricional
+ * @property ProductPrice              $product_price
  *
  * @package App\Models
  */
 class Product extends Model
 {
-	protected $table = 'products';
+    protected $table = 'products';
 
-	protected $casts = [
-		'cod_fenovo' => 'int',
-		'unit_amount' => 'float',
-		'unit_weight' => 'float',
-		'porcentaje_bruto' => 'float',
-		'stock_min' => 'float',
-		'stock_actual' => 'int',
-		'stock_sem_min' => 'int',
-		'stock_sem_max' => 'int',
-		'hight' => 'float',
-		'width' => 'float',
-		'long' => 'float',
-		'package_palet' => 'int',
-		'package_row' => 'int',
-		'online_sale' => 'int',
-		'proveedor_id' => 'int',
-		'categorie_id' => 'int',
-		'type_id' => 'int',
-		'senasa_id' => 'int',
-		'active' => 'int',
-		'is_senasa' => 'int'
-	];
+    protected $casts = [
+        'cod_fenovo'       => 'int',
+        'unit_amount'      => 'float',
+        'unit_weight'      => 'float',
+        'porcentaje_bruto' => 'float',
+        'stock_min'        => 'float',
+        'stock_actual'     => 'int',
+        'stock_sem_min'    => 'int',
+        'stock_sem_max'    => 'int',
+        'hight'            => 'float',
+        'width'            => 'float',
+        'long'             => 'float',
+        'package_palet'    => 'int',
+        'package_row'      => 'int',
+        'online_sale'      => 'int',
+        'proveedor_id'     => 'int',
+        'categorie_id'     => 'int',
+        'type_id'          => 'int',
+        'senasa_id'        => 'int',
+        'active'           => 'int',
+        'is_senasa'        => 'int',
+    ];
 
-	protected $dates = [
-		'expiration_date',
-		'publication_date'
-	];
+    protected $dates = [
+        'expiration_date',
+        'publication_date',
+    ];
 
-	protected $fillable = [
-		'cod_fenovo',
-		'name',
-		'description',
-		'barcode',
-		'cod_cuenta_compra',
-		'cod_cuenta_venta',
-		'cod_proveedor',
-		'unit_type',
-		'unit_amount',
-		'unit_weight',
-		'porcentaje_bruto',
-		'stock_min',
-		'stock_actual',
-		'stock_sem_min',
-		'stock_sem_max',
-		'hight',
-		'width',
-		'long',
-		'unit_package',
-		'package_palet',
-		'package_row',
-		'currency',
-		'online_sale',
-		'fragility',
-		'expiration_date',
-		'publication_date',
-		'publication_state',
-		'publication_log',
-		'proveedor_id',
-		'categorie_id',
-		'type_id',
-		'senasa_id',
-		'active',
-		'is_senasa'
-	];
+    protected $fillable = [
+        'cod_fenovo',
+        'name',
+        'description',
+        'barcode',
+        'cod_cuenta_compra',
+        'cod_cuenta_venta',
+        'cod_proveedor',
+        'unit_type',
+        'unit_amount',
+        'unit_weight',
+        'porcentaje_bruto',
+        'stock_min',
+        'stock_actual',
+        'stock_sem_min',
+        'stock_sem_max',
+        'hight',
+        'width',
+        'long',
+        'unit_package',
+        'package_palet',
+        'package_row',
+        'currency',
+        'online_sale',
+        'fragility',
+        'expiration_date',
+        'publication_date',
+        'publication_state',
+        'publication_log',
+        'proveedor_id',
+        'categorie_id',
+        'type_id',
+        'senasa_id',
+        'active',
+        'is_senasa',
+    ];
 
-	public function product_category()
-	{
-		return $this->belongsTo(ProductCategory::class, 'categorie_id');
-	}
+    public function product_category()
+    {
+        return $this->belongsTo(ProductCategory::class, 'categorie_id');
+    }
 
-	public function proveedor()
-	{
-		return $this->belongsTo(Proveedor::class);
-	}
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class);
+    }
 
-	public function senasa_definition()
-	{
-		return $this->belongsTo(SenasaDefinition::class, 'senasa_id');
-	}
+    public function senasa_definition()
+    {
+        return $this->belongsTo(SenasaDefinition::class, 'senasa_id');
+    }
 
-	public function product_type()
-	{
-		return $this->belongsTo(ProductType::class, 'type_id');
-	}
+    public function senasa()
+    {
+        $senasa = SenasaDefinition::find($this->senasa_id);
+        return ($senasa) ? $senasa->product_name : null;
+    }
 
-	public function product_images()
-	{
-		return $this->hasMany(ProductImage::class,'cod_fenovo');
-	}
+    public function product_type()
+    {
+        return $this->belongsTo(ProductType::class, 'type_id');
+    }
 
-	public function product_nutricional()
-	{
-		return $this->hasOne(ProductNutricional::class);
-	}
+    public function product_images()
+    {
+        return $this->hasMany(ProductImage::class, 'cod_fenovo');
+    }
 
-	public function product_price()
-	{
-		return $this->hasOne(ProductPrice::class);
-	}
+    public function product_nutricional()
+    {
+        return $this->hasOne(ProductNutricional::class);
+    }
 
-    public function stock($unit_package = null,$store_id = 1){
-        $stock = 0.0;
-        $movement_product = MovementProduct::where('product_id',$this->id)
-                                            ->where('store_id',$store_id)
+    public function product_price()
+    {
+        return $this->hasOne(ProductPrice::class);
+    }
+
+    public function stock($unit_package = null, $store_id = 1)
+    {
+        $stock            = 0.0;
+        $movement_product = MovementProduct::where('product_id', $this->id)
+                                            ->where('store_id', $store_id)
                                             ->when($unit_package, function ($q, $unit_package) {
                                                 $q->where('unit_package', $unit_package);
                                             })
                                             ->latest()
                                             ->first();
-        if($movement_product){
-            $stock = (float) $movement_product->balance;
+        if ($movement_product) {
+            $stock = (float)$movement_product->balance;
         }
         return $stock;
     }
