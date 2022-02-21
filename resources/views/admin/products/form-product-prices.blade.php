@@ -2,13 +2,18 @@
     <div class="col-md-6">
         <div class="form-group row">
             <div class="col-md-12">
-                <label  class="text-body">Precio proveedor *</label>
+                <label  class="text-body">Precio proveedor * </label>
                 <fieldset class="input-group form-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text">$</span>
                     </div>
                     <input type="number" step="0.50" min="0" @if (isset($product)) value="{{$product->product_price->plistproveedor}}" @else value="" @endif
                     name="plistproveedor" id="plistproveedor" class="form-control border-dark">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->plistproveedor}} @endif</b>
+                        </span>
+                    </div>
                 </fieldset>
             </div>
 
@@ -31,6 +36,11 @@
                     </div>
                     <input type="number" step="0.50" min="0" @if (isset($product)) value="{{$product->product_price->costfenovo}}" @else value="0" @endif
                      name="costfenovo" id="costfenovo"  disabled class="form-control border-dark"  >
+                     <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->costfenovo}} @endif</b>
+                        </span>
+                    </div>
                 </fieldset>
             </div>
 
@@ -64,6 +74,11 @@
                     </div>
                     <input type="number" step="0.50" @if (isset($product)) value="{{$product->product_price->plist0neto}}" @else value="0" @endif
                      min="0" name="plist0neto" id="plist0neto"  disabled class="form-control border-dark"  >
+                     <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->plist0neto}} @endif</b>
+                        </span>
+                    </div>
                 </fieldset>
             </div>
 
@@ -73,9 +88,9 @@
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="tasiva" id="tasiva">
                         @foreach ($alicuotas as $alicuota)
                             <option value="{{$alicuota->value}}"
-                                @if(isset($product) && (($product->product_price->tasiva *100) == $alicuota->value))
+                                @if(isset($product) && ((float)$product->product_price->tasiva == (float)$alicuota->value*100))
                                     selected
-                                 @elseif($alicuota->value *100 == 21)
+                                 @elseif($alicuota->value * 100 == 21)
                                     selected
                                 @endif>
                                     {{$alicuota->description}}
@@ -93,6 +108,11 @@
                     </div>
                     <input type="number" step="0.50" @if (isset($product)) value="{{$product->product_price->plist0iva}}" @else value="0" @endif
                      min="0" name="plist0iva" id="plist0iva" disabled class="form-control border-dark"  >
+                     <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->plist0iva}} @endif</b>
+                        </span>
+                    </div>
                 </fieldset>
             </div>
 
@@ -184,6 +204,11 @@
                     <input type="number" step="0.50" min="0" name="p1tienda" id="p1tienda"
                      @if (isset($product)) value="{{$product->product_price->p1tienda}}" @else value="0" @endif
                     class="form-control border-dark"  >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->p1tienda}} @endif</b>
+                        </span>
+                    </div>
                 </fieldset>
             </div>
             <div class="col-md-6">
@@ -193,7 +218,9 @@
                      @if (isset($product)) value="{{$product->product_price->mup1}}" @else value="0" @endif
                     disabled class="form-control border-dark"  >
                     <div class="input-group-prepend">
-                        <span class="input-group-text">%</span>
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->mup1}} @endif %</b>
+                        </span>
                     </div>
                 </fieldset>
             </div>
@@ -226,6 +253,11 @@
                     <input type="number" step="0.50" min="0" name="p1may" id="p1may"
                      @if (isset($product)) value="{{$product->product_price->p1may}}" @else value="0" @endif
                     disabled class="form-control border-dark"  >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->p1may}} @endif</b>
+                        </span>
+                    </div>
                 </fieldset>
             </div>
             <div class="col-md-3">
@@ -235,7 +267,9 @@
                      @if (isset($product)) value="{{$product->product_price->mupp1may}}" @else value="0" @endif
                     disabled class="form-control border-dark"  >
                     <div class="input-group-prepend">
-                        <span class="input-group-text">%</span>
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->mupp1may}} @endif %</b>
+                        </span>
                     </div>
                 </fieldset>
             </div>
@@ -252,6 +286,11 @@
                     <input type="number" step="0.50" min="0" name="p2tienda" id="p2tienda"
                      @if (isset($product)) value="{{$product->product_price->p2tienda}}" @else value="0" @endif
                     class="form-control border-dark"  >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->p2tienda}} @endif</b>
+                        </span>
+                    </div>
                 </fieldset>
             </div>
             <div class="col-md-6">
@@ -261,7 +300,9 @@
                      @if (isset($product)) value="{{$product->product_price->mup2}}" @else value="0" @endif
                     disabled class="form-control border-dark"  >
                     <div class="input-group-prepend">
-                        <span class="input-group-text">%</span>
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->mup2}} @endif %</b>
+                        </span>
                     </div>
                 </fieldset>
             </div>
@@ -294,6 +335,11 @@
                     <input type="number" step="0.50" min="0" name="p2may" id="p2may"
                      @if (isset($product)) value="{{$product->product_price->p2may}}" @else value="0" @endif
                     disabled class="form-control border-dark"  >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->p2may}} @endif</b>
+                        </span>
+                    </div>
                 </fieldset>
             </div>
             <div class="col-md-3">
@@ -303,7 +349,9 @@
                      @if (isset($product)) value="{{$product->product_price->mupp2may}}" @else value="0" @endif
                     disabled class="form-control border-dark"  >
                     <div class="input-group-prepend">
-                        <span class="input-group-text">%</span>
+                        <span class="input-group-text">
+                            <b style="color:blue; font-size:10px; float:right">@if (isset($product)){{$product->product_price->mupp2may}} @endif %</b>
+                        </span>
                     </div>
                 </fieldset>
             </div>

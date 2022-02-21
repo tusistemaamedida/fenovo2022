@@ -350,6 +350,7 @@ class SalidasController extends Controller
             $insert_data['to']             = $explode[1];
             $insert_data['date']           = now();
             $insert_data['from']           = 1;
+            $insert_data['status']         = 'FINISHED';
             $insert_data['voucher_number'] = $request->input('voucher_number');
             $insert_data['flete']          = (float)$request->input('flete');
 

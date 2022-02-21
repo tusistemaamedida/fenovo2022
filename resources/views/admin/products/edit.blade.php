@@ -96,7 +96,7 @@
             tags: true
         })
     });
-        
+
     function updateProduct(route){
             var elements = document.querySelectorAll('.is-invalid');
             var form = jQuery('#formData').serialize();

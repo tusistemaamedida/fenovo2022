@@ -216,6 +216,7 @@ class ProductController extends Controller
                 'mup2'       => $mup2,
                 'p2may'      => $p2may,
                 'mupp2may'   => $mupp2may,
+                'tasiva'     => $tasiva
             ];
         } catch (\Exception $th) {
             return ['type' => 'error', 'msj' => $th->getMessage()];
@@ -393,6 +394,8 @@ class ProductController extends Controller
                 ];
                 $producto_nuevo = $this->productRepository->create($insertData);
 
+                $plist1 = round($importData[8] * ($importData[15] / 100 + 1) * (10 / 100 + 1), 2);
+                $plist2 = round($importData[8] * ($importData[15] / 100 + 1) * (20 / 100 + 1), 2);
                 $data = [
                     'product_id'        => $producto_nuevo->id,
                     'plistproveedor'    => $importData[4],
@@ -403,14 +406,28 @@ class ProductController extends Controller
                     'plist0neto'        => $importData[8],
                     'plist0iva'         => $importData[8] * ($importData[15] / 100 + 1),
                     'contribution_fund' => 0.5,
-                    'plist1'            => $importData[10],
-                    'muplist1'          => $importData[9],
-                    'plist2'            => $importData[12],
-                    'muplist2'          => $importData[11],
-                    'p1tienda'          => $importData[21],
-                    'mup1'              => $importData[20],
+
+                    'p1tienda'          => $importData[10],
+                    'mup1'              => $importData[9],
+                    'mupp1may'          => $importData[11],
                     'descp1'            => $importData[14],
+                    'p1may'             => $importData[12],
+                    'muplist1'          => 10,
+                    'muplist2'          => 20,
+
+                    'plist1'            => $plist1,
+                    'plist2'            => $plist2,
+                    'comlista1'         => round((($plist1 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist1, 2),
+                    'comlista2'         => round((($plist2 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist2, 2),
+
+                    'p2tienda'          => $importData[21],
+                    'mup2'              => $importData[20],
+                    'p2may'             => $importData[12],
+                    'descp2'            => abs((($importData[12] - $importData[21]) * 100) / $importData[21]),
+                    'mupp2may'          => round(($importData[12] / ($importData[8] * ($importData[15] / 100 + 1)) - 1) * 100, 2),
+
                     'cantmay1'          => $importData[13],
+                    'cantmay2'          => $importData[13],
                 ];
                 $this->productPriceRepository->create($data);
             }
