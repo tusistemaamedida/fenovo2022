@@ -18,7 +18,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                Bienvenido
+                <h5>Bienvenido <strong> {{ ucfirst(Auth::user()->username) }} </strong> </h5>
             </div>
         </div>
     </div>
