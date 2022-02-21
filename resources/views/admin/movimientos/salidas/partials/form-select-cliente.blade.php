@@ -6,9 +6,7 @@
                     <label class="text-body">Movimiento</label>
                     <fieldset class="form-group mb-3">
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="to_type" id="to_type">
-                            <option value="VENTA" @if(isset($tipo) && $tipo=='VENTA' ) selected @endif>Venta</option>
-                            <option value="TRASLADO" @if(isset($tipo) && $tipo=='TRASLADO' ) selected @endif>Traslado</option>
-                            <option value="VENTACLIENTE" @if(isset($tipo) && $tipo=='VENTACLIENTE' ) selected @endif>Venta a cliente</option>
+                            <option value="DEVOLUCION" @if(isset($tipo) && $tipo=='DEVOLUCION' ) selected @endif>Devolución</option>
                         </select>
                     </fieldset>
                 </div>
@@ -27,8 +25,8 @@
                     </fieldset>
                 </div>
                 <div class="col-md-2">
-                    <button type="button" class="btn btn-danger" id="btnOpenCerrarSalida" disabled style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
-                        <i class="fa fa-times"></i> Cerrar Salida</button>
+                    <button type="button" class="btn btn-danger" id="btnOpenCerrarNC" disabled style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
+                        <i class="fa fa-times"></i> Cerrar Nota de crédito</button>
                 </div>
             </div>
         </div>

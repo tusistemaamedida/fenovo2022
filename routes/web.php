@@ -26,6 +26,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         // Movimientos
         require __DIR__ . '/admin/movimientos/ingresos.php';
         require __DIR__ . '/admin/movimientos/salidas.php';
+        require __DIR__ . '/admin/movimientos/notas_credito.php';
         require __DIR__ . '/admin/movimientos/senasa.php';
     });
 });
