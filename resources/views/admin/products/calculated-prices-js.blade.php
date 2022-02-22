@@ -134,6 +134,7 @@
                     jQuery("#mup2").val(data['mup2']);
                     jQuery("#p2may").val(data['p2may']);
                     jQuery("#mupp2may").val(data['mupp2may']);
+                    jQuery("#descp2").val(data['descp2']);
                 }else{
                     toastr.error(data['msj'],'ERROR!');
                 }

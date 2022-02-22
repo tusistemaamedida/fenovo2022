@@ -197,7 +197,8 @@ class ProductController extends Controller
             $p1may      = $this->p1may($p1tienda, $descp1);
             $mupp1may   = $this->mupp1may($p1may, $plist0Iva);
             $mup2       = $this->mup2($plist0Iva, $p2tienda);
-            $p2may      = $this->p2may($p2tienda, $descp2);
+            $p2may      = $p1may;
+            $descp2     = $this->descp2($p2may, $p2tienda);
             $mupp2may   = $this->mupp2may($p2may, $plist0Iva);
 
             return [
@@ -216,10 +217,20 @@ class ProductController extends Controller
                 'mup2'       => $mup2,
                 'p2may'      => $p2may,
                 'mupp2may'   => $mupp2may,
-                'tasiva'     => $tasiva
+                'tasiva'     => $tasiva,
+                'descp2'     => $descp2
             ];
         } catch (\Exception $th) {
             return ['type' => 'error', 'msj' => $th->getMessage()];
+        }
+    }
+
+    private function descp2($p2may, $p2tienda)
+    {
+        try {
+            return abs(round(((($p2may - $p2tienda) * 100 ) / $p2tienda), 2));
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 

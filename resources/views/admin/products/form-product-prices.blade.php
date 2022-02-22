@@ -1,5 +1,5 @@
 <div class="form-group row">
-    <div class="col-md-6">
+    <div class="col-md-5">
         <div class="form-group row">
             <div class="col-md-12">
                 <label  class="text-body">Precio proveedor * </label>
@@ -122,7 +122,7 @@
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-7">
         <div class="form-group row">
             <div class="col-md-4">
                 <label  class="text-body">Markup lista 1 *</label>
