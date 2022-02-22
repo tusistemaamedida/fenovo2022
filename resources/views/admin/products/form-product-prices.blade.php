@@ -318,7 +318,7 @@
             <div class="col-md-3">
                 <label  class="text-body">Desc. mayorista *</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" step="0.50" min="0" name="descp2" id="descp2"
+                    <input type="number" step="0.50" min="0" name="descp2" id="descp2" readonly
                      @if (isset($product)) value="{{$product->product_price->descp2}}" @else value="0" @endif
                     class="form-control border-dark"  >
                     <div class="input-group-prepend">
