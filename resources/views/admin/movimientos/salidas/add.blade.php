@@ -252,7 +252,7 @@
         });
     }
 
-    function sumar(){
+    function sumar(obj){
         const unit_weight = parseFloat(document.getElementById("unit_weight").value);
         let total = 0;
         let valido = true;
@@ -269,10 +269,17 @@
                 let presentacion = jQuery(this).attr("id");
                 total = total + (valor*presentacion*unit_weight);
             });
+        }
+
+        const max = parseInt(jQuery("#tope").val());
+        if(total > max){
+            toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
+            jQuery(obj).val(0).select();
+        }else{
             jQuery("#envio_total").html('');
             jQuery("#envio_total").html(total);
             jQuery("#kg_totales").val(total);
-        }
+        }        
     }
 
     jQuery("#sessionProductstore").click(function(e){
@@ -324,16 +331,17 @@
         document.getElementById("unidades_a_enviar").reset();
         jQuery('.editpopup').removeClass('offcanvas-on');
         jQuery('#product_search').val(null).trigger('change');
-    });
+    })
 
     jQuery("#btnOpenCerrarSalida").click(function(e){
         e.preventDefault();
         cargarFlete()
         jQuery('#closeSalida').addClass('offcanvas-on');
     })
+
     jQuery('#close_modal_salida').on('click', function () {
         jQuery('#closeSalida').removeClass('offcanvas-on');
-    });
+    })
 
     jQuery("#btnCloseSalida").click(function(){
         jQuery('#loader').removeClass('hidden');
@@ -360,5 +368,6 @@
             }
         });
     }
+
 </script>
 @endsection
