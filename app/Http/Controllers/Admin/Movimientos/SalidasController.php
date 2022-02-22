@@ -177,7 +177,7 @@ class SalidasController extends Controller
 
             $valid_names[] = [
                 'id'       => $product->id,
-                'text'     => $product->name . ' [' . $product->cod_fenovo . ']' . $text_no_stock,
+                'text'     => $product->name . ' [' . round($stock,2) . ' Kg.]' . $text_no_stock,
                 'disabled' => $disabled,  ];
         }
 
@@ -227,6 +227,7 @@ class SalidasController extends Controller
                 if ($product) {
                     $stock_presentaciones = [];
                     $presentaciones       = explode('|', $product->unit_package);
+                    $stock_total          = $product->stock();
 
                     for ($i = 0; $i < count($presentaciones); $i++) {
                         $bultos                                   = 0;
@@ -235,7 +236,7 @@ class SalidasController extends Controller
                         $stock_en_session                         = $this->sessionProductRepository->getCantidadTotalDeBultos($product->id, $presentacion);
                         $stock                                    = $product->stock($presentacion);
                         $stock_presentaciones[$i]['presentacion'] = $presentacion;
-                        $stock_presentaciones[$i]['stock']        = $stock;
+                        $stock_presentaciones[$i]['unit_weight']  = $product->unit_weight;
                         // los bultos que hay disponibles se calcula dividiendo el balance por el peso del bulto
                         $peso_por_bulto = $product->unit_weight * $presentacion;
 
@@ -251,7 +252,7 @@ class SalidasController extends Controller
                         'type' => 'success',
                         'html' => view(
                             'admin.movimientos.salidas.partials.inserByAjax',
-                            compact('stock_presentaciones', 'product', 'presentaciones')
+                            compact('stock_presentaciones', 'product', 'presentaciones','stock_total')
                         )->render(),
                     ]);
                 }

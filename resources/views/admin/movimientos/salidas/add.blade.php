@@ -146,7 +146,7 @@
                 },
                 success: function (data) {
                     if (data['type'] == 'success') {
-                        
+
                         jQuery("#insertByAjax").html(data['html']);
                         jQuery('.editpopup').addClass('offcanvas-on');
                     } else if(data['type'] != 'clear') {
@@ -190,7 +190,7 @@
                         toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
                         toastr.info("Eliminado ... ");
                         cargarTablaProductos();
-                    }                    
+                    }
                 }
             });
         }
@@ -244,7 +244,7 @@
             data:formData,
             success:function(data){
                 jQuery("#montoFlete").html(data['flete']);
-                let flete = parseFloat(data['flete']/100);          
+                let flete = parseFloat(data['flete']/100);
                 jQuery("#flete").val(parseFloat(jQuery("#subTotal").val()*flete).toFixed(2));
             },
             error: function (data) {
@@ -252,15 +252,27 @@
         });
     }
 
-    function verif(pres){
-        
-        const max = parseFloat(document.getElementById("unidades_"+pres).max);
-        const value = parseFloat(document.getElementById("unidades_"+pres).value);
-        if(value > max){
-            toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
-            jQuery("#unidades_"+pres).val(max);
-            jQuery("#unidades_"+pres).focus();
-        };
+    function sumar(){
+        const unit_weight = parseFloat(document.getElementById("unit_weight").value);
+        let total = 0;
+        let valido = true;
+
+        jQuery('.calculate').each(function() {
+            if(isNaN(parseFloat(jQuery(this).val()))){
+                valido = false;
+            }
+        });
+
+        if(valido){
+            jQuery('.calculate').each(function() {
+                let valor = parseFloat(jQuery(this).val());
+                let presentacion = jQuery(this).attr("id");
+                total = total + (valor*presentacion*unit_weight);
+            });
+            jQuery("#envio_total").html('');
+            jQuery("#envio_total").html(total);
+            jQuery("#kg_totales").val(total);
+        }
     }
 
     jQuery("#sessionProductstore").click(function(e){

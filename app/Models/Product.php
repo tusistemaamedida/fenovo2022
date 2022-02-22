@@ -129,7 +129,7 @@ class Product extends Model
                                             ->latest()
                                             ->first();
         if ($movement_product) {
-            $stock = (float)$movement_product->balance;
+            $stock = (float) $movement_product->balance;
         }
         return $stock;
     }
