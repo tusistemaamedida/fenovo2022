@@ -120,17 +120,30 @@ class Product extends Model
 
     public function stock($unit_package = null, $store_id = 1)
     {
-        $stock            = 0.0;
+        $stock = 0.0;
+        // Buscar el ultimo movimiento
         $movement_product = MovementProduct::where('product_id', $this->id)
-                                            ->where('store_id', $store_id)
-                                            ->when($unit_package, function ($q, $unit_package) {
-                                                $q->where('unit_package', $unit_package);
-                                            })
-                                            ->latest()
-                                            ->first();
+            ->where('store_id', $store_id)
+            ->when($unit_package, function ($q, $unit_package) {
+                $q->where('unit_package', $unit_package);
+            })
+            ->latest()
+            ->first();
+
         if ($movement_product) {
-            $stock = (float) $movement_product->balance;
+            $stock = (float)$movement_product->balance;
         }
+
+        // Buscar en la session iniciadas
+        $subtotal         = 0.0;
+        $session_products = SessionProduct::where('product_id', $this->id)->where('store_id', $store_id)->get();
+        foreach ($session_products as $session_product) {
+            $subtotal = $subtotal + ($session_product->unit_package * $session_product->quantity * $this->unit_weight);
+        }
+        if ($session_products) {
+            $stock = $stock - $subtotal;
+        }
+
         return $stock;
     }
 }

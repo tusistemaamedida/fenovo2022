@@ -177,7 +177,7 @@ class SalidasController extends Controller
 
             $valid_names[] = [
                 'id'       => $product->id,
-                'text'     => $product->name . ' [' . round($stock,2) . ' Kg.]' . $text_no_stock,
+                'text'     => $product->name . '' . $text_no_stock,
                 'disabled' => $disabled,  ];
         }
 
@@ -252,7 +252,7 @@ class SalidasController extends Controller
                         'type' => 'success',
                         'html' => view(
                             'admin.movimientos.salidas.partials.inserByAjax',
-                            compact('stock_presentaciones', 'product', 'presentaciones','stock_total')
+                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total')
                         )->render(),
                     ]);
                 }
