@@ -22,7 +22,7 @@
 <div class="d-flex flex-column-fluid">
     <div class="container-fluid">
         <div class="row">
-            @include('admin.movimientos.salidas.partials.form-select-cliente')
+            @include('admin.movimientos.notas-credito.partials.form-select-cliente')
             <b style="width: 100%" id="session_products_table"></b>
         </div>
     </div>
