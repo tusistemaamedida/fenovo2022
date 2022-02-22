@@ -6,61 +6,8 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Product
- *
- * @property int         $id
- * @property int         $cod_fenovo
- * @property string|null $name
- * @property string|null $description
- * @property string|null $barcode
- * @property string|null $cod_cuenta_compra
- * @property string|null $cod_cuenta_venta
- * @property string|null $cod_proveedor
- * @property string|null $unit_type
- * @property float|null  $unit_amount
- * @property float|null  $unit_weight
- * @property float|null  $porcentaje_bruto
- * @property float|null  $stock_min
- * @property int|null    $stock_actual
- * @property int|null    $stock_sem_min
- * @property int|null    $stock_sem_max
- * @property float|null  $hight
- * @property float|null  $width
- * @property float|null  $long
- * @property string|null $unit_package
- * @property int         $package_palet
- * @property int         $package_row
- * @property string|null $currency
- * @property int         $online_sale
- * @property string|null $fragility
- * @property Carbon|null $expiration_date
- * @property Carbon|null $publication_date
- * @property string|null $publication_state
- * @property string|null $publication_log
- * @property int|null    $proveedor_id
- * @property int|null    $categorie_id
- * @property int|null    $type_id
- * @property int|null    $senasa_id
- * @property int         $active
- * @property int         $is_senasa
- * @property Carbon|null $updated_at
- * @property Carbon|null $created_at
- *
- * @property ProductCategory|null      $product_category
- * @property Proveedor|null            $proveedor
- * @property SenasaDefinition|null     $senasa_definition
- * @property ProductType|null          $product_type
- * @property Collection|ProductImage[] $product_images
- * @property ProductNutricional        $product_nutricional
- * @property ProductPrice              $product_price
- *
- * @package App\Models
- */
 class Product extends Model
 {
     protected $table = 'products';
@@ -124,7 +71,7 @@ class Product extends Model
         'publication_log',
         'proveedor_id',
         'categorie_id',
-        'type_id',
+        'cod_descuento',
         'senasa_id',
         'active',
         'is_senasa',
@@ -151,9 +98,9 @@ class Product extends Model
         return ($senasa) ? $senasa->product_name : null;
     }
 
-    public function product_type()
+    public function product_descuento()
     {
-        return $this->belongsTo(ProductType::class, 'type_id');
+        return $this->belongsTo(ProductDescuento::class, 'cod_descuento');
     }
 
     public function product_images()

@@ -12,10 +12,10 @@ use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\Product;
 use App\Repositories\AlicuotaTypeRepository;
+use App\Repositories\ProducDescuentoRepository;
 use App\Repositories\ProductCategoryRepository;
 use App\Repositories\ProductPriceRepository;
 use App\Repositories\ProductRepository;
-use App\Repositories\ProducTypeRepository;
 use App\Repositories\ProveedorRepository;
 
 use App\Repositories\SenasaDefinitionRepository;
@@ -29,7 +29,7 @@ class ProductController extends Controller
     private $productPriceRepository;
     private $alicuotaTypeRepository;
     private $productCategoryRepository;
-    private $productTypeRepository;
+    private $productDescuentoRepository;
     private $proveedorRepository;
     private $senasaDefinitionRepository;
 
@@ -37,7 +37,7 @@ class ProductController extends Controller
         ProductRepository $productRepository,
         ProductPriceRepository $productPriceRepository,
         ProductCategoryRepository $productCategoryRepository,
-        ProducTypeRepository $productTypeRepository,
+        ProducDescuentoRepository $productDescuentoRepository,
         ProveedorRepository $proveedorRepository,
         SenasaDefinitionRepository $senasaDefinitionRepository,
         AlicuotaTypeRepository $alicuotaTypeRepository
@@ -46,7 +46,7 @@ class ProductController extends Controller
         $this->productPriceRepository     = $productPriceRepository;
         $this->alicuotaTypeRepository     = $alicuotaTypeRepository;
         $this->productCategoryRepository  = $productCategoryRepository;
-        $this->productTypeRepository      = $productTypeRepository;
+        $this->productDescuentoRepository = $productDescuentoRepository;
         $this->proveedorRepository        = $proveedorRepository;
         $this->senasaDefinitionRepository = $senasaDefinitionRepository;
     }
@@ -86,9 +86,9 @@ class ProductController extends Controller
         $alicuotas         = $this->alicuotaTypeRepository->get('value', 'DESC');
         $senasaDefinitions = $this->senasaDefinitionRepository->get('product_name', 'DESC');
         $categories        = $this->productCategoryRepository->getActives('name', 'ASC');
-        $types             = $this->productTypeRepository->getActives('name', 'ASC');
+        $descuentos        = $this->productDescuentoRepository->getActives('codigo', 'ASC');
         $proveedores       = $this->proveedorRepository->getActives('name', 'ASC');
-        return view('admin.products.add', compact('alicuotas', 'categories', 'types', 'proveedores', 'senasaDefinitions'));
+        return view('admin.products.add', compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions'));
     }
 
     public function store(AddProduct $request)
@@ -114,12 +114,12 @@ class ProductController extends Controller
             $alicuotas         = $this->alicuotaTypeRepository->get('value', 'DESC');
             $senasaDefinitions = $this->senasaDefinitionRepository->get('product_name', 'DESC');
             $categories        = $this->productCategoryRepository->getActives('name', 'ASC');
-            $types             = $this->productTypeRepository->getActives('name', 'ASC');
+            $descuentos        = $this->productDescuentoRepository->getActives('descripcion', 'ASC');
             $proveedores       = $this->proveedorRepository->getActives('name', 'ASC');
             $unit_package      = explode('|', $product->unit_package);
 
             if ($product) {
-                return view('admin.products.edit', compact('alicuotas', 'categories', 'types', 'proveedores', 'senasaDefinitions', 'product', 'unit_package'));
+                return view('admin.products.edit', compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions', 'product', 'unit_package'));
             }
             $notification = [
                 'message'    => 'El producto no existe !',
@@ -407,7 +407,7 @@ class ProductController extends Controller
 
                 $plist1 = round($importData[8] * ($importData[15] / 100 + 1) * (10 / 100 + 1), 2);
                 $plist2 = round($importData[8] * ($importData[15] / 100 + 1) * (20 / 100 + 1), 2);
-                $data = [
+                $data   = [
                     'product_id'        => $producto_nuevo->id,
                     'plistproveedor'    => $importData[4],
                     'descproveedor'     => $importData[5],
@@ -418,27 +418,27 @@ class ProductController extends Controller
                     'plist0iva'         => $importData[8] * ($importData[15] / 100 + 1),
                     'contribution_fund' => 0.5,
 
-                    'p1tienda'          => $importData[10],
-                    'mup1'              => $importData[9],
-                    'mupp1may'          => $importData[11],
-                    'descp1'            => $importData[14],
-                    'p1may'             => $importData[12],
-                    'muplist1'          => 10,
-                    'muplist2'          => 20,
+                    'p1tienda' => $importData[10],
+                    'mup1'     => $importData[9],
+                    'mupp1may' => $importData[11],
+                    'descp1'   => $importData[14],
+                    'p1may'    => $importData[12],
+                    'muplist1' => 10,
+                    'muplist2' => 20,
 
-                    'plist1'            => $plist1,
-                    'plist2'            => $plist2,
-                    'comlista1'         => round((($plist1 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist1, 2),
-                    'comlista2'         => round((($plist2 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist2, 2),
+                    'plist1'    => $plist1,
+                    'plist2'    => $plist2,
+                    'comlista1' => round((($plist1 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist1, 2),
+                    'comlista2' => round((($plist2 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist2, 2),
 
-                    'p2tienda'          => $importData[21],
-                    'mup2'              => $importData[20],
-                    'p2may'             => $importData[12],
-                    'descp2'            => abs((($importData[12] - $importData[21]) * 100) / $importData[21]),
-                    'mupp2may'          => round(($importData[12] / ($importData[8] * ($importData[15] / 100 + 1)) - 1) * 100, 2),
+                    'p2tienda' => $importData[21],
+                    'mup2'     => $importData[20],
+                    'p2may'    => $importData[12],
+                    'descp2'   => abs((($importData[12] - $importData[21]) * 100) / $importData[21]),
+                    'mupp2may' => round(($importData[12] / ($importData[8] * ($importData[15] / 100 + 1)) - 1) * 100, 2),
 
-                    'cantmay1'          => $importData[13],
-                    'cantmay2'          => $importData[13],
+                    'cantmay1' => $importData[13],
+                    'cantmay2' => $importData[13],
                 ];
                 $this->productPriceRepository->create($data);
             }

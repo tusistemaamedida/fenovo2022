@@ -20,12 +20,12 @@
             </div>
 
             <div class="col-md-6">
-                <label class="text-body">Rubro</label>
+                <label class="text-body">Descuento</label>
                 <fieldset class="form-group mb-3">
-                    <select class="js-example-basic-single js-states form-control bg-transparent" name="type_id" id="type_id">
-                        @foreach ($types as $type)
-                        <option value="{{$type->id}}" @if (isset($product) && $product->type_id == $type->id) selected @endif>
-                            {{$type->name}}
+                    <select class="js-example-basic-single js-states form-control bg-transparent" name="cod_descuento" id="cod_descuento">
+                        @foreach ($descuentos as $descuento)
+                        <option value="{{$descuento->codigo }}" @if (isset($product) && $product->cod_descuento == $descuento->codigo) selected @endif>
+                            {{$descuento->descripcion}}
                         </option>
                         @endforeach
                     </select>

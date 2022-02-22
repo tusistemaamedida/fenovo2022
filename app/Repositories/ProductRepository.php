@@ -17,7 +17,7 @@ class ProductRepository extends BaseRepository
             'product_category',
             'proveedor',
             'senasa_definition',
-            'product_type',
+            'product_descuento',
             'product_images',
             'product_nutricional',
             'product_price',

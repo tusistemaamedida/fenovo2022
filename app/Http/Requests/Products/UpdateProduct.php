@@ -20,7 +20,6 @@ class UpdateProduct extends FormRequest
         return [
             'name'=> 'required',
             'categorie_id'=> 'required',
-            'type_id'=> 'required',
             'cod_fenovo'=> 'required|numeric',
             'proveedor_id'=> 'required',
             'unit_type'=> 'required',
@@ -33,7 +32,6 @@ class UpdateProduct extends FormRequest
         return [
             'name.required'   => 'El nombre del producto es requerido!',
             'categorie_id.required'   => 'La categoría  del producto es requerida!',
-            'type_id.required'   => 'El rubro del producto es requerido!',
             'cod_fenovo.required'   => 'El código fenovo es requerido!',
             'cod_fenovo.numeric'   => 'El código fenovo debe ser numérico!',
             'proveedor_id.required'   => 'El proveedor del producto es requerido!',
