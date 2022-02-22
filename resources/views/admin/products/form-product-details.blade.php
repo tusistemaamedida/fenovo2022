@@ -23,6 +23,7 @@
                 <label class="text-body">Descuento</label>
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="cod_descuento" id="cod_descuento">
+                        <option value="">Seleccione un descuento </option>
                         @foreach ($descuentos as $descuento)
                         <option value="{{$descuento->codigo }}" @if (isset($product) && $product->cod_descuento == $descuento->codigo) selected @endif>
                             {{$descuento->descripcion}}
