@@ -3,16 +3,16 @@
 
 @section('content')
 
-<div class="container-fluid h-100 bg-image" style="background-image: url(./assets/images/misc/bg-login1.png);">
+<div class="container-fluid h-100" style=" background-color:#1a3353 ">
     <div class="d-flex justify-content-center align-items-center h-100">
         <div class="row w-100 justify-content-center">
             <div class="col-12 col-md-8 col-lg-6 col-xl-4">
-                <div class="card card-custom p-5 ">
-                        <div class="card-title mb-0">
-                            <h3 style="text-align: center">
-                                <img src="{{asset('assets/images/misc/logo.png')}}" alt="fenovo" style="height:50px;">
-                            </h3>
-                        </div>
+                <div class="card card-custom p-5">
+                    <div class="card-title mb-0 text-center">
+                        <h3>
+                            <img src="{{asset('assets/images/misc/logo.png')}}" alt="fenovo" class=" img-fluid">
+                        </h3>
+                    </div>
                     <div class="card-body p-0">
                         <form method="POST" action="{{ route('login') }}" style="padding: 25px">
                             @csrf
