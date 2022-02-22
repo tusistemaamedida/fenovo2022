@@ -57,17 +57,12 @@ class ProductController extends Controller
             $productos = $this->productRepository->all()->where('active', '=', 1);
             return Datatables::of($productos)
                 ->addIndexColumn()
-                ->addColumn('costo', function ($product) {
-                    return '$' . $product->product_price->plist0neto;
-                })
+
                 ->addColumn('stock', function ($product) {
                     return $product->stock();
                 })
-                ->addColumn('precios_fenovo', function ($product) {
-                    return 'L0: $' . $product->product_price->plist0iva . '<br> L1: $' . $product->product_price->plist1 . '<br> L2: $' . $product->product_price->plist2;
-                })
-                ->addColumn('precios_tiendas', function ($product) {
-                    return 'PT1: $' . $product->product_price->p1tienda . '<br> PT2: $' . $product->product_price->p2tienda;
+                ->addColumn('senasa', function ($product) {
+                    return $product->senasa();
                 })
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
@@ -79,7 +74,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'costo', 'precios_fenovo', 'precios_tiendas', 'borrar', 'editar'])
+                ->rawColumns(['stock', 'senasa', 'borrar', 'editar'])
                 ->make(true);
         }
 

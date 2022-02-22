@@ -252,7 +252,7 @@
             <div class="col-md-3">
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="senasa_id">
-                        <option value="">Seleccione una Agrupación</option>
+                        <option value="">Agrupación SENASA</option>
                         @foreach ($senasaDefinitions as $senasaDefinition)
                         <option value="{{$senasaDefinition->id}}" @if (isset($product) && $product->senasa_id == $senasaDefinition->id) selected @endif
                             >{{$senasaDefinition->product_name}}</option>

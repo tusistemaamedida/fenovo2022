@@ -10,7 +10,7 @@
 
 @include('admin.movimientos.senasa.header-salida')
 
-<table class="table table-condensed table-sm">
+<table style="width:100%; font-size: 11px ">
     <tr>
         <td style="width: 30%">LUGAR DE EMISION</td>
         <td class=" text-center" style="width: 10%">DIA</td>
@@ -29,12 +29,22 @@
     </tr>
     <tr>
         <td colspan="6">
+            <br />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6">
             Autorízase al estableciento Nro Oficial <strong> 5241 FENOVO S.A.</strong> a transportar los siguientes productos inspeccionados
+        </td>
+    </tr>
+    <tr>
+        <td colspan="6">
+            <br />
         </td>
     </tr>
 </table>
 
-<table class="table ">
+<table style="width:100%; font-size: 11px ">
     <tr>
         <th class="text-center" style="width: 5%; ">Cant</th>
         <th class="text-center" style="width: 50%;">Descripción</th>
@@ -52,14 +62,16 @@
     </tr>
     @endforeach
     <tr>
-        <td colspan="5">&nbsp;</td>
+        <td colspan="5">
+            <hr>
+        </td>
     </tr>
     <tr>
-        <td></td>
-        <th class="text-center">Totales</th>
-        <td class="text-center"> <strong> {{ number_format($movimientos->sum('kilos'),2) }}</strong></td>
+        <th class="text-center"> {{ number_format($movimientos->sum('bultos')) }}</strong> </th>
+        <td>Total de bultos</td>
+        <td class="text-center"> <strong> {{ number_format($movimientos->sum('kilos'),2) }} Kgrs</strong></td>
         <td class="text-center"> </td>
-        <td class="text-center"> Kg. </td>
+        <td class="text-center"> </td>
     </tr>
 </table>
 

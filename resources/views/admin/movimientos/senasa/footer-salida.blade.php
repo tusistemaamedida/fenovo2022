@@ -1,5 +1,5 @@
-<footer>
-    <table class="table table-borderless table-condensed table-sm">
+<footer-5>
+    <table style="width:100%; font-size: 11px ">
         <tr>
             <td colspan="2">
                 En el camión patente Nro <strong>{{ $senasa->patente_nro }}</strong> habilitación SENASA Nro <strong>{{ $senasa->habilitacion_nro }}</strong> Precinto/s Nro <strong>{{ $senasa->precintos }}</strong>
@@ -16,15 +16,10 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2">
-                <strong> INTERVIENE </strong>
-            </td>
-        </tr>
-        <tr class="text-center">
             <td>
-                ..............................................................................
+                <strong> INTERVIENE </strong> .....................................................................
             </td>
-            <td>
+            <td class="text-center">
                 ..............................................................................
             </td>
         </tr>
@@ -39,4 +34,4 @@
             </td>
         </tr>
     </table>
-</footer>
+</footer-5>
