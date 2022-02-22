@@ -28,7 +28,7 @@ class CalculatePrices extends FormRequest
             'p1tienda'  => 'nullable|numeric',
             'descp1'    => 'nullable|numeric|max:99.9',
             'p2tienda'  => 'nullable|numeric',
-            'descp2'    => 'nullable|numeric|max:99.9',
+            'descp2'    => 'nullable|numeric',
         ];
     }
 
@@ -57,7 +57,7 @@ class CalculatePrices extends FormRequest
             'descp2.numeric'            => 'El Desc. mayorista debe ser numérico!',
 
             'descp1.max'            => 'El Desc. mayorista debe ser maximo 100%!',
-            'descp2.max'            => 'El Desc. mayorista debe ser maximo 100%!',
+            //'descp2.max'            => 'El Desc. mayorista debe ser maximo 100%!',
         ];
     }
 }
