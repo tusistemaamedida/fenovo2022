@@ -402,6 +402,7 @@ class ProductController extends Controller
                     'unit_package'  => $importData[17],
                     'package_palet' => $importData[22],
                     'package_row'   => $importData[23],
+                    'cod_descuento' => ($importData[24] != '' && !is_null($importData[24]))? $importData[24] : null,
                 ];
                 $producto_nuevo = $this->productRepository->create($insertData);
 
