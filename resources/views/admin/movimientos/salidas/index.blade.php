@@ -17,17 +17,19 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="row">
+                <div class="row mt-5">
+                    <div class="col-lg-12 col-xl-6">
+                        <h3 class="card-label mb-0 font-weight-bold text-body">
+                            Listado
+                        </h3>
+                    </div>
+                    <div class="col-lg-12 col-xl-6  text-right">
+                        <a href="{{ route('salidas.menu.print') }}"> <i class=" fa fa-print"></i> Opciones de Impresion</a>
+                    </div>
+                </div>
+                <div class="row mt-3 mb-3">
                     <div class="col-lg-12 col-xl-12">
-                        <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
-                            <div class="card-header align-items-center  border-bottom-dark px-0">
-                                <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">
-                                        Listado
-                                    </h3>
-                                </div>
-                            </div>
-                        </div>
+                        &nbsp;
                     </div>
                 </div>
                 <div class="row">

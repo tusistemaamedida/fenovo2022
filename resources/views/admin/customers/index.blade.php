@@ -46,6 +46,7 @@
                                         <tr class="bg-dark text-white">
                                             <th>No</th>
                                             <th>Razon social</th>
+                                            <th>Lista precios</th>
                                             <th>Cuit</th>
                                             <th>Email</th>
                                             @include('partials.table.head-action')
@@ -75,8 +76,9 @@
         @include('partials.table.dom-button'),
         ajax: "{{ route('customers.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'DT_RowIndex', 'class':'text-center', orderable: false, searchable: false},
             {data: 'razon_social'},
+            {data: 'listprice_associate', 'class':'text-center'},
             {data: 'cuit'},
             {data: 'email'},
             @include('partials.table.data-action')
