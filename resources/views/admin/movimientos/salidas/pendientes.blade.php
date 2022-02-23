@@ -46,7 +46,7 @@
                                         <tr class="bg-dark text-white">
                                             <th>Actualización</th>
                                             <th>Identificación</th>
-                                            <th>Items</th>
+                                            <th>Productos cargados</th>
                                             <th>Destino</th>
                                             <th>Detalle</th>
                                             <th>Print</th>

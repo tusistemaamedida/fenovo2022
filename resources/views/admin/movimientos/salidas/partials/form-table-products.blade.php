@@ -15,31 +15,31 @@
                                     <th class="border-0  header-heading" scope="col">P.U.</th>
                                     <th class="border-0  header-heading" scope="col">IVA</th>
                                     <th class="border-0  header-heading" scope="col">Subtotal</th>
-                                    <th class="border-0  header-heading" scope="col">Factura</th>
-                                    <th class="border-0  header-heading" scope="col">Edita</th>
+                                    <th class="border-0  header-heading text-center" scope="col">Factura</th>
+                                    <th class="border-0  header-heading text-center" scope="col">Edita</th>
                                     <th class="border-0  header-heading text-right" scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @if (isset($session_products))
                                 @php
-                                    $i=0;
-                                    $subtotal_product =0;
-                                    $total_kgrs = 0;
-                                    $total_bultos = 0;
-                                    $total_iva = 0;
-                                    $subtotal = 0;
+                                $i=0;
+                                $subtotal_product =0;
+                                $total_kgrs = 0;
+                                $total_bultos = 0;
+                                $total_iva = 0;
+                                $subtotal = 0;
                                 @endphp
                                 @foreach ($session_products as $session_product)
-                                    @php
-                                        $i++;
-                                        $subtotal_product = $session_product->unit_price * $session_product->unit_package * $session_product->quantity ;
-                                        $subtotal_product_format = number_format($subtotal_product, 2, ',', '');
-                                        $total_bultos += $session_product->quantity;
-                                        $total_kgrs += $session_product->producto->unit_weight * $session_product->unit_package * $session_product->quantity;
-                                        $total_iva += $subtotal_product * ($session_product->producto->product_price->tasiva/100);
-                                        $subtotal += $subtotal_product;
-                                    @endphp
+                                @php
+                                $i++;
+                                $subtotal_product = $session_product->unit_price * $session_product->unit_package * $session_product->quantity ;
+                                $subtotal_product_format = number_format($subtotal_product, 2, ',', '');
+                                $total_bultos += $session_product->quantity;
+                                $total_kgrs += $session_product->producto->unit_weight * $session_product->unit_package * $session_product->quantity;
+                                $total_iva += $subtotal_product * ($session_product->producto->product_price->tasiva/100);
+                                $subtotal += $subtotal_product;
+                                @endphp
 
                                 <tr class="">
                                     <td class="">{{ $i }}</td>
@@ -59,7 +59,7 @@
                                     </td>
                                     <td class=" text-center">
                                         <a href="javascript:void(0)" onclick="editarMovimiento('{{$session_product->id}}', '{{$session_product->quantity}}', '{{$session_product->producto->cod_fenovo}}')">
-                                            <i class="fas fa-edit"></i>
+                                            <i class=" fa fa-pencil-alt"></i>
                                         </a>
                                     </td>
                                     <td class=" text-center">
