@@ -52,7 +52,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{route('nc.add')}}" class="nav-link">
+                            <a href="{{route('nc.index')}}" class="nav-link">
                                 <span class="svg-icon nav-icon"> <i class="fas fa-file text-primary"></i> </span>
                                 <span class="nav-text">Notas de Crédito</span>
                             </a>

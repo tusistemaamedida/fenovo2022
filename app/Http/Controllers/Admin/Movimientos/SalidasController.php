@@ -145,7 +145,7 @@ class SalidasController extends Controller
         $term        = $request->term ?: '';
         $valid_names = [];
 
-        if ($request->to_type == 'VENTACLIENTE') {
+        if ($request->to_type == 'VENTACLIENTE' || $request->to_type == 'DEVOLUCIONCLIENTE') {
             $customers = $this->customerRepository->search($term);
             foreach ($customers as $customer) {
                 $valid_names[] = ['id' => $customer->id, 'text' => $customer->displayName()];
@@ -188,9 +188,10 @@ class SalidasController extends Controller
     {
         try {
             $session_products = $this->sessionProductRepository->getByListId($request->input('list_id'));
+            $mostrar_check_invoice = !(str_contains($request->input('list_id'), 'DEVOLUCION_'));
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products'))->render(),
+                'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products','mostrar_check_invoice'))->render(),
             ]);
         } catch (\Exception $e) {
             return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -224,6 +225,8 @@ class SalidasController extends Controller
             if ($request->has('id') && $request->input('id') != '') {
                 $product = $this->productRepository->getById($request->input('id'));
                 $list_id = $request->input('list_id');
+                $mostrar_detalles = !(str_contains($list_id, 'DEVOLUCION_'));
+
                 if ($product) {
                     $stock_presentaciones = [];
                     $presentaciones       = explode('|', $product->unit_package);
@@ -252,7 +255,7 @@ class SalidasController extends Controller
                         'type' => 'success',
                         'html' => view(
                             'admin.movimientos.salidas.partials.inserByAjax',
-                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total')
+                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total','mostrar_detalles')
                         )->render(),
                     ]);
                 }
@@ -291,6 +294,7 @@ class SalidasController extends Controller
             $insert_data = [];
             $product     = $this->productRepository->getByIdWith($product_id);
             switch ($to_type) {
+                case 'DEVOLUCION':
                 case 'VENTA':
                     $insert_data['unit_price'] = $product->product_price->plist0neto;
                     $insert_data['tasiva']     = $product->product_price->tasiva;

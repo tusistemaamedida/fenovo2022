@@ -68,6 +68,7 @@ class SessionProductRepository extends BaseRepository
     public function groupBy($group)
     {
         return SessionProduct::select()
+        ->where('list_id','not like', "%DEVOLUCION_%")
         ->orderBy('updated_at', 'DESC')
         ->get()
         ->unique($group);

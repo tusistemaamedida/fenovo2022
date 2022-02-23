@@ -7,6 +7,7 @@
                     <fieldset class="form-group mb-3">
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="to_type" id="to_type">
                             <option value="DEVOLUCION" @if(isset($tipo) && $tipo=='DEVOLUCION' ) selected @endif>Devolución</option>
+                            <option value="DEVOLUCIONCLIENTE" @if(isset($tipo) && $tipo=='DEVOLUCIONCLIENTE' ) selected @endif>Devolución cliente</option>
                         </select>
                     </fieldset>
                 </div>

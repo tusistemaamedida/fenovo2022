@@ -71,9 +71,11 @@ class Movement extends Model
                 return $proveedor->name;
             case 'VENTA':
             case 'TRASLADO':
+            case 'DEVOLUCION':
                 $store = Store::find($this->to);
                 return $store->description;
             case 'VENTACLIENTE':
+            case 'DEVOLUCIONCLIENTE':
                 $customer = Customer::find($this->to);
                 return $customer->razon_social;
         }

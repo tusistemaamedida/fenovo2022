@@ -5,10 +5,12 @@ use App\Http\Controllers\Admin\InvoiceController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+
+Route::get('/', function () {
+   return view('portada');
+});
+
 Route::group(['middleware' => 'preventBackHistory'], function () {
-    Route::get('/', function () {
-        return view('auth.login');
-    });
 
     Auth::routes();
     Route::get('/inicio', [App\Http\Controllers\HomeController::class, 'index'])->name('inicio');

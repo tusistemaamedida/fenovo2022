@@ -129,8 +129,6 @@ class InvoiceController extends Controller
     }
 
     public function create($movement_id){
-       // dd($voucher_types = $this->afip->ElectronicBilling->GetVoucherTypes());
-        //dd($voucher_types = $this->afip->ElectronicBilling->GetOptionsTypes());
         try {
             $movement = Movement::where('id',$movement_id)->with('movement_salida_products')->firstOrFail();
             $result = $this->createVoucher($movement);

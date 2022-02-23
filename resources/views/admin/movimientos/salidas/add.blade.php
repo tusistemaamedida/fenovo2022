@@ -279,7 +279,7 @@
             jQuery("#envio_total").html('');
             jQuery("#envio_total").html(total);
             jQuery("#kg_totales").val(total);
-        }        
+        }
     }
 
     jQuery("#sessionProductstore").click(function(e){
@@ -310,13 +310,13 @@
                 if (data['type'] == 'success') {
                     document.getElementById("unidades_a_enviar").reset();
                     jQuery('.editpopup').removeClass('offcanvas-on');
+                    jQuery('#product_search').val(null).trigger('change');
                     cargarTablaProductos()
                 } else{
                     jQuery('#' + data['index']).addClass('is-invalid');
                     jQuery('#'+  data['index']).next().find('.select2-selection').addClass('is-invalid');
                     toastr.error(data['msj'], 'Verifique');
                 }
-                jQuery('#product_search').val(null).trigger('change')
                 jQuery('#loader').addClass('hidden');
             },
             error: function (data) {

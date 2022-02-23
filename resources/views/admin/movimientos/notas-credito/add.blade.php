@@ -30,7 +30,7 @@
 
 @include('admin.movimientos.salidas.partials.modal-product-details')
 
-@include('admin.movimientos.salidas.partials.open-close-salida')
+@include('admin.movimientos.notas-credito.partials.open-close-nc')
 
 @include('admin.movimientos.salidas.modalMovimiento')
 
@@ -127,6 +127,27 @@
         }
     });
 
+    jQuery('#voucher_number').select2({
+        placeholder: 'Buscar número de factura...',
+        minimumInputLength: 2,
+        tags: false,
+        ajax: {
+            dataType: 'json',
+            url: '{{ route('search.voucher_number') }}',
+            delay: 250,
+            data: function(params) {
+                return {
+                    term: params.term
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+        }
+    });
+
     jQuery('#product_search').change(function(){
 
         var elements = document.querySelectorAll('.is-invalid');
@@ -146,7 +167,6 @@
                 },
                 success: function (data) {
                     if (data['type'] == 'success') {
-
                         jQuery("#insertByAjax").html(data['html']);
                         jQuery('.editpopup').addClass('offcanvas-on');
                     } else if(data['type'] != 'clear') {
@@ -224,37 +244,6 @@
         });
     }
 
-    function cargarFlete(){
-        var to_type = jQuery("#to_type").val();
-        var to = jQuery("#to").val();
-        var list_id = to_type+'_'+to;
-        var formData =  {list_id};
-        var url ="{{ route('get.flete.session.products') }}";
-        jQuery.ajax({
-            url:url,
-            type:'GET',
-            data:formData,
-            success:function(data){
-                jQuery("#montoFlete").html(data['flete']);
-                let flete = parseFloat(data['flete']/100);
-                jQuery("#flete").val(parseFloat(jQuery("#subTotal").val()*flete).toFixed(2));
-            },
-            error: function (data) {
-            },
-        });
-    }
-
-    function verif(pres){
-
-        const max = parseFloat(document.getElementById("unidades_"+pres).max);
-        const value = parseFloat(document.getElementById("unidades_"+pres).value);
-        if(value > max){
-            toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
-            jQuery("#unidades_"+pres).val(max);
-            jQuery("#unidades_"+pres).focus();
-        };
-    }
-
     jQuery("#sessionProductstore").click(function(e){
         e.preventDefault();
         guardarProductoEnSession()
@@ -283,13 +272,13 @@
                 if (data['type'] == 'success') {
                     document.getElementById("unidades_a_enviar").reset();
                     jQuery('.editpopup').removeClass('offcanvas-on');
+                    jQuery('#product_search').val(null).trigger('change')
                     cargarTablaProductos()
                 } else{
                     jQuery('#' + data['index']).addClass('is-invalid');
                     jQuery('#'+  data['index']).next().find('.select2-selection').addClass('is-invalid');
                     toastr.error(data['msj'], 'Verifique');
                 }
-                jQuery('#product_search').val(null).trigger('change')
                 jQuery('#loader').addClass('hidden');
             },
             error: function (data) {
@@ -317,27 +306,5 @@
     jQuery("#btnCloseSalida").click(function(){
         jQuery('#loader').removeClass('hidden');
     })
-
-    function changeInvoice(list_id,product_id){
-        jQuery.ajax({
-            url:"{{route('change.invoice.product')}}",
-            type:'POST',
-            data:{list_id,product_id},
-            beforeSend: function() {
-                jQuery('#loader').removeClass('hidden');
-            },
-            success:function(data){
-                if (data['type'] != 'success') {
-                    toastr.error(data['msj'], 'Verifique');
-                }
-                jQuery('#loader').addClass('hidden');
-            },
-            error: function (data) {
-            },
-            complete: function () {
-                jQuery('#loader').addClass('hidden');
-            }
-        });
-    }
 </script>
 @endsection
