@@ -3,25 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
-use File;
 use App\Http\Requests\Products\AddProduct;
-use App\Http\Requests\Products\CalculatePrices;
 
+use App\Http\Requests\Products\CalculatePrices;
 use App\Http\Requests\Products\UpdateProduct;
-use App\Models\Product;
-use App\Repositories\AlicuotaTypeRepository;
-use App\Repositories\ProductCategoryRepository;
-use App\Repositories\ProductPriceRepository;
-use App\Repositories\ProductRepository;
-use App\Repositories\ProducTypeRepository;
-use App\Repositories\ProveedorRepository;
-use App\Repositories\SenasaDefinitionRepository;
 
 use App\Models\Movement;
 use App\Models\MovementProduct;
+use App\Models\Product;
+use App\Repositories\AlicuotaTypeRepository;
+use App\Repositories\ProducDescuentoRepository;
+use App\Repositories\ProductCategoryRepository;
+use App\Repositories\ProductPriceRepository;
+use App\Repositories\ProductRepository;
+use App\Repositories\ProveedorRepository;
+
+use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -30,7 +29,7 @@ class ProductController extends Controller
     private $productPriceRepository;
     private $alicuotaTypeRepository;
     private $productCategoryRepository;
-    private $productTypeRepository;
+    private $productDescuentoRepository;
     private $proveedorRepository;
     private $senasaDefinitionRepository;
 
@@ -38,7 +37,7 @@ class ProductController extends Controller
         ProductRepository $productRepository,
         ProductPriceRepository $productPriceRepository,
         ProductCategoryRepository $productCategoryRepository,
-        ProducTypeRepository $productTypeRepository,
+        ProducDescuentoRepository $productDescuentoRepository,
         ProveedorRepository $proveedorRepository,
         SenasaDefinitionRepository $senasaDefinitionRepository,
         AlicuotaTypeRepository $alicuotaTypeRepository
@@ -47,7 +46,7 @@ class ProductController extends Controller
         $this->productPriceRepository     = $productPriceRepository;
         $this->alicuotaTypeRepository     = $alicuotaTypeRepository;
         $this->productCategoryRepository  = $productCategoryRepository;
-        $this->productTypeRepository      = $productTypeRepository;
+        $this->productDescuentoRepository = $productDescuentoRepository;
         $this->proveedorRepository        = $proveedorRepository;
         $this->senasaDefinitionRepository = $senasaDefinitionRepository;
     }
@@ -58,17 +57,12 @@ class ProductController extends Controller
             $productos = $this->productRepository->all()->where('active', '=', 1);
             return Datatables::of($productos)
                 ->addIndexColumn()
-                ->addColumn('costo', function ($product) {
-                    return '$' . $product->product_price->costfenovo;
-                })
+
                 ->addColumn('stock', function ($product) {
                     return $product->stock();
                 })
-                ->addColumn('precios_fenovo', function ($product) {
-                    return 'L0: $' . $product->product_price->plist0iva . '<br> L1: $' . $product->product_price->plist1 . '<br> L2: $' . $product->product_price->plist2;
-                })
-                ->addColumn('precios_tiendas', function ($product) {
-                    return 'PT1: $' . $product->product_price->p1tienda . '<br> PT2: $' . $product->product_price->p2tienda;
+                ->addColumn('senasa', function ($product) {
+                    return $product->senasa();
                 })
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
@@ -80,7 +74,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'costo', 'precios_fenovo', 'precios_tiendas', 'borrar', 'editar'])
+                ->rawColumns(['stock', 'senasa', 'borrar', 'editar'])
                 ->make(true);
         }
 
@@ -92,16 +86,16 @@ class ProductController extends Controller
         $alicuotas         = $this->alicuotaTypeRepository->get('value', 'DESC');
         $senasaDefinitions = $this->senasaDefinitionRepository->get('product_name', 'DESC');
         $categories        = $this->productCategoryRepository->getActives('name', 'ASC');
-        $types             = $this->productTypeRepository->getActives('name', 'ASC');
+        $descuentos        = $this->productDescuentoRepository->getActives('codigo', 'ASC');
         $proveedores       = $this->proveedorRepository->getActives('name', 'ASC');
-        return view('admin.products.add', compact('alicuotas', 'categories', 'types', 'proveedores', 'senasaDefinitions'));
+        return view('admin.products.add', compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions'));
     }
 
     public function store(AddProduct $request)
     {
         try {
             $data                 = $request->all();
-            $data['unit_package'] = implode(',', $data['unit_package']);
+            $data['unit_package'] = implode('|', $data['unit_package']);
             $preciosCalculados    = $this->calcularPrecios($request);
             $data                 = array_merge($data, $preciosCalculados);
             $producto_nuevo       = $this->productRepository->create($data);
@@ -120,11 +114,12 @@ class ProductController extends Controller
             $alicuotas         = $this->alicuotaTypeRepository->get('value', 'DESC');
             $senasaDefinitions = $this->senasaDefinitionRepository->get('product_name', 'DESC');
             $categories        = $this->productCategoryRepository->getActives('name', 'ASC');
-            $types             = $this->productTypeRepository->getActives('name', 'ASC');
+            $descuentos        = $this->productDescuentoRepository->getActives('descripcion', 'ASC');
             $proveedores       = $this->proveedorRepository->getActives('name', 'ASC');
-            $unit_package      = explode(',', $product->unit_package);
+            $unit_package      = explode('|', $product->unit_package);
+
             if ($product) {
-                return view('admin.products.edit', compact('alicuotas', 'categories', 'types', 'proveedores', 'senasaDefinitions', 'product', 'unit_package'));
+                return view('admin.products.edit', compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions', 'product', 'unit_package'));
             }
             $notification = [
                 'message'    => 'El producto no existe !',
@@ -141,7 +136,7 @@ class ProductController extends Controller
         try {
             $data                 = $request->except('_token');
             $product_id           = $data['product_id'];
-            $data['unit_package'] = implode(',', $data['unit_package']);
+            $data['unit_package'] = implode('|', $data['unit_package']);
             $producto_actualizado = $this->productRepository->fill($product_id, $data);
             $preciosCalculados    = $this->calcularPrecios($request);
             $data                 = array_merge($data, $preciosCalculados);
@@ -202,7 +197,8 @@ class ProductController extends Controller
             $p1may      = $this->p1may($p1tienda, $descp1);
             $mupp1may   = $this->mupp1may($p1may, $plist0Iva);
             $mup2       = $this->mup2($plist0Iva, $p2tienda);
-            $p2may      = $this->p2may($p2tienda, $descp2);
+            $p2may      = $p1may;
+            $descp2     = $this->descp2($p2may, $p2tienda);
             $mupp2may   = $this->mupp2may($p2may, $plist0Iva);
 
             return [
@@ -221,9 +217,20 @@ class ProductController extends Controller
                 'mup2'       => $mup2,
                 'p2may'      => $p2may,
                 'mupp2may'   => $mupp2may,
+                'tasiva'     => $tasiva,
+                'descp2'     => $descp2
             ];
         } catch (\Exception $th) {
             return ['type' => 'error', 'msj' => $th->getMessage()];
+        }
+    }
+
+    private function descp2($p2may, $p2tienda)
+    {
+        try {
+            return abs(round(((($p2may - $p2tienda) * 100 ) / $p2tienda), 2));
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
@@ -363,111 +370,127 @@ class ProductController extends Controller
         }
     }
 
-    public function importFromCsv(){
+    public function importFromCsv()
+    {
         try {
             $filepath = public_path('/imports/FROZEN.TXT');
-            $file = fopen($filepath,"r");
+            $file     = fopen($filepath, 'r');
 
-            $importData_arr = array();
-            $i = 0;
+            $importData_arr = [];
+            $i              = 0;
 
-            while (($filedata = fgetcsv($file, 0, ",")) !== FALSE) {
-                $num = count($filedata );
-                for ($c=0; $c < $num; $c++) {
-                    $importData_arr[$i][] = $filedata [$c];
+            while (($filedata = fgetcsv($file, 0, ',')) !== false) {
+                $num = count($filedata);
+                for ($c = 0; $c < $num; $c++) {
+                    $importData_arr[$i][] = $filedata[$c];
                 }
                 $i++;
             }
             fclose($file);
-            foreach($importData_arr as $importData){
-                $data = [];
-                $proveedor = $this->proveedorRepository->getByName($importData[2]);
-                $insertData = array(
-                    "cod_fenovo"   => $importData[0],
-                    "cod_proveedor"=> $importData[1],
-                    "name"         => $importData[3],
-                    "proveedor_id" => $proveedor->id,
-                    "categorie_id" => 1,
-                    "barcode"      => $importData[16],
-                    "unit_type"    => $importData[18],
-                    "unit_weight"  => $importData[19],
-                    "unit_package" => $importData[17],
-                    "package_palet"=> $importData[22],
-                    "package_row"  => $importData[23]
-                );
+            foreach ($importData_arr as $importData) {
+                $data       = [];
+                $proveedor  = $this->proveedorRepository->getByName($importData[2]);
+                $insertData = [
+                    'cod_fenovo'    => $importData[0],
+                    'cod_proveedor' => $importData[1],
+                    'name'          => $importData[3],
+                    'proveedor_id'  => $proveedor->id,
+                    'categorie_id'  => 1,
+                    'barcode'       => $importData[16],
+                    'unit_type'     => $importData[18],
+                    'unit_weight'   => $importData[19],
+                    'unit_package'  => $importData[17],
+                    'package_palet' => $importData[22],
+                    'package_row'   => $importData[23],
+                    'cod_descuento' => ($importData[24] != '' && !is_null($importData[24]))? $importData[24] : null,
+                ];
                 $producto_nuevo = $this->productRepository->create($insertData);
 
-                $data = array(
+                $plist1 = round($importData[8] * ($importData[15] / 100 + 1) * (10 / 100 + 1), 2);
+                $plist2 = round($importData[8] * ($importData[15] / 100 + 1) * (20 / 100 + 1), 2);
+                $data   = [
                     'product_id'        => $producto_nuevo->id,
-                    "plistproveedor"    => $importData[4],
-                    "descproveedor"     => $importData[5],
-                    "costfenovo"        => $importData[6],
-                    "mupfenovo"         => $importData[7],
-                    "tasiva"            => $importData[15],
-                    "plist0neto"        => $importData[8],
-                    'plist0iva'         => $importData[8] * ($importData[15] / 100 +1),
-                    "contribution_fund" => 0.5,
-                    "plist1"            => $importData[10],
-                    "muplist1"          => $importData[9],
-                    "plist2"            => $importData[12],
-                    "muplist2"          => $importData[11],
-                    "p1tienda"          => $importData[21],
-                    "mup1"              => $importData[20],
-                    "descp1"            => $importData[14],
-                    "cantmay1"          => $importData[13]
-                );
-                $this->productPriceRepository->create($data);
+                    'plistproveedor'    => $importData[4],
+                    'descproveedor'     => $importData[5],
+                    'costfenovo'        => $importData[6],
+                    'mupfenovo'         => $importData[7],
+                    'tasiva'            => $importData[15],
+                    'plist0neto'        => $importData[8],
+                    'plist0iva'         => $importData[8] * ($importData[15] / 100 + 1),
+                    'contribution_fund' => 0.5,
 
+                    'p1tienda' => $importData[10],
+                    'mup1'     => $importData[9],
+                    'mupp1may' => $importData[11],
+                    'descp1'   => $importData[14],
+                    'p1may'    => $importData[12],
+                    'muplist1' => 10,
+                    'muplist2' => 20,
+
+                    'plist1'    => $plist1,
+                    'plist2'    => $plist2,
+                    'comlista1' => round((($plist1 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist1, 2),
+                    'comlista2' => round((($plist2 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist2, 2),
+
+                    'p2tienda' => $importData[21],
+                    'mup2'     => $importData[20],
+                    'p2may'    => $importData[12],
+                    'descp2'   => abs((($importData[12] - $importData[21]) * 100) / $importData[21]),
+                    'mupp2may' => round(($importData[12] / ($importData[8] * ($importData[15] / 100 + 1)) - 1) * 100, 2),
+
+                    'cantmay1' => $importData[13],
+                    'cantmay2' => $importData[13],
+                ];
+                $this->productPriceRepository->create($data);
             }
 
             $filepath = public_path('/imports/ST.TXT');
-            $file = fopen($filepath,"r");
+            $file     = fopen($filepath, 'r');
 
-            $importData_arr2 = array();
-            $i = 0;
+            $importData_arr2 = [];
+            $i               = 0;
 
-            while (($filedata2 = fgetcsv($file, 0, ",")) !== FALSE) {
-                $num = count($filedata2 );
-                for ($c=0; $c < $num; $c++) {
-                    $importData_arr2[$i][] = $filedata2 [$c];
+            while (($filedata2 = fgetcsv($file, 0, ',')) !== false) {
+                $num = count($filedata2);
+                for ($c = 0; $c < $num; $c++) {
+                    $importData_arr2[$i][] = $filedata2[$c];
                 }
                 $i++;
             }
             fclose($file);
 
             $movement = Movement::create([
-                'date' => now(),
-                'type' => 'COMPRA',
-                'from' => 1,
-                'to' => 1,
-                'status' => 'CREATED',
+                'date'           => now(),
+                'type'           => 'COMPRA',
+                'from'           => 1,
+                'to'             => 1,
+                'status'         => 'CREATED',
                 'voucher_number' => '00001',
             ]);
             $code_not_found = [];
-            foreach($importData_arr2 as $importData){
-                $cod_fenovo   = $importData[0];
-                $balance = $importData[1];
-                $product = $this->productRepository->getByCodeFenovo($cod_fenovo);
-                if($product){
+            foreach ($importData_arr2 as $importData) {
+                $cod_fenovo = $importData[0];
+                $balance    = $importData[1];
+                $product    = $this->productRepository->getByCodeFenovo($cod_fenovo);
+                if ($product) {
                     MovementProduct::create([
-                        'store_id' => 1,
-                        'movement_id' => $movement->id,
-                        'product_id' => $product->id,
+                        'store_id'     => 1,
+                        'movement_id'  => $movement->id,
+                        'product_id'   => $product->id,
                         'unit_package' => $product->unit_package,
-                        'invoice' => 1,
-                        'entry' => $balance,
-                        'egress' => 0,
-                        'balance' => $balance,
-                        'unit_price'=>$product->product_price->costfenovo,
-                        'tasiva' => $product->product_price->tasiva
+                        'invoice'      => 1,
+                        'entry'        => $balance,
+                        'egress'       => 0,
+                        'balance'      => $balance,
+                        'unit_price'   => $product->product_price->costfenovo,
+                        'tasiva'       => $product->product_price->tasiva,
                     ]);
-                }else{
-                    array_push($code_not_found,$cod_fenovo);
+                } else {
+                    array_push($code_not_found, $cod_fenovo);
                 }
             }
             dd($code_not_found);
             return redirect()->route('products.list');
-
         } catch (\Exception $e) {
             dd($e->getMessage());
         }

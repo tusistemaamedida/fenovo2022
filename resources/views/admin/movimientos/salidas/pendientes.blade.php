@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Salidas Pendientes</li>
+                <li class="breadcrumb-item active" aria-current="page">Salidas</li>
             </ol>
         </nav>
     </div>
@@ -43,11 +43,14 @@
                             <div class="card-body">
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
-                                        <tr>
-                                            <th>No</th>
+                                        <tr class="bg-dark text-white">
+                                            <th>Actualización</th>
                                             <th>Identificación</th>
+                                            <th>Productos cargados</th>
                                             <th>Destino</th>
                                             <th>Detalle</th>
+                                            <th>Print</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -70,14 +73,50 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.dom-button'),
+        ordering: false,
         ajax: "{{ route('salidas.pendientes') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
+            {data: 'actualizacion', 'class':'text-center', searchable: false},
             {data: 'list_id'},
+            {data: 'items', 'class':'text-center', searchable: false},
             {data: 'destino'},
-            {data: 'edit', name: 'Editar', 'class':'text-center', searchable: false},
+            {data: 'edit', 'class':'text-center', searchable: false},
+            {data: 'print', 'class':'text-center', searchable: false},
+            {data: 'destroy', 'class':'text-center', searchable: false},
+
         ]
     });
+
+    const eliminarPendiente = (id, route) => {
+
+
+        ymz.jq_confirm({
+            title: 'Eliminar',
+            text: "confirma borrar registro ?",
+            no_btn: "Cancelar",
+            yes_btn: "Confirma",
+            no_fn: function () {
+                return false;
+            },
+            yes_fn: function () {
+                jQuery.ajax({
+                    url: route,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: id },
+                    success: function (data) {
+                        if (data['type'] == 'success') {
+                            table.ajax.reload();
+                            toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                            toastr.info("Eliminado ... ");
+                        }
+                    }
+                });
+            }
+        });
+    };
+
+
 </script>
 
 @endsection

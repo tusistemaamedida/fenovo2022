@@ -7,8 +7,7 @@
 </div>
 
 <div class="form-group">
-    <label class="text-dark">Nombre</label>
-    <input type="text" id="name" name="name" @if (isset($product)) value="{{$product->name}}" @else value="" @endif class="form-control" required>
+    <p class=" font-weight-bold">{{$product->name}}</p>
 </div>
 
 <div class="form-group">

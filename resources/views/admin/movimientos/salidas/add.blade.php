@@ -2,36 +2,38 @@
 
 @section('css')
 <style>
-    .table tbody tr td{
+    .table tbody tr td {
         color: #1a3353;
-    font-weight: 500;
+        font-weight: 500;
     }
 </style>
 @endsection
 
 @section('content')
-    <div class="subheader py-2 py-lg-6 subheader-solid">
-        <div class="container-fluid">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                    <li class="breadcrumb-item active" aria-current="page">Salida de mercadería</li>
-                </ol>
-            </nav>
+<div class="subheader py-2 py-lg-6 subheader-solid">
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-white mb-0 px-0 py-2">
+                <li class="breadcrumb-item active" aria-current="page">Salida de mercadería</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="row">
+            @include('admin.movimientos.salidas.partials.form-select-cliente')
+            <b style="width: 100%" id="session_products_table"></b>
         </div>
     </div>
-    <div class="d-flex flex-column-fluid">
-        <div class="container-fluid">
-            <div class="row">
+</div>
 
-                @include('admin.movimientos.salidas.partials.form-select-cliente')
+@include('admin.movimientos.salidas.partials.modal-product-details')
 
-                <b style="width: 100%" id="session_products_table"></b>
-            </div>
-        </div>
-    </div>
+@include('admin.movimientos.salidas.partials.open-close-salida')
 
-    @include('admin.movimientos.salidas.partials.modal-product-details')
-    @include('admin.movimientos.salidas.partials.open-close-salida')
+@include('admin.movimientos.salidas.modalMovimiento')
+
 @endsection
 
 @section('js')
@@ -41,6 +43,42 @@
             cargarTablaProductos();
         @endif
     });
+
+    const editarMovimiento = (id, quantity, cod_fenovo) => {
+
+        jQuery("#session_product_id").val(id);
+        jQuery("#session_product_quantity").val(quantity);
+        jQuery("#mov_cod_fenovo").html(cod_fenovo);
+        jQuery('.movimientoPopup').addClass('offcanvas-on');
+    }
+
+    const actualizarMovimiento = () =>{
+        var url ="{{ route('store.session.product.item') }}";
+        jQuery.ajax({
+            url:url,
+            type:'POST',
+            data:{
+                id: jQuery("#session_product_id").val(),
+                quantity: jQuery("#session_product_quantity").val()
+            },
+            beforeSend: function() {
+                jQuery('#loader').removeClass('hidden');
+            },
+            success:function(data){
+                jQuery('.movimientoPopup').removeClass('offcanvas-on');
+                jQuery('#to').val(jQuery('#to').val()).trigger('change');
+            },
+            error: function (data) {
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
+            }
+        });
+    }
+
+    const cerrarModal = () =>{
+        jQuery('.movimientoPopup').removeClass('offcanvas-on');
+    }
 
     jQuery("#to_type").change(function(){
         jQuery('#to').val(null).trigger('change');
@@ -90,18 +128,25 @@
     });
 
     jQuery('#product_search').change(function(){
+
         var elements = document.querySelectorAll('.is-invalid');
         var id = jQuery("#product_search").val();
+
+        var to_type = jQuery("#to_type").val();
+        var to = jQuery("#to").val();
+        var list_id = to_type+'_'+to;
+
         if(id != ''){
             jQuery.ajax({
                 url: "{{route('get.presentaciones')}}",
                 type: 'GET',
-                data: { id },
+                data: { id, list_id },
                 beforeSend: function () {
                     jQuery('#loader').removeClass('hidden');
                 },
                 success: function (data) {
                     if (data['type'] == 'success') {
+
                         jQuery("#insertByAjax").html(data['html']);
                         jQuery('.editpopup').addClass('offcanvas-on');
                     } else if(data['type'] != 'clear') {
@@ -118,7 +163,6 @@
     });
 
     jQuery('#product_search').on('select2:open', function () {
-        document.getElementById("unidades_a_enviar").reset();
         jQuery('.editpopup').removeClass('offcanvas-on');
     });
 
@@ -142,15 +186,23 @@
                 dataType: 'json',
                 data: { id: id },
                 success: function (data) {
-                    toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                    toastr.success("Eliminado ... ");
-                    setTimeout(() => {
+                    if (data['type'] == 'success') {
+                        toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                        toastr.info("Eliminado ... ");
                         cargarTablaProductos();
-                    }, 500);
+                    }
                 }
             });
         }
     });
+    }
+
+    const printPendiente = ()=>{
+        var to_type = jQuery("#to_type").val();
+        var to = jQuery("#to").val();
+        var list_id = to_type+'_'+to;
+        var url = "{{route('salidas.pendiente.print', '')}}"+"?list_id="+list_id;
+        window.location = url;
     }
 
     function cargarTablaProductos(){
@@ -180,23 +232,61 @@
         });
     }
 
-</script>
+    function cargarFlete(){
+        var to_type = jQuery("#to_type").val();
+        var to = jQuery("#to").val();
+        var list_id = to_type+'_'+to;
+        var formData =  {list_id};
+        var url ="{{ route('get.flete.session.products') }}";
+        jQuery.ajax({
+            url:url,
+            type:'GET',
+            data:formData,
+            success:function(data){
+                jQuery("#montoFlete").html(data['flete']);
+                let flete = parseFloat(data['flete']/100);
+                jQuery("#flete").val(parseFloat(jQuery("#subTotal").val()*flete).toFixed(2));
+            },
+            error: function (data) {
+            },
+        });
+    }
 
-<script>
-    function verif(pres){
-        const max = parseInt(jQuery("#unidades_"+pres).attr("max"));
-        const value = parseInt(jQuery("#unidades_"+pres).val());
-        if(value > max){
+    function sumar(obj){
+        const unit_weight = parseFloat(document.getElementById("unit_weight").value);
+        let total = 0;
+        let valido = true;
+
+        jQuery('.calculate').each(function() {
+            if(isNaN(parseFloat(jQuery(this).val()))){
+                valido = false;
+            }
+        });
+
+        if(valido){
+            jQuery('.calculate').each(function() {
+                let valor = parseFloat(jQuery(this).val());
+                let presentacion = jQuery(this).attr("id");
+                total = total + (valor*presentacion*unit_weight);
+            });
+        }
+
+        const max = parseInt(jQuery("#tope").val());
+        if(total > max){
             toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
-            jQuery("#unidades_"+pres).val(max);
-            jQuery("#unidades_"+pres).focus();
-        };
+            jQuery(obj).val(0).select();
+        }else{
+            jQuery("#envio_total").html('');
+            jQuery("#envio_total").html(total);
+            jQuery("#kg_totales").val(total);
+        }
     }
 
     jQuery("#sessionProductstore").click(function(e){
         e.preventDefault();
         guardarProductoEnSession()
     })
+
     function guardarProductoEnSession(){
         var to_type = jQuery("#to_type").val();
         var product_id = jQuery("#product_search").val();
@@ -220,13 +310,13 @@
                 if (data['type'] == 'success') {
                     document.getElementById("unidades_a_enviar").reset();
                     jQuery('.editpopup').removeClass('offcanvas-on');
+                    jQuery('#product_search').val(null).trigger('change');
                     cargarTablaProductos()
                 } else{
                     jQuery('#' + data['index']).addClass('is-invalid');
                     jQuery('#'+  data['index']).next().find('.select2-selection').addClass('is-invalid');
                     toastr.error(data['msj'], 'Verifique');
                 }
-                jQuery('#product_search').val(null).trigger('change')
                 jQuery('#loader').addClass('hidden');
             },
             error: function (data) {
@@ -241,15 +331,17 @@
         document.getElementById("unidades_a_enviar").reset();
         jQuery('.editpopup').removeClass('offcanvas-on');
         jQuery('#product_search').val(null).trigger('change');
-    });
+    })
 
     jQuery("#btnOpenCerrarSalida").click(function(e){
         e.preventDefault();
+        cargarFlete()
         jQuery('#closeSalida').addClass('offcanvas-on');
     })
+
     jQuery('#close_modal_salida').on('click', function () {
         jQuery('#closeSalida').removeClass('offcanvas-on');
-    });
+    })
 
     jQuery("#btnCloseSalida").click(function(){
         jQuery('#loader').removeClass('hidden');
@@ -276,5 +368,6 @@
             }
         });
     }
+
 </script>
 @endsection

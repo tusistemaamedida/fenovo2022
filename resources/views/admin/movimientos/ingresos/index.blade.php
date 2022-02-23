@@ -43,13 +43,11 @@
                             <div class="card-body">
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Fecha</th>
+                                        <tr class="bg-dark text-white">
+                                            <th>Actualización</th>
                                             <th>Proveedor</th>
                                             <th>Items</th>
                                             <th>ComprobanteNro</th>
-                                            <th>Actualización</th>
                                             <th>Detalle</th>
                                         </tr>
                                     </thead>
@@ -74,14 +72,13 @@
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.dom-button'),
         ajax: "{{ route('ingresos.index') }}",
+        ordering: false,
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
-            {data: 'date'},
+            {data: 'updated_at', 'class':'text-center', searchable: false},
             {data: 'origen'},
-            {data: 'items'},
+            {data: 'items', 'class':'text-center', searchable: false},
             {data: 'voucher_number',  'class':'text-center'},
-            {data: 'updated_at'},
-            {data: 'edit', name: 'Editar', 'class':'text-center', searchable: false},
+            {data: 'edit', 'class':'text-center', searchable: false},
         ],
         });
 </script>

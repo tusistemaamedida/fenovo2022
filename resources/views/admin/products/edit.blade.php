@@ -91,10 +91,15 @@
 @include('admin.products.images-js')
 @include('admin.products.calculated-prices-js')
 <script>
+    jQuery( document ).ready(function() {
+        jQuery("#unit_package").select2({
+            tags: true
+        })
+    });
+
     function updateProduct(route){
             var elements = document.querySelectorAll('.is-invalid');
             var form = jQuery('#formData').serialize();
-
             jQuery.ajax({
                 url: route,
                 type: 'POST',
@@ -107,8 +112,7 @@
                 },
                 success: function (data) {
                     if (data['type'] == 'success') {
-                        toastr.info(data['msj'],'Registro');
-
+                        toastr.info(data['msj'],'Actualización');                        
                     } else {
                         toastr.error(data['html'], 'Verifique');
                     }
@@ -124,6 +128,10 @@
                 },
                 complete: function () {
                     jQuery('#loader').addClass('hidden');
+                    setTimeout(() => {
+                        window.location= '{{ route('products.list') }}';    
+                    }, 500);
+                    
                 }
             });
         };

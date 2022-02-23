@@ -1,12 +1,10 @@
 <table id="productTable" class="table table-condensed table-hover yajra-datatable">
     <thead>
-        <tr>
-            <th>#</th>
+        <tr class="bg-dark text-white">
+            <th>Codigo</th>
             <th>Producto</th>
             <th>Stock</th>
-            <th>Costo</th>
-            <th>Precio Fenovos</th>
-            <th>Tiendas</th>
+            <th>Tipo senasa</th>
             <th>Proveedor</th>
             <th></th>
             <th></th>

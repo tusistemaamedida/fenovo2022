@@ -38,7 +38,8 @@ class IngresosController extends Controller
                     return date('Y-m-d', strtotime($movement->date));
                 })
                 ->addColumn('items', function ($movement) {
-                    return count($movement->movement_products);
+                    $count = count($movement->movement_products);
+                    return '<span class="badge badge-primary">' . $count . '</span>';
                 })
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
@@ -79,7 +80,7 @@ class IngresosController extends Controller
     {
         try {
             $product      = Product::find($request->id);
-            $unit_package = explode(',', $product->unit_package);
+            $unit_package = explode('|', $product->unit_package);
             return new JsonResponse([
                 'type' => 'success',
                 'html' => view('admin.movimientos.ingresos.insertByAjax', compact('product', 'unit_package'))->render(),
@@ -92,7 +93,7 @@ class IngresosController extends Controller
     public function updateProduct(Request $request)
     {
         try {
-            $data['unit_package'] = implode(',', $request->unit_package);
+            $data['unit_package'] = implode('|', $request->unit_package);
             Product::find($request->product_id)->update($data);
             return new JsonResponse(['msj' => 'Actualización correcta !', 'type' => 'success']);
         } catch (\Exception $e) {

@@ -5,13 +5,16 @@ namespace App\Http\Controllers\Admin\Movimientos;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\MovementProduct;
+use App\Models\SessionProduct;
 use App\Models\Store;
 use App\Repositories\CustomerRepository;
 use App\Repositories\ProductRepository;
 
 use App\Repositories\SessionProductRepository;
+
 use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
+use Barryvdh\DomPDF\Facade as PDF;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -46,7 +49,7 @@ class SalidasController extends Controller
             $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
             return DataTables::of($movement)
                 ->addIndexColumn()
-                ->addColumn('origen', function ($movement) {
+                ->addColumn('destino', function ($movement) {
                     return $movement->origenData($movement->type);
                 })
                 ->editColumn('date', function ($movement) {
@@ -58,10 +61,16 @@ class SalidasController extends Controller
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
                 })
-                ->addColumn('edit', function ($movement) {
-                    return '<a class="dropdown-item" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                ->addColumn('acciones', function ($movement) {
+                    $links = '<a class="flex-button" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                    if ($movement->invoice) {
+                        $links .= '<a class="flex-button" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
+                    } else {
+                        $links .= '<a class="flex-button" target="_blank" href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
+                    }
+                    return $links;
                 })
-                ->rawColumns(['origen', 'date', 'type', 'edit'])
+                ->rawColumns(['origen', 'date', 'type', 'acciones'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.index');
@@ -73,14 +82,28 @@ class SalidasController extends Controller
             $pendientes = $this->sessionProductRepository->groupBy('list_id');
             return DataTables::of($pendientes)
                 ->addIndexColumn()
+                ->addColumn('actualizacion', function ($pendiente) {
+                    return date('d-m-Y H:i:s', strtotime($pendiente->updated_at));
+                })
                 ->addColumn('destino', function ($pendiente) {
                     $explode = explode('_', $pendiente->list_id);
                     return $pendiente::origenData($explode[0], $explode[1]);
                 })
-                ->addColumn('edit', function ($pendiente) {
-                    return '<a class="dropdown-item" href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-eye"></i> </a>';
+                ->addColumn('items', function ($pendiente) {
+                    $count = count(SessionProduct::query()->where('list_id', $pendiente->list_id)->get());
+                    return '<span class="badge badge-primary">' . $count . '</span>';
                 })
-                ->rawColumns(['destino', 'edit'])
+                ->addColumn('destroy', function ($pendiente) {
+                    $ruta = 'eliminarPendiente(' . $pendiente->id . ",'" . route('salidas.pendiente.destroy') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                })
+                ->addColumn('edit', function ($pendiente) {
+                    return '<a href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
+                })
+                ->addColumn('print', function ($pendiente) {
+                    return '<a href="' . route('salidas.pendiente.print', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-print"></i> </a>';
+                })
+                ->rawColumns(['actualizacion', 'items', 'destino', 'edit', 'destroy', 'print'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.pendientes');
@@ -93,6 +116,16 @@ class SalidasController extends Controller
         $destino     = $this::origenData($tipo, $explode[1], true);
         $destinoName = $this::origenData($tipo, $explode[1]);
         return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
+    }
+
+    public function pendientePrint(Request $request)
+    {
+        $session_products = SessionProduct::query()->where('list_id', $request->input('list_id'))->get();
+        $explode          = explode('_', $request->input('list_id'));
+        $tipo             = $explode[0];
+        $destino          = $this::origenData($tipo, $explode[1], true);
+        $pdf              = PDF::loadView('admin.movimientos.salidas.salidas-detalle', compact('session_products', 'destino'));
+        return $pdf->stream('salidas.pdf');
     }
 
     public function add()
@@ -112,7 +145,7 @@ class SalidasController extends Controller
         $term        = $request->term ?: '';
         $valid_names = [];
 
-        if ($request->to_type == 'VENTACLIENTE') {
+        if ($request->to_type == 'VENTACLIENTE' || $request->to_type == 'DEVOLUCIONCLIENTE') {
             $customers = $this->customerRepository->search($term);
             foreach ($customers as $customer) {
                 $valid_names[] = ['id' => $customer->id, 'text' => $customer->displayName()];
@@ -144,7 +177,7 @@ class SalidasController extends Controller
 
             $valid_names[] = [
                 'id'       => $product->id,
-                'text'     => $product->name . ' [' . $stock . ' ' . $product->unit_type . ']' . $text_no_stock,
+                'text'     => $product->name . '' . $text_no_stock,
                 'disabled' => $disabled,  ];
         }
 
@@ -155,9 +188,21 @@ class SalidasController extends Controller
     {
         try {
             $session_products = $this->sessionProductRepository->getByListId($request->input('list_id'));
+            $mostrar_check_invoice = !(str_contains($request->input('list_id'), 'DEVOLUCION_'));
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products'))->render(),
+                'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products','mostrar_check_invoice'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function getFleteSessionProducts(Request $request)
+    {
+        try {
+            return new JsonResponse([
+                'flete' => $this->sessionProductRepository->getFlete($request->input('list_id')),
             ]);
         } catch (\Exception $e) {
             return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -179,19 +224,22 @@ class SalidasController extends Controller
         try {
             if ($request->has('id') && $request->input('id') != '') {
                 $product = $this->productRepository->getById($request->input('id'));
+                $list_id = $request->input('list_id');
+                $mostrar_detalles = !(str_contains($list_id, 'DEVOLUCION_'));
+
                 if ($product) {
                     $stock_presentaciones = [];
-                    $presentaciones       = explode(',', $product->unit_package);
+                    $presentaciones       = explode('|', $product->unit_package);
+                    $stock_total          = $product->stock();
 
                     for ($i = 0; $i < count($presentaciones); $i++) {
-                        $bultos            = 0;
-                        $bultos_en_session = 0;
-                        $presentacion      = $presentaciones[$i];
-                        $stock_en_session  = $this->sessionProductRepository->getCantidadTotalDeBultos($product->id, $presentacion);
-
+                        $bultos                                   = 0;
+                        $bultos_en_session                        = 0;
+                        $presentacion                             = ($presentaciones[$i] == 0)?1:$presentaciones[$i];
+                        $stock_en_session                         = $this->sessionProductRepository->getCantidadTotalDeBultos($product->id, $presentacion);
                         $stock                                    = $product->stock($presentacion);
                         $stock_presentaciones[$i]['presentacion'] = $presentacion;
-                        $stock_presentaciones[$i]['stock']        = $stock;
+                        $stock_presentaciones[$i]['unit_weight']  = $product->unit_weight;
                         // los bultos que hay disponibles se calcula dividiendo el balance por el peso del bulto
                         $peso_por_bulto = $product->unit_weight * $presentacion;
 
@@ -207,7 +255,7 @@ class SalidasController extends Controller
                         'type' => 'success',
                         'html' => view(
                             'admin.movimientos.salidas.partials.inserByAjax',
-                            compact('stock_presentaciones', 'product', 'presentaciones')
+                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total','mostrar_detalles')
                         )->render(),
                     ]);
                 }
@@ -246,6 +294,7 @@ class SalidasController extends Controller
             $insert_data = [];
             $product     = $this->productRepository->getByIdWith($product_id);
             switch ($to_type) {
+                case 'DEVOLUCION':
                 case 'VENTA':
                     $insert_data['unit_price'] = $product->product_price->plist0neto;
                     $insert_data['tasiva']     = $product->product_price->tasiva;
@@ -275,12 +324,22 @@ class SalidasController extends Controller
                 $quantity = (float)$unidad['value'];
                 if ($quantity > 0) {
                     $explode                     = explode('_', $unidad['name']);
-                    $insert_data['unit_package'] = (int)$explode[1];
-                    $stock_en_session            = $this->sessionProductRepository->getCantidadTotalDeBultos($product_id, $insert_data['unit_package']);
+                    $insert_data['unit_package'] = $explode[1];
+                    $stock_en_session            = $this->sessionProductRepository->getCantidadTotalDeBultosByListId($product_id, $insert_data['unit_package'], $insert_data['list_id']);
                     $insert_data['quantity']     = $quantity + $stock_en_session;
                     $this->sessionProductRepository->updateOrCreate($insert_data);
                 }
             }
+            return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function storeSessionProductItem(Request $request)
+    {
+        try {
+            SessionProduct::find($request->id)->update(['quantity' => $request->quantity]);
             return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -296,7 +355,9 @@ class SalidasController extends Controller
             $insert_data['to']             = $explode[1];
             $insert_data['date']           = now();
             $insert_data['from']           = 1;
+            $insert_data['status']         = 'FINISHED';
             $insert_data['voucher_number'] = $request->input('voucher_number');
+            $insert_data['flete']          = (float)$request->input('flete');
 
             $movement         = Movement::create($insert_data);
             $session_products = $this->sessionProductRepository->getByListId($list_id);
@@ -362,5 +423,16 @@ class SalidasController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
+    }
+
+    public function pendienteDestroy(Request $request)
+    {
+        SessionProduct::find($request->id)->delete();
+        return new JsonResponse(
+            [
+                'msj'  => 'Eliminado ... ',
+                'type' => 'success',
+            ]
+        );
     }
 }

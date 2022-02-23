@@ -37,7 +37,7 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="text-dark">Nro Comprobante</label>
-                                <input type="text" id="voucher_number" name="voucher_number" value="" class="form-control" required="true">
+                                <input type="text" id="voucher_number" name="voucher_number" value="" class="form-control text-center" required="true">
                             </div>
                             <div class="col-md-2 text-center">
                                 <label class="text-dark">Guardar</label>

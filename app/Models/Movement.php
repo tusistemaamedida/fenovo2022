@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $to
  * @property string|null $status
  * @property string|null $voucher_number
+ * @property float|null  $flete
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -44,6 +45,7 @@ class Movement extends Model
         'to',
         'status',
         'voucher_number',
+        'flete',
     ];
 
     public function movement_products()
@@ -69,11 +71,18 @@ class Movement extends Model
                 return $proveedor->name;
             case 'VENTA':
             case 'TRASLADO':
+            case 'DEVOLUCION':
                 $store = Store::find($this->to);
-                return $store->razon_social;
+                return $store->description;
             case 'VENTACLIENTE':
+            case 'DEVOLUCIONCLIENTE':
                 $customer = Customer::find($this->to);
                 return $customer->razon_social;
         }
+    }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class)->whereNotNull('cae');
     }
 }

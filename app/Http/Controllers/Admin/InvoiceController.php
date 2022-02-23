@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade as PDF;
 use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\InvoicesRepository;
 use App\Models\Movement;
+use App\Models\MovementProduct;
 use App\Models\Store;
 use App\Models\Customer;
+use App\Models\VoucherType;
 use App\Models\Iibb;
 use Afip;
 use stdClass;
@@ -41,7 +44,6 @@ class InvoiceController extends Controller
     }
 
     public function index(Request $request){
-
         if ($request->ajax()) {
             $invoices = $this->invoiceRepository->all();
             return Datatables::of($invoices)
@@ -60,9 +62,74 @@ class InvoiceController extends Controller
         return view('admin.invoice.list');
     }
 
-    public function create(Request $request){
+    public function generateInvoicePdf($movement_id){
+        $array_productos = $alicuotas_array = [];
+        $invoice = $this->invoiceRepository->getByMovement($movement_id);
+        if(!is_null($invoice->cae)){
+            $movement = Movement::where('id',$movement_id)->firstOrFail();
+            $productos = MovementProduct::where('movement_id',$movement_id)->where('invoice',1)->where('egress', '>', 0)->with('product')->get();
+            foreach ($productos as $producto) {
+                $objProduct = new stdClass;
+                $objProduct->cant = $producto->bultos * $producto->unit_package;
+                $objProduct->iva = number_format($producto->tasiva, 2, ',', '.');
+                $objProduct->unit_price = $producto->unit_price;
+                $objProduct->total = number_format($producto->bultos * $producto->unit_price * $producto->unit_package, 2, ',', '.');
+                $objProduct->name = $producto->product->name;
+                $objProduct->unity = $producto->product->unit_type;
+                $objProduct->class = '';
+                array_push($array_productos,$objProduct);
+            }
+
+            if(!is_null($movement->flete ) && $movement->flete > 0){
+                $objProduct = new stdClass;
+                $objProduct->cant = 1;
+                $objProduct->iva = 21;
+                $objProduct->unit_price = $movement->flete;
+                $objProduct->total = number_format($movement->flete, 2, ',', '.');
+                $objProduct->name = 'FLETE';
+                $objProduct->unity = ' ';
+                $objProduct->class = '';
+                array_push($array_productos,$objProduct);
+            }
+
+            $total_lineas = 24;
+            $paginas = (int) ((count($array_productos)/$total_lineas) + 1);
+            $faltantes_para_completar = ($total_lineas * $paginas) - count($array_productos);
+
+            for ($aux = 0; $aux < $faltantes_para_completar; $aux++) {
+                $objProduct = new stdClass;
+                $objProduct->cant = 0;
+                $objProduct->iva = 'none';
+                $objProduct->name = 'none';
+                $objProduct->total = 'none';
+                $objProduct->unit_price = 0;
+                $objProduct->unity = 'none';
+                $objProduct->class = 'no-visible';
+                array_push($array_productos,$objProduct);
+              }
+
+            $alicuotas = json_decode($invoice->ivas);
+            foreach ($alicuotas as $alicuota) {
+                $objAlicuota = new stdClass;
+                $objAlicuota->name = $this->get_alicuota_value($alicuota->Id);
+                $objAlicuota->value = number_format($alicuota->Importe, 2, ',', '.') ;
+                array_push($alicuotas_array,$objAlicuota);
+            }
+            if(!\File::exists(public_path('images'))) {
+                \File::makeDirectory(public_path('images'), $mode = 0777, true, true);
+            }
+
+            \QrCode::generate(url('factura-electronica/'.$movement_id), 'images/'.$invoice->voucher_number.'.svg');
+
+            $qr_url = 'images/'.$invoice->voucher_number.'.svg';
+            $voucherType = VoucherType::where('afip_id',$invoice->cbte_tipo)->first();
+            $pdf = PDF::loadView('print.invoice',compact('invoice','array_productos','alicuotas_array','voucherType','qr_url','paginas','total_lineas'));
+            return $pdf->stream('invoice.pdf');
+        }
+    }
+
+    public function create($movement_id){
         try {
-            $movement_id = 525;
             $movement = Movement::where('id',$movement_id)->with('movement_salida_products')->firstOrFail();
             $result = $this->createVoucher($movement);
             $invoice = $this->invoiceRepository->getByMovement($movement_id);
@@ -74,7 +141,8 @@ class InvoiceController extends Controller
                         'expiration' => $result['response_afip']['CAEFchVto']
                     ]);
                 }
-                return 'invoice creado';
+
+                return $this->generateInvoicePdf($movement_id);
             }else{
                 if(isset($invoice)) $this->invoiceRepository->fill($invoice->id,[ 'error' => $result['error'] ]);
                 return $result['error'];
@@ -84,8 +152,28 @@ class InvoiceController extends Controller
         }
     }
 
+    private function get_alicuota_value($iva_id){
+        switch ($iva_id) {
+          case 6:
+            return '27%';
+          case 5:
+            return "21%";
+          case 4:
+            return "10,5%";
+          case 8:
+            return "5%";
+          case 9:
+            return "2,5%";
+          case 3:
+            return "0%";
+          default:
+            return "0%";
+        }
+      }
+
     private function createVoucher($movement){
         $data_invoice = $this->dataInvoice($movement);
+
         if($data_invoice['status']){
             try {
               $response_afip = null;
@@ -120,6 +208,7 @@ class InvoiceController extends Controller
     private function dataInvoice($movement){
         try {
           $client = $this->dataClient($movement->type,(int)$movement->to);
+
           if($client){
             $last_voucher = 0;
             $fecha_servicio_desde = $fecha_servicio_hasta = $fecha_vencimiento_pago = 0;
@@ -129,12 +218,13 @@ class InvoiceController extends Controller
             $tipo_de_documento = $this->document_type;
             $numero_de_documento = $this->client->cuit;
             $last_voucher = $this->afip->ElectronicBilling->GetLastVoucher($punto_de_venta, $tipo_de_factura);
+
             $numero_de_factura = $last_voucher+1;
             $fecha = date('Y-m-d');
             $iibb = Iibb::where('state',$this->client->state)->first();
             $iibb = ($iibb)?$iibb->value:0;
 
-            $importe = $this->importes($movement->movement_products);
+            $importe = $this->importes($movement);
             $importe_gravado = $importe['gravado'];
             $importe_exento_iva = 0;
             $importe_iva = $importe['iva'];
@@ -176,30 +266,33 @@ class InvoiceController extends Controller
           }
           return ['status' => false, 'error' => "Cliente o store no encontrado en el movimiento ". $movement->id];
         } catch (\Exception $e) {
-          return $e->getMessage();
+          return ['status' => false, 'error' => $e->getMessage()];
         }
     }
 
-    private function importes($products){
+    private function importes($movement){
+        $products = $movement->movement_salida_products;
         $gravado = 0;
         $iva = 0;
         $ivas = [];
-        $obj_iva = new stdClass;
-
         foreach ($products as $product) {
             if($product->invoice && $product->egress > 0){
+                $obj_iva = new stdClass;
                 $tasiva = $product->tasiva;
-                $subtotal = $product->egress * $product->unit_price; // cantidad de salida por el precio del producto
-                $iva_price = ( $subtotal * $tasiva)/100; // iva del subtotal del precio
+                $subtotal = $product->bultos * $product->unit_price * $product->unit_package; // cantidad de salida por el precio del producto
+                $iva_price = ($subtotal * $tasiva)/100; // iva del subtotal del precio
 
                 $gravado += $subtotal;
                 $iva += $iva_price;
 
                 $id_alicuota = $this->get_alicuota_id($tasiva);
 
+                $BaseImp = round($subtotal,2);
+                $Importe = round($iva_price,2);
+
                 $obj_iva->Id = $id_alicuota;
-                $obj_iva->BaseImp = $BaseImp = round($subtotal,2);
-                $obj_iva->Importe = $Importe = round($iva_price,2);
+                $obj_iva->BaseImp = $BaseImp;
+                $obj_iva->Importe = $Importe;
                 $insert_new = true;
 
                 if(count($ivas)){
@@ -217,6 +310,29 @@ class InvoiceController extends Controller
                 }
             }
         }
+        //dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
+        if(!is_null($movement->flete ) && $movement->flete > 0){
+            $insert_new = true;
+            $iva += ($movement->flete * 0.21);
+            $gravado += $movement->flete;
+
+            for ($cont=0; $cont <count($ivas) ; $cont++) {
+                $alicuota = $ivas[$cont];
+                if($alicuota->Id == 5){
+                    $alicuota->BaseImp = round(($alicuota->BaseImp + $movement->flete),2);
+                    $alicuota->Importe = round(($alicuota->Importe + $movement->flete * 0.21),2);
+                    $insert_new = false;
+                }
+            }
+            if($insert_new){
+                $obj_iva = new stdClass;
+                $obj_iva->Id = 5;
+                $obj_iva->BaseImp = round(($movement->flete),2);
+                $obj_iva->Importe = round(($movement->flete * 0.21),2);
+                array_push($ivas,$obj_iva);
+            }
+        }
+       // dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
         return ['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas];
     }
 
