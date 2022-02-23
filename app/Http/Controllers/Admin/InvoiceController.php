@@ -109,7 +109,6 @@ class InvoiceController extends Controller
               }
 
             $alicuotas = json_decode($invoice->ivas);
-
             foreach ($alicuotas as $alicuota) {
                 $objAlicuota = new stdClass;
                 $objAlicuota->name = $this->get_alicuota_value($alicuota->Id);
@@ -313,11 +312,12 @@ class InvoiceController extends Controller
                 }
             }
         }
-
-
+        //dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
         if(!is_null($movement->flete ) && $movement->flete > 0){
-            $iva += $movement->flete * 0.21;
+            $insert_new = true;
+            $iva += ($movement->flete * 0.21);
             $gravado += $movement->flete;
+
             for ($cont=0; $cont <count($ivas) ; $cont++) {
                 $alicuota = $ivas[$cont];
                 if($alicuota->Id == 5){
@@ -326,8 +326,15 @@ class InvoiceController extends Controller
                     $insert_new = false;
                 }
             }
+            if($insert_new){
+                $obj_iva = new stdClass;
+                $obj_iva->Id = 5;
+                $obj_iva->BaseImp = round(($movement->flete),2);
+                $obj_iva->Importe = round(($movement->flete * 0.21),2);
+                array_push($ivas,$obj_iva);
+            }
         }
-
+       // dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
         return ['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas];
     }
 

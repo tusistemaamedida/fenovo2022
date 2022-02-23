@@ -232,7 +232,7 @@ class SalidasController extends Controller
                     for ($i = 0; $i < count($presentaciones); $i++) {
                         $bultos                                   = 0;
                         $bultos_en_session                        = 0;
-                        $presentacion                             = $presentaciones[$i];
+                        $presentacion                             = ($presentaciones[$i] == 0)?1:$presentaciones[$i];
                         $stock_en_session                         = $this->sessionProductRepository->getCantidadTotalDeBultos($product->id, $presentacion);
                         $stock                                    = $product->stock($presentacion);
                         $stock_presentaciones[$i]['presentacion'] = $presentacion;
