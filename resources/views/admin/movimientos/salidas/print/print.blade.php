@@ -34,7 +34,7 @@
                 </div>
                 <div class="card card-custom gutter-b bg-white border-0">
                     <div class="row m-4 border-bottom-dark">
-                        <div class="col-4">
+                        <div class="col-3">
                             <fieldset class="input-group form-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Desde</span>
@@ -42,7 +42,7 @@
                                 <input type="date" name="salidaDesde" id="salidaDesde" value="{{ date('Y-m-d', strtotime($carbon::now()->subDays(2))) }}" class="form-control border-dark" autofocus>
                             </fieldset>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                             <fieldset class="input-group form-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Hasta</span>
@@ -50,7 +50,22 @@
                                 <input type="date" name="salidaHasta" id="salidaHasta" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark">
                             </fieldset>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
+                            <fieldset class="input-group form-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Tipo salida</span>
+                                </div>
+                                <select class="rounded form-control bg-transparent" name="tiposalida" id="tiposalida">
+                                    <option value="">Seleccione un tipo ... </option>
+                                    @foreach ($tiposalidas as $tiposalida)
+                                    <option value="{{$tiposalida['type']}}">
+                                        {{$tiposalida['type'] }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </fieldset>
+                        </div>
+                        <div class="col-3">
                             <a href="javascript:void(0)" onclick="entreFechas()"> <i class=" fa fa-print"></i> Imprimir</a>
                         </div>
                     </div>
@@ -68,7 +83,9 @@
     const entreFechas = ()=>{
         let desde = jQuery("#salidaDesde").val();
         let hasta = jQuery("#salidaHasta").val();
-        let url = "{{route('salidas.printEntreFechas', '')}}"+"?desde="+desde+"&hasta="+hasta;
+        let tipo = jQuery("#tiposalida").val();
+
+        let url = "{{route('salidas.printEntreFechas', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
         window.location = url;
     }
 

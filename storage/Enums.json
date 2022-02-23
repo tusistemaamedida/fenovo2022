@@ -1,4 +1,18 @@
 {
+  "salidas": [
+    {
+      "type": "VENTA"
+    },
+    {
+      "type": "VENTACLIENTE"
+    },
+    {
+      "type": "TRASLADO"
+    },
+    {
+      "type": "DEVOLUCION"
+    }
+  ],
   "iva": [
     {
       "type": "RI"
