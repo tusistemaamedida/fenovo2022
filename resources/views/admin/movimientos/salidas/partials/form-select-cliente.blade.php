@@ -1,4 +1,4 @@
- <div class="col-lg-12 col-xl-12">
+<div class="col-lg-12 col-xl-12">
     <div class="card card-custom gutter-b bg-white border-0">
         <div class="card-body">
             <div class="form-group row">
@@ -27,12 +27,13 @@
                     </fieldset>
                 </div>
 
-                <div class="col-md-3 text-center" style="display:inline-flex">
+                <div class="col-md-1 text-center">
                     <a onclick="printPendiente()" class="btn btn-primary" style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
                         <i class="fa fa-print"></i>
                     </a>
-                    <button type="button" class="btn btn-danger" id="btnOpenCerrarSalida" disabled
-                    style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;margin-left:5px">
+                </div>
+                <div class="col-md-2 text-center">
+                    <button type="button" class="btn btn-danger" id="btnOpenCerrarSalida" disabled style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;margin-left:5px">
                         <i class="fa fa-times"></i> Cerrar Salida
                     </button>
                 </div>
