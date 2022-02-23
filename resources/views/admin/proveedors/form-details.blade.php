@@ -69,7 +69,6 @@
             <fieldset class="form-group">
                 <select class="rounded form-control bg-transparent" name="state">
                     @forelse ($states as $state)
-
                     <option value="{{$state['name']}}" @if(isset($proveedor) && ($state['name']==$proveedor->state)) selected @endif>
                         {{$state['name'] }}
                     </option>

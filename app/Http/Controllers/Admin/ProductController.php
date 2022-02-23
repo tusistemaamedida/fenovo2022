@@ -218,7 +218,7 @@ class ProductController extends Controller
                 'p2may'      => $p2may,
                 'mupp2may'   => $mupp2may,
                 'tasiva'     => $tasiva,
-                'descp2'     => $descp2
+                'descp2'     => $descp2,
             ];
         } catch (\Exception $th) {
             return ['type' => 'error', 'msj' => $th->getMessage()];
@@ -228,7 +228,7 @@ class ProductController extends Controller
     private function descp2($p2may, $p2tienda)
     {
         try {
-            return abs(round(((($p2may - $p2tienda) * 100 ) / $p2tienda), 2));
+            return abs(round(((($p2may - $p2tienda) * 100) / $p2tienda), 2));
         } catch (\Exception $e) {
             throw $e;
         }
@@ -402,7 +402,7 @@ class ProductController extends Controller
                     'unit_package'  => $importData[17],
                     'package_palet' => $importData[22],
                     'package_row'   => $importData[23],
-                    'cod_descuento' => ($importData[24] != '' && !is_null($importData[24]))? $importData[24] : null,
+                    'cod_descuento' => ($importData[24] != '' && !is_null($importData[24])) ? $importData[24] : null,
                 ];
                 $producto_nuevo = $this->productRepository->create($insertData);
 

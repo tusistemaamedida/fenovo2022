@@ -6,8 +6,10 @@
             <th>Stock</th>
             <th>Tipo senasa</th>
             <th>Proveedor</th>
+            @can('products.create')
             <th></th>
             <th></th>
+            @endcan
         </tr>
     </thead>
     <tbody>
