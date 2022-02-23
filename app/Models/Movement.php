@@ -9,6 +9,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class Movement
@@ -84,5 +85,19 @@ class Movement extends Model
     public function invoice()
     {
         return $this->hasOne(Invoice::class)->whereNotNull('cae');
+    }
+
+    public function totalKgrs($id)
+    {
+        $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+        $salida   = DB::table('movements as t1')
+            ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
+            ->groupBy('t2.movement_id')
+            ->select([DB::raw('SUM(t2.egress) as total')])
+            ->orderBy('t1.date', 'ASC')
+            ->where('t1.id', $id)
+            ->where('t2.egress', '>', 0)
+            ->whereIn('t1.type', $arrTypes)->first();
+        return $salida->total;
     }
 }

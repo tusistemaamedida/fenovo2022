@@ -18,7 +18,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -118,13 +118,35 @@ class SalidasController extends Controller
         return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
     }
 
+    public function menuPrint(Request $request)
+    {
+        return view('admin.movimientos.salidas.print');
+    }
+
+    public function printEntreFechas(Request $request)
+    {
+        $desde    = $request->desde;
+        $hasta    = $request->hasta;
+        $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+
+        $salidas = Movement::query()
+            ->whereIn('type', $arrTypes)
+            ->orderBy('created_at', 'ASC')
+            ->whereBetween(DB::raw('DATE(created_at)'), [$request->desde, $request->hasta])
+            ->get()
+            ->unique('voucher_number');
+
+        $pdf = PDF::loadView('admin.movimientos.salidas.print.entreFechas', compact('salidas', 'desde', 'hasta'));
+        return $pdf->stream('salidas_fechas.pdf');
+    }
+
     public function pendientePrint(Request $request)
     {
         $session_products = SessionProduct::query()->where('list_id', $request->input('list_id'))->get();
         $explode          = explode('_', $request->input('list_id'));
         $tipo             = $explode[0];
         $destino          = $this::origenData($tipo, $explode[1], true);
-        $pdf              = PDF::loadView('admin.movimientos.salidas.salidas-detalle', compact('session_products', 'destino'));
+        $pdf              = PDF::loadView('admin.movimientos.salidas.print.salidas-detalle', compact('session_products', 'destino'));
         return $pdf->stream('salidas.pdf');
     }
 
@@ -235,7 +257,7 @@ class SalidasController extends Controller
                     for ($i = 0; $i < count($presentaciones); $i++) {
                         $bultos                                   = 0;
                         $bultos_en_session                        = 0;
-                        $presentacion                             = ($presentaciones[$i] == 0)?1:$presentaciones[$i];
+                        $presentacion                             = ($presentaciones[$i] == 0) ? 1 : $presentaciones[$i];
                         $stock_en_session                         = $this->sessionProductRepository->getCantidadTotalDeBultos($product->id, $presentacion);
                         $stock                                    = $product->stock($presentacion);
                         $stock_presentaciones[$i]['presentacion'] = $presentacion;

@@ -8,9 +8,18 @@
 
 @section('content')
 
+@include('admin.movimientos.salidas.print.salidas-header')
 
 @if (isset($session_products))
-@include('admin.movimientos.salidas.salidas-header')
+
+<table class="table table-borderless">
+    <tr>
+        <td>Destino : <strong> {{ $destino->description }} </strong></td>
+        <td>Items <strong> {{ $session_products->count('id') }}</strong> - Bultos <strong> {{ $session_products->sum('quantity') }}</strong></td>
+        <td>Página :: <strong> <span class="pagenum"></span> </strong>
+        </td>
+    </tr>
+</table>
 
 <table class="table table-condensed table-sm">
     <tr class="">
@@ -54,7 +63,7 @@
         <th></th>
     </tr>
 </table>
-@include('admin.movimientos.salidas.salidas-footer')
+@include('admin.movimientos.salidas.print.salidas-footer')
 @endif
 
 @endsection
