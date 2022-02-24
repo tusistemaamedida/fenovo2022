@@ -21,19 +21,21 @@
                             </a>
                         </li>
 
+                        @can('products.index')
                         <li class="nav-item">
                             <a href="{{url('productos')}}" class="nav-link">
                                 <span class="svg-icon nav-icon"> <i class="fas fa-boxes"></i> </span>
                                 <span class="nav-text"> Productos </span>
                             </a>
                         </li>
+                        @endcan
 
                         <li> <span class="nav-text"> ... </span> </li>
 
                         <li class="nav-item">
                             <a href="{{ route('ingresos.index') }}" class="nav-link">
                                 <span class="svg-icon nav-icon"> <i class="fas fa-arrow-alt-circle-left"></i> </span>
-                                <span class="nav-text"> Ingresos </span>
+                                <span class="nav-text">Ingresos </span>
                             </a>
                         </li>
 

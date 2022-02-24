@@ -9,7 +9,7 @@ Route::get('salidas-pendientes', [SalidasController::class, 'pendientes'])->name
 Route::get('salidas/add', [SalidasController::class, 'add'])->name('salidas.add');
 Route::get('salidas/show', [SalidasController::class, 'show'])->name('salidas.show');
 Route::get('salidas-pendiente/show', [SalidasController::class, 'pendienteShow'])->name('salidas.pendiente.show');
-Route::get('salidas-pendiente/print', [SalidasController::class, 'pendientePrint'])->name('salidas.pendiente.print');
+
 Route::get('clientes/salidas', [SalidasController::class, 'getClienteSalida'])->name('get.cliente.salida');
 Route::get('search-products', [SalidasController::class, 'searchProducts'])->name('search.products');
 Route::get('session-products-by-list-id', [SalidasController::class, 'getSessionProducts'])->name('get.session.products');
@@ -24,3 +24,7 @@ Route::post('cambiar-facturacion', [SalidasController::class, 'changeInvoiceProd
 Route::get('get-presentaciones', [SalidasController::class, 'getPresentaciones'])->name('get.presentaciones');
 
 Route::post('salidas-pendiente/destroy', [SalidasController::class, 'pendienteDestroy'])->name('salidas.pendiente.destroy');
+
+Route::get('salidas-pendiente/print', [SalidasController::class, 'pendientePrint'])->name('salidas.pendiente.print');
+Route::get('salidas-menu/print', [SalidasController::class, 'menuPrint'])->name('salidas.menu.print');
+Route::get('salidas-print/entreFechas', [SalidasController::class, 'printEntreFechas'])->name('salidas.printEntreFechas');
