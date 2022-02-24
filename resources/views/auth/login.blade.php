@@ -20,7 +20,7 @@
 
                                 <div class="col-lg-12 col-12 pl-0">
                                     <label for="">Email</label>
-                                    <input type="email" class="form-control  @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="example@mail.com" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                    <input type="email" class="form-control  border-dark @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="example@mail.com" id="exampleInputEmail1" aria-describedby="emailHelp">
 
                                     @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -35,7 +35,14 @@
 
                                 <div class="col-lg-12 col-12 pl-0">
                                     <label for="">Password</label>
-                                    <input type="password" placeholder="......." class="form-control  @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" id="exampleInputPassword1">
+                                    <div class="input-group">
+                                        <input type="password" placeholder="......." class="form-control border-dark  @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" id="password">
+                                        <div class=" input-group-append">
+                                            <span class="input-group-text bg-transparent">
+                                                <span class="fa fa-eye show-t"></span>
+                                            </span>
+                                        </div>
+                                    </div>
 
                                     @error('password')
                                     <span class="invalid-feedback" role="alert">
