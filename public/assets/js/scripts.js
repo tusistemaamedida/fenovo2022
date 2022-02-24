@@ -47,7 +47,7 @@ const store = (route) => {
             jQuery.each(data.errors, function (index, value) {
                 lista_errores += value + '<br />';
                 jQuery('#' + index).addClass('is-invalid');
-                jQuery('#'+ index).next().find('.select2-selection').addClass('is-invalid');
+                jQuery('#' + index).next().find('.select2-selection').addClass('is-invalid');
             });
             toastr.error(lista_errores, 'Verifique');
         },
@@ -152,7 +152,20 @@ jQuery('.close_modal').on("click", function (event) {
     jQuery('.editpopup').removeClass('offcanvas-on');
 });
 
-// Fin botones modales //
+// Activar Submenues
+
+jQuery('[data-submenu]').submenupicker();
+
+// Mostrar Input tipo password
+jQuery('.show-t').on('click', function () {
+    console.log(jQuery("#password").attr("type"))
+    let x = jQuery("#password").attr("type");
+    if (x === "password") {
+        jQuery("#password").attr("type", "text");
+    } else {
+        jQuery("#password").attr("type", "password");
+    }
+});
 
 (function ($) {
     $.extend(true, $.fn.dataTable.defaults, {

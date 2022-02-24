@@ -1,5 +1,10 @@
 @charset "UTF-8";
 
+/* Dropdown menu Hover*/
+
+.topbar li:hover .dropdown-menu {
+    display: block;
+}
 /* DataTable style */
 
 div.dataTables_wrapper div.dataTables_processing {
@@ -20215,19 +20220,19 @@ input[type="radio"].radio-warning:checked + .custom-control-label:before {
     display: none;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button{
+.dataTables_wrapper .dataTables_paginate .paginate_button {
     padding: 0 !important;
 }
-.dataTables_wrapper .dataTables_paginate .paginate_button{
+.dataTables_wrapper .dataTables_paginate .paginate_button {
     border: 0px !important;
 }
 
-.flex{
+.flex {
     display: flex;
-    margin: 0 10px;;
+    margin: 0 10px;
 }
 
-.flex-button{
+.flex-button {
     display: flex;
     margin: 0 10px;
     font-size: 14px;

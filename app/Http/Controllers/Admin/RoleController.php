@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-
+use App\Http\Requests\Roles\EditRequest;
 use App\Repositories\RoleRepository;
 
-use App\Http\Requests\Roles\EditRequest;
-use App\Models\Role as ModelsRole;
-use Spatie\Permission\Models\Role;
+use Illuminate\Http\JsonResponse;
+
+use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 use Yajra\DataTables\Facades\DataTables;
 
@@ -35,11 +33,11 @@ class RoleController extends Controller
                     return ($rol->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
                 })
                 ->addColumn('edit', function ($rol) {
-                    $ruta = "edit(" . $rol->id . ",'" . route('roles.edit') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                    $ruta = route('roles.edit', ['id' => $rol->id]);
+                    return '<a class="dropdown-item" href="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($rol) {
-                    $ruta = "destroy(" . $rol->id . ",'" . route('roles.destroy') . "')";
+                    $ruta = 'destroy(' . $rol->id . ",'" . route('roles.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
                 ->rawColumns(['inactivo', 'edit', 'destroy'])
@@ -51,10 +49,10 @@ class RoleController extends Controller
     public function add()
     {
         try {
-            $role  = null;
+            $role = null;
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.roles.insertByAjax', compact('role'))->render()
+                'html' => view('admin.roles.insertByAjax', compact('role'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -64,12 +62,12 @@ class RoleController extends Controller
     public function store(EditRequest $request)
     {
         try {
-            $data = $request->except(['_token']);
+            $data           = $request->except(['_token']);
             $data['active'] = 1;
             $this->roleRepository->create($data);
             return new JsonResponse([
-                'msj' => 'Actualización correcta !',
-                'type' => 'success'
+                'msj'  => 'Actualización correcta !',
+                'type' => 'success',
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -78,32 +76,18 @@ class RoleController extends Controller
 
     public function edit(Request $request)
     {
-        try {
-            $role  = $this->roleRepository->getOne($request->id);
-            $permissions = Permission::all();
-            return new JsonResponse([
-                'type' => 'success',
-                'html' => view('admin.roles.insertByAjax', compact('role', 'permissions'))->render()
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
+        $role        = $this->roleRepository->getOne($request->id);
+        $permissions = Permission::all();
+        return view('admin.roles.edit', compact('role', 'permissions'));
     }
 
     public function update(EditRequest $request)
     {
-        try {
-            $data['name'] = $request->name;
-            $data['active'] = ($request->has('active')) ? 1 : 0;
-            $this->roleRepository->update($request->input('role_id'), $data);
-            $this->roleRepository->getOne($request->role_id)->syncPermissions($request->input('permissions'));
-            return new JsonResponse([
-                'msj' => 'Actualización correcta !',
-                'type' => 'success'
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
+        $data['name']   = $request->name;
+        $data['active'] = ($request->has('active')) ? 1 : 0;
+        $this->roleRepository->update($request->input('role_id'), $data);
+        $this->roleRepository->getOne($request->role_id)->syncPermissions($request->input('permissions'));
+        return redirect()->route('roles.index');
     }
 
     public function destroy(Request $request)
