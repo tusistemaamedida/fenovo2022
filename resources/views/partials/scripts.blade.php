@@ -30,6 +30,7 @@
 <script src="{{asset('assets/js/ymz_box.min.js')}}"></script>
 
 <script src="{{asset('assets/api/select2/select2.min.js')}}"></script>
+<script src="{{asset('assets/js/bootstrap-submenu.min.js')}}"></script>
 
 <script>
     jQuery.ajaxSetup({
