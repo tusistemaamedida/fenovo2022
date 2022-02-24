@@ -58,26 +58,26 @@
 @endsection
 
 @section('content')
-<div class="bgimg-1">
-    <div class="subheader py-2 py-lg-6 subheader-solid">
-        <div class="container">
-            <nav aria-label="breadcrumb" style="display: inline-flex; float: right;">
-                <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                    <li class="breadcrumb-item active" aria-current="page">
-                        <a href="http://frioteka.com.ar" target="_blank" rel="noopener noreferrer">frioteka.com.ar</a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                        <a href="{{asset('constancias.pdf')}}" target="_blank" rel="noopener noreferrer">Constancias</a>
-                    </li>
 
-                    <li class="breadcrumb-item active" aria-current="page">
-                        <a href="http://fenovo.ar/login" target="_blank" rel="noopener noreferrer">Intranet</a>
-                    </li>
-                </ol>
-            </nav>
+    <div class="bgimg-1">
+        <div class="subheader py-2 py-lg-6 subheader-solid">
+            <div class="container-fluid">
+                <nav aria-label="breadcrumb" style="display: inline-flex; float: right;">
+                    <ol class="breadcrumb bg-white mb-0 px-0 py-2">
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <a href="http://frioteka.com.ar" target="_blank" rel="noopener noreferrer">Frioteka</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <a href="{{asset('constancias.pdf')}}" target="_blank" rel="noopener noreferrer">Constancias</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                          <a href="http://fenovo.ar/login" target="_blank" rel="noopener noreferrer">Intranet</a>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('js')
