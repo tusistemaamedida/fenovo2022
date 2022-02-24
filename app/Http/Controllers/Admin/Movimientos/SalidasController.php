@@ -8,17 +8,18 @@ use App\Models\MovementProduct;
 use App\Models\SessionProduct;
 use App\Models\Store;
 use App\Repositories\CustomerRepository;
+use App\Repositories\EnumRepository;
+
 use App\Repositories\ProductRepository;
 
 use App\Repositories\SessionProductRepository;
-
 use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
 use Barryvdh\DomPDF\Facade as PDF;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -34,12 +35,14 @@ class SalidasController extends Controller
         CustomerRepository $customerRepository,
         StoreRepository $storeRepository,
         ProductRepository $productRepository,
-        SessionProductRepository $sessionProductRepository
+        SessionProductRepository $sessionProductRepository,
+        EnumRepository $enumRepository
     ) {
         $this->productRepository        = $productRepository;
         $this->customerRepository       = $customerRepository;
         $this->storeRepository          = $storeRepository;
         $this->sessionProductRepository = $sessionProductRepository;
+        $this->enumRepository           = $enumRepository;
     }
 
     public function index(Request $request)
@@ -118,13 +121,36 @@ class SalidasController extends Controller
         return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
     }
 
+    public function menuPrint(Request $request)
+    {
+        $tiposalidas = $this->enumRepository->getType('salidas');
+        return view('admin.movimientos.salidas.print.print', compact('tiposalidas'));
+    }
+
+    public function printEntreFechas(Request $request)
+    {
+        $desde    = $request->desde;
+        $hasta    = $request->hasta;
+        $arrTypes = ($request->tipo) ? [$request->tipo] : ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+
+        $salidas = Movement::query()
+            ->whereIn('type', $arrTypes)
+            ->orderBy('created_at', 'ASC')
+            ->whereBetween(DB::raw('DATE(created_at)'), [$request->desde, $request->hasta])
+            ->get()
+            ->unique('voucher_number');
+
+        $pdf = PDF::loadView('admin.movimientos.salidas.print.entreFechas', compact('salidas', 'desde', 'hasta'));
+        return $pdf->stream('salidas_fechas.pdf');
+    }
+
     public function pendientePrint(Request $request)
     {
         $session_products = SessionProduct::query()->where('list_id', $request->input('list_id'))->get();
         $explode          = explode('_', $request->input('list_id'));
         $tipo             = $explode[0];
         $destino          = $this::origenData($tipo, $explode[1], true);
-        $pdf              = PDF::loadView('admin.movimientos.salidas.salidas-detalle', compact('session_products', 'destino'));
+        $pdf              = PDF::loadView('admin.movimientos.salidas.print.salidas-detalle', compact('session_products', 'destino'));
         return $pdf->stream('salidas.pdf');
     }
 
@@ -187,11 +213,11 @@ class SalidasController extends Controller
     public function getSessionProducts(Request $request)
     {
         try {
-            $session_products = $this->sessionProductRepository->getByListId($request->input('list_id'));
+            $session_products      = $this->sessionProductRepository->getByListId($request->input('list_id'));
             $mostrar_check_invoice = !(str_contains($request->input('list_id'), 'DEVOLUCION_'));
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products','mostrar_check_invoice'))->render(),
+                'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products', 'mostrar_check_invoice'))->render(),
             ]);
         } catch (\Exception $e) {
             return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -223,8 +249,8 @@ class SalidasController extends Controller
     {
         try {
             if ($request->has('id') && $request->input('id') != '') {
-                $product = $this->productRepository->getById($request->input('id'));
-                $list_id = $request->input('list_id');
+                $product          = $this->productRepository->getById($request->input('id'));
+                $list_id          = $request->input('list_id');
                 $mostrar_detalles = !(str_contains($list_id, 'DEVOLUCION_'));
 
                 if ($product) {
@@ -235,7 +261,7 @@ class SalidasController extends Controller
                     for ($i = 0; $i < count($presentaciones); $i++) {
                         $bultos                                   = 0;
                         $bultos_en_session                        = 0;
-                        $presentacion                             = ($presentaciones[$i] == 0)?1:$presentaciones[$i];
+                        $presentacion                             = ($presentaciones[$i] == 0) ? 1 : $presentaciones[$i];
                         $stock_en_session                         = $this->sessionProductRepository->getCantidadTotalDeBultos($product->id, $presentacion);
                         $stock                                    = $product->stock($presentacion);
                         $stock_presentaciones[$i]['presentacion'] = $presentacion;
@@ -255,7 +281,7 @@ class SalidasController extends Controller
                         'type' => 'success',
                         'html' => view(
                             'admin.movimientos.salidas.partials.inserByAjax',
-                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total','mostrar_detalles')
+                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total', 'mostrar_detalles')
                         )->render(),
                     ]);
                 }

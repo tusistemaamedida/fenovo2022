@@ -6,7 +6,7 @@
                 <input type="hidden" name="session_list_id" id="session_list_id" value="">
                 <h6>CERRAR SALIDA</h6>
                 <label class="text-dark">
-                    Al cerrar la salida, el stock se actulizará definitivamente, desea continuar ?
+                    El stock se actualizará definitivamente, continúa ?
                 </label>
             </div>
         </div>
@@ -14,7 +14,7 @@
         <div class="row mt-3">
             <div class="col-12">
                 <label class="text-dark">Ingrese una identificación</label>
-                <input type="text" name="voucher_number" id="voucher_number" class="form-control" autofocus>
+                <input type="text" name="voucher_number" value="{{ strtoupper(substr(md5(time()), 0, 6)) }}" id="voucher_number" class="form-control" autofocus>
             </div>
         </div>
 

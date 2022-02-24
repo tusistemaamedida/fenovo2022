@@ -24,10 +24,10 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">Listado
-                                    </h3>
+                                    <h3 class="card-label mb-0 font-weight-bold text-body">Listado</h3>
                                 </div>
                                 <div class="icons d-flex">
+                                    @can('products.create')
                                     <a href="{{route('product.add')}}" class="ml-2">
                                         <span class="bg-primary h-30px font-size-h5 w-30px d-flex align-items-center justify-content-center  rounded-circle shadow-sm ">
                                             <svg width="25px" height="25px" viewBox="0 0 16 16" class="bi bi-plus white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -35,6 +35,7 @@
                                             </svg>
                                         </span>
                                     </a>
+                                    @endcan
                                 </div>
                             </div>
                         </div>
@@ -68,8 +69,10 @@
             {data: 'stock', orderable: false, searchable: false},
             {data: 'senasa', orderable: false, searchable: false},
             {data: 'proveedor', orderable: false},
+            @can('products.create')
             {data: 'editar', class:'text-center', orderable: false, searchable: false},
             {data: 'borrar', class:'text-center', orderable: false, searchable: false},
+            @endcan
         ]
     });
 </script>

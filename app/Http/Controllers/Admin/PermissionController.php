@@ -28,7 +28,7 @@ class PermissionController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $permission = Permission::all();
+            $permission = Permission::all()->where('active', 1)->sortBy('name');
             return Datatables::of($permission)
                 ->addIndexColumn()
                 ->addColumn('rol', function ($permission) {
