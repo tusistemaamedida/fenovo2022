@@ -76,7 +76,6 @@
                                         @if ($loop->iteration % 8 == 0)
                                     </div>
                                     <div class="col-4"> @endif
-
                                         @endforeach
                                     </div>
                                 </div>
