@@ -49,7 +49,10 @@
                                             <th>Username</th>
                                             <th>Email</th>
                                             <th>Rol</th>
-                                            @include('partials.table.head-action')
+                                            <th>Vincular tienda</th>
+                                            <th>Tienda activa</th>
+                                            <th>Editar</th>
+                                            <th>Borrar</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -76,12 +79,16 @@
         @include('partials.table.dom-button'),
         ajax: "{{ route('users.index') }}",
         columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'DT_RowIndex', name: 'DT_RowIndex', 'class':'text-center', orderable: false, searchable: false},
             {data: 'name'},
             {data: 'username'},
             {data: 'email'},
             {data: 'rol'},
-            @include('partials.table.data-action')
+            {data: 'vincular', 'class':'text-center'},
+            {data: 'tienda'},
+            {data: 'edit'},
+            {data: 'destroy'},
+            
         ]
     });      
 </script>

@@ -35,6 +35,25 @@
             </div>
         </header>
         <div class="topbar">
+
+            @role('superadmin')
+            <li class="dropdown">
+                <button class="btn dropdown-toggle text-black-50" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="{{ Auth::user()->rol() }}">
+                    Settings
+                </button>
+                <div class="dropdown-menu bg-dark" aria-labelledby="dropdownMenuButton">
+                    <a href="{{ url('users') }}" class="dropdown-item">
+                        <span class="nav-text">Usuarios</span>
+                    </a>
+                    <a href="{{ route('roles.index') }}" class="dropdown-item">
+                        <span class="nav-text">Roles</span>
+                    </a>
+                    <a href="{{ url('permissions') }}" class="dropdown-item">
+                        <span class="nav-text">Permisos</span>
+                    </a>
+                </div>
+            </li>
+            @endrole
             <li class="dropdown">
                 <button class="btn dropdown-toggle text-black-50" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="{{ Auth::user()->rol() }}">
                     {{ ucfirst(Auth::user()->username) }}
@@ -51,24 +70,6 @@
                     <a class="dropdown-item" href="{{ route('users.editProfile') }}">
                         Perfil
                     </a>
-
-                    @role('superadmin')
-                    <div class="dropdown dropleft dropdown-submenu">
-                        <a class="dropdown-item dropdown-toggle" type="button" data-toggle="dropdown">Setting</a>
-                        <div class="dropdown-menu bg-dark">
-                            <a href="{{ url('users') }}" class="dropdown-item">
-                                <span class="nav-text">Usuarios</span>
-                            </a>
-                            <a href="{{ route('roles.index') }}" class="dropdown-item">
-                                <span class="nav-text">Roles</span>
-                            </a>
-                            <a href="{{ url('permissions') }}" class="dropdown-item">
-                                <span class="nav-text">Permisos</span>
-                            </a>
-                        </div>
-                    </div>
-                    @endrole
-
                 </div>
             </li>
         </div>
