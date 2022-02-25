@@ -59,7 +59,7 @@ class ProductController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('stock', function ($product) {
-                    return $product->stock();
+                    return $product->stock(null,\Auth::user()->store_active);
                 })
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();

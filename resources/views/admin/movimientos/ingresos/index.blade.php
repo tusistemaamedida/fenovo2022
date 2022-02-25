@@ -45,7 +45,11 @@
                                     <thead>
                                         <tr class="bg-dark text-white">
                                             <th>Actualización</th>
-                                            <th>Proveedor</th>
+                                            @if (\Auth::user()->rol() == 'base')
+                                                <th>Origen</th>
+                                            @else
+                                                <th>Proveedor</th>
+                                            @endif
                                             <th>Items</th>
                                             <th>ComprobanteNro</th>
                                             <th>Detalle</th>

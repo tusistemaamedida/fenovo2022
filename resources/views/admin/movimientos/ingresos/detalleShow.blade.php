@@ -1,6 +1,6 @@
 @isset($movimientos)
-<table class=" table table-hover table-striped table-sm">
-    <tr>
+<table class=" table table-hover table-sm text-center">
+    <tr class=" bg-dark text-white">
         <th class="text-center">#</th>
         <th>Cod fenovo</th>
         <th>Producto</th>
@@ -26,7 +26,7 @@
         <th></th>
         <th></th>
     </tr>
-    <tr>
+    <tr class=" bg-info text-white">
         <th></th>
         <th></th>
         <th></th>

@@ -378,13 +378,14 @@ class SalidasController extends Controller
 
     public function storeSalida(Request $request)
     {
+        $from = \Auth::user()->store_active;
         try {
             $list_id                       = $request->input('session_list_id');
             $explode                       = explode('_', $list_id);
             $insert_data['type']           = $explode[0];
             $insert_data['to']             = $explode[1];
             $insert_data['date']           = now();
-            $insert_data['from']           = 1;
+            $insert_data['from']           = $from;
             $insert_data['status']         = 'FINISHED';
             $insert_data['voucher_number'] = $request->input('voucher_number');
             $insert_data['flete']          = (float)$request->input('flete');
@@ -394,14 +395,14 @@ class SalidasController extends Controller
             foreach ($session_products as $product) {
                 // resta del balance de la store fenovo porque es salida
                 $latest = MovementProduct::all()
-                    ->where('store_id', 1)
+                    ->where('store_id', $from)
                     ->where('product_id', $product->product_id)
                     ->where('unit_package', $product->unit_package)
                     ->sortByDesc('id')->first();
 
                 $balance = ($latest) ? $latest->balance - ($product->producto->unit_weight * $product->unit_package * $product->quantity) : 0;
                 MovementProduct::firstOrCreate([
-                    'store_id'       => 1,
+                    'store_id'       => $from,
                     'movement_id'    => $movement->id,
                     'product_id'     => $product->product_id,
                     'unit_package'   => $product->unit_package, ], [

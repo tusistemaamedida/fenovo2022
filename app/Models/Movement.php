@@ -59,6 +59,11 @@ class Movement extends Model
         return $this->hasMany(MovementProduct::class)->where('egress', '>', 0);
     }
 
+    public function movement_ingreso_products()
+    {
+        return $this->hasMany(MovementProduct::class)->where('entry', '>', 0);
+    }
+
     public function senasa()
     {
         return $this->belongsToMany(Senasa::class);
@@ -66,6 +71,9 @@ class Movement extends Model
 
     public function origenData($type)
     {
+        $typeTo = $this->to;
+        if(($type == 'TRASLADO' && \Auth::user()->store_active == $typeTo) || $type == 'VENTA' && \Auth::user()->store_active == $typeTo) $typeTo = $this->from;
+
         switch ($type) {
             case 'COMPRA':
                 $proveedor = Proveedor::find($this->from);
@@ -73,11 +81,11 @@ class Movement extends Model
             case 'VENTA':
             case 'TRASLADO':
             case 'DEVOLUCION':
-                $store = Store::find($this->to);
+                $store = Store::find($typeTo);
                 return $store->description;
             case 'VENTACLIENTE':
             case 'DEVOLUCIONCLIENTE':
-                $customer = Customer::find($this->to);
+                $customer = Customer::find($typeTo);
                 return $customer->razon_social;
         }
     }

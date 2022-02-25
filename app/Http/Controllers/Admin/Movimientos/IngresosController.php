@@ -27,8 +27,15 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $arrTypes = ['COMPRA'];
-            $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
+            $arrTypes = ['COMPRA','TRASLADO'];
+
+            if(\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin'){
+                $arrTypes = ['COMPRA'];
+                $movement = Movement::whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('created_at','DESC')->get();
+            }else{
+                $arrTypes = ['VENTA','TRASLADO'];
+                $movement = Movement::where('to', \Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('created_at','DESC')->get();
+            }
             return Datatables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('origen', function ($movement) {
@@ -38,7 +45,7 @@ class IngresosController extends Controller
                     return date('Y-m-d', strtotime($movement->date));
                 })
                 ->addColumn('items', function ($movement) {
-                    $count = count($movement->movement_products);
+                    $count = count($movement->movement_ingreso_products);
                     return '<span class="badge badge-primary">' . $count . '</span>';
                 })
                 ->editColumn('updated_at', function ($movement) {
@@ -112,10 +119,9 @@ class IngresosController extends Controller
 
     public function show(Request $request)
     {
-        $movement    = Movement::find($request->id);
-        $proveedor   = Proveedor::find($movement->from);
-        $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
-        return view('admin.movimientos.ingresos.show', compact('movement', 'proveedor', 'movimientos'));
+        $movement    = Movement::query()->where('id', $request->id)->with('movement_ingreso_products')->first();
+        $movimientos = (isset($movement->movement_ingreso_products))?$movement->movement_ingreso_products:null;
+        return view('admin.movimientos.ingresos.show', compact('movement', 'movimientos'));
     }
 
     public function destroy(Request $request)
