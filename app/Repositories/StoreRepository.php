@@ -36,7 +36,7 @@ class StoreRepository extends BaseRepository
 
     public function getAll()
     {
-        return Store::all();
+        return Store::all()->sortBy('description');
     }
 
     public function search($term)

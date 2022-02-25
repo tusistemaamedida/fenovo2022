@@ -63,11 +63,10 @@ class UserController extends Controller
     public function add()
     {
         try {
-            $stores = $this->storeRepository->getActives();
-            $roles  = $this->roleRepository->getActives();
+            $roles = $this->roleRepository->getActives();
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.users.insertByAjax', compact('roles', 'stores'))->render(),
+                'html' => view('admin.users.insertByAjax', compact('roles'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -97,9 +96,9 @@ class UserController extends Controller
     public function edit(Request $request)
     {
         try {
-            $stores = $this->storeRepository->getActives();
-            $roles  = $this->roleRepository->getActives();
             $user   = $this->userRepository->getOne($request->id);
+            $roles  = $this->roleRepository->getActives();
+            $stores = $user->stores;
             return new JsonResponse([
                 'msj'  => 'Registro guardado correctamente!',
                 'type' => 'success',
@@ -149,7 +148,26 @@ class UserController extends Controller
     public function vincularTienda(Request $request)
     {
         $user   = $this->userRepository->getOne($request->id);
-        $stores = $this->storeRepository->getActives();
+        $stores = $this->storeRepository->getAll();
         return view('admin.users.vincular', compact('user', 'stores'));
+    }
+
+    public function vincularTiendaUpdate(Request $request)
+    {
+        $user = User::find($request->id);
+        $user->stores()->sync($request->get('stores'));
+        $arrStores = $user->stores->pluck('id')->toArray();
+
+        if (!in_array($user->store_active, $arrStores)) {
+            $user->store_active = null;
+            $user->save();
+        }
+
+        $notification = [
+            'message'    => 'Relacion actualizada !',
+            'alert-type' => 'info',
+        ];
+
+        return redirect()->route('users.index')->with($notification);
     }
 }

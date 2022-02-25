@@ -20,16 +20,13 @@
         {!! Form::hidden('id', $user->id) !!}
 
         <div class="row">
-            <div class="col-12">
-                <div class="form-group">
-                    <label>Nombre y apellido</label>
-                    <input type="text" id="name" name="name" @if (isset($user)) value="{{$user->name}}" @else value="" @endif class="form-control" autocomplete="off">
-                </div>
-
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" name="username" @if (isset($user)) value="{{$user->username}}" @else value="" @endif class="form-control" autocomplete="off">
-                </div>
+            <div class="col-6">
+                <label>Nombre y apellido</label>
+                <input type="text" id="name" name="name" @if (isset($user)) value="{{$user->name}}" @else value="" @endif class="form-control" autocomplete="off">
+            </div>
+            <div class="col-6">
+                <label>Username</label>
+                <input type="text" name="username" @if (isset($user)) value="{{$user->username}}" @else value="" @endif class="form-control" autocomplete="off">
             </div>
         </div>
 
@@ -42,9 +39,19 @@
             </div>
         </div>
 
-        <div class="row mt-5">
-            <div class="col-12">
+        <div class="row mb-5 mt-3">
+            <div class="col-3">
+                @foreach ($stores as $store)
+                <label>
+                    {{ Form::checkbox('stores[]', $store->id ) }}
+                    {{$store->description}}
+                </label>
+                <br>
 
+                @if ($loop->iteration % 8 == 0)
+            </div>
+            <div class="col-4"> @endif
+                @endforeach
             </div>
         </div>
 

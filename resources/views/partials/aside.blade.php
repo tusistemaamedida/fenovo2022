@@ -95,6 +95,15 @@
                                 <span class="nav-text">Clientes</span>
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            <a href="{{ url('users') }}" class="nav-link">
+                                <span class="svg-icon nav-icon">
+                                    <i class="fas fa-user-cog"></i>
+                                </span>
+                                <span class="nav-text">Usuarios</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
