@@ -75,6 +75,7 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
+        @include('partials.table.setting'),
         ajax: "{{ route('nc.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
