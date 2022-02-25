@@ -11,6 +11,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\Store;
+use App\Repositories\SessionProductRepository;
 
 use App\Repositories\InvoicesRepository;
 
@@ -37,6 +38,10 @@ class NotasCreditoController extends Controller
                 ->addColumn('destino', function ($movement) {
                     return $movement->origenData($movement->type);
                 })
+                ->addColumn('comprobante_nc', function ($movement) {
+                    if(isset($movement->invoice)) return $movement->invoice->voucher_number;
+                    return '--';
+                })
                 ->editColumn('date', function ($movement) {
                     return date('Y-m-d', strtotime($movement->date));
                 })
@@ -48,14 +53,15 @@ class NotasCreditoController extends Controller
                 })
                 ->addColumn('acciones', function ($movement) {
                     $links = '<a class="flex-button" href="' . route('nc.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
-                    if ($movement->invoice) {
+                    if ($movement->invoice && !is_null($movement->invoice->cae)) {
                         $links .= '<a class="flex-button" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
                     } else {
-                        $links .= '<a class="flex-button"  href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
+                        $ruta = "'".route('create.invoice', ['movment_id' => $movement->id])."'";
+                        $links .= '<a class="flex-button"  href="javascript:void(0)" onclick="createInvoice('. $ruta .')"> <i class="fas fa-file-invoice"></i> </a>';
                     }
                     return $links;
                 })
-                ->rawColumns(['origen', 'date', 'type', 'acciones'])
+                ->rawColumns(['origen', 'date', 'type', 'acciones','comprobante_nc'])
                 ->make(true);
         }
         return view('admin.movimientos.notas-credito.index');

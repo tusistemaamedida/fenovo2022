@@ -50,7 +50,8 @@
                                             <th>Fecha</th>
                                             <th>Destino</th>
                                             <th>Tipo</th>
-                                            <th>Comprobante Nro</th>
+                                            <th>Factura Relacionada</th>
+                                            <th>Comprobante NC</th>
                                             <th>Registro</th>
                                             <th>Detalle</th>
                                         </tr>
@@ -81,10 +82,16 @@
             {data: 'destino'},
             {data: 'type'},
             {data: 'voucher_number',  'class':'text-center'},
+            {data: 'comprobante_nc',  'class':'text-center'},
             {data: 'updated_at'},
             {data: 'acciones','class':'flex'},
         ]
     });
+
+    function createInvoice(ruta){
+        jQuery('#loader').removeClass('hidden');
+        window.location.href = ruta
+    }
 </script>
 
 @endsection

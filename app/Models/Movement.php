@@ -84,7 +84,7 @@ class Movement extends Model
 
     public function invoice()
     {
-        return $this->hasOne(Invoice::class)->whereNotNull('cae');
+        return $this->hasOne(Invoice::class);
     }
 
     public function totalKgrs($id)

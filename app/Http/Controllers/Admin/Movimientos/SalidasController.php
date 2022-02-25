@@ -66,7 +66,7 @@ class SalidasController extends Controller
                 })
                 ->addColumn('acciones', function ($movement) {
                     $links = '<a class="flex-button" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
-                    if ($movement->invoice) {
+                    if ($movement->invoice && !is_null($movement->invoice->cae)) {
                         $links .= '<a class="flex-button" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
                     } else {
                         $links .= '<a class="flex-button" target="_blank" href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
