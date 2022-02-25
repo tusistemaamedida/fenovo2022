@@ -8,10 +8,11 @@
 
 <div class="form-group">
     <div class="row">
-        <div class="col-12">
+        <div class="col-9">
             <label class="text-dark">Descripción</label>
             <input type="text" id="description" name="description" @if (isset($store)) value="{{$store->description}}" @else value="" @endif class="form-control" autofocus required>
         </div>
+        <div class="col-3"></div>
     </div>
 </div>
 
