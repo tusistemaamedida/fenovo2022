@@ -78,7 +78,7 @@ class User extends Authenticatable
 
     public function stores()
     {
-        return $this->hasMany(UserStore::class);
+        return $this->belongsToMany(Store::class, UserStore::class);
     }
 
     public function rol()

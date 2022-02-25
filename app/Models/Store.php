@@ -70,9 +70,9 @@ class Store extends Model
         return $this->hasMany(Store::class, 'storefather_id');
     }
 
-    public function user_store()
+    public function users()
     {
-        return $this->hasMany(UserStore::class);
+        return $this->belongsToMany(User::class, UserStore::class);
     }
 
     public function displayName()

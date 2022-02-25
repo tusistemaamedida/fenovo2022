@@ -49,8 +49,8 @@
                                             <th>Username</th>
                                             <th>Email</th>
                                             <th>Rol</th>
-                                            <th>Vincular tienda</th>
-                                            <th>Tienda activa</th>
+                                            <th>Vincular</th>
+                                            <th>TiendaActiva</th>
                                             <th>Editar</th>
                                             <th>Borrar</th>
                                         </tr>
