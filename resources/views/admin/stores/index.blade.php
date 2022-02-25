@@ -1,15 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="subheader py-2 py-lg-6 subheader-solid">
-    <div class="container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-white mb-0 px-2 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Tiendas</li>
-            </ol>
-        </nav>
-    </div>
-</div>
 
 <div class="d-flex flex-column-fluid">
     <div class="container-fluid">
@@ -21,7 +12,7 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h3 class="card-label mb-0 font-weight-bold text-body">
-                                        Listado
+                                        Tiendas
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
@@ -46,10 +37,10 @@
                                         <tr class="bg-dark text-white">
                                             <th>No</th>
                                             <th>Cod Fenovo</th>
-                                            <th>Nombre referencial</th>
+                                            <th>Nombre </th>
                                             <th>Cuit</th>
-                                            <th>Email</th>
-                                            @include('partials.table.head-action')
+                                            <th></th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -71,15 +62,15 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        @include('partials.table.dom-button'),
+        @include('partials.table.setting'),
         ajax: "{{ route('stores.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'cod_fenovo'},
             {data: 'description'},
             {data: 'cuit'},
-            {data: 'email'},
-            @include('partials.table.data-action')
+            {data: 'edit', name: 'Editar', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'destroy', name: 'Borrar', 'class':'text-center', orderable: false, searchable: false},
         ]
     });
 </script>

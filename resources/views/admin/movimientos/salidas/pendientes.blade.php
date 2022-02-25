@@ -1,15 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="subheader py-2 py-lg-6 subheader-solid">
-    <div class="container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-white mb-0 px-2 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Salidas</li>
-            </ol>
-        </nav>
-    </div>
-</div>
 
 <div class="d-flex flex-column-fluid">
     <div class="container-fluid">
@@ -21,7 +12,7 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h3 class="card-label mb-0 font-weight-bold text-body">
-                                        Listado
+                                        Salidas en preparación
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
@@ -72,7 +63,7 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        @include('partials.table.dom-button'),
+        @include('partials.table.setting'),
         ordering: false,
         ajax: "{{ route('salidas.pendientes') }}",
         columns: [

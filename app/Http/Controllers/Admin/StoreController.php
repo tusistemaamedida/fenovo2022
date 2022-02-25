@@ -12,7 +12,7 @@ use App\Repositories\StoreRepository;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class StoreController extends Controller
@@ -30,7 +30,12 @@ class StoreController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $store = Store::all();
+            if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
+                $store = Store::all();
+            } else {
+                $store = Auth::user()->stores;
+            }
+
             return Datatables::of($store)
                 ->addIndexColumn()
                 ->addColumn('cod_fenovo', function ($store) {
