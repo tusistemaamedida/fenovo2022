@@ -67,11 +67,11 @@ class SessionProductRepository extends BaseRepository
 
     public function groupBy($group)
     {
-        return SessionProduct::select()
-        ->where('list_id','not like', "%DEVOLUCION_%")
-        ->orderBy('updated_at', 'DESC')
-        ->get()
-        ->unique($group);
+        if(\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin'){
+            return SessionProduct::select()->where('list_id','not like', "%DEVOLUCION_%")->orderBy('updated_at', 'DESC')->get()->unique($group);
+        }else{
+            return SessionProduct::select()->where('list_id','not like', "%DEVOLUCION_%")->where('store_id', \Auth::user()->store_active)->orderBy('updated_at', 'DESC')->get()->unique($group);
+        }
     }
 
     public function getFlete($list_id)

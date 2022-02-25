@@ -42,7 +42,7 @@ class StoreRepository extends BaseRepository
     public function search($term)
     {
         return Store::where('active', true)
-                    ->where('cod_fenovo', '!=', 1)
+                    ->where('storefather_id', \Auth::user()->store_active)
                     ->where(function ($query) use ($term) {
                         $query->orWhere('description', 'LIKE', '%' . $term . '%')
                               ->orWhere('cod_fenovo', 'LIKE', '%' . $term . '%')

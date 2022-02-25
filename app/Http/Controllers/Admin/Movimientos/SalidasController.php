@@ -49,7 +49,11 @@ class SalidasController extends Controller
     {
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-            $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
+            if(\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin'){
+                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
+            }else{
+                $movement = Movement::where('from', \Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('created_at','DESC')->get();
+            }
             return DataTables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('destino', function ($movement) {
@@ -195,7 +199,7 @@ class SalidasController extends Controller
         foreach ($products as $product) {
             $disabled      = '';
             $text_no_stock = '';
-            $stock         = $product->stock();
+            $stock         = $product->stock(null,\Auth::user()->store_active);
             if (!$stock) {
                 $disabled      = 'disabled';
                 $text_no_stock = ' -- SIN STOCK --';
@@ -256,7 +260,7 @@ class SalidasController extends Controller
                 if ($product) {
                     $stock_presentaciones = [];
                     $presentaciones       = explode('|', $product->unit_package);
-                    $stock_total          = $product->stock();
+                    $stock_total          = $product->stock(null,\Auth::user()->store_active);
 
                     for ($i = 0; $i < count($presentaciones); $i++) {
                         $bultos                                   = 0;
@@ -342,7 +346,7 @@ class SalidasController extends Controller
             }
 
             $insert_data['list_id']    = $to_type . '_' . $to;
-            $insert_data['store_id']   = 1;
+            $insert_data['store_id']   = \Auth::user()->store_active;
             $insert_data['invoice']    = true;
             $insert_data['product_id'] = $product_id;
             for ($i = 0; $i < count($unidades); $i++) {
