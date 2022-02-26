@@ -39,7 +39,7 @@
 
                         <li class="nav-item" title="Salidas en preparación">
                             <a href="{{route('salidas.pendientes')}}" class="nav-link">
-                                <span class="svg-icon nav-icon"> <i class="fas fa-arrow-alt-circle-right text-secondary"></i> </span>
+                                <span class="svg-icon nav-icon"> <i class="fas fa-truck-moving text-secondary"></i> </span>
                                 <span class="nav-text">Salidas</span>
                             </a>
                         </li>
@@ -58,9 +58,11 @@
                             </a>
                         </li>
 
-                        <li class="nav-item" title="Documentos Senasa">
+                        <li class="nav-item ml-2" title="Documentos Senasa">
                             <a href="{{route('senasa.index')}}" class="nav-link">
-                                <span class="svg-icon nav-icon"> <i class="fa fa-calendar-check"></i> </span>
+                                <span class="svg-icon nav-icon">
+                                    <img src="{{asset('assets/images/misc/senasa.ico')}}" alt="senasa">
+                                </span>
                                 <span class="nav-text">Senasa</span>
                             </a>
                         </li>
@@ -68,11 +70,9 @@
                         <li class="nav-item" title="Proveedores">
                             <a href="{{url('proveedores')}}" class="nav-link">
                                 <span class="svg-icon nav-icon">
-                                    <i class="fas fa-truck"></i>
+                                    <i class="fas fa-industry"></i>
                                 </span>
-                                <span class="nav-text">
-                                    Proveedores
-                                </span>
+                                <span class="nav-text"> Proveedores </span>
                             </a>
                         </li>
                         <li class="nav-item" title="Lista de Friotekas">

@@ -34,19 +34,15 @@
         </header>
         <div class="topbar">
 
+            <div class="btn-clean mr-2 text-black-50">
+                {{ ucfirst(Auth::user()->username) }} <span class=" text-warning">| </span>{{ Auth::user()->rol() }}<span class=" text-warning"> |</span>
+            </div>
+
             <li class="dropdown">
                 <button class="btn dropdown-toggle text-black-50" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="{{ Auth::user()->rol() }}">
-                    {{ ucfirst(Auth::user()->username) }} <span class=" text-warning">| </span>{{ Auth::user()->rol() }}<span class=" text-warning"> |</span>
+                    Opción
                 </button>
                 <div class="dropdown-menu bg-dark " aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="#">
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="rounded-pill" style="border: none;">
-                                Salir
-                            </button>
-                        </form>
-                    </a>
                     <a class="dropdown-item" href="{{ route('users.editProfile') }}">
                         Perfil
                     </a>
@@ -67,6 +63,17 @@
                     @endrole
                 </div>
             </li>
+
+            <div class="btn btn-icon btn-clean mr-1 text-black-50">
+                <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="rounded-pill" style="border: none;">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
+            </div>
+
+
         </div>
     </div>
 </div>
