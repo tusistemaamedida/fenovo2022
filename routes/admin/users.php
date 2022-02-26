@@ -13,3 +13,5 @@ Route::get('users/edit-profile', [UserController::class, 'editProfile'])->name('
 
 Route::get('users/vincular-tienda', [UserController::class, 'vincularTienda'])->name('users.vincular.tienda');
 Route::post('users/vincular-tienda', [UserController::class, 'vincularTiendaUpdate'])->name('users.vincular.tienda.update');
+
+Route::post('users/activar-tienda', [UserController::class, 'activarTienda'])->name('users.activar.tienda');

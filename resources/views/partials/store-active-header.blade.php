@@ -1,0 +1,1 @@
+Tienda activa <span class=" font-monospace"> {{ $user->store_active()}} </span>

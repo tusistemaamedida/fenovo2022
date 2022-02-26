@@ -170,4 +170,20 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with($notification);
     }
+
+    public function activarTienda(Request $request)
+    {
+        try {
+            $user               = User::find($request->user_id);
+            $user->store_active = $request->id;
+            $user->save();
+            return new JsonResponse([
+                'type'   => 'success',
+                'header' => view('partials.store-active-header', compact('user'))->render(),
+                'body'   => view('partials.store-active-body', compact('user'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
 }

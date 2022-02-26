@@ -1,37 +1,29 @@
-<div id="tc_header" class="header header-fixed bg-dark">
+<div id="tc_header" class="header header-fixed mt-2 bg-dark">
     <div class="container-fluid d-flex align-items-stretch justify-content-between">
-        <div class="header-menu-wrapper header-menu-wrapper-left" id="tc_header_menu_wrapper">
-            <div id="tc_header_menu" class="header-menu header-menu-mobile header-menu-layout-default">
+        <div class="header-menu-wrapper ">
+            <div class="header-menu header-menu-mobile header-menu-layout-default">
                 <ul class="menu-nav">
-                    <li class="menu-item menu-item-open menu-item-here menu-item-submenu menu-item-rel menu-item-open menu-item-here menu-item-active p-0" data-menu-toggle="click" aria-haspopup="true">
+                    <span class="menu-item  p-0" aria-haspopup="true">
                         <div class="btn  btn-clean btn-dropdown mr-0 p-0" id="tc_aside_toggle">
                             <span class="svg-icon svg-icon-xl svg-icon-primary">
                                 <svg width="24px" height="24px" viewBox="0 0 16 16" class="bi bi-list" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
                                 </svg>
                             </span>
-
-                            @if(Auth::user()->rol()=='base')
-                            Tienda activa <span class=" font-monospace text-white ">{{ Auth::user()->store_active()}}</span>
-                            @endif
+                            FENOVO SA ::
+                            <span id="storeActiveHeader">
+                                @if(Auth::user()->rol()=='base')
+                                Tienda activa <span class=" active">
+                                    {{ Auth::user()->store_active()}}
+                                </span>
+                                @endif
+                            </span>
                         </div>
-                    </li>
+                    </span>
                 </ul>
             </div>
         </div>
-        <header class="pos-header">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-xl-12 col-lg-12 col-md-12">
-                        <div class="greeting-text">
-                            <h3 class="card-label mb-0 mt-2">
-                                FENOVO SA
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+
         <div class="topbar">
 
             <div class="btn-clean mr-2 text-black-50">

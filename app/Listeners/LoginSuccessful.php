@@ -29,9 +29,6 @@ class LoginSuccessful
         $user             = $event->user;
         $user->last_login = date('Y-m-d H:i:s');
         $user->save();
-
-        $stores = $user->stores();
-
         //FacadesSession::flash('login-success', $stores);
         FacadesSession::flash('login-success', 'Hola <strong>' . $event->user->name . ', </strong> bienvenido nuevamente !');
     }
