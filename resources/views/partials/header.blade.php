@@ -26,14 +26,14 @@
 
         <div class="topbar">
 
-            <div class="btn-clean mr-2 text-black-50">
-                {{ ucfirst(Auth::user()->username) }} <span class=" text-warning">| </span>{{ Auth::user()->rol() }}<span class=" text-warning"> |</span>
-            </div>
+            <span class="text-black-50 m-2">
+                {{ ucfirst(Auth::user()->username) }} <span class=" text-warning">| </span>{{ Auth::user()->rol() }}
+            </span>
 
             <li class="dropdown">
-                <button class="btn dropdown-toggle text-black-50" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="{{ Auth::user()->rol() }}">
-                    Opción
-                </button>
+                <span class="dropdown-toggle text-black-50 p-1" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="{{ Auth::user()->rol() }}">
+                    opciones
+                </span>
                 <div class="dropdown-menu bg-dark " aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('users.editProfile') }}">
                         Perfil
@@ -56,14 +56,14 @@
                 </div>
             </li>
 
-            <div class="btn btn-icon btn-clean mr-1 text-black-50">
-                <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="rounded-pill" style="border: none;">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </form>
-            </div>
+
+            <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="btn text-black-50">
+                    <i class="fas fa-sign-out-alt" title="Salir "></i>
+                </button>
+            </form>
+
 
 
         </div>

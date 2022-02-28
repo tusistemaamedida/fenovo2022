@@ -9,6 +9,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -72,7 +73,9 @@ class Movement extends Model
     public function origenData($type)
     {
         $typeTo = $this->to;
-        if(($type == 'TRASLADO' && \Auth::user()->store_active == $typeTo) || $type == 'VENTA' && \Auth::user()->store_active == $typeTo) $typeTo = $this->from;
+        if (($type == 'TRASLADO' && Auth::user()->store_active == $typeTo) || $type == 'VENTA' && Auth::user()->store_active == $typeTo) {
+            $typeTo = $this->from;
+        }
 
         switch ($type) {
             case 'COMPRA':
