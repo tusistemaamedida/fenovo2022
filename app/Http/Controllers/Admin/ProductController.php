@@ -21,6 +21,7 @@ use App\Repositories\ProveedorRepository;
 use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -59,7 +60,7 @@ class ProductController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('stock', function ($product) {
-                    return $product->stock(null,\Auth::user()->store_active);
+                    return $product->stock(null, Auth::user()->store_active);
                 })
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();

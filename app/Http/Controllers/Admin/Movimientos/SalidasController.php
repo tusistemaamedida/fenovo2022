@@ -69,12 +69,11 @@ class SalidasController extends Controller
                     return $movement->type;
                 })
                 ->editColumn('factura_nro', function ($movement) {
-                    if($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE'){
-                        if($movement->invoice && !is_null($movement->invoice->cae)){
-                            return '<a class="flex-button text-primary" data-toggle="tooltip" data-placement="top" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> '.$movement->invoice->voucher_number.' </a>'; ;
-                        }else{
-                            return '<a class="flex-button"   href="' . route('create.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>';
+                    if ($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE') {
+                        if ($movement->invoice && !is_null($movement->invoice->cae)) {
+                            return '<a class="flex-button text-primary" data-toggle="tooltip" data-placement="top" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> ' . $movement->invoice->voucher_number . ' </a>';
                         }
+                        return '<a class="flex-button"   href="' . route('create.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>';
                     }
                 })
                 ->editColumn('updated_at', function ($movement) {
@@ -82,7 +81,7 @@ class SalidasController extends Controller
                 })
                 ->addColumn('acciones', function ($movement) {
                     $links = '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Detalles de salida" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
-                    if($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE'){
+                    if ($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE') {
                         if ($movement->invoice && !is_null($movement->invoice->cae)) {
                             $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
                         } else {
@@ -91,7 +90,7 @@ class SalidasController extends Controller
                     }
                     return $links;
                 })
-                ->rawColumns(['origen', 'date', 'type', 'acciones','factura_nro'])
+                ->rawColumns(['origen', 'date', 'type', 'acciones', 'factura_nro'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.index');
@@ -164,16 +163,7 @@ class SalidasController extends Controller
 
     public function exportEntreFechas(Request $request, Response $response)
     {
-        return $movimientos = Movement::whereBetween(DB::raw('DATE(date)'), [$request['desde'], $request['hasta']])->get();
-
-        return DB::table('movements as t1')
-        ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
-        ->select('t2.id', 't1.date', )
-        ->orderBy('t1.created_at', 'ASC')
-        ->whereBetween(DB::raw('DATE(t1.date)'), [$request['desde'], $request['hasta']])
-        ->get();
-
-        // return Excel::download(new MovementsExport($request), 'movement.xlsx');
+        return Excel::download(new MovementsExport($request), 'movement.csv');
     }
 
     public function pendientePrint(Request $request)

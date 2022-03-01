@@ -35,7 +35,7 @@
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
                                         <tr class="bg-dark text-white">
-                                            <th>Actualización</th>
+                                            <th>Fecha</th>
                                             @if (\Auth::user()->rol() == 'base')
                                             <th>Origen</th>
                                             @else
@@ -69,7 +69,7 @@
         ajax: "{{ route('ingresos.index') }}",
         ordering: false,
         columns: [
-            {data: 'updated_at', 'class':'text-center', searchable: false},
+            {data: 'date', 'class':'text-center', searchable: false},
             {data: 'origen'},
             {data: 'items', 'class':'text-center', searchable: false},
             {data: 'voucher_number',  'class':'text-center'},
