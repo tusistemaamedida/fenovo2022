@@ -12,7 +12,23 @@
             <label class="text-dark">Descripción</label>
             <input type="text" id="description" name="description" @if (isset($store)) value="{{$store->description}}" @else value="" @endif class="form-control" autofocus required>
         </div>
-        <div class="col-3"></div>
+        <div class="col-3">
+            <div class="col-6">
+                <label class="text-dark">Tipo Store</label>
+                <fieldset class="form-group">
+
+                    <select class="rounded form-control bg-transparent" name="store_type" id="store_type">
+                        @forelse ($storeType as $storeT)
+                        <option value="{{$storeT['type']}}" @if(isset($store) && ($storeT['type']==$store->store_type)) selected @endif>
+                            {{$storeT['type'] }}
+                        </option>
+                        @empty
+                        <option value="">Sin tipo store</option>
+                        @endforelse
+                    </select>
+                </fieldset>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -41,7 +57,6 @@
             <fieldset class="form-group">
                 <select class="rounded form-control bg-transparent" name="iva_type">
                     @forelse ($ivaType as $iva)
-
                     <option value="{{$iva['type']}}" @if(isset($store) && ($iva['type']==$store->iva_type)) selected @endif>
                         {{$iva['type'] }}
                     </option>
@@ -139,20 +154,6 @@
 <div class="form-group">
     <div class="row">
         <div class="col-xs-12 col-md-2">
-            <label class="text-dark">Tiendas dependiente</label>
-            <fieldset class="form-group">
-                <select class="rounded form-control bg-transparent" name="storefather_id">
-                    @forelse ($stores as $tienda)
-                    <option value="{{$tienda->id}}" @if(isset($store) && ($tienda->id == $store->storefather_id)) selected @endif>
-                        {{$tienda->fantasy_name}}
-                    </option>
-                    @empty
-                    <option value="">No hay tiendas</option>
-                    @endforelse
-                </select>
-            </fieldset>
-        </div>
-        <div class="col-xs-12 col-md-2">
             <label class="text-dark">Máx Facturación</label>
             <input type="text" id="billing_amount" name="billing_amount" @if (isset($store)) value="{{$store->billing_amount}}" @else value="" @endif class="form-control">
         </div>
@@ -179,18 +180,12 @@
 </div>
 
 <div class="form-group">
-    <div class="row">
-        <div class="col-6">
-            <label class="text-dark">Latitud</label>
-            <input type="text" id="lat" name="lat" @if (isset($store)) value="{{$store->lat}}" @else value="" @endif class="form-control">
-        </div>
-        <div class="col-6">
-            <label class="text-dark">Longitud</label>
-            <input type="text" id="lon" name="lon" @if (isset($store)) value="{{$store->lon}}" @else value="" @endif class="form-control">
+    <div class="row mt-3 mb-3">
+        <div class="col-12">
+
         </div>
     </div>
 </div>
-
 
 @if (isset($store))
 {!! Form::model($store, []) !!}

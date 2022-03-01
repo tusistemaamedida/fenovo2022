@@ -37,7 +37,8 @@
                                         <tr class="bg-dark text-white">
                                             <th>No</th>
                                             <th>Razon social</th>
-                                            <th>Lista precios</th>
+                                            <th>Tienda</th>
+                                            <th>L.Precios</th>
                                             <th>Cuit</th>
                                             <th>Email</th>
                                             <th></th>
@@ -70,6 +71,7 @@
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center', orderable: false, searchable: false},
             {data: 'razon_social'},
+            {data: 'tienda'},
             {data: 'listprice_associate', 'class':'text-center'},
             {data: 'cuit'},
             {data: 'email'},

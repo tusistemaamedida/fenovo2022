@@ -27,8 +27,6 @@ class Store extends Model
 
     protected $fillable = [
         'cod_fenovo',
-        'region_id',
-        'storefather_id',
         'razon_social',
         'description',
         'responsable',
@@ -38,9 +36,10 @@ class Store extends Model
         'city',
         'state',
         'telephone',
-        'print_type',
         'iva_type',
+        'print_type',
         'store_type',
+        'region_id',
         'billing_amount',
         'lat',
         'lon',
@@ -55,19 +54,9 @@ class Store extends Model
         return $this->belongsTo(Region::class, 'region_id');
     }
 
-    public function store()
-    {
-        return $this->belongsTo(Store::class, 'storefather_id');
-    }
-
     public function customers()
     {
         return $this->hasMany(Customer::class);
-    }
-
-    public function stores()
-    {
-        return $this->hasMany(Store::class, 'storefather_id');
     }
 
     public function users()

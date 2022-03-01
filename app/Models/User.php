@@ -85,4 +85,9 @@ class User extends Authenticatable
     {
         return ($this->roles()->first()) ? $this->roles()->first()->name : 'Sin rol';
     }
+
+    public function is_base()
+    {
+        return ($this->rol() == 'base') ? true : false;
+    }
 }

@@ -44,7 +44,7 @@
                 @foreach ($stores as $store)
                 <label>
                     {{ Form::checkbox('stores[]', $store->id ) }}
-                    {{$store->description}}
+                    <strong> {{$store->store_type}} </strong> - {{$store->description}}
                 </label>
                 <br>
 

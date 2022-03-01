@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Movimientos;
 
+use App\Exports\MovementsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\MovementProduct;
@@ -16,11 +17,12 @@ use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
 use Barryvdh\DomPDF\Facade as PDF;
-
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -149,18 +151,18 @@ class SalidasController extends Controller
         return $pdf->stream('salidas_fechas.pdf');
     }
 
-    public function exportEntreFechas(Request $request)
+    public function exportEntreFechas(Request $request, Response $response)
     {
-        $arrTypes = ($request->tipo) ? [$request->tipo] : ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+        return $movimientos = Movement::whereBetween(DB::raw('DATE(date)'), [$request['desde'], $request['hasta']])->get();
 
-        $salidas = Movement::with('movement_salida_products')
-            ->whereIn('type', $arrTypes)
-            ->orderBy('created_at', 'ASC')
-            ->whereBetween(DB::raw('DATE(created_at)'), [$request->desde, $request->hasta])
-            ->get()
-            ->unique('voucher_number');
+        return DB::table('movements as t1')
+        ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
+        ->select('t2.id', 't1.date', )
+        ->orderBy('t1.created_at', 'ASC')
+        ->whereBetween(DB::raw('DATE(t1.date)'), [$request['desde'], $request['hasta']])
+        ->get();
 
-        return $salidas;
+        // return Excel::download(new MovementsExport($request), 'movement.xlsx');
     }
 
     public function pendientePrint(Request $request)
