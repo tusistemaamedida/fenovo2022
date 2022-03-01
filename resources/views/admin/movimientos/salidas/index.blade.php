@@ -32,7 +32,7 @@
                                             <th>Fecha</th>
                                             <th>Destino</th>
                                             <th>Tipo</th>
-                                            <th>Comprobante Nro</th>
+                                            <th>Factura Nro</th>
                                             <th>Registro</th>
                                             <th>Detalle</th>
                                         </tr>
@@ -56,18 +56,27 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-
+        lengthMenu : [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+        stateSave:true,
+        processing: true,
+        serverSide: true,
+        dom: '<lfrtip>',
         ajax: "{{ route('salidas.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
+            {data: 'DT_RowIndex', 'class':'text-center', orderable:false,searchable: false},
             {data: 'date'},
             {data: 'destino'},
             {data: 'type'},
-            {data: 'voucher_number',  'class':'text-center'},
+            {data: 'factura_nro',  'class':'text-center'},
             {data: 'updated_at'},
-            {data: 'acciones','class':'flex'},
+            {data: 'acciones','class':'flex',orderable:false},
         ]
     });
+
+    jQuery('.yajra-datatable').on('draw.dt', function() {
+        jQuery('[data-toggle="tooltip"]').tooltip();
+    })
+
 </script>
 
 @endsection

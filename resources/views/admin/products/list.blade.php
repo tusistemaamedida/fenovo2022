@@ -53,10 +53,10 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        @include('partials.table.setting'),    
+        @include('partials.table.setting'),
         ajax: "{{ route('products.list') }}",
         columns: [
-            
+
             {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},
             {data: 'stock', orderable: false, searchable: false},

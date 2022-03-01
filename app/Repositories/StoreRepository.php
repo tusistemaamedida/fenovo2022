@@ -41,8 +41,15 @@ class StoreRepository extends BaseRepository
 
     public function search($term)
     {
+        $ids = null;
+        if(\Auth::user()->rol() == 'base'){
+            $ids = \Auth::user()->stores->pluck('id');
+        }
+
         return Store::where('active', true)
-                    ->where('storefather_id', \Auth::user()->store_active)
+                    ->when($ids, function ($q, $ids) {
+                        $q->whereIn('id', $ids);
+                    })
                     ->where(function ($query) use ($term) {
                         $query->orWhere('description', 'LIKE', '%' . $term . '%')
                               ->orWhere('cod_fenovo', 'LIKE', '%' . $term . '%')

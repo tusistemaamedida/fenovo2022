@@ -7,7 +7,9 @@
                     <fieldset class="form-group mb-3">
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="to_type" id="to_type">
                             <option value="VENTA" @if(isset($tipo) && $tipo=='VENTA' ) selected @endif>Venta</option>
-                            <option value="TRASLADO" @if(isset($tipo) && $tipo=='TRASLADO' ) selected @endif>Traslado</option>
+                            @if (\Auth::user()->rol() == 'admin' || \Auth::user()->rol() == 'superadmin')
+                                <option value="TRASLADO" @if(isset($tipo) && $tipo=='TRASLADO' ) selected @endif>Traslado</option>
+                            @endif
                             <option value="VENTACLIENTE" @if(isset($tipo) && $tipo=='VENTACLIENTE' ) selected @endif>Venta a cliente</option>
                         </select>
                     </fieldset>

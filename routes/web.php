@@ -39,4 +39,4 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth']], function () {
 
 
 Route::get('factura-electronica/{movment_id}', [InvoiceController::class, 'generateInvoicePdf'])->name('ver.fe');
-//require __DIR__ . '/cron/routes.php';
+require __DIR__ . '/admin/cron/routes.php';

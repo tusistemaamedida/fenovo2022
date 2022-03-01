@@ -65,19 +65,30 @@ class SalidasController extends Controller
                 ->editColumn('type', function ($movement) {
                     return $movement->type;
                 })
+                ->editColumn('factura_nro', function ($movement) {
+                    if($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE'){
+                        if($movement->invoice && !is_null($movement->invoice->cae)){
+                            return '<a class="flex-button text-primary" data-toggle="tooltip" data-placement="top" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> '.$movement->invoice->voucher_number.' </a>'; ;
+                        }else{
+                            return '<a class="flex-button"   href="' . route('create.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>';
+                        }
+                    }
+                })
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
                 })
                 ->addColumn('acciones', function ($movement) {
-                    $links = '<a class="flex-button" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
-                    if ($movement->invoice && !is_null($movement->invoice->cae)) {
-                        $links .= '<a class="flex-button" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
-                    } else {
-                        $links .= '<a class="flex-button" target="_blank" href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
+                    $links = '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Detalles de salida" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                    if($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE'){
+                        if ($movement->invoice && !is_null($movement->invoice->cae)) {
+                            $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
+                        } else {
+                            $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Generar factura"  href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
+                        }
                     }
                     return $links;
                 })
-                ->rawColumns(['origen', 'date', 'type', 'acciones'])
+                ->rawColumns(['origen', 'date', 'type', 'acciones','factura_nro'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.index');
