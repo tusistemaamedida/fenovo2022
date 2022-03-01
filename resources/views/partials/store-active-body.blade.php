@@ -1,5 +1,6 @@
 <div class="row">
     @foreach ($user->stores as $store)
+    @if($store->store_type == 'B')
     <div class="col-xl-3">
         <div class="card card-custom gutter-b bg-white border-0 theme-circle theme-circle-info">
             <div class="card-body">
@@ -16,5 +17,6 @@
             </div>
         </div>
     </div>
+    @endif
     @endforeach
 </div>

@@ -30,21 +30,21 @@
 
                     <li class="nav-item" title="Compra de Mercadería">
                         <a href="{{ route('ingresos.index') }}" class="nav-link">
-                            <span class="svg-icon nav-icon"> <i class="fas fa-coins text-secondary"></i> </span>
+                            <span class="svg-icon nav-icon"> <i class="fas fa-truck-moving"></i> </span>
                             <span class="nav-text">Compras</span>
                         </a>
                     </li>
 
                     <li class="nav-item" title="Salidas en preparación">
                         <a href="{{route('salidas.pendientes')}}" class="nav-link">
-                            <span class="svg-icon nav-icon"> <i class="fas fa-truck-moving text-secondary"></i> </span>
+                            <span class="svg-icon nav-icon"> <i class="fas fa-stopwatch text-secondary"></i> </span>
                             <span class="nav-text">Salidas</span>
                         </a>
                     </li>
 
                     <li class="nav-item" title="Salidas cerradas">
                         <a href="{{route('salidas.index')}}" class="nav-link">
-                            <span class="svg-icon nav-icon"> <i class="fa fa-money-bill-alt text-secondary"></i> </span>
+                            <span class="svg-icon nav-icon"> <i class="fab fa-expeditedssl text-secondary "></i> </span>
                             <span class="nav-text">Salidas.Finalizadas</span>
                         </a>
                     </li>

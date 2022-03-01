@@ -9,11 +9,11 @@
                 <div class="row mt-5">
                     <div class="col-lg-12 col-xl-6">
                         <h3 class="card-label mb-0 font-weight-bold text-body">
-                            Salidas finalizadas
+                            Salidas cerrradas
                         </h3>
                     </div>
                     <div class="col-lg-12 col-xl-6  text-right">
-                        <a href="{{ route('salidas.menu.print') }}"> <i class=" fa fa-print"></i> Opciones de Impresion</a>
+                        <a href="{{ route('salidas.menu.print') }}"> <i class=" fa fa-print"></i> Impresion | Exportación <i class="fas fa-file-csv"></i></a>
                     </div>
                 </div>
                 <div class="row mt-3 mb-3">

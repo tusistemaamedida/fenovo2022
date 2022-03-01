@@ -55,13 +55,14 @@
     </div>
 </div>
 
-<div class="form-group">
-    <label class="text-dark">Tiendas asociada</label>
+<div class="form-group mb-3">
+    <label class="text-dark text-primary">Cliente de la <strong>tienda</strong></label>
     <fieldset class="form-group">
         <select class="rounded form-control bg-transparent" name="store_id">
+            <option value="">Seleccione ...</option>
             @forelse ($stores as $store)
             <option value="{{$store->id}}" @if(isset($customer) && ($store->id == $customer->store_id)) selected @endif>
-                {{$store->fantasy_name}}
+                {{$store->description}}
             </option>
             @empty
             <option value="">No hay tiendas</option>
@@ -70,7 +71,7 @@
     </fieldset>
 </div>
 
-<div class="form-group">
+<div class="form-group mt-4">
     <label class="text-dark">Dirección</label>
     <input type="text" id="address" name="address" @if (isset($customer)) value="{{$customer->address}}" @else value="" @endif class="form-control">
 </div>

@@ -4,18 +4,6 @@
 
 @inject('carbon', 'Carbon\Carbon')
 
-<div class="subheader py-2 py-lg-6 subheader-solid">
-    <div class="container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-white mb-0 px-2 py-2">
-                <li class="breadcrumb-item active" aria-current="page">
-                    Opciones de Impresión
-                </li>
-            </ol>
-        </nav>
-    </div>
-</div>
-
 <div class="d-flex flex-column-fluid">
     <div class="container-fluid">
         <div class="row">
@@ -23,7 +11,7 @@
                 <div class="row mt-5">
                     <div class="col-lg-12 col-xl-6">
                         <h3 class="card-label mb-0 font-weight-bold text-body">
-                            Salida de Mercadería
+                            Salidas :: Impresión | Exportación
                         </h3>
                     </div>
                 </div>
@@ -50,7 +38,7 @@
                                 <input type="date" name="salidaHasta" id="salidaHasta" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark">
                             </fieldset>
                         </div>
-                        <div class="col-3">
+                        <div class="col-4">
                             <fieldset class="input-group form-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Tipo salida</span>
@@ -65,8 +53,11 @@
                                 </select>
                             </fieldset>
                         </div>
-                        <div class="col-3">
+                        <div class="col-1">
                             <a href="javascript:void(0)" onclick="entreFechas()"> <i class=" fa fa-print"></i> Imprimir</a>
+                        </div>
+                        <div class="col-1">
+                            <a href="javascript:void(0)" onclick="entreFechasCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
                         </div>
                     </div>
                 </div>
@@ -80,12 +71,25 @@
 @section('js')
 
 <script>
-    const entreFechas = ()=>{
-        let desde = jQuery("#salidaDesde").val();
-        let hasta = jQuery("#salidaHasta").val();
-        let tipo = jQuery("#tiposalida").val();
+    let desde;
+    let hasta;
+    let tipo;
 
+    const leerDatos = ()=>{
+        desde = jQuery("#salidaDesde").val();
+        hasta = jQuery("#salidaHasta").val();
+        tipo = jQuery("#tiposalida").val();
+    }
+
+    const entreFechas = ()=>{
+        leerDatos();
         let url = "{{route('salidas.printEntreFechas', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
+        window.location = url;
+    }
+
+    const entreFechasCSV= ()=>{
+        leerDatos();
+        let url = "{{route('salidas.exportEntreFechas', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
         window.location = url;
     }
 

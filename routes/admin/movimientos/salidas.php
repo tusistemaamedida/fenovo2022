@@ -28,3 +28,4 @@ Route::post('salidas-pendiente/destroy', [SalidasController::class, 'pendienteDe
 Route::get('salidas-pendiente/print', [SalidasController::class, 'pendientePrint'])->name('salidas.pendiente.print');
 Route::get('salidas-menu/print', [SalidasController::class, 'menuPrint'])->name('salidas.menu.print');
 Route::get('salidas-print/entreFechas', [SalidasController::class, 'printEntreFechas'])->name('salidas.printEntreFechas');
+Route::get('salidas-export/entreFechas', [SalidasController::class, 'exportEntreFechas'])->name('salidas.exportEntreFechas');

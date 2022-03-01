@@ -35,7 +35,6 @@ class StoreController extends Controller
             } else {
                 $store = Auth::user()->stores;
             }
-
             return Datatables::of($store)
                 ->addIndexColumn()
                 ->addColumn('cod_fenovo', function ($store) {
@@ -60,12 +59,12 @@ class StoreController extends Controller
     public function add()
     {
         $store     = null;
-        $stores    = $this->storeRepository->getAll();
         $regiones  = $this->regionRepository->getAll();
         $states    = $this->enumRepository->getType('state');
+        $storeType = $this->enumRepository->getType('store');
         $printType = $this->enumRepository->getType('print');
         $ivaType   = $this->enumRepository->getType('iva');
-        return  view('admin.stores.form', compact('store', 'stores', 'regiones', 'states', 'printType', 'ivaType'));
+        return  view('admin.stores.form', compact('store', 'regiones', 'states', 'printType', 'ivaType', 'storeType'));
     }
 
     public function store(EditRequest $request)
@@ -73,7 +72,7 @@ class StoreController extends Controller
         try {
             $data           = $request->except(['_token']);
             $data['active'] = 1;
-            $this->storeRepository->create($data);
+            return $this->storeRepository->create($data);
             return new JsonResponse([
                 'msj'  => 'Actualización correcta !',
                 'type' => 'success',
@@ -86,12 +85,12 @@ class StoreController extends Controller
     public function edit(Request $request)
     {
         $store     = $this->storeRepository->getOne($request->id);
-        $stores    = $this->storeRepository->getAll();
         $regiones  = $this->regionRepository->getAll();
         $states    = $this->enumRepository->getType('state');
+        $storeType = $this->enumRepository->getType('store');
         $printType = $this->enumRepository->getType('print');
         $ivaType   = $this->enumRepository->getType('iva');
-        return  view('admin.stores.form', compact('store', 'stores', 'regiones', 'states', 'printType', 'ivaType'));
+        return  view('admin.stores.form', compact('store', 'regiones', 'states', 'printType', 'ivaType', 'storeType'));
     }
 
     public function update(EditRequest $request)
@@ -100,7 +99,7 @@ class StoreController extends Controller
             $data                = $request->except(['_token', 'store_id', 'active', 'online_sale']);
             $data['active']      = ($request->has('active')) ? 1 : 0;
             $data['online_sale'] = ($request->has('online_sale')) ? 1 : 0;
-            $stores              = $this->storeRepository->update($request->input('store_id'), $data);
+            $this->storeRepository->update($request->input('store_id'), $data);
             return new JsonResponse([
                 'msj'  => 'Actualización correcta !',
                 'type' => 'success',

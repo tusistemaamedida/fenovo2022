@@ -37,6 +37,7 @@
                                         <tr class="bg-dark text-white">
                                             <th>No</th>
                                             <th>Cod Fenovo</th>
+                                            <th>Tipo tienda</th>
                                             <th>Nombre </th>
                                             <th>Cuit</th>
                                             <th></th>
@@ -67,6 +68,7 @@
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'cod_fenovo'},
+            {data: 'store_type', 'class':'text-center font-weight-bolder',},
             {data: 'description'},
             {data: 'cuit'},
             {data: 'edit', name: 'Editar', 'class':'text-center', orderable: false, searchable: false},

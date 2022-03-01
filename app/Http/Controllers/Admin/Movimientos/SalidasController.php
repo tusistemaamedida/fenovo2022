@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Movimientos;
 
+use App\Exports\MovementsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\MovementProduct;
@@ -16,10 +17,12 @@ use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
 use Barryvdh\DomPDF\Facade as PDF;
-
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -49,10 +52,10 @@ class SalidasController extends Controller
     {
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-            if(\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin'){
+            if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
-            }else{
-                $movement = Movement::where('from', \Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('created_at','DESC')->get();
+            } else {
+                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('created_at', 'DESC')->get();
             }
             return DataTables::of($movement)
                 ->addIndexColumn()
@@ -159,6 +162,20 @@ class SalidasController extends Controller
         return $pdf->stream('salidas_fechas.pdf');
     }
 
+    public function exportEntreFechas(Request $request, Response $response)
+    {
+        return $movimientos = Movement::whereBetween(DB::raw('DATE(date)'), [$request['desde'], $request['hasta']])->get();
+
+        return DB::table('movements as t1')
+        ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
+        ->select('t2.id', 't1.date', )
+        ->orderBy('t1.created_at', 'ASC')
+        ->whereBetween(DB::raw('DATE(t1.date)'), [$request['desde'], $request['hasta']])
+        ->get();
+
+        // return Excel::download(new MovementsExport($request), 'movement.xlsx');
+    }
+
     public function pendientePrint(Request $request)
     {
         $session_products = SessionProduct::query()->where('list_id', $request->input('list_id'))->get();
@@ -210,7 +227,7 @@ class SalidasController extends Controller
         foreach ($products as $product) {
             $disabled      = '';
             $text_no_stock = '';
-            $stock         = $product->stock(null,\Auth::user()->store_active);
+            $stock         = $product->stock(null, Auth::user()->store_active);
             if (!$stock) {
                 $disabled      = 'disabled';
                 $text_no_stock = ' -- SIN STOCK --';
@@ -271,7 +288,7 @@ class SalidasController extends Controller
                 if ($product) {
                     $stock_presentaciones = [];
                     $presentaciones       = explode('|', $product->unit_package);
-                    $stock_total          = $product->stock(null,\Auth::user()->store_active);
+                    $stock_total          = $product->stock(null, Auth::user()->store_active);
 
                     for ($i = 0; $i < count($presentaciones); $i++) {
                         $bultos                                   = 0;
@@ -357,7 +374,7 @@ class SalidasController extends Controller
             }
 
             $insert_data['list_id']    = $to_type . '_' . $to;
-            $insert_data['store_id']   = \Auth::user()->store_active;
+            $insert_data['store_id']   = Auth::user()->store_active;
             $insert_data['invoice']    = true;
             $insert_data['product_id'] = $product_id;
             for ($i = 0; $i < count($unidades); $i++) {
@@ -389,7 +406,7 @@ class SalidasController extends Controller
 
     public function storeSalida(Request $request)
     {
-        $from = \Auth::user()->store_active;
+        $from = Auth::user()->store_active;
         try {
             $list_id                       = $request->input('session_list_id');
             $explode                       = explode('_', $list_id);
