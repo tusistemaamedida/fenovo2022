@@ -11,7 +11,7 @@ use App\Repositories\ProductRepository;
 use App\Repositories\ProveedorRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class IngresosController extends Controller
@@ -27,14 +27,14 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $arrTypes = ['COMPRA','TRASLADO'];
+            $arrTypes = ['COMPRA', 'TRASLADO'];
 
-            if(\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin'){
+            if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $arrTypes = ['COMPRA'];
-                $movement = Movement::whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('created_at','DESC')->get();
-            }else{
-                $arrTypes = ['VENTA','TRASLADO'];
-                $movement = Movement::where('to', \Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('created_at','DESC')->get();
+                $movement = Movement::whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('created_at', 'DESC')->get();
+            } else {
+                $arrTypes = ['VENTA', 'TRASLADO'];
+                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('created_at', 'DESC')->get();
             }
             return Datatables::of($movement)
                 ->addIndexColumn()
@@ -120,7 +120,7 @@ class IngresosController extends Controller
     public function show(Request $request)
     {
         $movement    = Movement::query()->where('id', $request->id)->with('movement_ingreso_products')->first();
-        $movimientos = (isset($movement->movement_ingreso_products))?$movement->movement_ingreso_products:null;
+        $movimientos = (isset($movement->movement_ingreso_products)) ? $movement->movement_ingreso_products : null;
         return view('admin.movimientos.ingresos.show', compact('movement', 'movimientos'));
     }
 
