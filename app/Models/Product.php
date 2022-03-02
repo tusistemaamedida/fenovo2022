@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +28,6 @@ class Product extends Model
         'type_id'          => 'int',
         'senasa_id'        => 'int',
         'active'           => 'int',
-        'is_senasa'        => 'int',
     ];
 
     protected $dates = [
@@ -74,7 +69,6 @@ class Product extends Model
         'cod_descuento',
         'senasa_id',
         'active',
-        'is_senasa',
     ];
 
     public function product_category()
