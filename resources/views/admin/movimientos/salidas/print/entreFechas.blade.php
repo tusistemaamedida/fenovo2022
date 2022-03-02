@@ -37,7 +37,7 @@
         <td>{{ $salida->type }}</td>
         <td>{{ $salida->voucher_number }}</td>
         <td>{{ count($salida->movement_salida_products) }}</td>
-        <td>{{ $salida->totalKgrs($salida->id) }}</td>
+        <td>{{ $salida->totalKgrs() }}</td>
     </tr>
 
     @endforeach

@@ -1,5 +1,8 @@
 {
-  "salidas": [
+  "movimientos": [
+    {
+      "type": "COMPRA"
+    },
     {
       "type": "VENTA"
     },
@@ -11,6 +14,9 @@
     },
     {
       "type": "DEVOLUCION"
+    },
+    {
+      "type": "DEVOLUCIONCLIENTE"
     }
   ],
   "iva": [
@@ -25,9 +31,6 @@
     }
   ],
   "store": [
-    {
-      "type": "N"
-    },
     {
       "type": "B"
     },

@@ -92,7 +92,7 @@ class InvoiceController extends Controller
                 array_push($array_productos,$objProduct);
             }
 
-            $total_lineas = 24;
+            $total_lineas = 22;
             $paginas = (int) ((count($array_productos)/$total_lineas) + 1);
             $faltantes_para_completar = ($total_lineas * $paginas) - count($array_productos);
 

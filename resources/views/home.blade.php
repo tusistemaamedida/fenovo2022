@@ -29,7 +29,7 @@
                                 <div class="col-xl-3">
                                     <div class="card card-custom gutter-b bg-white border-0 theme-circle theme-circle-info">
                                         <div class="card-body">
-                                            <h3 class="text-body font-weight-bold">{{ $store->description }}</h3>
+                                            <p class="text-body font-weight-bold">{{ $store->description }}</p>
                                             <div class="mt-3">
                                                 <div class="text-black-50 mt-3">
                                                     @if(Auth::user()->store_active != $store->id )

@@ -98,17 +98,33 @@ class Movement extends Model
         return $this->hasOne(Invoice::class);
     }
 
-    public function totalKgrs($id)
+    public function totalKgrs()
     {
-        $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-        $salida   = DB::table('movements as t1')
+        $arrIngreso     = ['COMPRA'];
+        $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
+        $arrOtros       = ['TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $arrTypes       = ['COMPRA', 'VENTA', 'VENTACLIENTE', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $fieldCondition = (in_array($this->type, $arrIngreso)) ? 't2.entry' : 't2.egress';
+
+        if (in_array($this->type, $arrOtros)) {
+            $movimiento = DB::table('movements as t1')
             ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
             ->groupBy('t2.movement_id')
-            ->select([DB::raw('SUM(t2.egress) as total')])
+            ->select([DB::raw('SUM(t2.entry) as total')])
             ->orderBy('t1.date', 'ASC')
-            ->where('t1.id', $id)
-            ->where('t2.egress', '>', 0)
+            ->where('t1.id', $this->id)
+            ->whereIn('t1.type', $arrOtros)->first();
+        } else {
+            $movimiento = DB::table('movements as t1')
+            ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
+            ->groupBy('t2.movement_id')
+            ->select([DB::raw("SUM($fieldCondition) as total")])
+            ->orderBy('t1.date', 'ASC')
+            ->where('t1.id', $this->id)
+            ->where($fieldCondition, '>', 0)
             ->whereIn('t1.type', $arrTypes)->first();
-        return $salida->total;
+        }
+
+        return ($movimiento) ? $movimiento->total : 0;
     }
 }

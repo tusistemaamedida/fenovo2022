@@ -1,4 +1,15 @@
-<header>
+<style>
+    #header {
+        line-height: 0.6cm;
+        position: fixed;
+        top: 1.2cm;
+        left: 1.5cm;
+        right: 1.5cm;
+        height: 3cm;
+    }
+</style>
+
+<div id="header">
     <table style="width: 100%">
         <tr>
             <td style="width: 35%"> Salida de Mercaderías </td>
@@ -11,4 +22,4 @@
             </td>
         </tr>
     </table>
-</header>
+</div>
