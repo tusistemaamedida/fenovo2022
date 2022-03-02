@@ -8,6 +8,7 @@ use App\Models\Product;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DetalleIngresosController extends Controller
 {
@@ -15,15 +16,11 @@ class DetalleIngresosController extends Controller
     {
         try {
             foreach ($request->datos as $movimiento) {
-                $latest = MovementProduct::all()
-                    ->where('store_id', 1)
-                    ->where('product_id', $movimiento['product_id'])
-                    ->where('unit_package', $movimiento['unit_package'])
-                    ->sortByDesc('id')->first();
-
-                $balance               = ($latest) ? $latest->balance + $movimiento['entry'] : $movimiento['entry'];
+                $product               = Product::find($movimiento['product_id']);
+                $latest                = $product->stock(null, Auth::user()->store_active);
+                $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
                 $movimiento['balance'] = $balance;
-                MovementProduct::firstOrCreate(['store_id' => 1, 'movement_id' => $movimiento['movement_id'], 'product_id' => $movimiento['product_id'], 'unit_package' => $movimiento['unit_package']], $movimiento);
+                MovementProduct::firstOrCreate(['store_id' => Auth::user()->store_active, 'movement_id' => $movimiento['movement_id'], 'product_id' => $movimiento['product_id'], 'unit_package' => $movimiento['unit_package']], $movimiento);
             }
 
             return new JsonResponse(['msj' => 'Guardado', 'type' => 'success']);
