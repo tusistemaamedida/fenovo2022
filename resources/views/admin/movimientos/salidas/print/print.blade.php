@@ -41,10 +41,10 @@
                         <div class="col-4">
                             <fieldset class="input-group form-group mb-3">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Tipo salida</span>
+                                    <span class="input-group-text">Movimiento</span>
                                 </div>
                                 <select class="rounded form-control bg-transparent" name="tiposalida" id="tiposalida">
-                                    <option value="">Seleccione un tipo ... </option>
+                                    <option value="">TODOS</option>
                                     @foreach ($tiposalidas as $tiposalida)
                                     <option value="{{$tiposalida['type']}}">
                                         {{$tiposalida['type'] }}

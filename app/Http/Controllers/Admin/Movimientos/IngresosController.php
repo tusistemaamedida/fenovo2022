@@ -27,7 +27,6 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $arrTypes = ['COMPRA', 'TRASLADO'];
 
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $arrTypes = ['COMPRA'];

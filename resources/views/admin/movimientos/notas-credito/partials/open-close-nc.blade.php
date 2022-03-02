@@ -1,5 +1,5 @@
 <div id="closeSalida" class="offcanvas offcanvas-right kt-color-panel p-5">
-    <form action="{{route('guardar.salida')}}" method="POST">
+    <form action="{{route('guardar.nc')}}" method="POST">
         @csrf
         <div class="row">
             <div class="col-12">

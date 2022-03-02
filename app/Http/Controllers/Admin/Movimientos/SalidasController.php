@@ -140,7 +140,7 @@ class SalidasController extends Controller
 
     public function menuPrint(Request $request)
     {
-        $tiposalidas = $this->enumRepository->getType('salidas');
+        $tiposalidas = $this->enumRepository->getType('movimientos');
         return view('admin.movimientos.salidas.print.print', compact('tiposalidas'));
     }
 
@@ -415,7 +415,6 @@ class SalidasController extends Controller
                 $latest = MovementProduct::all()
                     ->where('store_id', $from)
                     ->where('product_id', $product->product_id)
-                    ->where('unit_package', $product->unit_package)
                     ->sortByDesc('id')->first();
 
                 $balance = ($latest) ? $latest->balance - ($product->producto->unit_weight * $product->unit_package * $product->quantity) : 0;
@@ -437,7 +436,6 @@ class SalidasController extends Controller
                 $latest = MovementProduct::all()
                     ->where('store_id', $insert_data['to'])
                     ->where('product_id', $product->product_id)
-                    ->where('unit_package', $product->unit_package)
                     ->sortByDesc('id')->first();
 
                 $balance = ($latest) ? $latest->balance + ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->producto->unit_weight * $product->unit_package * $product->quantity);
