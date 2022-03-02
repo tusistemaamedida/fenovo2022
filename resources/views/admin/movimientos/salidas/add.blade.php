@@ -199,13 +199,7 @@
     });
     }
 
-    const printPendiente = ()=>{
-        var to_type = jQuery("#to_type").val();
-        var to = jQuery("#to").val();
-        var list_id = to_type+'_'+to;
-        var url = "{{route('salidas.pendiente.print', '')}}"+"?list_id="+list_id;
-        window.location = url;
-    }
+    
 
     function cargarTablaProductos(){
         var to_type = jQuery("#to_type").val();
@@ -224,6 +218,7 @@
             success:function(data){
                 jQuery("#session_products_table").html(data['html']);
                 jQuery("#btnOpenCerrarSalida").attr('disabled',false);
+                jQuery("#btnPrintCerrarSalida").attr('disabled',false);
                 jQuery("#session_list_id").val(list_id);
             },
             error: function (data) {
@@ -333,6 +328,14 @@
         document.getElementById("unidades_a_enviar").reset();
         jQuery('.editpopup').removeClass('offcanvas-on');
         jQuery('#product_search').val(null).trigger('change');
+    })
+
+    jQuery('#btnPrintCerrarSalida').click(function(e){
+        var to_type = jQuery("#to_type").val();
+        var to = jQuery("#to").val();
+        var list_id = to_type+'_'+to;
+        var url = "{{route('salidas.pendiente.print', '')}}"+"?list_id="+list_id;
+        window.location = url;
     })
 
     jQuery("#btnOpenCerrarSalida").click(function(e){

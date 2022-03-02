@@ -8,7 +8,7 @@
 
 @section('content')
 
-@include('admin.movimientos.salidas.print.salidas-header')
+@include('admin.movimientos.print.salidas-header')
 
 @if (isset($session_products))
 
@@ -63,7 +63,7 @@
         <th></th>
     </tr>
 </table>
-@include('admin.movimientos.salidas.print.salidas-footer')
+@include('admin.movimientos.print.salidas-footer')
 @endif
 
 @endsection

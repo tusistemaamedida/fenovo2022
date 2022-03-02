@@ -1,5 +1,4 @@
 <header>
-
     <table style="width:100%; font-size: 11px ">
         <tr>
             <td style="width: 20%">
@@ -24,5 +23,4 @@
             </td>
         </tr>
     </table>
-
 </header>

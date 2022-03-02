@@ -122,7 +122,7 @@ class SenasaController extends Controller
     {
         $senasa      = Senasa::find($request->id);
         $movimientos = $senasa->productos_senasa($request->id);
-        $pdf         = PDF::loadView('admin.movimientos.senasa.detalle-salida', compact('senasa', 'movimientos'));
+        $pdf         = PDF::loadView('admin.movimientos.senasa.print', compact('senasa', 'movimientos'));
         return $pdf->stream('senasa.pdf');
     }
 }

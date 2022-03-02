@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@section('css')
-<link href="{{asset('assets/api/datatable/jquery.dataTables.min.css')}}" rel="stylesheet" type="text/css" />
-@endsection
-
 @section('content')
 
 <div class="d-flex flex-column-fluid">
@@ -21,12 +17,8 @@
                                 </div>
                                 <div class="icons d-flex">
                                     @can('products.create')
-                                    <a href="{{route('product.add')}}" class="ml-2">
-                                        <span class="bg-primary h-30px font-size-h5 w-30px d-flex align-items-center justify-content-center  rounded-circle shadow-sm ">
-                                            <svg width="25px" height="25px" viewBox="0 0 16 16" class="bi bi-plus white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                                            </svg>
-                                        </span>
+                                    <a href="{{route('product.add')}}">
+                                        <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
                                     @endcan
                                 </div>
@@ -35,7 +27,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12 ">
+                    <div class="col-12">
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
                                 @include('admin.products.table-products')
