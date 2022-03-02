@@ -121,7 +121,7 @@ class Product extends Model
             ->when($unit_package, function ($q, $unit_package) {
                 $q->where('unit_package', $unit_package);
             })
-            ->latest()
+            ->orderBy('id', 'DESC')
             ->first();
 
         if ($movement_product) {
