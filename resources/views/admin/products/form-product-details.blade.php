@@ -240,17 +240,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="switch-h d-flex mb-3">
-                    <label style="margin-right: 5px">SENASA?</label>
-                    <div class="custom-control switch custom-switch custom-control-inline mr-0">
-                        <input type="checkbox" class="custom-control-input" id="is_senasa" @if (isset($product) && $product->is_senasa) checked=" " @else unchecked="" @endif name="is_senasa" value="1">
-                        <label class="custom-control-label mr-1" for="is_senasa"></label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
+            <div class="col-md-6">
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="senasa_id">
                         <option value="">Agrupación SENASA</option>
