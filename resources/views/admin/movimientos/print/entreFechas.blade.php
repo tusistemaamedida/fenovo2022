@@ -8,7 +8,7 @@
 
 @section('content')
 
-@include('admin.movimientos.salidas.print.salidas-header')
+@include('admin.movimientos.print.salidas-header')
 
 <table class="table table-borderless">
     <tr>
@@ -24,8 +24,7 @@
         <td>Fecha</td>
         <td>Destino</td>
         <td>Tipo</td>
-        <td>Comprobante Nro</td>
-        <td>Movimientos</td>
+        <td>Comprobante</td>
         <td>Kgrs</td>
     </tr>
     @if (isset($salidas))
@@ -36,10 +35,8 @@
         <td>{{ $salida->origenData($salida->type); }}</td>
         <td>{{ $salida->type }}</td>
         <td>{{ $salida->voucher_number }}</td>
-        <td>{{ count($salida->movement_salida_products) }}</td>
         <td>{{ $salida->totalKgrs() }}</td>
     </tr>
-
     @endforeach
     @endif
 

@@ -11,7 +11,7 @@
                 <div class="row mt-5">
                     <div class="col-lg-12 col-xl-6">
                         <h3 class="card-label mb-0 font-weight-bold text-body">
-                            Salidas :: Impresión | Exportación
+                            Movimientos :: Impresión | Exportación
                         </h3>
                     </div>
                 </div>
@@ -83,13 +83,13 @@
 
     const entreFechas = ()=>{
         leerDatos();
-        let url = "{{route('salidas.printEntreFechas', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
+        let url = "{{route('movement.printEntreFechas', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
         window.location = url;
     }
 
     const entreFechasCSV= ()=>{
         leerDatos();
-        let url = "{{route('salidas.exportEntreFechas', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
+        let url = "{{route('movement.exportEntreFechas', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
         window.location = url;
     }
 

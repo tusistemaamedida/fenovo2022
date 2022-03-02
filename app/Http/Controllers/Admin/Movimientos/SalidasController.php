@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Movimientos;
 
-use App\Exports\MovementsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\MovementProduct;
@@ -10,19 +9,15 @@ use App\Models\SessionProduct;
 use App\Models\Store;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
-
 use App\Repositories\ProductRepository;
-
 use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
+
 use App\Traits\OriginDataTrait;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Response;
-use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -68,12 +63,15 @@ class SalidasController extends Controller
                 ->editColumn('type', function ($movement) {
                     return $movement->type;
                 })
+                ->addColumn('kgrs', function ($movement) {
+                    return $movement->totalKgrs();
+                })
                 ->editColumn('factura_nro', function ($movement) {
                     if ($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE') {
                         if ($movement->invoice && !is_null($movement->invoice->cae)) {
                             return '<a class="flex-button text-primary" data-toggle="tooltip" data-placement="top" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> ' . $movement->invoice->voucher_number . ' </a>';
                         }
-                        return '<a class="flex-button"   href="' . route('create.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>';
+                        return '<a class="flex-button" href="' . route('create.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>';
                     }
                 })
                 ->editColumn('updated_at', function ($movement) {
@@ -90,7 +88,7 @@ class SalidasController extends Controller
                     }
                     return $links;
                 })
-                ->rawColumns(['origen', 'date', 'type', 'acciones', 'factura_nro'])
+                ->rawColumns(['origen', 'date', 'type', 'kgrs', 'acciones', 'factura_nro'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.index');
@@ -138,41 +136,13 @@ class SalidasController extends Controller
         return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
     }
 
-    public function menuPrint(Request $request)
-    {
-        $tiposalidas = $this->enumRepository->getType('movimientos');
-        return view('admin.movimientos.salidas.print.print', compact('tiposalidas'));
-    }
-
-    public function printEntreFechas(Request $request)
-    {
-        $desde    = $request->desde;
-        $hasta    = $request->hasta;
-        $arrTypes = ($request->tipo) ? [$request->tipo] : ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-
-        $salidas = Movement::query()
-            ->whereIn('type', $arrTypes)
-            ->orderBy('created_at', 'ASC')
-            ->whereBetween(DB::raw('DATE(created_at)'), [$request->desde, $request->hasta])
-            ->get()
-            ->unique('voucher_number');
-
-        $pdf = PDF::loadView('admin.movimientos.salidas.print.entreFechas', compact('salidas', 'desde', 'hasta'));
-        return $pdf->stream('salidas_fechas.pdf');
-    }
-
-    public function exportEntreFechas(Request $request, Response $response)
-    {
-        return Excel::download(new MovementsExport($request), 'movement.csv');
-    }
-
     public function pendientePrint(Request $request)
     {
         $session_products = SessionProduct::query()->where('list_id', $request->input('list_id'))->get();
         $explode          = explode('_', $request->input('list_id'));
         $tipo             = $explode[0];
-        $destino          = $this::origenData($tipo, $explode[1], true);
-        $pdf              = PDF::loadView('admin.movimientos.salidas.print.salidas-detalle', compact('session_products', 'destino'));
+        $destino          = $this->origenData($tipo, $explode[1], true);
+        $pdf              = PDF::loadView('admin.movimientos.print.pendientes', compact('session_products', 'destino'));
         return $pdf->stream('salidas.pdf');
     }
 
