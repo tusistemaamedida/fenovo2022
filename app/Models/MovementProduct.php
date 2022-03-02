@@ -43,4 +43,9 @@ class MovementProduct extends Model
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
+    }
 }
