@@ -29,6 +29,12 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/movimientos/salidas.php';
         require __DIR__ . '/admin/movimientos/notas_credito.php';
         require __DIR__ . '/admin/movimientos/senasa.php';
+        // Logistica
+        require __DIR__ . '/admin/transportistas.php';
+        require __DIR__ . '/admin/vehiculos.php';
+        require __DIR__ . '/admin/rutas.php';
+        //
+        require __DIR__ . '/admin/localidades.php';
     });
 });
 

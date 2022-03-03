@@ -26,41 +26,22 @@
 
         <div class="topbar">
 
-            <span class="text-black-50 m-2">
-                {{ ucfirst(Auth::user()->username) }} <span class=" text-warning">| </span>{{ Auth::user()->rol() }}
-            </span>
-
             <li class="dropdown">
                 <span class="dropdown-toggle text-black-50 p-1" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="{{ Auth::user()->rol() }}">
-                    opciones
+                    {{ ucfirst(Auth::user()->username) }} <span class=" text-warning">[</span>{{ Auth::user()->rol() }}<span class=" text-warning">]</span>
                 </span>
                 <div class="dropdown-menu bg-dark " aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="{{ route('users.editProfile') }}">
                         Perfil
                     </a>
-
-                    @role('superadmin')
-
-                    <a class="dropdown-item mb-0 mt-0" href="#" style=" height: 0; border: 0; border-top: 1px solid #fcfcfc">
-                        <hr />
-                    </a>
-
-                    <a class="dropdown-item mt-0" href="{{ route('roles.index') }}">
-                        <span class="nav-text">Roles</span>
-                    </a>
-                    <a class="dropdown-item" href="{{ url('permissions') }}">
-                        <span class="nav-text">Permisos</span>
-                    </a>
-
-                    @endrole
                 </div>
             </li>
 
 
             <form id="logout-form" action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="btn text-black-50">
-                    <i class="fas fa-sign-out-alt" title="Salir "></i>
+                <button type="submit" class="btn btn-close text-black-50">
+                    Salir
                 </button>
             </form>
 

@@ -5,6 +5,11 @@
 .topbar li:hover .dropdown-menu {
     display: block;
 }
+
+.aside li:hover .dropdown-menu {
+    display: block;
+}
+
 /* DataTable style */
 
 div.dataTables_wrapper div.dataTables_processing {
