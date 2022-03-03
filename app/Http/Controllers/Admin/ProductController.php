@@ -11,6 +11,7 @@ use App\Http\Requests\Products\UpdateProduct;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\Product;
+
 use App\Repositories\AlicuotaTypeRepository;
 use App\Repositories\ProducDescuentoRepository;
 use App\Repositories\ProductCategoryRepository;

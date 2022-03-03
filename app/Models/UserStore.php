@@ -8,18 +8,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class UserLocal
- *
- * @property int      $id
- * @property int|null $user_id
- * @property int|null $store_id
- *
- * @property Store|null $store
- * @property User|null  $user
- *
- * @package App\Models
- */
+
 class UserStore extends Model
 {
     protected $table   = 'user_store';
