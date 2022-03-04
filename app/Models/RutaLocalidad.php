@@ -32,7 +32,7 @@ class RutaLocalidad extends Model
         $arrTransportistas = [];
         foreach ($transportistas as $transportista) {
             $transportista = Transportista::find($transportista->transportista_id);
-            array_push($arrTransportistas, $transportista['nombre'].' ');
+            array_push($arrTransportistas, $transportista['nombre'] . ' ');
         }
         return $arrTransportistas;
     }

@@ -28,6 +28,6 @@ class Vehiculo extends Model
 
     public function rutas()
     {
-        return $this->belongsToMany(Ruta::class, RutaVehiculo::class);
+        return $this->belongsToMany(Ruta::class, RutaTransportista::class);
     }
 }

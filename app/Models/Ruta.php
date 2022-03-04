@@ -11,15 +11,22 @@ class Ruta extends Model
 
     protected $table = 'rutas';
 
+    public $timestamps = true;
+
     protected $fillable = [
         'id',
         'nombre',
         'active',
     ];
 
-    public function vehiculos()
+    public function setNombreAttribute($value)
     {
-        return $this->belongsToMany(Vehiculo::class, RutaVehiculo::class);
+        $this->attributes['nombre'] = strtoupper(trim($value));
+    }
+
+    public function transportistas()
+    {
+        return $this->belongsToMany(Transportista::class, RutaTransportista::class);
     }
 
     public function localidades()
@@ -37,13 +44,13 @@ class Ruta extends Model
         return $arrLocalidades;
     }
 
-    public function tipos_vehiculos()
+    public function nombres_transportistas()
     {
-        $vehiculos    = $this->vehiculos;
-        $arrVehiculos = [];
-        foreach ($vehiculos as $vehiculo) {
-            array_push($arrVehiculos, $vehiculo['tipo'] . ',' . $vehiculo['capacidad']);
+        $transportistas    = $this->transportistas;
+        $arrTransportistas = [];
+        foreach ($transportistas as $transportista) {
+            array_push($arrTransportistas, $transportista['nombre']);
         }
-        return $arrVehiculos;
+        return $arrTransportistas;
     }
 }

@@ -11,6 +11,8 @@ class Transportista extends Model
 
     protected $table = 'transportistas';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'id',
         'nombre',
@@ -21,6 +23,11 @@ class Transportista extends Model
         'email',
         'active',
     ];
+
+    public function setNombreAttribute($value)
+    {
+        $this->attributes['nombre'] = strtoupper(trim($value));
+    }
 
     public function vehiculos()
     {

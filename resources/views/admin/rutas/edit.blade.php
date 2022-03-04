@@ -1,15 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="subheader py-2 py-lg-6 subheader-solid">
-    <div class="container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-white mb-0 px-2 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Roles</li>
-            </ol>
-        </nav>
-    </div>
-</div>
 
 <div class="d-flex flex-column-fluid">
     <div class="container-fluid">
@@ -21,7 +12,7 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h3 class="card-label mb-0 font-weight-bold text-body">
-                                        Editar rol
+                                        Editar ruta
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
@@ -36,52 +27,62 @@
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
 
-                                {!! Form::model($role, ['route' => ['roles.update', $role->id], 'method' => 'POST']) !!}
+                                {!! Form::model($ruta, ['route' => ['rutas.update', $ruta->id], 'method' => 'POST']) !!}
 
                                 <div class="form-group mb-3">
                                     <div class="row">
                                         <div class="col-6">
-                                            {!! Form::label('name', 'Nombre') !!}
-                                            {!! Form::text('name', null, ['class' => 'form-control', 'required', 'placeholder' => 'Nombre de rol']) !!}
+                                            {!! Form::label('nombre', 'Nombre') !!}
+                                            {!! Form::text('nombre', null, ['class' => 'form-control', 'required', 'placeholder' => 'Nombre ruta']) !!}
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" @if (isset($role) && $role->active) checked="" @endif name="active" id="active" value='1'>
+                                        <input type="checkbox" class="custom-control-input" @if (isset($ruta) && $ruta->active) checked="" @endif name="active" id="active" value='1'>
                                         <label class="custom-control-label" for="active">Activo</label>
                                     </div>
                                 </div>
 
-                                <div class="form-group d-none">
-                                    <label class="text-dark">Guard Name</label>
-                                    <input type="text" id="guard_name" name="guard_name" @if (isset($role)) value="{{$role->guard_name}}" @else value="web" @endif class="form-control">
+                                <div class="row mb-3 mt-3">
+                                    <div class="col-12">
+                                        <hr />
+                                    </div>
                                 </div>
-
-                                <div class="form-group mt-5 mb-3">
-                                    <h5 class=" font-size-bold">Permisos</h5>
-                                </div>
-
 
                                 <div class="row mb-5 mt-3">
-                                    <div class="col-3">
-                                        @foreach ($permissions as $permiso)
-                                        <label>
-                                            {{ Form::checkbox('permissions[]', $permiso->id ) }}
-                                            {{$permiso->name}}
-                                        </label>
-                                        <br>
+                                    <div class="col-6">
+                                        <p>Localidades</p>
+                                        <fieldset class="form-group mb-3">
 
-                                        @if ($loop->iteration % 8 == 0)
+                                            <select class="js-example-basic-single js-states form-control bg-transparent" name="localidades[]" id="localidades" multiple="multiple" size=10>
+                                                @foreach ( $localidades as $localidad )
+                                                <option value="{{$localidad->id}}" @if (isset($ruta) && in_array($localidad->id, $ruta->localidades->pluck('id')->toArray() )) selected @endif>
+                                                    {{$localidad->nombre}} - {{$localidad->provincia }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+
+                                        </fieldset>
                                     </div>
-                                    <div class="col-4"> @endif
-                                        @endforeach
+
+                                    <div class="col-6">
+                                        <p>Transportistas</p>
+                                        <fieldset class="form-group mb-3">
+                                            <select class="js-example-placeholder-multiple js-states form-control" multiple="multiple" name="transportistas[]" id="transportistas" size=5>
+                                                <option value="" disabled>Seleccione ...</option>
+                                                @foreach ( $transportistas as $transportista )
+                                                <option value="{{$transportista->id}}" @if (isset($ruta) && in_array($transportista->id, $ruta->transportistas->pluck('id')->toArray() )) selected @endif>
+                                                    {{$transportista->nombre}}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                        </fieldset>
                                     </div>
                                 </div>
 
-
-                                <input type="hidden" name="role_id" value="{{$role->id}}" />
+                                <input type="hidden" name="ruta_id" value="{{$ruta->id}}" />
 
                                 <div class="form-group text-right">
                                     <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Actualizar</button>
@@ -104,7 +105,9 @@
 @section('js')
 
 <script>
-
+    jQuery(".js-example-placeholder-multiple").select2({
+        placeholder: "Seleccione transportista"
+    });
 </script>
 
 @endsection
