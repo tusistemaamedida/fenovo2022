@@ -90,11 +90,11 @@
                             <a class="dropdown-item" href="{{ route('rutas.index') }}">
                                 <span class="text-black-50">Rutas</span>
                             </a>
-                            <a class="dropdown-item" href="#">
-                                <span class="text-black-50">Link 1</span>
+                            <a class="dropdown-item" href="{{ route('transportistas.index') }}">
+                                <span class="text-black-50">Transportistas</span>
                             </a>
                             <a class="dropdown-item" href="#">
-                                <span class="text-black-50">Link 1</span>
+                                <span class="text-black-50">Vehiculos</span>
                             </a>
                         </div>
                     </li>

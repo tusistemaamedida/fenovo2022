@@ -5,8 +5,8 @@
             <div class="col-12" id="insertByAjax"></div>
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-primary close_modal"><i class="fa fa-times"></i> Cerrar</button>
-                <button type="button" class="btn btn-primary btn-guardar" onclick="store('{{ route('rutas.store') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
-                <button type="button" class="btn btn-primary btn-actualizar" onclick="update('{{ route('rutas.update') }}')" style="float: right"><i class="fa fa-save"></i> Actualizar</button>
+                <button type="button" class="btn btn-primary btn-guardar" onclick="store('{{ route('transportistas.store') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+                <button type="button" class="btn btn-primary btn-actualizar" onclick="update('{{ route('transportistas.update') }}')" style="float: right"><i class="fa fa-save"></i> Actualizar</button>
             </div>
         </div>
     </form>

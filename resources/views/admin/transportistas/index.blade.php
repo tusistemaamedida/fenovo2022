@@ -12,11 +12,11 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h3 class="card-label mb-0 font-weight-bold text-body">
-                                        Rutas
+                                        Transportistas
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="javascript:void(0)" onclick="add('{{ route('rutas.add') }}')" class="ml-2">
+                                    <a href="javascript:void(0)" onclick="add('{{ route('transportistas.add') }}')" class="ml-2">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
                                 </div>
@@ -32,9 +32,9 @@
                                     <thead>
                                         <tr class="bg-dark text-white">
                                             <th>No</th>
-                                            <th>Nombre de ruta</th>
-                                            <th>Principales localidades que recorre</th>
-                                            <th>Transportistas</th>
+                                            <th>Nombre de transportista</th>
+                                            <th>Cuit</th>
+                                            <th>Telefono</th>
                                             <th></th>
                                             <th></th>
                                         </tr>
@@ -52,7 +52,7 @@
 
 </div>
 
-@include('admin.rutas.modal')
+@include('admin.transportistas.modal')
 
 @endsection
 
@@ -61,12 +61,12 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
-        ajax: "{{ route('rutas.index') }}",
+        ajax: "{{ route('transportistas.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'ruta'},
-            {data: 'localidad'},
-            {data: 'transportistas', searchable: false},
+            {data: 'transportista'},
+            {data: 'cuit'},
+            {data: 'telefono'},
             {data: 'edit', name: 'Editar', 'class':'text-center', orderable: false, searchable: false},
             {data: 'destroy', name: 'Borrar', 'class':'text-center', orderable: false, searchable: false},
         ]

@@ -2,14 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Models\Ruta;
+use App\Models\Localidad;
 
-class RutaRepository extends BaseRepository
+class LocalidadRepository extends BaseRepository
 {
-
     public function getModel()
     {
-        return new Ruta();
+        return new Localidad();
     }
 
     protected function selectList()
@@ -20,18 +19,17 @@ class RutaRepository extends BaseRepository
     public function paginate($cant)
     {
         return $this->selectList()
-            ->where('active', true)
             ->orderBy('nombre', 'ASC')
             ->paginate($cant);
     }
 
     public function getOne($id)
     {
-        return Ruta::find($id);
+        return Localidad::find($id);
     }
 
     public function getAll()
     {
-        return Ruta::with('localidades')->where('active', 1)->orderBy('nombre', 'ASC')->get();
+        return Localidad::all();
     }
 }

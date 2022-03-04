@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\RutasController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\RutasController;
 
 Route::get('rutas', [RutasController::class, 'index'])->name('rutas.index');
 Route::get('rutas/add', [RutasController::class, 'add'])->name('rutas.add');
