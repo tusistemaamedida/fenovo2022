@@ -20,7 +20,7 @@
         <div class="row mt-5">
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-primary" id="close_modal_salida"><i class="fa fa-times"></i> NO</button>
-                <button type="submit" class="btn btn-primary" id="btnCloseSalida" style="float: right"><i class="fa fa-save"></i> SI</button>
+                <button type="submit" class="btn btn-primary" id="btnCloseSalida" style="float: right" disabled><i class="fa fa-save"></i> SI</button>
             </div>
         </div>
     </form>

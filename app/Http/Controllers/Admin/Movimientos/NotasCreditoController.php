@@ -11,6 +11,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\Store;
+use App\Models\Invoice;
 use App\Repositories\SessionProductRepository;
 
 use App\Repositories\InvoicesRepository;
@@ -89,21 +90,91 @@ class NotasCreditoController extends Controller
         return new JsonResponse($valid_names);
     }
 
+    public function validateVoucherTo(Request $request){
+        $to = $request->input('to');
+        $voucher_number = $request->input('voucher_number');
+        $invoice = Invoice::where('voucher_number',$voucher_number)->first();
+        if($invoice){
+            $movement_relacionado = Movement::where('id',$invoice->movement_id)->first();
+
+            if($movement_relacionado && $movement_relacionado->to == $to){
+                return new JsonResponse(['type'=> 'success']);
+            }else{
+                return new JsonResponse(['type'=> 'error','msj' => 'El número de facura con corresponde a la tienda seleccionada']);
+            }
+        }
+        return new JsonResponse(['type'=> 'error','msj' => 'El número de facura con corresponde a la tienda seleccionada']);
+    }
+
     public function storeNotaCredito(Request $request){
         try {
-            $list_id                       = $request->input('session_list_id');
-            $explode                       = explode('_', $list_id);
-            $insert_data['type']           = $explode[0];
-            $insert_data['to']             = $explode[1];
-            $insert_data['date']           = now();
-            $insert_data['from']           = 1;
-            $insert_data['status']         = 'FINISHED';
-            $insert_data['voucher_number'] = $request->input('voucher_number');
+            if($request->input('voucher_number') != '' || !is_null($request->input('voucher_number'))){
+                $list_id                       = $request->input('session_list_id');
+                $explode                       = explode('_', $list_id);
+                $insert_data['type']           = $explode[0];
+                $insert_data['to']             = $explode[1];
+                $insert_data['date']           = now();
+                $insert_data['from']           = \Auth::user()->store_active;
+                $insert_data['status']         = 'FINISHED';
+                $insert_data['voucher_number'] = $request->input('voucher_number');
 
-            $movement         = Movement::create($insert_data);
-            $this->sessionProductRepository->deleteList($list_id);
-            return redirect()->route('nc.add');
+                $movement             = Movement::create($insert_data);
+                $invoice              = Invoice::where('voucher_number',$request->input('voucher_number'))->first();
+                $movement_relacionado = Movement::where('id',$invoice->movement_id)->first();
+                $session_products = $this->sessionProductRepository->getByListId($list_id);
+                foreach ($session_products as $product) {
+
+                    // busco el balance del producto y el TO del movimento de salida para restarle la cantidad devuelta
+                    $latest = MovementProduct::all()
+                                            ->where('store_id', $movement_relacionado->to)
+                                            ->where('product_id', $product->product_id)
+                                            ->sortByDesc('id')
+                                            ->first();
+                    $kgs = $product->producto->unit_weight * $product->unit_package * $product->quantity;
+                    $balance = ($latest) ? $latest->balance - $kgs : 0;
+
+                    MovementProduct::firstOrCreate([
+                        'store_id'       => $movement_relacionado->to,
+                        'movement_id'    => $movement->id,
+                        'product_id'     => $product->product_id,
+                        'unit_package'   => $product->unit_package, ], [
+                            'invoice'    => 1,
+                            'unit_price' => $product->unit_price,
+                            'tasiva'     => $product->tasiva,
+                            'entry'      => 0,
+                            'bultos'     => $product->quantity,
+                            'egress'     => $kgs,
+                            'balance'    => $balance,
+                    ]);
+
+                    $latest = MovementProduct::all()
+                        ->where('store_id', \Auth::user()->store_active)
+                        ->where('product_id', $product->product_id)
+                        ->sortByDesc('id')->first();
+
+                    $balance = ($latest) ? $latest->balance + $kgs : $kgs;
+                    MovementProduct::firstOrCreate([
+                        'store_id'       => \Auth::user()->store_active,
+                        'movement_id'    => $movement->id,
+                        'product_id'     => $product->product_id,
+                        'unit_package'   => $product->unit_package, ], [
+                            'invoice'    => 1,
+                            'unit_price' => $product->unit_price,
+                            'tasiva'     => $product->tasiva,
+                            'entry'      => $kgs,
+                            'bultos'     => $product->quantity,
+                            'egress'     => 0,
+                            'balance'    => $balance,
+                        ]);
+                }
+
+                $this->sessionProductRepository->deleteList($list_id);
+                return redirect()->route('nc.add')->withInput();
+            }
+            $request->session()->flash('error', 'No selecciono ninguna Factura');
+            return redirect()->back()->withInput();
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
