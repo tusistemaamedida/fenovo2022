@@ -18,11 +18,11 @@ class TransportistaVehiculo extends Model
 
     public function transportista()
     {
-        return $this->belongsTo(Transportista::class);
+        return $this->belongsTo(Transportista::class, 'transportista_id');
     }
 
     public function vehiculo()
     {
-        return $this->belongsTo(Vehiculo::class);
+        return $this->belongsTo(Vehiculo::class, 'vehiculo_id');
     }
 }
