@@ -31,6 +31,7 @@ class MovementsExport implements FromArray
             ->orderBy('id', 'ASC')->get();
 
         $arrMovements = [];
+        
         foreach ($movements as $movement) {
             foreach ($movement->movement_products as $movement_product) {
                 if ($movement->type == 'VENTACLIENTE' and $movement_product->egress > 0) {
