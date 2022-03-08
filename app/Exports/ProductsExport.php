@@ -27,7 +27,7 @@ class ProductsExport implements FromArray
         $productos = DB::table('products as t1')
             ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
             ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
-            ->join('product_descuentos as t4', 't1.cod_descuento', '=', 't4.codigo')
+            ->leftJoin('product_descuentos as t4', 't1.cod_descuento', '=', 't4.codigo')
             ->select(
                 't1.cod_fenovo',
                 't1.cod_proveedor',
