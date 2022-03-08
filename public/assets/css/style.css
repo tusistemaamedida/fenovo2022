@@ -1780,7 +1780,7 @@ pre code {
 
 .table-hover tbody tr:hover {
     color: #212529;
-    background-color: rgba(0, 0, 0, 0.075);
+    background-color: rgba(25, 29, 87, 0.404) !important;
 }
 
 .table-primary,
