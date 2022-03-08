@@ -29,21 +29,27 @@
                     <div class="col-12 ">
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
-                                <table class="display table-hover yajra-datatable">
-                                    <thead>
-                                        <tr class="bg-dark text-white">
-                                            <th>Actualización</th>
-                                            <th>Identificación</th>
-                                            <th>Productos cargados</th>
-                                            <th>Destino</th>
-                                            <th>Detalle</th>
-                                            <th>Print</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+
+                                <div class="table-datapos">
+                                    <div class="table-responsive">
+                                        <table class="display table-hover yajra-datatable">
+                                            <thead>
+                                                <tr class="bg-dark text-white">
+                                                    <th>Actualización</th>
+                                                    <th>Identificación</th>
+                                                    <th>Productos cargados</th>
+                                                    <th>Destino</th>
+                                                    <th>Detalle</th>
+                                                    <th>Print</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

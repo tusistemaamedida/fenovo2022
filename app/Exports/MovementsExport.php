@@ -31,16 +31,18 @@ class MovementsExport implements FromArray
             ->orderBy('id', 'ASC')->get();
 
         $arrMovements = [];
-        
+
         foreach ($movements as $movement) {
             foreach ($movement->movement_products as $movement_product) {
-                if ($movement->type == 'VENTACLIENTE' and $movement_product->egress > 0) {
-                    $cod_tienda = 0;
-                } elseif ($movement->type == 'COMPRA') {
-                    $cod_tienda = -1;
+                if ($movement->type == 'VENTACLIENTE') {
+                    $cod_tienda = '0';
                 } else {
-                    $tienda     = $this->origenData($movement->type, $movement_product->store_id, true);
-                    $cod_tienda = $tienda->cod_fenovo;
+                    if ($movement->type == 'COMPRA') {
+                        $cod_tienda = '-1';
+                    } else {
+                        $tienda     = $this->origenData($movement->type, $movement_product->store_id, true);
+                        $cod_tienda = $tienda->cod_fenovo;
+                    }
                 }
 
                 $objMovement = new stdClass();

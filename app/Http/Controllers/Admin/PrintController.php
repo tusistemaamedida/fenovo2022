@@ -15,6 +15,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use stdClass;
 
 class PrintController extends Controller
 {
@@ -62,10 +63,11 @@ class PrintController extends Controller
 
     public function exportEntreFechas(Request $request)
     {
-        $desde          = explode('-', $request->desde);
-        $hasta          = explode('-', $request->hasta);
+        $desde   = explode('-', $request->desde);
+        $hasta   = explode('-', $request->hasta);
         $type    = ($request->tipo) ? $request->tipo : 'TODOS';
         $archivo = 'MOV_' . $type . '_' . $desde[2] . $desde[1] . '_' . $hasta[2] . $hasta[1] . '.csv';
+
         return Excel::download(new MovementsExport($request), $archivo);
     }
 }
