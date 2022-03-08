@@ -388,6 +388,7 @@ class ProductController extends Controller
                 }
                 $i++;
             }
+
             fclose($file);
             foreach ($importData_arr as $importData) {
                 $data       = [];
