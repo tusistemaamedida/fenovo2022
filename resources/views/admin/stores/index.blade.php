@@ -31,7 +31,7 @@
 
                                 <div class="table-datapos">
                                     <div class="table-responsive">
-                                        <table class=" display yajra-datatable" style="width:100%">
+                                        <table class="table table-hover display yajra-datatable" style="width:100%">
                                             <thead>
                                                 <tr class="bg-dark text-white">
                                                     <th>No</th>

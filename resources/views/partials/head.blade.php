@@ -14,7 +14,6 @@
 	<link href="{{asset('assets/css/toastr.min.css')}}" rel="stylesheet" type="text/css" />
 	<link href="{{asset('assets/css/ymz_box.css')}}" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="{{asset('assets/css/toastr.min.css')}}">
-	<link rel="stylesheet" type="text/css" href="{{asset('assets/css/bootstrap-submenu.min.css')}}">
 	<link href="{{asset('assets/api/select2/select2.min.css')}}" rel="stylesheet" />
 	<link rel="stylesheet" href="{{asset('assets/css/loading.css')}}">
 
