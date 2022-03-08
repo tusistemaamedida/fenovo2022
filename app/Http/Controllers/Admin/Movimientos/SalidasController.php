@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
+use stdClass;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\SessionProduct;
@@ -86,6 +87,8 @@ class SalidasController extends Controller
                             $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Generar factura"  href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
                         }
                     }
+                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito('.$movement->id.')"> <i class="fas fa-print"></i> </a>';
+
                     return $links;
                 })
                 ->rawColumns(['origen', 'date', 'type', 'kgrs', 'acciones', 'factura_nro'])
@@ -146,6 +149,58 @@ class SalidasController extends Controller
         return $pdf->stream('salidas.pdf');
     }
 
+    public function getTotalMovement(Request $request){
+        $total = 0;
+        $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
+        $products = $movement->movement_salida_products;
+        foreach ($products as $product) {
+            if($product->invoice){
+                $subtotal = $product->bultos * $product->unit_price * $product->unit_package;
+                $total += $subtotal;
+            }
+        }
+
+        return new JsonResponse(['type' => 'success','total'=>number_format($total, 2, ',', '.')]);
+    }
+
+    public function printRemito(Request $request){
+        $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
+        if($movement){
+            $destino  = $this->origenData($movement->type, $movement->to, true);
+            $neto = $request->input('neto');
+            $array_productos =  [];
+            $productos = $movement->movement_salida_products;
+            foreach ($productos as $producto) {
+                $objProduct = new stdClass;
+                $objProduct->cant = $producto->bultos;
+                $objProduct->codigo = $producto->product->cod_fenovo;
+                $objProduct->name = $producto->product->name;
+                $objProduct->unity = '( '.$producto->unit_package . ' '.$producto->product->unit_type .' )';
+                $objProduct->total_unit = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                $objProduct->class = '';
+                array_push($array_productos,$objProduct);
+            }
+
+            $total_lineas = 27;
+            $paginas = (int) ((count($array_productos)/$total_lineas) + 1);
+            $faltantes_para_completar = ($total_lineas * $paginas) - count($array_productos);
+
+            for ($aux = 0; $aux < $faltantes_para_completar; $aux++) {
+                $objProduct = new stdClass;
+                $objProduct->cant = 0;
+                $objProduct->codigo = 'none';
+                $objProduct->name = 'none';
+                $objProduct->total_unit = 'none';
+                $objProduct->unity = 'none';
+                $objProduct->class = 'no-visible';
+                array_push($array_productos,$objProduct);
+            }
+
+            $pdf = PDF::loadView('print.remito',compact('destino','array_productos','neto','paginas','total_lineas'));
+            return $pdf->download('remito.pdf');
+
+        }
+    }
     public function add()
     {
         return view('admin.movimientos.salidas.add');

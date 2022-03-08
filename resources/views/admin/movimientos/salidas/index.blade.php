@@ -53,6 +53,8 @@
     </div>
 </div>
 
+@include('admin.movimientos.salidas.partials.modal-open-remito')
+
 @endsection
 
 @section('js')
@@ -80,6 +82,37 @@
     jQuery('.yajra-datatable').on('draw.dt', function() {
         jQuery('[data-toggle="tooltip"]').tooltip();
     })
+
+    function createRemito(id){
+        var url ="{{ route('get.total.movement') }}";
+        jQuery.ajax({
+            url:url,
+            type:'GET',
+            data:{movement_id:id},
+            beforeSend: function() {
+                jQuery('#loader').removeClass('hidden');
+            },
+            success:function(data){
+                if (data['type'] == 'success') {
+                    jQuery("#movement_id_in_modal").val(id);
+                    jQuery("#total_in_span").html(data['total']);
+                    jQuery('#createRemito').addClass('offcanvas-on');
+                } else{
+                    toastr.error(data['msj'], 'Verifique');
+                }
+                jQuery('#loader').addClass('hidden');
+            },
+            error: function (data) {
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
+            }
+        });
+    };
+
+    jQuery('#close_modal_salida').on('click', function () {
+        jQuery('#createRemito').removeClass('offcanvas-on');
+    });
 
 </script>
 

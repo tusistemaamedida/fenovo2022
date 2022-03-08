@@ -1,7 +1,7 @@
 <h4>{{$product->name}}</h4>
 <br>
 <div class="form-group">
-    @if($mostrar_detalles)
+
         <div class="row text-center">
             <div class="col-12 bg-dark text-white">Kgrs</div>
         </div>
@@ -17,7 +17,7 @@
                 <h4> <span id="envio_total" class=" text-danger">0</span> </h4>
             </div>
         </div>
-    @endif
+
 
     <input type="hidden" name="tope" id="tope" value="{{$stock_total}}">
     <input type="hidden" name="kg_totales" id="kg_totales" value="0">
@@ -46,7 +46,7 @@
                                @if($stock_total==0) disabled @endif
                                max="{{$stock_presentaciones[$i]['bultos']}}"
                                value="0"
-                               @if($mostrar_detalles) onkeyup="sumar(this)" @endif>
+                               onkeyup="sumar(this)" >
                     </td>
                     </tr>
                     @endfor
