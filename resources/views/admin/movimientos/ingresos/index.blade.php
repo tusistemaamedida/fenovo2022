@@ -15,8 +15,8 @@
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{ route('movement.menu.print') }}" class="mr-3"> 
-                                        <i class=" fa fa-print"></i> 
+                                    <a href="{{ route('movement.menu.print') }}" class="mr-3">
+                                        <i class=" fa fa-print"></i>
                                         Impresion | Exportación <i class="fas fa-file-csv"></i>
                                     </a>
                                     <a href="{{ route('ingresos.add') }}">
@@ -25,30 +25,34 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
-                
+
                 <div class="row">
                     <div class="col-12 ">
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
-                                <table class="display table-hover yajra-datatable">
-                                    <thead>
-                                        <tr class="bg-dark text-white">
-                                            <th>Fecha</th>
-                                            @if (\Auth::user()->rol() == 'base')
-                                            <th>Origen</th>
-                                            @else
-                                            <th>Proveedor</th>
-                                            @endif
-                                            <th>Items</th>
-                                            <th>ComprobanteNro</th>
-                                            <th>Detalle</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+                                <div class="table-datapos">
+                                    <div class="table-responsive">
+                                        <table class="display table-hover yajra-datatable">
+                                            <thead>
+                                                <tr class="bg-dark text-white">
+                                                    <th>Fecha</th>
+                                                    @if (\Auth::user()->rol() == 'base')
+                                                    <th>Origen</th>
+                                                    @else
+                                                    <th>Proveedor</th>
+                                                    @endif
+                                                    <th>Items</th>
+                                                    <th>ComprobanteNro</th>
+                                                    <th>Detalle</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
