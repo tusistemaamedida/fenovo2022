@@ -10,6 +10,7 @@ class Vehiculo extends Model
     use HasFactory;
 
     protected $table = 'vehiculos';
+    public $timestamps = false;
 
     protected $fillable = [
         'id',
@@ -18,16 +19,13 @@ class Vehiculo extends Model
         'capacidad',
         'patente',
         'chofer',
+        'transportista_id',
+        'senasa',
         'active',
     ];
 
-    public function transportistas()
+    public function transportista()
     {
-        return $this->belongsToMany(Transportista::class, TransportistaVehiculo::class);
-    }
-
-    public function rutas()
-    {
-        return $this->belongsToMany(Ruta::class, RutaTransportista::class);
+        return $this->belongsTo(Transportista::class, 'transportista_id');
     }
 }
