@@ -446,7 +446,7 @@ class ProductController extends Controller
                 $this->productPriceRepository->create($data);
             }
 
-            $filepath = public_path('/imports/ST.TXT');
+            /* $filepath = public_path('/imports/ST.TXT');
             $file     = fopen($filepath, 'r');
 
             $importData_arr2 = [];
@@ -491,7 +491,7 @@ class ProductController extends Controller
                     array_push($code_not_found, $cod_fenovo);
                 }
             }
-            dd($code_not_found);
+            dd($code_not_found); */
             return redirect()->route('products.list');
         } catch (\Exception $e) {
             dd($e->getMessage());
