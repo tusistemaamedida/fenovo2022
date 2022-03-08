@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Repositories\EnumRepository;
 use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model

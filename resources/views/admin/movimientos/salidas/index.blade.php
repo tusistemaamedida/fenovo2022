@@ -62,6 +62,7 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         lengthMenu : [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+        ordering: false,
         stateSave:true,
         processing: true,
         serverSide: true,
@@ -75,7 +76,7 @@
             {data: 'kgrs', orderable:false},
             {data: 'factura_nro', 'class' : 'text-center'},
             {data: 'updated_at', 'class' : 'text-center', orderable:false},
-            {data: 'acciones','class':'flex', orderable:false},
+            {data: 'acciones', orderable:false},
         ]
     });
 
