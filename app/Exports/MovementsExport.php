@@ -50,6 +50,7 @@ class MovementsExport implements FromArray
                 $objMovement->codtienda   = $cod_tienda;
                 $objMovement->codproducto = $movement_product->product->cod_fenovo;
                 $objMovement->cantidad    = ($movement_product->egress > 0) ? $movement_product->egress : $movement_product->entry;
+
                 array_push($arrMovements, $objMovement);
             }
         }

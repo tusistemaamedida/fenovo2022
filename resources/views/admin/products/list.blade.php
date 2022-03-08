@@ -17,6 +17,10 @@
                                 </div>
                                 <div class="icons d-flex">
                                     @can('products.create')
+                                    <a href="{{ route('export.products') }}" class="mr-3">
+                                        Exportar <i class="fas fa-file-csv"></i>
+                                    </a>
+
                                     <a href="{{route('product.add')}}">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
