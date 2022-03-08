@@ -20,7 +20,7 @@
                     <select class="rounded form-control bg-transparent" name="store_type" id="store_type">
                         @forelse ($storeType as $storeT)
                         <option value="{{$storeT['type']}}" @if(isset($store) && ($storeT['type']==$store->store_type)) selected @endif>
-                            {{$storeT['type'] }}
+                            {{$storeT['name'] }}
                         </option>
                         @empty
                         <option value="">Sin tipo store</option>
