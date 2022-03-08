@@ -16,7 +16,7 @@
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="javascript:void(0)" onclick="add('{{ route('rutas.add') }}')" class="ml-2">
+                                    <a href="javascript:void(0)" onclick="add('{{ route('rutas.add') }}')" class="ml-2 ">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
                                 </div>

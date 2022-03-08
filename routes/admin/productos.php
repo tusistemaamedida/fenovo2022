@@ -19,3 +19,4 @@ Route::post('producto/update', [ProductController::class, 'update'])->name('prod
 Route::get('productos/getProductByProveedor', [ProductController::class, 'getProductByProveedor'])->name('products.getProductByProveedor');
 
 Route::get('importar', [ProductController::class, 'importFromCsv'])->name('import.products');
+Route::get('exportar', [ProductController::class, 'exportToCsv'])->name('export.products');
