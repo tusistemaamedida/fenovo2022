@@ -44,7 +44,7 @@ class IngresosController extends Controller
                     return date('Y-m-d', strtotime($movement->date));
                 })
                 ->addColumn('items', function ($movement) {
-                    $count = count($movement->movement_ingreso_products);
+                    $count = count($movement->movement_products);
                     return '<span class="badge badge-primary">' . $count . '</span>';
                 })
                 ->editColumn('updated_at', function ($movement) {
