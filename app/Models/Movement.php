@@ -62,7 +62,7 @@ class Movement extends Model
 
     public function movement_ingreso_products()
     {
-        return $this->hasMany(MovementProduct::class)->where('entry', '>', 0);
+        return $this->hasMany(MovementProduct::class)->where('entry', '>=', 0);
     }
 
     public function senasa()
