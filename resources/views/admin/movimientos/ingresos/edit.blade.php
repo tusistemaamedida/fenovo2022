@@ -187,22 +187,28 @@
             if(isNaN(parseFloat(jQuery(this).val()))){
                 valido = false;
             }else{                       
-                let unit_package = parseFloat(jQuery(this).attr("id"));
-                let valor = parseFloat(jQuery(this).val());
-                let presentacion = parseFloat(jQuery(this).attr("id"));
-                let entry = (valor*presentacion)*peso_unitario;
-                let egress= 0;
-                let balance=0;
+                let unit_package    = parseFloat(jQuery(this).attr("id"));
+                let valor           = parseFloat(jQuery(this).val());
+                let presentacion    = parseFloat(jQuery(this).attr("id"));
+                let entry           = (valor*presentacion)*peso_unitario;
+                let egress          = 0;
+                let balance         = 0;
+                let entidad_tipo    = 'S';
+
                 if(entry > 0){
+
                     let Movi = new Object();
-                    Movi.movement_id= movement_id;
-                    Movi.store_id= store_id;
-                    Movi.product_id= product_id;
-                    Movi.unit_package = unit_package;
-                    Movi.bultos = valor;
-                    Movi.entry = entry;
-                    Movi.balance = 0;
-                    Movi.egress  = 0;
+
+                    Movi.movement_id    = movement_id;
+                    Movi.entidad_id     = store_id;
+                    Movi.entidad_tipo   = entidad_tipo;
+                    Movi.product_id     = product_id;
+                    Movi.unit_package   = unit_package;
+                    Movi.bultos         = valor;
+                    Movi.entry          = entry;
+                    Movi.balance        = 0;
+                    Movi.egress         = 0;
+
                     arrMovimientos.push(Movi);
                 }
             }
@@ -213,7 +219,6 @@
             type: 'POST',
             data: {datos: arrMovimientos},
             success: function (data) {
-
                 if (data['type'] == 'success') {
                     actualizarIngreso();
                     jQuery("#dataTemp").html('');

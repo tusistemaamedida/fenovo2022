@@ -20,9 +20,8 @@ class DetalleIngresosController extends Controller
                 $latest                = $product->stock(null, Auth::user()->store_active);
                 $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
                 $movimiento['balance'] = $balance;
-                MovementProduct::firstOrCreate(['store_id' => Auth::user()->store_active, 'movement_id' => $movimiento['movement_id'], 'product_id' => $movimiento['product_id'], 'unit_package' => $movimiento['unit_package']], $movimiento);
+                MovementProduct::firstOrCreate(['entidad_id' => Auth::user()->store_active, 'movement_id' => $movimiento['movement_id'], 'product_id' => $movimiento['product_id'], 'unit_package' => $movimiento['unit_package']], $movimiento);
             }
-
             return new JsonResponse(['msj' => 'Guardado', 'type' => 'success']);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);

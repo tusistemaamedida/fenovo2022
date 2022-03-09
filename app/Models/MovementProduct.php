@@ -11,6 +11,7 @@ class MovementProduct extends Model
     protected $casts = [
         'movement_id'  => 'int',
         'entidad_id'   => 'int',
+        'entidad_tipo' => 'string',
         'product_id'   => 'int',
         'unit_package' => 'float',
         'invoice'      => 'bool',
