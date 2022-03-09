@@ -32,10 +32,6 @@
   ],
   "store": [
     {
-      "type": "N",
-      "name": "NAVE"
-    },
-    {
       "type": "B",
       "name": "BASE"
     },
@@ -44,12 +40,16 @@
       "name": "COCINA"
     },
     {
-      "type": "T",
-      "name": "TIENDA"
-    },
-    {
       "type": "E",
       "name": "EXPRESS"
+    },    
+    {
+      "type": "N",
+      "name": "NAVE"
+    },
+    {
+      "type": "T",
+      "name": "TIENDA"
     }
   ],
   "print": [

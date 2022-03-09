@@ -101,6 +101,7 @@ class IngresosController extends Controller
     {
         try {
             $data['unit_package'] = implode('|', $request->unit_package);
+            $data['unit_weight'] = $request->unit_weight;
             Product::find($request->product_id)->update($data);
             return new JsonResponse(['msj' => 'Actualización correcta !', 'type' => 'success']);
         } catch (\Exception $e) {

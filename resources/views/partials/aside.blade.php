@@ -81,24 +81,6 @@
                             <span class="nav-text">Clientes</span>
                         </a>
                     </li>
-
-                    <li class="dropdown dropright">
-                        <button type="button" class="btn dropdown-toggle text-black-50" data-toggle="dropdown">
-                            <i class="fas fa-shipping-fast text-black-50"></i>
-                        </button>
-                        <div class="dropdown-menu bg-dark">
-                            <a class="dropdown-item" href="{{ route('rutas.index') }}">
-                                <span class="text-black-50">Rutas</span>
-                            </a>
-                            <a class="dropdown-item" href="{{ route('transportistas.index') }}">
-                                <span class="text-black-50">Transportistas</span>
-                            </a>
-                            <a class="dropdown-item" href="{{ route('vehiculos.index') }}">
-                                <span class="text-black-50">Vehículos</span>
-                            </a>
-                        </div>
-                    </li>
-
                     <li class="dropdown dropright">
                         <button type="button" class="btn dropdown-toggle text-black-50" data-toggle="dropdown">
                             <i class="fas fa-cogs text-black-50"></i>
@@ -118,6 +100,22 @@
                             @endrole
                         </div>
                     </li>
+                    <li class="dropdown dropright">
+                        <button type="button" class="btn dropdown-toggle text-black-50" data-toggle="dropdown">
+                            <i class="fas fa-shipping-fast text-black-50"></i>
+                        </button>
+                        <div class="dropdown-menu bg-dark">
+                            <a class="dropdown-item" href="{{ route('rutas.index') }}">
+                                <span class="text-black-50">Rutas</span>
+                            </a>
+                            <a class="dropdown-item" href="{{ route('transportistas.index') }}">
+                                <span class="text-black-50">Transportistas</span>
+                            </a>
+                            <a class="dropdown-item" href="{{ route('vehiculos.index') }}">
+                                <span class="text-black-50">Vehículos</span>
+                            </a>
+                        </div>
+                    </li>                   
 
                 </ul>
 
