@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Traits\OriginDataTrait;
+
 use App\Exports\MovementsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
@@ -23,6 +25,8 @@ class PrintController extends Controller
     private $storeRepository;
     private $productRepository;
     private $sessionProductRepository;
+
+    use OriginDataTrait;
 
     public function __construct(
         CustomerRepository $customerRepository,
