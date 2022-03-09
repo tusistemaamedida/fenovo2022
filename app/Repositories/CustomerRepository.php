@@ -33,7 +33,8 @@ class CustomerRepository extends BaseRepository
     public function search($term){
 
         return Customer::where('active',true)
-                       ->where(function($query) use ($term){
+                        ->where('store_id', \Auth::user()->store_active)
+                        ->where(function($query) use ($term){
                             $query->orWhere('cuit','LIKE','%'.$term.'%')
                                 ->orWhere('responsable','LIKE','%'.$term.'%')
                                 ->orWhere('bussiness_name','LIKE','%'.$term.'%')

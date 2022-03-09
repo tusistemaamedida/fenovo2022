@@ -152,10 +152,6 @@ jQuery('.close_modal').on("click", function (event) {
     jQuery('.editpopup').removeClass('offcanvas-on');
 });
 
-// Activar Submenues
-
-jQuery('[data-submenu]').submenupicker();
-
 // Mostrar Input tipo password
 jQuery('.show-t').on('click', function () {
     console.log(jQuery("#password").attr("type"))

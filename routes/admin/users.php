@@ -10,3 +10,8 @@ Route::get('users/edit', [UserController::class, 'edit'])->name('users.edit');
 Route::post('users/update', [UserController::class, 'update'])->name('users.update');
 Route::post('users/destroy', [UserController::class, 'destroy'])->name('users.destroy');
 Route::get('users/edit-profile', [UserController::class, 'editProfile'])->name('users.editProfile');
+
+Route::get('users/vincular-tienda', [UserController::class, 'vincularTienda'])->name('users.vincular.tienda');
+Route::post('users/vincular-tienda', [UserController::class, 'vincularTiendaUpdate'])->name('users.vincular.tienda.update');
+
+Route::post('users/activar-tienda', [UserController::class, 'activarTienda'])->name('users.activar.tienda');

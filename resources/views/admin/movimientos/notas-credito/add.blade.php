@@ -13,7 +13,7 @@
 <div class="subheader py-2 py-lg-6 subheader-solid">
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-white mb-0 px-0 py-2">
+            <ol class="breadcrumb bg-white mb-0 px-2 py-2">
                 <li class="breadcrumb-item active" aria-current="page">Nota de crédito</li>
             </ol>
         </nav>
@@ -22,6 +22,13 @@
 <div class="d-flex flex-column-fluid">
     <div class="container-fluid">
         <div class="row">
+            @if(session('error'))
+                <div class="col-lg-12 col-xl-12">
+                    <div class="alert alert-info" role="alert">
+                        {!! session('error') !!}
+                    </div>
+                </div>
+            @endif
             @include('admin.movimientos.notas-credito.partials.form-select-cliente')
             <b style="width: 100%" id="session_products_table"></b>
         </div>
@@ -145,6 +152,33 @@
                     results: data
                 };
             },
+        }
+    });
+
+    jQuery('#voucher_number').change(function(){
+        var voucher_number = jQuery("#voucher_number").val();
+        var to = jQuery("#to").val();
+
+        if(voucher_number != ''){
+            jQuery.ajax({
+                url: "{{route('validate.voucher.to')}}",
+                type: 'GET',
+                data: { to, voucher_number },
+                beforeSend: function () {
+                    jQuery('#loader').removeClass('hidden');
+                },
+                success: function (data) {
+                    if(data['type'] == 'error') {
+                        toastr.error(data['msj'], 'Verifique');
+                    }else{
+                        jQuery('#btnCloseSalida').attr('disabled',false);
+                    }
+                    jQuery('#loader').addClass('hidden');
+                },
+                complete: function () {
+                    jQuery('#loader').addClass('hidden');
+                }
+            });
         }
     });
 
@@ -306,5 +340,35 @@
     jQuery("#btnCloseSalida").click(function(){
         jQuery('#loader').removeClass('hidden');
     })
+
+    function sumar(obj){
+        const unit_weight = parseFloat(document.getElementById("unit_weight").value);
+        let total = 0;
+        let valido = true;
+
+        jQuery('.calculate').each(function() {
+            if(isNaN(parseFloat(jQuery(this).val()))){
+                valido = false;
+            }
+        });
+
+        if(valido){
+            jQuery('.calculate').each(function() {
+                let valor = parseFloat(jQuery(this).val());
+                let presentacion = jQuery(this).attr("id");
+                total = total + (valor*presentacion*unit_weight);
+            });
+        }
+
+        const max = parseInt(jQuery("#tope").val());
+        if(total > max){
+            toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
+            jQuery(obj).val(0).select();
+        }else{
+            jQuery("#envio_total").html('');
+            jQuery("#envio_total").html(total);
+            jQuery("#kg_totales").val(total);
+        }
+    }
 </script>
 @endsection

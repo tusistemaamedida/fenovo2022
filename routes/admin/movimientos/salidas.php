@@ -26,5 +26,5 @@ Route::get('get-presentaciones', [SalidasController::class, 'getPresentaciones']
 Route::post('salidas-pendiente/destroy', [SalidasController::class, 'pendienteDestroy'])->name('salidas.pendiente.destroy');
 
 Route::get('salidas-pendiente/print', [SalidasController::class, 'pendientePrint'])->name('salidas.pendiente.print');
-Route::get('salidas-menu/print', [SalidasController::class, 'menuPrint'])->name('salidas.menu.print');
-Route::get('salidas-print/entreFechas', [SalidasController::class, 'printEntreFechas'])->name('salidas.printEntreFechas');
+Route::post('imprimir-remito', [SalidasController::class, 'printRemito'])->name('print.remito');
+Route::get('total-del-movimiento', [SalidasController::class, 'getTotalMovement'])->name('get.total.movement');

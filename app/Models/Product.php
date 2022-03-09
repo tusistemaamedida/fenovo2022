@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +28,6 @@ class Product extends Model
         'type_id'          => 'int',
         'senasa_id'        => 'int',
         'active'           => 'int',
-        'is_senasa'        => 'int',
     ];
 
     protected $dates = [
@@ -74,7 +69,6 @@ class Product extends Model
         'cod_descuento',
         'senasa_id',
         'active',
-        'is_senasa',
     ];
 
     public function product_category()
@@ -118,16 +112,17 @@ class Product extends Model
         return $this->hasOne(ProductPrice::class);
     }
 
-    public function stock($unit_package = null, $store_id = 1)
+    public function stock($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
     {
         $stock = 0.0;
         // Buscar el ultimo movimiento
         $movement_product = MovementProduct::where('product_id', $this->id)
-            ->where('store_id', $store_id)
+            ->where('entidad_id', $entidad_id)
+            ->where('entidad_tipo', $entidad_tipo)
             ->when($unit_package, function ($q, $unit_package) {
                 $q->where('unit_package', $unit_package);
             })
-            ->latest()
+            ->orderBy('id', 'DESC')
             ->first();
 
         if ($movement_product) {
@@ -136,7 +131,7 @@ class Product extends Model
 
         // Buscar en la session iniciadas
         $subtotal         = 0.0;
-        $session_products = SessionProduct::where('product_id', $this->id)->where('store_id', $store_id)->get();
+        $session_products = SessionProduct::where('product_id', $this->id)->where('store_id', $entidad_id)->get();
         foreach ($session_products as $session_product) {
             $subtotal = $subtotal + ($session_product->unit_package * $session_product->quantity * $this->unit_weight);
         }

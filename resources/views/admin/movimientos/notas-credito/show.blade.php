@@ -7,7 +7,7 @@
 <div class="subheader py-2 py-lg-6 subheader-solid">
     <div class="container-fluid">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-white mb-0 px-0 py-2">
+            <ol class="breadcrumb bg-white mb-0 px-2 py-2">
                 <li class="breadcrumb-item active" aria-current="page">Nota Crédito</li>
             </ol>
         </nav>
@@ -30,16 +30,22 @@
                             <strong>{{ $movement->type }}</strong>
                         </fieldset>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <label class="text-body">Destino</label>
                         <fieldset class="form-group mb-3">
                             <strong>{{ $movement->origenData($movement->type) }}</strong>
                         </fieldset>
                     </div>
                     <div class="col-md-2 text-center">
-                        <label class="text-dark">Nro Comprobante</label>
+                        <label class="text-dark">Factura Relacionada</label>
                         <fieldset class="form-group mb-3">
                             <strong>{{ $movement->voucher_number }}</strong>
+                        </fieldset>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <label class="text-dark">Número de NC</label>
+                        <fieldset class="form-group mb-3">
+                            <strong>@if($movement->invoice){{ $movement->invoice->voucher_number }}@else -- @endif</strong>
                         </fieldset>
                     </div>
                     <div class="col-md-1 text-center">

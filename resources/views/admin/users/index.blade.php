@@ -1,15 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="subheader py-2 py-lg-6 subheader-solid">
-    <div class="container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb bg-white mb-0 px-0 py-2">
-                <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
-            </ol>
-        </nav>
-    </div>
-</div>
 
 <div class="d-flex flex-column-fluid">
     <div class="container-fluid">
@@ -21,16 +12,12 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h3 class="card-label mb-0 font-weight-bold text-body">
-                                        Listado
+                                        Usuarios
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
                                     <a href="javascript:void(0)" onclick="add('{{ route('users.add') }}')" class="ml-2">
-                                        <span class="bg-primary h-30px font-size-h5 w-30px d-flex align-items-center justify-content-center  rounded-circle shadow-sm ">
-                                            <svg width="25px" height="25px" viewBox="0 0 16 16" class="bi bi-plus white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                                            </svg>
-                                        </span>
+                                        <i class=" fa-2x fa fa-plus-circle text-primary"></i>
                                     </a>
                                 </div>
                             </div>
@@ -41,20 +28,28 @@
                     <div class="col-12 ">
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
-                                <table class="display table-hover yajra-datatable">
-                                    <thead>
-                                        <tr class="bg-dark text-white">
-                                            <th>No</th>
-                                            <th>Nombre</th>
-                                            <th>Username</th>
-                                            <th>Email</th>
-                                            <th>Rol</th>
-                                            @include('partials.table.head-action')
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+
+                                <div class="table-datapos">
+                                    <div class="table-responsive">
+                                        <table class="display table-hover yajra-datatable">
+                                            <thead>
+                                                <tr class="bg-dark text-white">
+                                                    <th>UserID</th>
+                                                    <th>Username</th>
+                                                    <th>Rol</th>
+                                                    <th>Vincular tiendas</th>
+                                                    <th>Nro tiendas asociadas</th>
+                                                    <th>Tienda activa</th>
+                                                    <th>Editar</th>
+                                                    <th>Borrar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -73,15 +68,18 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        @include('partials.table.dom-button'),
+        @include('partials.table.setting'),
         ajax: "{{ route('users.index') }}",
         columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'name'},
+            {data: 'user_id', 'class':'text-center', orderable: false, searchable: false},
             {data: 'username'},
-            {data: 'email'},
             {data: 'rol'},
-            @include('partials.table.data-action')
+            {data: 'vincular', 'class':'text-center'},
+            {data: 'asociadas', 'class':'text-center'},
+            {data: 'tienda'},
+            {data: 'edit'},
+            {data: 'destroy'},
+            
         ]
     });      
 </script>

@@ -8,6 +8,7 @@ use App\Http\Requests\Users\EditRequest;
 
 use App\Models\User;
 use App\Repositories\RoleRepository;
+use App\Repositories\StoreRepository;
 use App\Repositories\UserRepository;
 
 use Illuminate\Http\JsonResponse;
@@ -22,25 +23,35 @@ class UserController extends Controller
     private $userRepository;
     private $roleRepository;
 
-    public function __construct(UserRepository $userRepository, RoleRepository $roleRepository)
+    public function __construct(StoreRepository $storeRepository, UserRepository $userRepository, RoleRepository $roleRepository)
     {
         $this->middleware('permission:users.index', ['only' => ['index', 'add', 'store']]);
-        $this->userRepository = $userRepository;
-        $this->roleRepository = $roleRepository;
+        $this->userRepository  = $userRepository;
+        $this->roleRepository  = $roleRepository;
+        $this->storeRepository = $storeRepository;
     }
 
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $user = User::all();
+            $user = User::orderBy('username', 'ASC')->get();
             return Datatables::of($user)
-                ->addIndexColumn()
+                ->addColumn('user_id', function ($user) {
+                    return str_pad($user->id, 4, 0, STR_PAD_LEFT);
+                })
                 ->addColumn('rol', function ($user) {
                     return $user->rol();
                 })
-                ->addColumn('inactivo', function ($user) {
-                    return ($user->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
+                ->addColumn('vincular', function ($user) {
+                    return '<a href="' . route('users.vincular.tienda', ['id' => $user->id]) . '"> <i class="fa fa-link"></i> </a>';
                 })
+                ->addColumn('tienda', function ($user) {
+                    return str_pad($user->store_active, 4, 0, STR_PAD_LEFT) . ' - ' . $user->store_active();
+                })
+                ->addColumn('asociadas', function ($user) {
+                    return count($user->stores);
+                })
+
                 ->addColumn('edit', function ($user) {
                     $ruta = 'edit(' . $user->id . ",'" . route('users.edit') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
@@ -49,7 +60,7 @@ class UserController extends Controller
                     $ruta = 'destroy(' . $user->id . ",'" . route('users.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['rol', 'inactivo','edit', 'edit', 'destroy'])
+                ->rawColumns(['user_id','rol', 'vincular', 'tienda', 'asociadas', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.users.index');
@@ -91,12 +102,13 @@ class UserController extends Controller
     public function edit(Request $request)
     {
         try {
-            $roles = $this->roleRepository->getActives();
-            $user  = $this->userRepository->getOne($request->id);
+            $user   = $this->userRepository->getOne($request->id);
+            $roles  = $this->roleRepository->getActives();
+            $stores = $user->stores;
             return new JsonResponse([
                 'msj'  => 'Registro guardado correctamente!',
                 'type' => 'success',
-                'html' => view('admin.users.insertByAjax', compact('user', 'roles'))->render(),
+                'html' => view('admin.users.insertByAjax', compact('user', 'roles', 'stores'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -137,5 +149,41 @@ class UserController extends Controller
     {
         $this->userRepository->update($request->id, ['active' => 0]);
         return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
+    }
+
+    public function vincularTienda(Request $request)
+    {
+        $user   = $this->userRepository->getOne($request->id);
+        $stores = $this->storeRepository->getAll();
+        return view('admin.users.vincular', compact('user', 'stores'));
+    }
+
+    public function vincularTiendaUpdate(Request $request)
+    {
+        $user = User::find($request->id);
+        $user->stores()->sync($request->get('stores'));
+        $arrStores = $user->stores->pluck('id')->toArray();
+
+        if (!in_array($user->store_active, $arrStores)) {
+            $user->store_active = null;
+            $user->save();
+        }
+        return redirect()->route('users.index');
+    }
+
+    public function activarTienda(Request $request)
+    {
+        try {
+            $user               = User::find($request->user_id);
+            $user->store_active = $request->id;
+            $user->save();
+            return new JsonResponse([
+                'type'   => 'success',
+                'header' => view('partials.store-active-header', compact('user'))->render(),
+                'body'   => view('partials.store-active-body', compact('user'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
     }
 }

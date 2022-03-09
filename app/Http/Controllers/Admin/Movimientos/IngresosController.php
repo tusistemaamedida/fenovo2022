@@ -11,7 +11,7 @@ use App\Repositories\ProductRepository;
 use App\Repositories\ProveedorRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class IngresosController extends Controller
@@ -27,19 +27,26 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $arrTypes = ['COMPRA'];
-            $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
+            if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
+                $arrTypes = ['COMPRA'];
+                $movement = Movement::whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('created_at', 'DESC')->get();
+            } else {
+                $arrTypes = ['VENTA', 'TRASLADO'];
+                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('created_at', 'DESC')->get();
+            }
             return Datatables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('origen', function ($movement) {
                     return $movement->origenData($movement->type);
                 })
                 ->editColumn('date', function ($movement) {
-                    return date('Y-m-d', strtotime($movement->date));
+                    return date('d-m-Y', strtotime($movement->date));
                 })
                 ->addColumn('items', function ($movement) {
-                    $count = count($movement->movement_products);
-                    return '<span class="badge badge-primary">' . $count . '</span>';
+                    return '<span class="badge badge-primary">' . $movement->cantidad_ingresos() . '</span>';
+                })
+                ->addColumn('kgrs', function ($movement) {
+                    return '<span class="badge badge-primary">' . $movement->totalKgrs() . '</span>';
                 })
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
@@ -49,7 +56,7 @@ class IngresosController extends Controller
                     ? '<a class="dropdown-item" href="' . route('ingresos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-edit text-primary"></i> </a>'
                     : '<a class="dropdown-item" href="' . route('ingresos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
                 })
-                ->rawColumns(['origen', 'date', 'items', 'edit'])
+                ->rawColumns(['origen', 'date', 'items', 'kgrs','edit'])
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.index');
@@ -94,6 +101,7 @@ class IngresosController extends Controller
     {
         try {
             $data['unit_package'] = implode('|', $request->unit_package);
+            $data['unit_weight'] = $request->unit_weight;
             Product::find($request->product_id)->update($data);
             return new JsonResponse(['msj' => 'Actualización correcta !', 'type' => 'success']);
         } catch (\Exception $e) {
@@ -112,10 +120,9 @@ class IngresosController extends Controller
 
     public function show(Request $request)
     {
-        $movement    = Movement::find($request->id);
-        $proveedor   = Proveedor::find($movement->from);
-        $movimientos = MovementProduct::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
-        return view('admin.movimientos.ingresos.show', compact('movement', 'proveedor', 'movimientos'));
+        $movement    = Movement::query()->where('id', $request->id)->with('movement_ingreso_products')->first();
+        $movimientos = (isset($movement->movement_ingreso_products)) ? $movement->movement_ingreso_products : null;
+        return view('admin.movimientos.ingresos.show', compact('movement', 'movimientos'));
     }
 
     public function destroy(Request $request)

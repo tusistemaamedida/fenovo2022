@@ -5,13 +5,11 @@ use App\Http\Controllers\Admin\InvoiceController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-
 Route::get('/', function () {
-   return view('portada');
+    return view('portada');
 });
 
 Route::group(['middleware' => 'preventBackHistory'], function () {
-
     Auth::routes();
     Route::get('/inicio', [App\Http\Controllers\HomeController::class, 'index'])->name('inicio');
 
@@ -25,11 +23,18 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/permissions.php';
         require __DIR__ . '/admin/utils.php';
         require __DIR__ . '/admin/invoice.php';
+        require __DIR__ . '/admin/print.php';
         // Movimientos
         require __DIR__ . '/admin/movimientos/ingresos.php';
         require __DIR__ . '/admin/movimientos/salidas.php';
         require __DIR__ . '/admin/movimientos/notas_credito.php';
         require __DIR__ . '/admin/movimientos/senasa.php';
+        // Logistica
+        require __DIR__ . '/admin/transportistas.php';
+        require __DIR__ . '/admin/vehiculos.php';
+        require __DIR__ . '/admin/rutas.php';
+        //
+        require __DIR__ . '/admin/localidades.php';
     });
 });
 
@@ -37,6 +42,5 @@ Route::group(['namespace' => 'Admin', 'middleware' => ['auth']], function () {
     Route::any('filepicker', [FilepickerController::class, 'handle'])->name('filepicker');
 });
 
-
 Route::get('factura-electronica/{movment_id}', [InvoiceController::class, 'generateInvoicePdf'])->name('ver.fe');
-//require __DIR__ . '/cron/routes.php';
+require __DIR__ . '/admin/cron/routes.php';

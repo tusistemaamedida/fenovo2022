@@ -1,5 +1,8 @@
 {
-  "salidas": [
+  "movimientos": [
+    {
+      "type": "COMPRA"
+    },
     {
       "type": "VENTA"
     },
@@ -11,6 +14,9 @@
     },
     {
       "type": "DEVOLUCION"
+    },
+    {
+      "type": "DEVOLUCIONCLIENTE"
     }
   ],
   "iva": [
@@ -26,19 +32,24 @@
   ],
   "store": [
     {
-      "type": "N"
+      "type": "B",
+      "name": "BASE"
     },
     {
-      "type": "B"
+      "type": "C",
+      "name": "COCINA"
     },
     {
-      "type": "C"
+      "type": "E",
+      "name": "EXPRESS"
+    },    
+    {
+      "type": "N",
+      "name": "NAVE"
     },
     {
-      "type": "T"
-    },
-    {
-      "type": "E"
+      "type": "T",
+      "name": "TIENDA"
     }
   ],
   "print": [

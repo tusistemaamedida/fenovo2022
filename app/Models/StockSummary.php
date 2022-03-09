@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class StockSummary
- * 
+ *
  * @property int $id
  * @property int|null $product_id
  * @property int|null $store_id
@@ -37,24 +37,13 @@ class StockSummary extends Model
 		'product_id' => 'int',
 		'store_id' => 'int',
 		'daily_sale' => 'float',
-		'stock_min' => 'float',
-		'stock_actual' => 'float',
-		'net_weight' => 'float',
-		'gross_weight' => 'float',
-		'stock_capacity' => 'float'
+		'stock_actual' => 'float'
 	];
 
 	protected $fillable = [
 		'product_id',
 		'store_id',
 		'daily_sale',
-		'stock_min',
-		'stock_actual',
-		'net_weight',
-		'gross_weight',
-		'unit_type',
-		'unit_package',
-		'product_name',
-		'stock_capacity'
+		'stock_actual'
 	];
 }

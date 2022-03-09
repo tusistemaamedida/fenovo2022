@@ -25,6 +25,14 @@ body {
     font-size: 9px;
 }
 
+.body-senasa {
+    margin-top: 2cm;
+    margin-left: 0cm;
+    margin-right: 0cm;
+    margin-bottom: 2cm;
+    font-size: 9px;
+}
+
 header {
     line-height: 0.6cm;
     position: fixed;

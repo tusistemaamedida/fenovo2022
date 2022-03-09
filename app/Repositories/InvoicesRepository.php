@@ -18,4 +18,8 @@ class InvoicesRepository extends BaseRepository {
 
         return Invoice::whereNotNull('cae')->where('voucher_number','LIKE','%'.$term.'%')->get();
     }
+
+    public function getByVoucherNumber($voucher_number){
+        return $this->newQuery()->where('voucher_number',$voucher_number)->first();
+    }
 }

@@ -36,11 +36,11 @@
 
                 <div class="d-none">
                     <select class="rounded form-control bg-transparent" name="rol_id">
-                        @foreach ($roles as $rol)
+                        {{-- @foreach ($roles as $rol)
                         <option value="{{$rol->id}}" @if(isset($user) && isset($user->roles->pluck('id')[0]) && ($rol->id == $user->roles->pluck('id')[0]) ) selected @endif>
-                            {{$rol->name}}
+                        {{$rol->name}}
                         </option>
-                        @endforeach
+                        @endforeach --}}
                     </select>
                     <input type="checkbox" class="custom-control-input" @if (isset($user) && $user->active) checked="" @endif name="active" id="active" value='1'>
                 </div>

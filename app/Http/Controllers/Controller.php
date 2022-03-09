@@ -22,4 +22,24 @@ class Controller extends BaseController
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton" >'.$actions. '</div></div>';
     }
+
+    public static function getEntidadTipo($tipo){
+        switch ($tipo) {
+            case 'COMPRA':
+                return 'P';
+                break;
+            case 'TRASLADO':
+            case 'DEVOLUCION':
+            case 'VENTA':
+            case 'DEVOLUCIONCLIENTE':
+                return 'S';
+                break;
+            case 'VENTACLIENTE':
+                return 'C';
+                break;
+            default:
+                # code...
+                break;
+        }
+    }
 }

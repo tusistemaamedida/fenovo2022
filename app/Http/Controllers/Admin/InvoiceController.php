@@ -92,7 +92,7 @@ class InvoiceController extends Controller
                 array_push($array_productos,$objProduct);
             }
 
-            $total_lineas = 24;
+            $total_lineas = 22;
             $paginas = (int) ((count($array_productos)/$total_lineas) + 1);
             $faltantes_para_completar = ($total_lineas * $paginas) - count($array_productos);
 
@@ -131,6 +131,7 @@ class InvoiceController extends Controller
     public function create($movement_id){
         try {
             $movement = Movement::where('id',$movement_id)->with('movement_salida_products')->firstOrFail();
+
             $result = $this->createVoucher($movement);
             $invoice = $this->invoiceRepository->getByMovement($movement_id);
             if($result['status']){
@@ -142,13 +143,13 @@ class InvoiceController extends Controller
                     ]);
                 }
 
-                return $this->generateInvoicePdf($movement_id);
+                return redirect()->back()->withInput();
             }else{
                 if(isset($invoice)) $this->invoiceRepository->fill($invoice->id,[ 'error' => $result['error'] ]);
                 return $result['error'];
             }
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            return $e->getMessage();
         }
     }
 
@@ -202,69 +203,84 @@ class InvoiceController extends Controller
             }
         }
 
-          return 'error';//{status:false, data_invoice:null, error:data_invoice.error};
+        return ['status' => false,  'error' => $data_invoice['error']];
     }
 
     private function dataInvoice($movement){
         try {
-          $client = $this->dataClient($movement->type,(int)$movement->to);
+            $tipo_movimiento = $movement->type;
+            $client = $this->dataClient($tipo_movimiento,(int)$movement->to);
 
-          if($client){
-            $last_voucher = 0;
-            $fecha_servicio_desde = $fecha_servicio_hasta = $fecha_vencimiento_pago = 0;
-            $concepto = $this->concepto_afip;
-            $punto_de_venta = $this->pto_vta;
-            $tipo_de_factura = $this->voucherType($this->client->iva_type);
-            $tipo_de_documento = $this->document_type;
-            $numero_de_documento = $this->client->cuit;
-            $last_voucher = $this->afip->ElectronicBilling->GetLastVoucher($punto_de_venta, $tipo_de_factura);
+            if($client){
+                $last_voucher = 0;
+                $fecha_servicio_desde = $fecha_servicio_hasta = $fecha_vencimiento_pago = 0;
+                $concepto = $this->concepto_afip;
+                $punto_de_venta = $this->pto_vta;
+                $tipo_de_factura = $this->voucherType($this->client->iva_type,$tipo_movimiento);
+                $tipo_de_documento = $this->document_type;
+                $numero_de_documento = $this->client->cuit;
+                $last_voucher = $this->afip->ElectronicBilling->GetLastVoucher($punto_de_venta, $tipo_de_factura);
 
-            $numero_de_factura = $last_voucher+1;
-            $fecha = date('Y-m-d');
-            $iibb = Iibb::where('state',$this->client->state)->first();
-            $iibb = ($iibb)?$iibb->value:0;
+                $numero_de_factura = $last_voucher+1;
+                $fecha = date('Y-m-d');
+                $iibb = Iibb::where('state',$this->client->state)->first();
+                $iibb = ($iibb)?$iibb->value:0;
 
-            $importe = $this->importes($movement);
-            $importe_gravado = $importe['gravado'];
-            $importe_exento_iva = 0;
-            $importe_iva = $importe['iva'];
+                $importe = $this->importes($movement);
+                $importe_gravado = $importe['gravado'];
+                $importe_exento_iva = 0;
+                $importe_iva = $importe['iva'];
 
-            $importe_no_gravado = ($iibb>0)?($importe_gravado * $iibb /100):0;
+                $importe_no_gravado = ($iibb>0)?($importe_gravado * $iibb /100):0;
 
-            $dataAfip =[
-              'CantReg' 	=>  1, // Cantidad de facturas a registrar
-              'PtoVta' 	    =>  $punto_de_venta,
-              'CbteTipo' 	=>  $tipo_de_factura,
-              'Concepto' 	=>  $concepto,
-              'DocTipo' 	=>  $tipo_de_documento,
-              'DocNro' 	    =>  $numero_de_documento,
-              'CbteDesde'   =>  $numero_de_factura,
-              'CbteHasta'   =>  $numero_de_factura,
-              'CbteFch' 	=>  intval(str_replace('-', '', $fecha)),
-              'FchServDesde'=>  $fecha_servicio_desde,
-              'FchServHasta'=>  $fecha_servicio_hasta,
-              'FchVtoPago'  =>  $fecha_vencimiento_pago,
-              'ImpTotal' 	=>  round(($importe_gravado + $importe_iva + $importe_exento_iva + $importe_no_gravado),2),
-              'ImpTotConc'  =>  round($importe_no_gravado,2), // Importe neto no gravado
-              'ImpNeto' 	=>  $importe_gravado,
-              'ImpOpEx' 	=>  $importe_exento_iva,
-              'ImpIVA' 	    =>  $importe_iva,
-              'ImpTrib' 	=>  0, //Importe total de tributos
-              'MonId' 	    =>  'PES', //Tipo de moneda usada en la factura ('PES' = pesos argentinos)
-              'MonCotiz' 	=>  1, // Cotización de la moneda usada (1 para pesos argentinos)
-            ];
+                $dataAfip =[
+                    'CantReg' 	=>  1, // Cantidad de facturas a registrar
+                    'PtoVta' 	    =>  $punto_de_venta,
+                    'CbteTipo' 	=>  $tipo_de_factura,
+                    'Concepto' 	=>  $concepto,
+                    'DocTipo' 	=>  $tipo_de_documento,
+                    'DocNro' 	    =>  $numero_de_documento,
+                    'CbteDesde'   =>  $numero_de_factura,
+                    'CbteHasta'   =>  $numero_de_factura,
+                    'CbteFch' 	=>  intval(str_replace('-', '', $fecha)),
+                    'FchServDesde'=>  $fecha_servicio_desde,
+                    'FchServHasta'=>  $fecha_servicio_hasta,
+                    'FchVtoPago'  =>  $fecha_vencimiento_pago,
+                    'ImpTotal' 	=>  round(($importe_gravado + $importe_iva + $importe_exento_iva + $importe_no_gravado),2),
+                    'ImpTotConc'  =>  round($importe_no_gravado,2), // Importe neto no gravado
+                    'ImpNeto' 	=>  $importe_gravado,
+                    'ImpOpEx' 	=>  $importe_exento_iva,
+                    'ImpIVA' 	    =>  $importe_iva,
+                    'ImpTrib' 	=>  0, //Importe total de tributos
+                    'MonId' 	    =>  'PES', //Tipo de moneda usada en la factura ('PES' = pesos argentinos)
+                    'MonCotiz' 	=>  1, // Cotización de la moneda usada (1 para pesos argentinos)
+                ];
 
-            if($importe_gravado > 0 || $importe_iva > 0) $dataAfip['Iva'] = $importe['ivas'];
+                if($importe_gravado > 0 || $importe_iva > 0) $dataAfip['Iva'] = $importe['ivas'];
 
-            return [
-                'status'=> true,
-                'data' => $dataAfip ,
-                'client' => $this->client,
-                'numero_de_factura' => $numero_de_factura,
-                'iibb' => $iibb
-            ];
-          }
-          return ['status' => false, 'error' => "Cliente o store no encontrado en el movimiento ". $movement->id];
+                if($tipo_movimiento == 'DEVOLUCION' || $tipo_movimiento == 'DEVOLUCIONCLIENTE'){
+                    $invoice = $this->invoiceRepository->getByVoucherNumber($movement->voucher_number);
+                    if($invoice){
+                        $explode = explode('-',$movement->voucher_number);
+                        $dataAfip['CbtesAsoc'] = array( //Factura asociada
+                            array(
+                                'Tipo' 		=> $invoice->cbte_tipo,
+                                'PtoVta' 	=> $invoice->pto_vta,
+                                'Nro' 		=> (int)$explode[1],
+                            )
+                        );
+                    }
+                }
+
+                return [
+                    'status'=> true,
+                    'data' => $dataAfip ,
+                    'client' => $this->client,
+                    'numero_de_factura' => $numero_de_factura,
+                    'iibb' => $iibb
+                ];
+            }
+            return ['status' => false, 'error' => "Cliente o store no encontrado en el movimiento ". $movement->id];
         } catch (\Exception $e) {
           return ['status' => false, 'error' => $e->getMessage()];
         }
@@ -359,9 +375,11 @@ class InvoiceController extends Controller
         switch ($type) {
           case 'VENTA':
           case 'TRASLADO':
+          case 'DEVOLUCION':
             $this->client = Store::where('id',$id)->where('active', 1)->with('region')->first();
             return true;
           case 'VENTACLIENTE':
+          case 'DEVOLUCIONCLIENTE':
             $this->client = Customer::where('id',$id)->where('active', 1)->with('store')->first();
             return true;
           default:
@@ -369,13 +387,14 @@ class InvoiceController extends Controller
         }
     }
 
-    private function voucherType($type){
-        switch ($type) {
-          case 'RI':
-            return  1; //FACTURA A
-          default:
-            return  6; //FACTURA B
-        }
+    private function voucherType($type,$tipo_movimiento){
+        $factura = 6; //Por defecto FACTURA B
+        if(($type == 'RI' && $tipo_movimiento == 'VENTA') || $type == 'RI' && $tipo_movimiento == 'VENTACLIENTE') $factura = 1; //FACTURA A
+        if(($type != 'RI' && $tipo_movimiento == 'VENTA') || $type != 'RI' && $tipo_movimiento == 'VENTACLIENTE') $factura = 6; //FACTURA B
+        if(($type == 'RI' && $tipo_movimiento == 'DEVOLUCION') || $type == 'RI' && $tipo_movimiento == 'DEVOLUCIONCLIENTE') $factura = 3; //NOTA CREDITO A
+        if(($type != 'RI' && $tipo_movimiento == 'DEVOLUCION') || $type != 'RI' && $tipo_movimiento == 'DEVOLUCIONCLIENTE') $factura = 8; //NOTA CREDITO B
+
+        return $factura;
     }
 
     private function get_snake_case($data){
@@ -419,8 +438,10 @@ class InvoiceController extends Controller
 
     private function check_type($type){
         switch ($type) {
-          case 'VENTA':
-          case 'VENTACLIENTE':
+            case 'VENTA':
+            case 'VENTACLIENTE':
+            case 'DEVOLUCION':
+            case 'DEVOLUCIONCLIENTE':
               return true;
           default:
             return false;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ProductsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\AddProduct;
 
@@ -11,6 +12,7 @@ use App\Http\Requests\Products\UpdateProduct;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\Product;
+
 use App\Repositories\AlicuotaTypeRepository;
 use App\Repositories\ProducDescuentoRepository;
 use App\Repositories\ProductCategoryRepository;
@@ -21,6 +23,8 @@ use App\Repositories\ProveedorRepository;
 use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -59,7 +63,7 @@ class ProductController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('stock', function ($product) {
-                    return $product->stock();
+                    return $product->stock(null, Auth::user()->store_active);
                 })
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();
@@ -386,6 +390,7 @@ class ProductController extends Controller
                 }
                 $i++;
             }
+
             fclose($file);
             foreach ($importData_arr as $importData) {
                 $data       = [];
@@ -474,7 +479,8 @@ class ProductController extends Controller
                 $product    = $this->productRepository->getByCodeFenovo($cod_fenovo);
                 if ($product) {
                     MovementProduct::create([
-                        'store_id'     => 1,
+                        'entidad_id'   => 1,
+                        'entidad_tipo' => 'S',
                         'movement_id'  => $movement->id,
                         'product_id'   => $product->id,
                         'unit_package' => $product->unit_package,
@@ -494,5 +500,10 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             dd($e->getMessage());
         }
+    }
+
+    public function exportToCsv(Request $request)
+    {
+        return Excel::download(new ProductsExport($request), 'productos.csv');
     }
 }
