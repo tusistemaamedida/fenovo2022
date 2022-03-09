@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Traits\OriginDataTrait;
-
 use App\Exports\MovementsExport;
+
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
+use App\Models\Store;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\SessionProductRepository;
-
 use App\Repositories\StoreRepository;
+
+use App\Traits\OriginDataTrait;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -71,6 +72,8 @@ class PrintController extends Controller
         $hasta   = explode('-', $request->hasta);
         $type    = ($request->tipo) ? $request->tipo : 'TODOS';
         $archivo = 'MOV_' . $type . '_' . $desde[2] . $desde[1] . '_' . $hasta[2] . $hasta[1] . '.csv';
+
+        // Segmento de pruebas //
 
         return Excel::download(new MovementsExport($request), $archivo);
     }
