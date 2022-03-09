@@ -6,7 +6,6 @@ use App\Exports\MovementsExport;
 
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
-use App\Models\Store;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -18,7 +17,6 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use stdClass;
 
 class PrintController extends Controller
 {
@@ -59,8 +57,7 @@ class PrintController extends Controller
             ->whereIn('type', $arrTypes)
             ->orderBy('created_at', 'ASC')
             ->whereBetween(DB::raw('DATE(created_at)'), [$request->desde, $request->hasta])
-            ->get()
-            ->unique('voucher_number');
+            ->get();
 
         $pdf = PDF::loadView('admin.movimientos.print.entreFechas', compact('salidas', 'desde', 'hasta'));
         return $pdf->stream('salidas_fechas.pdf');
