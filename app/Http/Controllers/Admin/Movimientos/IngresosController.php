@@ -26,8 +26,8 @@ class IngresosController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->ajax()) {
 
+        if ($request->ajax()) {
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $arrTypes = ['COMPRA'];
                 $movement = Movement::whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('created_at', 'DESC')->get();
