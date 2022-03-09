@@ -10,7 +10,7 @@ class MovementProduct extends Model
 
     protected $casts = [
         'movement_id'  => 'int',
-        'store_id'     => 'int',
+        'entidad_id'   => 'int',
         'product_id'   => 'int',
         'unit_package' => 'float',
         'invoice'      => 'bool',
@@ -22,7 +22,8 @@ class MovementProduct extends Model
 
     protected $fillable = [
         'movement_id',
-        'store_id',
+        'entidad_id',
+        'entidad_tipo',
         'product_id',
         'unit_package',
         'invoice',
@@ -46,6 +47,6 @@ class MovementProduct extends Model
 
     public function store()
     {
-        return $this->belongsTo(Store::class, 'store_id');
+        return $this->belongsTo(Store::class, 'entidad_id');
     }
 }
