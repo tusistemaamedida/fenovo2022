@@ -110,11 +110,8 @@
                 if (data['type'] == 'success') {
                     jQuery("#dataTemp").html(data['html']);
                     jQuery(".calculate").first().select();
-                    
-                    console.log(jQuery("#unit_weight").val())
-
                     if(jQuery("#unit_weight").val() == 0){
-                        toastr.error('Evite errores, PRODUCTO SIN "PESO UNITARIO"', 'Verifique');
+                        toastr.error('PRODUCTO SIN "PESO UNITARIO"', 'Verifique');
                     }
                 }
             },
@@ -130,7 +127,9 @@
             success: function (data) {
                 if (data['type'] == 'success') {
                     jQuery("#insertByAjax").html(data['html']);
-                    jQuery("#unit_package").select2({});
+                    jQuery("#unit_package").select2({
+                        tags: true
+                    })
                     jQuery('.editpopup').addClass('offcanvas-on');
                 } else {
                     toastr.error(data['html'], 'Verifique');
