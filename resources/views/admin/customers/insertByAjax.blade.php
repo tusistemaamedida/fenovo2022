@@ -57,8 +57,8 @@
 
 <div class="form-group mb-3">
     <label class="text-dark text-primary">Cliente de la <strong>tienda</strong></label>
-    <fieldset class="form-group">
-        <select class="rounded form-control bg-transparent" name="store_id">
+    <fieldset class="form-group bg-dark border-radius-10px ">
+        <select class="rounded form-control bg-transparent text-black-50" name="store_id">
             <option value="">Seleccione ...</option>
             @forelse ($stores as $store)
             <option value="{{$store->id}}" @if(isset($customer) && ($store->id == $customer->store_id)) selected @endif>
