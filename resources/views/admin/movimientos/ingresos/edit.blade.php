@@ -94,7 +94,10 @@
 @section('js')
 <script>
     jQuery( document ).ready(function() {
-        jQuery("#product_id").select2('open')
+        jQuery("#product_id").select2('open');
+        jQuery("#unit_package").select2({
+            tags: true
+        })
     });
 
     jQuery("#product_id").on('change', function(){
@@ -107,6 +110,12 @@
                 if (data['type'] == 'success') {
                     jQuery("#dataTemp").html(data['html']);
                     jQuery(".calculate").first().select();
+                    
+                    console.log(jQuery("#unit_weight").val())
+
+                    if(jQuery("#unit_weight").val() == 0){
+                        toastr.error('Evite errores, PRODUCTO SIN "PESO UNITARIO"', 'Verifique');
+                    }
                 }
             },
         });
@@ -157,7 +166,7 @@
             if(isNaN(parseFloat(jQuery(this).val()))){
                 valido = false;
             }
-        });
+        });        
 
         if(valido){
             jQuery('.calculate').each(function() {

@@ -11,6 +11,16 @@
 </div>
 
 <div class="form-group">
+    <label class="text-body">Peso por unidad *</label>
+    <fieldset class="input-group form-group mb-3">
+        <input type="text" class="form-control border-dark" value="{{$product->unit_weight}}" name="unit_weight" id="unit_weight">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Kg.</span>
+        </div>
+    </fieldset>
+</div>
+
+<div class="form-group">
     <label class="text-body">Unidad x bulto *</label>
     <fieldset class="form-group mb-3">
         <select name="unit_package[]" id="unit_package" multiple="multiple" class="js-example-basic-multiple js-states form-control bg-transparent">
