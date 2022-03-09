@@ -448,53 +448,6 @@ class ProductController extends Controller
                 ];
                 $this->productPriceRepository->create($data);
             }
-
-            /* $filepath = public_path('/imports/ST.TXT');
-            $file     = fopen($filepath, 'r');
-
-            $importData_arr2 = [];
-            $i               = 0;
-
-            while (($filedata2 = fgetcsv($file, 0, ',')) !== false) {
-                $num = count($filedata2);
-                for ($c = 0; $c < $num; $c++) {
-                    $importData_arr2[$i][] = $filedata2[$c];
-                }
-                $i++;
-            }
-            fclose($file);
-
-            $movement = Movement::create([
-                'date'           => now(),
-                'type'           => 'COMPRA',
-                'from'           => 1,
-                'to'             => 1,
-                'status'         => 'CREATED',
-                'voucher_number' => '00001',
-            ]);
-            $code_not_found = [];
-            foreach ($importData_arr2 as $importData) {
-                $cod_fenovo = $importData[0];
-                $balance    = $importData[1];
-                $product    = $this->productRepository->getByCodeFenovo($cod_fenovo);
-                if ($product) {
-                    MovementProduct::create([
-                        'store_id'     => 1,
-                        'movement_id'  => $movement->id,
-                        'product_id'   => $product->id,
-                        'unit_package' => $product->unit_package,
-                        'invoice'      => 1,
-                        'entry'        => $balance,
-                        'egress'       => 0,
-                        'balance'      => $balance,
-                        'unit_price'   => $product->product_price->costfenovo,
-                        'tasiva'       => $product->product_price->tasiva,
-                    ]);
-                } else {
-                    array_push($code_not_found, $cod_fenovo);
-                }
-            }
-            dd($code_not_found); */
             return redirect()->route('products.list');
         } catch (\Exception $e) {
             dd($e->getMessage());

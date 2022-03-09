@@ -127,4 +127,9 @@ class Movement extends Model
 
         return ($movimiento) ? $movimiento->total : 0;
     }
+
+    public function cantidad_ingresos()
+    {	
+        return count($this->movement_ingreso_products()->get()->groupBy('product_id'));
+    }
 }
