@@ -44,7 +44,8 @@
                                                     <th>Proveedor</th>
                                                     @endif
                                                     <th>Items</th>
-                                                    <th>ComprobanteNro</th>
+                                                    <th>Kgrs</th>
+                                                    <th>Nro compra</th>
                                                     <th>Detalle</th>
                                                 </tr>
                                             </thead>
@@ -75,6 +76,7 @@
             {data: 'date', 'class':'text-center', searchable: false},
             {data: 'origen'},
             {data: 'items', 'class':'text-center', searchable: false},
+            {data: 'kgrs', 'class':'text-center', searchable: false},
             {data: 'voucher_number',  'class':'text-center'},
             {data: 'edit', 'class':'text-center', searchable: false},
         ],
