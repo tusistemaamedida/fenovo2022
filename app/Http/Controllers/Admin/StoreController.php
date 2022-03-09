@@ -38,7 +38,7 @@ class StoreController extends Controller
             return Datatables::of($store)
                 ->addIndexColumn()
                 ->addColumn('cod_fenovo', function ($store) {
-                    return str_pad($store->cod_fenovo, 5, 0, STR_PAD_LEFT);
+                    return str_pad($store->cod_fenovo, 4, 0, STR_PAD_LEFT);
                 })
                 ->addColumn('inactivo', function ($store) {
                     return ($store->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;

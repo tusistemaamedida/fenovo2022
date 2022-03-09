@@ -34,9 +34,11 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $user = User::all();
+            $user = User::orderBy('username', 'ASC')->get();
             return Datatables::of($user)
-                ->addIndexColumn()
+                ->addColumn('user_id', function ($user) {
+                    return str_pad($user->id, 4, 0, STR_PAD_LEFT);
+                })
                 ->addColumn('rol', function ($user) {
                     return $user->rol();
                 })
@@ -44,8 +46,12 @@ class UserController extends Controller
                     return '<a href="' . route('users.vincular.tienda', ['id' => $user->id]) . '"> <i class="fa fa-link"></i> </a>';
                 })
                 ->addColumn('tienda', function ($user) {
-                    return $user->store_active();
+                    return str_pad($user->store_active, 4, 0, STR_PAD_LEFT) . ' - ' . $user->store_active();
                 })
+                ->addColumn('asociadas', function ($user) {
+                    return count($user->stores);
+                })
+
                 ->addColumn('edit', function ($user) {
                     $ruta = 'edit(' . $user->id . ",'" . route('users.edit') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
@@ -54,7 +60,7 @@ class UserController extends Controller
                     $ruta = 'destroy(' . $user->id . ",'" . route('users.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['rol', 'vincular', 'tienda', 'edit', 'destroy'])
+                ->rawColumns(['user_id','rol', 'vincular', 'tienda', 'asociadas', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.users.index');
@@ -162,13 +168,7 @@ class UserController extends Controller
             $user->store_active = null;
             $user->save();
         }
-
-        $notification = [
-            'message'    => 'Relacion actualizada !',
-            'alert-type' => 'info',
-        ];
-
-        return redirect()->route('users.index')->with($notification);
+        return redirect()->route('users.index');
     }
 
     public function activarTienda(Request $request)

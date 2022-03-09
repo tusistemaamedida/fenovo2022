@@ -34,12 +34,11 @@
                                         <table class="display table-hover yajra-datatable">
                                             <thead>
                                                 <tr class="bg-dark text-white">
-                                                    <th>No</th>
-                                                    <th>Nombre</th>
+                                                    <th>UserID</th>
                                                     <th>Username</th>
-                                                    <th>Email</th>
                                                     <th>Rol</th>
-                                                    <th>Vincular</th>
+                                                    <th>Vincular tiendas</th>
+                                                    <th>Nro tiendas asociadas</th>
                                                     <th>Tienda activa</th>
                                                     <th>Editar</th>
                                                     <th>Borrar</th>
@@ -72,12 +71,11 @@
         @include('partials.table.setting'),
         ajax: "{{ route('users.index') }}",
         columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'name'},
+            {data: 'user_id', 'class':'text-center', orderable: false, searchable: false},
             {data: 'username'},
-            {data: 'email'},
             {data: 'rol'},
             {data: 'vincular', 'class':'text-center'},
+            {data: 'asociadas', 'class':'text-center'},
             {data: 'tienda'},
             {data: 'edit'},
             {data: 'destroy'},
