@@ -27,7 +27,7 @@ class MovementsExport implements FromArray
     {
         $arrTypes  = ($this->request->tipo) ? [$this->request->tipo] : ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE', 'VENTA', 'VENTACLIENTE', 'TRASLADO'];
         $movements = Movement::whereIn('type', $arrTypes)
-            ->whereBetween(DB::raw('DATE(date)'), [$this->request['desde'], $this->request['hasta']])
+            ->whereBetween(DB::raw('DATE(date)'), [$this->request->desde, $this->request->hasta])
             ->orderBy('id', 'ASC')->get();
 
         $arrMovements = [];
@@ -40,7 +40,7 @@ class MovementsExport implements FromArray
                     if ($movement->type == 'COMPRA') {
                         $cod_tienda = '-1';
                     } else {
-                        $tienda     = $this->origenData($movement->type, $movement_product->store_id, true);
+                        $tienda     = $this->origenData($movement->type, $movement_product->entidad_id, true);
                         $cod_tienda = $tienda->cod_fenovo;
                     }
                 }

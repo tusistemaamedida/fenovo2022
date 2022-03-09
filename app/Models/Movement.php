@@ -129,7 +129,7 @@ class Movement extends Model
     }
 
     public function cantidad_ingresos()
-    {	
-        return count($this->movement_ingreso_products()->get()->groupBy('product_id'));
+    {
+        return count($this->hasMany(MovementProduct::class)->get()->groupBy('product_id'));
     }
 }
