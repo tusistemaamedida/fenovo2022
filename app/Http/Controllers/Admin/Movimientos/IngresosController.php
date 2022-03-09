@@ -26,7 +26,6 @@ class IngresosController extends Controller
 
     public function index(Request $request)
     {
-
         if ($request->ajax()) {
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $arrTypes = ['COMPRA'];
@@ -44,8 +43,10 @@ class IngresosController extends Controller
                     return date('d-m-Y', strtotime($movement->date));
                 })
                 ->addColumn('items', function ($movement) {
-                    $count = count($movement->movement_products);
-                    return '<span class="badge badge-primary">' . $count . '</span>';
+                    return '<span class="badge badge-primary">' . $movement->cantidad_ingresos() . '</span>';
+                })
+                ->addColumn('kgrs', function ($movement) {
+                    return '<span class="badge badge-primary">' . $movement->totalKgrs() . '</span>';
                 })
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
@@ -55,7 +56,7 @@ class IngresosController extends Controller
                     ? '<a class="dropdown-item" href="' . route('ingresos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-edit text-primary"></i> </a>'
                     : '<a class="dropdown-item" href="' . route('ingresos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
                 })
-                ->rawColumns(['origen', 'date', 'items', 'edit'])
+                ->rawColumns(['origen', 'date', 'items', 'kgrs','edit'])
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.index');
