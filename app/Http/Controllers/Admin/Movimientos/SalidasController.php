@@ -419,8 +419,7 @@ class SalidasController extends Controller
         }
     }
 
-    public function storeSalida(Request $request)
-    {
+    public function storeSalida(Request $request){
         $from = Auth::user()->store_active;
         try {
             $list_id                       = $request->input('session_list_id');
@@ -435,16 +434,22 @@ class SalidasController extends Controller
 
             $movement         = Movement::create($insert_data);
             $session_products = $this->sessionProductRepository->getByListId($list_id);
+
+            $enitidad_tipo = parent::getEntidadTipo($insert_data['type']);
+
             foreach ($session_products as $product) {
+                $kgrs = ($product->producto->unit_weight * $product->unit_package * $product->quantity);
                 // resta del balance de la store fenovo porque es salida
                 $latest = MovementProduct::all()
-                    ->where('store_id', $from)
+                    ->where('entidad_id', $from)
+                    ->where('entidad_tipo', 'S')
                     ->where('product_id', $product->product_id)
                     ->sortByDesc('id')->first();
 
-                $balance = ($latest) ? $latest->balance - ($product->producto->unit_weight * $product->unit_package * $product->quantity) : 0;
+                $balance = ($latest) ? $latest->balance - $kgrs : 0;
                 MovementProduct::firstOrCreate([
-                    'store_id'       => $from,
+                    'entidad_id'     => $from,
+                    'entidad_tipo'   => 'S',
                     'movement_id'    => $movement->id,
                     'product_id'     => $product->product_id,
                     'unit_package'   => $product->unit_package, ], [
@@ -453,34 +458,54 @@ class SalidasController extends Controller
                         'tasiva'     => $product->tasiva,
                         'entry'      => 0,
                         'bultos'     => $product->quantity,
-                        'egress'     => $product->producto->unit_weight * $product->unit_package * $product->quantity,
+                        'egress'     => $kgrs,
                         'balance'    => $balance,
-                    ]);
+                ]);
 
-                // Suma al balance de la store to
-                $latest = MovementProduct::all()
-                    ->where('store_id', $insert_data['to'])
-                    ->where('product_id', $product->product_id)
-                    ->sortByDesc('id')->first();
+                if($insert_data['type'] != 'VENTACLIENTE'){
+                    // Suma al balance de la store to
+                    $latest = MovementProduct::all()
+                        ->where('entidad_id', $insert_data['to'])
+                        ->where('entidad_tipo', $enitidad_tipo)
+                        ->where('product_id', $product->product_id)
+                        ->sortByDesc('id')->first();
 
-                $balance = ($latest) ? $latest->balance + ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->producto->unit_weight * $product->unit_package * $product->quantity);
-                MovementProduct::firstOrCreate([
-                    'store_id'       => $insert_data['to'],
-                    'movement_id'    => $movement->id,
-                    'product_id'     => $product->product_id,
-                    'unit_package'   => $product->unit_package, ], [
-                        'invoice'    => $product->invoice,
-                        'bultos'     => $product->quantity,
-                        'entry'      => $product->producto->unit_weight * $product->unit_package * $product->quantity,
-                        'unit_price' => $product->unit_price,
-                        'tasiva'     => $product->tasiva,
-                        'egress'     => 0,
-                        'balance'    => $balance,
+                    $balance = ($latest) ? $latest->balance + $kgrs : $kgrs;
+                    MovementProduct::firstOrCreate([
+                        'entidad_id'     => $insert_data['to'],
+                        'entidad_tipo'   => $enitidad_tipo,
+                        'movement_id'    => $movement->id,
+                        'product_id'     => $product->product_id,
+                        'unit_package'   => $product->unit_package, ], [
+                            'invoice'    => $product->invoice,
+                            'bultos'     => $product->quantity,
+                            'entry'      => $kgrs,
+                            'unit_price' => $product->unit_price,
+                            'tasiva'     => $product->tasiva,
+                            'egress'     => 0,
+                            'balance'    => $balance,
                     ]);
+                }else{
+                    MovementProduct::firstOrCreate([
+                        'entidad_id'     => $insert_data['to'],
+                        'entidad_tipo'   => $enitidad_tipo,
+                        'movement_id'    => $movement->id,
+                        'product_id'     => $product->product_id,
+                        'unit_package'   => $product->unit_package, ], [
+                            'invoice'    => $product->invoice,
+                            'bultos'     => $product->quantity,
+                            'entry'      => $kgrs,
+                            'unit_price' => $product->unit_price,
+                            'tasiva'     => $product->tasiva,
+                            'egress'     => 0,
+                            'balance'    => $balance,
+                    ]);
+                }
             }
             $this->sessionProductRepository->deleteList($list_id);
             return redirect()->route('salidas.add');
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }

@@ -122,11 +122,14 @@ class NotasCreditoController extends Controller
                 $invoice              = Invoice::where('voucher_number',$request->input('voucher_number'))->first();
                 $movement_relacionado = Movement::where('id',$invoice->movement_id)->first();
                 $session_products = $this->sessionProductRepository->getByListId($list_id);
+                $enitidad_tipo = $this->getEntidadTipo($insert_data['type']);
+
                 foreach ($session_products as $product) {
 
                     // busco el balance del producto y el TO del movimento de salida para restarle la cantidad devuelta
                     $latest = MovementProduct::all()
-                                            ->where('store_id', $movement_relacionado->to)
+                                            ->where('entidad_id', $movement_relacionado->to)
+                                            ->where('entidad_tipo', $enitidad_tipo)
                                             ->where('product_id', $product->product_id)
                                             ->sortByDesc('id')
                                             ->first();
@@ -134,7 +137,8 @@ class NotasCreditoController extends Controller
                     $balance = ($latest) ? $latest->balance - $kgs : 0;
 
                     MovementProduct::firstOrCreate([
-                        'store_id'       => $movement_relacionado->to,
+                        'entidad_id'     => $movement_relacionado->to,
+                        'entidad_tipo'   => $enitidad_tipo,
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
                         'unit_package'   => $product->unit_package, ], [
@@ -148,13 +152,15 @@ class NotasCreditoController extends Controller
                     ]);
 
                     $latest = MovementProduct::all()
-                        ->where('store_id', \Auth::user()->store_active)
+                        ->where('entidad_id', \Auth::user()->store_active)
+                        ->where('entidad_tipo', $enitidad_tipo)
                         ->where('product_id', $product->product_id)
                         ->sortByDesc('id')->first();
 
                     $balance = ($latest) ? $latest->balance + $kgs : $kgs;
                     MovementProduct::firstOrCreate([
-                        'store_id'       => \Auth::user()->store_active,
+                        'entidad_id'     => \Auth::user()->store_active,
+                        'entidad_tipo'   => $enitidad_tipo,
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
                         'unit_package'   => $product->unit_package, ], [

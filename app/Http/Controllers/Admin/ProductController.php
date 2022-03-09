@@ -449,7 +449,7 @@ class ProductController extends Controller
                 $this->productPriceRepository->create($data);
             }
 
-            /* $filepath = public_path('/imports/ST.TXT');
+            $filepath = public_path('/imports/ST.TXT');
             $file     = fopen($filepath, 'r');
 
             $importData_arr2 = [];
@@ -479,7 +479,8 @@ class ProductController extends Controller
                 $product    = $this->productRepository->getByCodeFenovo($cod_fenovo);
                 if ($product) {
                     MovementProduct::create([
-                        'store_id'     => 1,
+                        'entidad_id'   => 1,
+                        'entidad_tipo' => 'S',
                         'movement_id'  => $movement->id,
                         'product_id'   => $product->id,
                         'unit_package' => $product->unit_package,
@@ -494,7 +495,7 @@ class ProductController extends Controller
                     array_push($code_not_found, $cod_fenovo);
                 }
             }
-            dd($code_not_found); */
+            dd($code_not_found);
             return redirect()->route('products.list');
         } catch (\Exception $e) {
             dd($e->getMessage());
