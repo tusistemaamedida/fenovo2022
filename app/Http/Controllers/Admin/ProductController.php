@@ -504,6 +504,6 @@ class ProductController extends Controller
 
     public function exportToCsv(Request $request)
     {
-        return Excel::download(new ProductsExport($request), 'productos.csv');
+        return Excel::download(new ProductsExport($request), 'producto.csv');
     }
 }
