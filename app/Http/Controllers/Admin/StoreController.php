@@ -31,7 +31,7 @@ class StoreController extends Controller
     {
         if ($request->ajax()) {
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $store = Store::all();
+                $store = Store::orderBy('description', 'asc')->get();
             } else {
                 $store = Auth::user()->stores;
             }
