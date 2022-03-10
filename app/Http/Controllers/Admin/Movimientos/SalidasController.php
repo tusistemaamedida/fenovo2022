@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
-use stdClass;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\SessionProduct;
@@ -13,12 +12,13 @@ use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
-
 use App\Traits\OriginDataTrait;
+
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -87,7 +87,7 @@ class SalidasController extends Controller
                             $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Generar factura"  href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
                         }
                     }
-                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito('.$movement->id.')"> <i class="fas fa-print"></i> </a>';
+                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
 
                     return $links;
                 })
@@ -134,8 +134,8 @@ class SalidasController extends Controller
     {
         $explode     = explode('_', $request->input('list_id'));
         $tipo        = $explode[0];
-        $destino     = $this::origenData($tipo, $explode[1], true);
-        $destinoName = $this::origenData($tipo, $explode[1]);
+        $destino     = $this->origenData($tipo, $explode[1], true);
+        $destinoName = $this->origenData($tipo, $explode[1]);
         return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
     }
 
@@ -149,56 +149,57 @@ class SalidasController extends Controller
         return $pdf->stream('salidas.pdf');
     }
 
-    public function getTotalMovement(Request $request){
-        $total = 0;
+    public function getTotalMovement(Request $request)
+    {
+        $total    = 0;
         $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
         $products = $movement->movement_salida_products;
         foreach ($products as $product) {
-            if($product->invoice){
+            if ($product->invoice) {
                 $subtotal = $product->bultos * $product->unit_price * $product->unit_package;
                 $total += $subtotal;
             }
         }
 
-        return new JsonResponse(['type' => 'success','total'=>number_format($total, 2, ',', '.')]);
+        return new JsonResponse(['type' => 'success', 'total' => number_format($total, 2, ',', '.')]);
     }
 
-    public function printRemito(Request $request){
+    public function printRemito(Request $request)
+    {
         $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
-        if($movement){
-            $destino  = $this->origenData($movement->type, $movement->to, true);
-            $neto = $request->input('neto');
-            $array_productos =  [];
-            $productos = $movement->movement_salida_products;
+        if ($movement) {
+            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $neto            = $request->input('neto');
+            $array_productos = [];
+            $productos       = $movement->movement_salida_products;
             foreach ($productos as $producto) {
-                $objProduct = new stdClass;
-                $objProduct->cant = $producto->bultos;
-                $objProduct->codigo = $producto->product->cod_fenovo;
-                $objProduct->name = $producto->product->name;
-                $objProduct->unity = '( '.$producto->unit_package . ' '.$producto->product->unit_type .' )';
+                $objProduct             = new stdClass();
+                $objProduct->cant       = $producto->bultos;
+                $objProduct->codigo     = $producto->product->cod_fenovo;
+                $objProduct->name       = $producto->product->name;
+                $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
                 $objProduct->total_unit = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
-                $objProduct->class = '';
-                array_push($array_productos,$objProduct);
+                $objProduct->class      = '';
+                array_push($array_productos, $objProduct);
             }
 
-            $total_lineas = 27;
-            $paginas = (int) ((count($array_productos)/$total_lineas) + 1);
+            $total_lineas             = 27;
+            $paginas                  = (int)((count($array_productos) / $total_lineas) + 1);
             $faltantes_para_completar = ($total_lineas * $paginas) - count($array_productos);
 
             for ($aux = 0; $aux < $faltantes_para_completar; $aux++) {
-                $objProduct = new stdClass;
-                $objProduct->cant = 0;
-                $objProduct->codigo = 'none';
-                $objProduct->name = 'none';
+                $objProduct             = new stdClass();
+                $objProduct->cant       = 0;
+                $objProduct->codigo     = 'none';
+                $objProduct->name       = 'none';
                 $objProduct->total_unit = 'none';
-                $objProduct->unity = 'none';
-                $objProduct->class = 'no-visible';
-                array_push($array_productos,$objProduct);
+                $objProduct->unity      = 'none';
+                $objProduct->class      = 'no-visible';
+                array_push($array_productos, $objProduct);
             }
 
-            $pdf = PDF::loadView('print.remito',compact('destino','array_productos','neto','paginas','total_lineas'));
+            $pdf = PDF::loadView('print.remito', compact('destino', 'array_productos', 'neto', 'paginas', 'total_lineas'));
             return $pdf->download('remito.pdf');
-
         }
     }
     public function add()
@@ -426,7 +427,8 @@ class SalidasController extends Controller
         }
     }
 
-    public function storeSalida(Request $request){
+    public function storeSalida(Request $request)
+    {
         $from = Auth::user()->store_active;
         try {
             $list_id                       = $request->input('session_list_id');
@@ -467,9 +469,9 @@ class SalidasController extends Controller
                         'bultos'     => $product->quantity,
                         'egress'     => $kgrs,
                         'balance'    => $balance,
-                ]);
+                    ]);
 
-                if($insert_data['type'] != 'VENTACLIENTE'){
+                if ($insert_data['type'] != 'VENTACLIENTE') {
                     // Suma al balance de la store to
                     $latest = MovementProduct::all()
                         ->where('entidad_id', $insert_data['to'])
@@ -491,8 +493,8 @@ class SalidasController extends Controller
                             'tasiva'     => $product->tasiva,
                             'egress'     => 0,
                             'balance'    => $balance,
-                    ]);
-                }else{
+                        ]);
+                } else {
                     MovementProduct::firstOrCreate([
                         'entidad_id'     => $insert_data['to'],
                         'entidad_tipo'   => $enitidad_tipo,
@@ -506,7 +508,7 @@ class SalidasController extends Controller
                             'tasiva'     => $product->tasiva,
                             'egress'     => 0,
                             'balance'    => $balance,
-                    ]);
+                        ]);
                 }
             }
             $this->sessionProductRepository->deleteList($list_id);

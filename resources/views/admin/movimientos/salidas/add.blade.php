@@ -265,10 +265,12 @@
                 let valor = parseFloat(jQuery(this).val());
                 let presentacion = jQuery(this).attr("id");
                 total = total + (valor*presentacion*unit_weight);
+                total = total.toFixed(2);
             });
         }
 
         const max = parseInt(jQuery("#tope").val());
+
         if(total > max){
             toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
             jQuery(obj).val(0).select();

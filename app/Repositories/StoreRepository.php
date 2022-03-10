@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Store;
+use Illuminate\Support\Facades\Auth;
 
 class StoreRepository extends BaseRepository
 {
@@ -36,14 +37,14 @@ class StoreRepository extends BaseRepository
 
     public function getAll()
     {
-        return Store::all()->sortBy('description');
+        return Store::orderBy('description', 'ASC')->get();
     }
 
     public function search($term)
     {
         $ids = null;
-        if(\Auth::user()->rol() == 'base'){
-            $ids = \Auth::user()->stores->pluck('id');
+        if (Auth::user()->rol() == 'base') {
+            $ids = Auth::user()->stores->pluck('id');
         }
 
         return Store::where('active', true)
@@ -53,8 +54,6 @@ class StoreRepository extends BaseRepository
                     ->where(function ($query) use ($term) {
                         $query->orWhere('description', 'LIKE', '%' . $term . '%')
                               ->orWhere('cod_fenovo', 'LIKE', '%' . $term . '%')
-                              ->orWhere('responsable', 'LIKE', '%' . $term . '%')
-                              ->orWhere('razon_social', 'LIKE', '%' . $term . '%')
                               ->orWhere('cuit', 'LIKE', '%' . $term . '%');
                     })
                     ->get();

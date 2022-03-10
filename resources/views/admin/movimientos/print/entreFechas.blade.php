@@ -25,6 +25,7 @@
             <tr>
                 <td>#</td>
                 <td>Fecha</td>
+                <td>Origen</td>
                 <td>Destino</td>
                 <td>Tipo</td>
                 <td>Comprobante</td>
@@ -35,7 +36,8 @@
             <tr>
                 <td>{{$loop->iteration}}</th>
                 <td>{{ date('d-m-Y',strtotime($salida->date)) }}</td>
-                <td>{{ $salida->origenData($salida->type); }}</td>
+                <td>{{ $salida->origenDataFrom($salida->type); }}</td>
+                <td>{{ $salida->origenDataTo($salida->type); }}</td>
                 <td>{{ $salida->type }}</td>
                 <td>{{ $salida->voucher_number }}</td>
                 <td>{{ $salida->totalKgrs() }}</td>

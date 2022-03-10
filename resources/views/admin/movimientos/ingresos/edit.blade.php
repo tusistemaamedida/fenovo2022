@@ -94,7 +94,10 @@
 @section('js')
 <script>
     jQuery( document ).ready(function() {
-        jQuery("#product_id").select2('open')
+        jQuery("#product_id").select2('open');
+        jQuery("#unit_package").select2({
+            tags: true
+        })
     });
 
     jQuery("#product_id").on('change', function(){
@@ -107,6 +110,9 @@
                 if (data['type'] == 'success') {
                     jQuery("#dataTemp").html(data['html']);
                     jQuery(".calculate").first().select();
+                    if(jQuery("#unit_weight").val() == 0){
+                        toastr.error('PRODUCTO SIN "PESO UNITARIO"', 'Verifique');
+                    }
                 }
             },
         });
@@ -121,7 +127,9 @@
             success: function (data) {
                 if (data['type'] == 'success') {
                     jQuery("#insertByAjax").html(data['html']);
-                    jQuery("#unit_package").select2({});
+                    jQuery("#unit_package").select2({
+                        tags: true
+                    })
                     jQuery('.editpopup').addClass('offcanvas-on');
                 } else {
                     toastr.error(data['html'], 'Verifique');
@@ -157,7 +165,7 @@
             if(isNaN(parseFloat(jQuery(this).val()))){
                 valido = false;
             }
-        });
+        });        
 
         if(valido){
             jQuery('.calculate').each(function() {

@@ -11,13 +11,28 @@
 </div>
 
 <div class="form-group">
+    <label class="text-body">Peso por unidad *</label>
+    <fieldset class="input-group form-group mb-3">
+        <input type="text" class="form-control border-dark" value="{{$product->unit_weight}}" name="unit_weight" id="unit_weight">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Kg.</span>
+        </div>
+    </fieldset>
+</div>
+
+<div class="form-group">
     <label class="text-body">Unidad x bulto *</label>
     <fieldset class="form-group mb-3">
         <select name="unit_package[]" id="unit_package" multiple="multiple" class="js-example-basic-multiple js-states form-control bg-transparent">
-            @for ($i = 1; $i < 101; $i++) <option value="{{$i}}" @if(isset($product) && in_array($i,$unit_package)) selected @endif>
-                {{$i}}
-                </option>
-                @endfor
+            @for ($i = 1; $i < 101; $i++) <option value="{{$i}}"> {{$i}}</option> @endfor
+
+            @if(isset($product))
+            @foreach ( $unit_package as $unit )
+            <option value="{{$unit}}" selected>
+                {{$unit}}
+            </option>
+            @endforeach
+            @endif
         </select>
     </fieldset>
 </div>

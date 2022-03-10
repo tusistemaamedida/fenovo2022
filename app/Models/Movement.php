@@ -70,6 +70,44 @@ class Movement extends Model
         return $this->belongsToMany(Senasa::class);
     }
 
+    public function origenDataFrom($type)
+    {
+        switch ($type) {
+            case 'COMPRA':
+                $proveedor = Proveedor::find($this->from);
+                return $proveedor->name;
+            case 'VENTA':
+            case 'TRASLADO':
+            case 'DEVOLUCION':
+                $store = Store::find($this->from);
+                return $store->description;
+            case 'VENTACLIENTE':
+                $store = Store::find($this->from);
+                return $store->description;
+            case 'DEVOLUCIONCLIENTE':
+                $customer = Customer::find($this->from);
+                return $customer->razon_social;
+        }
+    }
+
+    public function origenDataTo($type)
+    {
+        switch ($type) {
+            case 'COMPRA':
+                return 'Fenovo SA';
+            case 'VENTA':
+            case 'TRASLADO':
+            case 'DEVOLUCION':
+                $store = Store::find($this->to);
+                return $store->description;
+            case 'VENTACLIENTE':
+                $customer = Customer::find($this->to);
+                return $customer->razon_social;
+            case 'DEVOLUCIONCLIENTE':
+                return 'Fenovo SA';
+        }
+    }
+
     public function origenData($type)
     {
         $typeTo = $this->to;
