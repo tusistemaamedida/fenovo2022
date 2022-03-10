@@ -11,17 +11,23 @@
                 <div class="row mt-5">
                     <div class="col-lg-12 col-xl-6">
                         <h3 class="card-label mb-0 font-weight-bold text-body">
-                            Movimientos :: Impresión | Exportación
+                            Menú :: Impresión | Exportación
                         </h3>
                     </div>
                 </div>
                 <div class="row mt-3 mb-3">
-                    <div class="col-lg-12 col-xl-12">
+                    <div class="col-xl-12 col-lg-12 ">
                         &nbsp;
                     </div>
                 </div>
                 <div class="card card-custom gutter-b bg-white border-0">
-                    <div class="row m-4 border-bottom-dark">
+
+                    <div class="row mt-3 ml-3">
+                        <div class="col-12">
+                            Movimientos
+                        </div>
+                    </div>
+                    <div class="row m-2">
                         <div class="col-3">
                             <fieldset class="input-group form-group mb-3">
                                 <div class="input-group-prepend">
@@ -38,7 +44,7 @@
                                 <input type="date" name="salidaHasta" id="salidaHasta" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark">
                             </fieldset>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                             <fieldset class="input-group form-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Movimiento</span>
@@ -53,11 +59,26 @@
                                 </select>
                             </fieldset>
                         </div>
-                        <div class="col-1">
+                        <div class="col-3">
+                        </div>
+                    </div>
+                    <div class="row mb-5 ml-2 border-bottom-dark">
+                        <div class="col-3">
+                            <a href="javascript:void(0)" onclick="entreFechasCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
+                        </div>
+                        <div class="col-3">
                             <a href="javascript:void(0)" onclick="entreFechas()"> <i class=" fa fa-print"></i> Imprimir</a>
                         </div>
-                        <div class="col-1">
-                            <a href="javascript:void(0)" onclick="entreFechasCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
+                    </div>
+
+                    <div class="row mt-5 ml-3">
+                        <div class="col-12">
+                            Productos
+                        </div>
+                    </div>
+                    <div class="row m-2 border-bottom-dark">
+                        <div class="col-3">
+                            <a href="{{ route('export.products') }}"> <i class="fas fa-file-csv"></i> Exportar </a>
                         </div>
                     </div>
                 </div>

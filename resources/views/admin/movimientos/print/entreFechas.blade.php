@@ -34,10 +34,10 @@
             @if (isset($salidas))
             @foreach ($salidas as $salida)
             <tr>
-                <td>{{$loop->iteration}}</th>
+                <td>{{$salida->id}}</th>
                 <td>{{ date('d-m-Y',strtotime($salida->date)) }}</td>
-                <td>{{ $salida->origenDataFrom($salida->type); }}</td>
-                <td>{{ $salida->origenDataTo($salida->type); }}</td>
+                <td>{{ $salida->From($salida->type); }}</td>
+                <td>{{ $salida->To($salida->type); }}</td>
                 <td>{{ $salida->type }}</td>
                 <td>{{ $salida->voucher_number }}</td>
                 <td>{{ $salida->totalKgrs() }}</td>
