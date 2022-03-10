@@ -83,4 +83,9 @@ class SessionProductRepository extends BaseRepository
         }
         return '0';
     }
+
+    public function deleteDevoluciones()
+    {
+        return $this->newQuery()->where('list_id','like', "%DEVOLUCION_%")->delete();
+    }
 }

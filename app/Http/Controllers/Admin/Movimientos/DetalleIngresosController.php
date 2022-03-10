@@ -15,6 +15,7 @@ class DetalleIngresosController extends Controller
     public function store(Request $request)
     {
         try {
+           // dd($request->datos);
             foreach ($request->datos as $movimiento) {
                 $product               = Product::find($movimiento['product_id']);
                 $latest                = $product->stock(null, Auth::user()->store_active);

@@ -203,6 +203,7 @@ class SalidasController extends Controller
     }
     public function add()
     {
+        $this->sessionProductRepository->deleteDevoluciones();
         return view('admin.movimientos.salidas.add');
     }
 
@@ -217,6 +218,8 @@ class SalidasController extends Controller
     {
         $term        = $request->term ?: '';
         $valid_names = [];
+
+        $this->sessionProductRepository->deleteDevoluciones();
 
         if ($request->to_type == 'VENTACLIENTE' || $request->to_type == 'DEVOLUCIONCLIENTE') {
             $customers = $this->customerRepository->search($term);
@@ -236,16 +239,20 @@ class SalidasController extends Controller
     public function searchProducts(Request $request)
     {
         $term        = $request->term ?: '';
+        $show_stock  = $request->has('show_stock') ? (bool)$request->show_stock: true;
         $valid_names = [];
         $products    = $this->productRepository->search($term);
 
         foreach ($products as $product) {
             $disabled      = '';
             $text_no_stock = '';
-            $stock         = $product->stock(null, Auth::user()->store_active);
-            if (!$stock) {
-                $disabled      = 'disabled';
-                $text_no_stock = ' -- SIN STOCK --';
+
+            if($show_stock){
+                $stock         = $product->stock(null, Auth::user()->store_active);
+                if (!$stock) {
+                    $disabled      = 'disabled';
+                    $text_no_stock = ' -- SIN STOCK --';
+                }
             }
 
             $valid_names[] = [
@@ -298,7 +305,7 @@ class SalidasController extends Controller
             if ($request->has('id') && $request->input('id') != '') {
                 $product          = $this->productRepository->getById($request->input('id'));
                 $list_id          = $request->input('list_id');
-                $mostrar_detalles = !(str_contains($list_id, 'DEVOLUCION_'));
+                $devolucion       = str_contains($list_id, 'DEVOLUCION_');
 
                 if ($product) {
                     $stock_presentaciones = [];
@@ -324,11 +331,11 @@ class SalidasController extends Controller
                         }
                         $stock_presentaciones[$i]['bultos'] = (int)$bultos;
                     }
+
+                    $view = ($devolucion)?'admin.movimientos.notas-credito.partials.inserByAjax':'admin.movimientos.salidas.partials.inserByAjax';
                     return new JsonResponse([
                         'type' => 'success',
-                        'html' => view(
-                            'admin.movimientos.salidas.partials.inserByAjax',
-                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total', 'mostrar_detalles')
+                        'html' => view($view,compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total')
                         )->render(),
                     ]);
                 }

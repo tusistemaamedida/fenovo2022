@@ -69,6 +69,7 @@ class NotasCreditoController extends Controller
     }
 
     public function add(){
+        $this->sessionProductRepository->deleteDevoluciones();
         return view('admin.movimientos.notas-credito.add');
     }
 

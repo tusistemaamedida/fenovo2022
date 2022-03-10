@@ -67,9 +67,11 @@ class Store extends Model
 
     public function displayName()
     {
-        $display = '';
+        $display = '[Cod: ';
+        $display .= $this->cod_fenovo;
+        $display .= '] ';
         $display .= (is_null($this->description)) ? '' : $this->description;
-        $display .= ($display != '' && !is_null($this->cod_fenovo)) ? ', ' . $this->cod_fenovo : $this->cod_fenovo;
+
         return $display;
     }
 }

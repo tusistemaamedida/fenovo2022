@@ -151,7 +151,7 @@
 
     const sumar = () => {
         let total = 0;
-        let valido = true; 
+        let valido = true;
 
         jQuery('.calculate').each(function() {
             if(isNaN(parseFloat(jQuery(this).val()))){
@@ -167,7 +167,7 @@
             });
             if(total > 0){
                 jQuery('#btn-guardar-producto').removeClass("d-none");
-            }    
+            }
             jQuery('.total').val(total)
         }else{
             jQuery('#btn-guardar-producto').addClass("d-none");
@@ -186,7 +186,7 @@
         jQuery('.calculate').each(function() {
             if(isNaN(parseFloat(jQuery(this).val()))){
                 valido = false;
-            }else{                       
+            }else{
                 let unit_package    = parseFloat(jQuery(this).attr("id"));
                 let valor           = parseFloat(jQuery(this).val());
                 let presentacion    = parseFloat(jQuery(this).attr("id"));
@@ -212,8 +212,8 @@
                     arrMovimientos.push(Movi);
                 }
             }
-        }); 
-                
+        });
+       console.log(arrMovimientos)
         jQuery.ajax({
             url: '{{ route('detalle-ingresos.store') }}',
             type: 'POST',
@@ -232,7 +232,7 @@
 
         jQuery('#loader').addClass('hidden');
     }
-    
+
     const actualizarIngreso = ()=>{
         const id = jQuery("#movement_id").val();
         jQuery.ajax({
@@ -291,9 +291,9 @@
                     dataType: 'json',
                     data: { id: id },
                     success: function (data) {
-                        if (data['type'] == 'success') {                 
+                        if (data['type'] == 'success') {
                             let ruta = "{{ route('ingresos.index') }}";
-                            window.location = ruta;                           
+                            window.location = ruta;
                         }
                     }
                 });
@@ -317,7 +317,7 @@
                     dataType: 'json',
                     data: { id: id },
                     success: function (data) {
-                        if (data['type'] == 'success') {                    
+                        if (data['type'] == 'success') {
                             let ruta = "{{ route('ingresos.index') }}";
                             window.location = ruta;
                         }

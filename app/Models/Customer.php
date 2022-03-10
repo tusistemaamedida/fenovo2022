@@ -66,8 +66,8 @@ class Customer extends Model
     {
         $display = '';
         $display .= (is_null($this->bussiness_name)) ? '' : $this->bussiness_name;
-        $display .= ($display != '' && !is_null($this->razon_social)) ? ', ' . $this->razon_social : $this->razon_social;
-        $display .= ($display != '' && !is_null($this->responsable)) ? ', ' . $this->responsable : $this->responsable;
+        //$display .= ($display != '' && !is_null($this->razon_social)) ? ', ' . $this->razon_social : $this->razon_social;
+        //$display .= ($display != '' && !is_null($this->responsable)) ? ', ' . $this->responsable : $this->responsable;
 
         return $display;
     }
