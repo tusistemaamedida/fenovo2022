@@ -56,6 +56,7 @@ class ProductsExport implements FromArray
                 't1.package_row',
                 't4.codigo',
             )
+            ->where('t1.active', 1)
             ->get();
 
         foreach ($productos as $producto) {
