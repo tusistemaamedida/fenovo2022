@@ -33,7 +33,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Desde</span>
                                 </div>
-                                <input type="date" name="salidaDesde" id="salidaDesde" value="{{ date('Y-m-d', strtotime($carbon::now()->subDays(2))) }}" class="form-control border-dark" autofocus>
+                                {{-- {{ date('Y-m-d', strtotime($carbon::now()->subDays(2))) }}  --}}
+                                <input type="date" name="salidaDesde" id="salidaDesde" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark" autofocus>
                             </fieldset>
                         </div>
                         <div class="col-3">
