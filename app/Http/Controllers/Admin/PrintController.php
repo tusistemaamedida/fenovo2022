@@ -17,7 +17,6 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use stdClass;
 
 class PrintController extends Controller
 {
@@ -71,51 +70,7 @@ class PrintController extends Controller
         $type    = ($request->tipo) ? $request->tipo : 'TODOS';
         $archivo = 'MOV_' . $type . '_' . $desde[2] . $desde[1] . '_' . $hasta[2] . $hasta[1] . '.csv';
 
-        // Segmento de pruebas
-
-        $arrTypes  = ($request->tipo) ? [$request->tipo] : ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE', 'VENTA', 'VENTACLIENTE', 'TRASLADO'];
-        $movements = Movement::whereIn('type', $arrTypes)
-            ->whereBetween(DB::raw('DATE(date)'), [$request->desde, $request->hasta])
-            ->orderBy('id', 'ASC')->get();
-
-        $arrMovements = [];
-
-        foreach ($movements as $movement) {
-            foreach ($movement->movement_products as $movement_product) {
-                // NO INFORMO CLIENTE DONDE VAN LAS VENTAS
-                if (!($movement->type == 'VENTACLIENTE' && $movement_product->entidad_tipo == 'C')) {
-                    // NO INFORMO CLIENTE QUE DEVUELVE
-                    if (!($movement->type == 'DEVOLUCION' && $movement_product->entidad_tipo == 'C')) {
-                        if ($movement->type == 'VENTACLIENTE') {
-                            $tienda     = $movement->From($movement->type, true);
-                            $cod_tienda = $tienda->cod_fenovo;
-                        } else {
-                            if ($movement->type !== 'DEVOLUCION') {
-                                $tienda = ($movement_product->egress > 0) ? $movement->From($movement->type, true) : $movement->To($movement->type, true);
-                            } else {
-                                $tienda = ($movement_product->egress > 0) ? $movement->To($movement->type, true) : $movement->From($movement->type, true);
-                            }
-                            $cod_tienda = $tienda->cod_fenovo;
-                        }
-
-                        $objMovement = new stdClass();
-
-                        $objMovement->id          = $movement_product->id;
-                        $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
-                        $objMovement->tipo        = ($movement_product->egress > 0) ? 'S' : 'E';
-                        $objMovement->codtienda   = $cod_tienda;
-                        $objMovement->codproducto = $movement_product->product->cod_fenovo;
-                        $objMovement->cantidad    = ($movement_product->egress > 0) ? $movement_product->egress : $movement_product->entry;
-
-                        array_push($arrMovements, $objMovement);
-                    }
-                }
-            }
-        }
-
-        return $arrMovements;
-
-        //
+        // Segmento de pruebas //
 
         return Excel::download(new MovementsExport($request), $archivo);
     }
