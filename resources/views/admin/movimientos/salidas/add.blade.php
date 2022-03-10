@@ -265,8 +265,8 @@
                 let valor = parseFloat(jQuery(this).val());
                 let presentacion = jQuery(this).attr("id");
                 total = total + (valor*presentacion*unit_weight);
-                total = total.toFixed(2);
             });
+            total = total.toFixed(2);
         }
 
         const max = parseInt(jQuery("#tope").val());

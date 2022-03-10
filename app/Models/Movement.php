@@ -70,41 +70,49 @@ class Movement extends Model
         return $this->belongsToMany(Senasa::class);
     }
 
-    public function From($type)
+    public function From($type, $returnObject = false)
     {
         switch ($type) {
             case 'COMPRA':
-                $proveedor = Proveedor::find($this->from);
-                return $proveedor->name;
+                $Proveedor = Proveedor::find($this->from);
+                if ($returnObject) {
+                    return $Proveedor;
+                }
+                return $Proveedor->name;
             case 'VENTA':
             case 'TRASLADO':
             case 'DEVOLUCION':
-                $store = Store::find($this->from);
-                return $store->description;
-            case 'VENTACLIENTE':
-                $store = Store::find($this->from);
-                return $store->description;
+            case 'VENTACLIENTE':    
+                $Store = Store::find($this->from);
+                if ($returnObject) {
+                    return $Store;
+                }
+                return $Store->description;
             case 'DEVOLUCIONCLIENTE':
                 $customer = Customer::find($this->from);
                 return $customer->razon_social;
         }
     }
 
-    public function To($type)
+    public function To($type, $returnObject = false)
     {
         switch ($type) {
             case 'COMPRA':
-                return 'Fenovo SA';
             case 'VENTA':
             case 'TRASLADO':
             case 'DEVOLUCION':
-                $store = Store::find($this->to);
-                return $store->description;
-            case 'VENTACLIENTE':
-                $customer = Customer::find($this->to);
-                return $customer->razon_social;
             case 'DEVOLUCIONCLIENTE':
-                return 'Fenovo SA';
+                $Store = Store::find($this->to);
+                if ($returnObject) {
+                    return $Store;
+                }
+                return $Store->description;
+            case 'VENTACLIENTE':
+                $Customer = Customer::find($this->to);
+                if ($returnObject) {
+                    return $Customer;
+                }
+                return $Customer->razon_social;
         }
     }
 
