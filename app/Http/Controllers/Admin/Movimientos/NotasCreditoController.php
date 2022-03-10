@@ -123,7 +123,7 @@ class NotasCreditoController extends Controller
                 $invoice              = Invoice::where('voucher_number',$request->input('voucher_number'))->first();
                 $movement_relacionado = Movement::where('id',$invoice->movement_id)->first();
                 $session_products = $this->sessionProductRepository->getByListId($list_id);
-                $enitidad_tipo = $this->getEntidadTipo($insert_data['type']);
+                $enitidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
                 foreach ($session_products as $product) {
 
@@ -161,7 +161,7 @@ class NotasCreditoController extends Controller
                     $balance = ($latest) ? $latest->balance + $kgs : $kgs;
                     MovementProduct::firstOrCreate([
                         'entidad_id'     => \Auth::user()->store_active,
-                        'entidad_tipo'   => $enitidad_tipo,
+                        'entidad_tipo'   => 'S',
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
                         'unit_package'   => $product->unit_package, ], [
