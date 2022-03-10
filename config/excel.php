@@ -44,7 +44,7 @@ return [
         'csv' => [
             'delimiter'              => ',',
             'enclosure'              => '',    // Esto le quité a la exportación de Productos Fenovo
-            'line_ending'            => '<br>' . PHP_EOL,
+            'line_ending'            => PHP_EOL,
             'use_bom'                => true,
             'include_separator_line' => false,
             'excel_compatibility'    => false,
