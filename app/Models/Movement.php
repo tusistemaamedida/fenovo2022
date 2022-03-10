@@ -70,7 +70,7 @@ class Movement extends Model
         return $this->belongsToMany(Senasa::class);
     }
 
-    public function origenDataFrom($type)
+    public function From($type)
     {
         switch ($type) {
             case 'COMPRA':
@@ -90,7 +90,7 @@ class Movement extends Model
         }
     }
 
-    public function origenDataTo($type)
+    public function To($type)
     {
         switch ($type) {
             case 'COMPRA':

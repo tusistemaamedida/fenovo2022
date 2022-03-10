@@ -15,10 +15,6 @@
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{ route('movement.menu.print') }}" class="mr-3">
-                                        <i class=" fa fa-print"></i>
-                                        Impresion | Exportación <i class="fas fa-file-csv"></i>
-                                    </a>
                                     <a href="{{ route('ingresos.add') }}">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
