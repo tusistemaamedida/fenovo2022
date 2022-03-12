@@ -12,30 +12,35 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h3 class="card-label mb-0 font-weight-bold text-body">
-                                        Productos
+                                        Actualizaciones de precios
                                     </h3>
                                 </div>
                                 <div class="icons d-flex">
-                                    @can('products.create')
-                                    
-                                    <a href="{{route('actualizacion.index')}}" title="Actualización de precios" class="mr-4">
-                                        Actualizac. precios 
-                                    </a>
-
-                                    <a href="{{route('product.add')}}">
+                                    <a href="javascript:void(0)" onclick="add('{{ route('actualizacion.add') }}')" class="ml-2">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
-                                    @endcan
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 ">
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
-                                @include('admin.products.table-products')
+                                <table class="display table-hover yajra-datatable">
+                                    <thead>
+                                        <tr class="bg-dark text-white">
+                                            <th>No</th>
+                                            <th>Fecha</th>
+                                            <th>Productos actualizados</th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -43,7 +48,11 @@
             </div>
         </div>
     </div>
+
 </div>
+
+@include('admin.actualizaciones.modal')
+
 @endsection
 
 @section('js')
@@ -51,18 +60,13 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
-        ajax: "{{ route('products.list') }}",
+        ajax: "{{ route('actualizacion.index') }}",
         columns: [
-
-            {data: 'cod_fenovo', orderable: false},
-            {data: 'name', orderable: false},
-            {data: 'stock', orderable: false, searchable: false},
-            {data: 'senasa', orderable: false, searchable: false},
-            {data: 'proveedor', orderable: false},
-            @can('products.create')
-            {data: 'editar', class:'text-center', orderable: false, searchable: false},
-            {data: 'borrar', class:'text-center', orderable: false, searchable: false},
-            @endcan
+            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'fecha'},
+            {data: 'registros', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'edit', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'destroy','class':'text-center', orderable: false, searchable: false},
         ]
     });
 </script>

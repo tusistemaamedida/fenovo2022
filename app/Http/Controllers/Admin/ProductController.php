@@ -24,7 +24,9 @@ use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -502,8 +504,4 @@ class ProductController extends Controller
         }
     }
 
-    public function exportToCsv(Request $request)
-    {
-        return Excel::download(new ProductsExport($request), 'producto.csv');
-    }
 }

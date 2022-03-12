@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\MovementsExport;
+use App\Exports\MovementsViewExport;
+use App\Exports\ProductsViewExport;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActualizacionPrecio;
 use App\Models\Movement;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
@@ -48,7 +50,7 @@ class PrintController extends Controller
         return view('admin.movimientos.print.print', compact('tiposalidas'));
     }
 
-    public function printEntreFechas(Request $request)
+    public function printMovimientosPDF(Request $request)
     {
         $desde    = $request->desde;
         $hasta    = $request->hasta;
@@ -64,59 +66,88 @@ class PrintController extends Controller
         return $pdf->stream('salidas_fechas.pdf');
     }
 
-    public function exportEntreFechas(Request $request)
+    public function exportMovimientosCsv(Request $request)
     {
-        $desde   = explode('-', $request->desde);
-        $hasta   = explode('-', $request->hasta);
-        $type    = ($request->tipo) ? $request->tipo : 'TODOS';
-        $archivo = 'MOV_' . $type . '_' . $desde[2] . $desde[1] . '_' . $hasta[2] . $hasta[1] . '.csv';
-
-        // Segmento de pruebas
-
+        // Sector de pruebas
+        //
         // $arrTypes  = ($request->tipo) ? [$request->tipo] : ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE', 'VENTA', 'VENTACLIENTE', 'TRASLADO'];
         // $movements = Movement::whereIn('type', $arrTypes)
         //     ->whereBetween(DB::raw('DATE(date)'), [$request->desde, $request->hasta])
         //     ->orderBy('id', 'ASC')->get();
 
         // $arrMovements = [];
-
         // foreach ($movements as $movement) {
         //     foreach ($movement->movement_products as $movement_product) {
-        //         // NO INFORMO CLIENTE DONDE VAN LAS VENTAS
-        //         if (!($movement->type == 'VENTACLIENTE' && $movement_product->entidad_tipo == 'C')) {
-        //             // NO INFORMO CLIENTE QUE DEVUELVE
-        //             if (!($movement->type == 'DEVOLUCION' && $movement_product->entidad_tipo == 'C')) {
-        //                 if ($movement->type == 'VENTACLIENTE') {
-        //                     $tienda     = $movement->From($movement->type, true);
-        //                     $cod_tienda = $tienda->cod_fenovo;
-        //                 } else {
-        //                     if ($movement->type !== 'DEVOLUCION') {
-        //                         $tienda = ($movement_product->egress > 0) ? $movement->From($movement->type, true) : $movement->To($movement->type, true);
-        //                     } else {
-        //                         $tienda = ($movement_product->egress > 0) ? $movement->To($movement->type, true) : $movement->From($movement->type, true);
-        //                     }
-        //                     $cod_tienda = $tienda->cod_fenovo;
-        //                 }
-
-        //                 $objMovement = new stdClass();
-
-        //                 $objMovement->id          = $movement_product->id;
-        //                 $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
-        //                 $objMovement->tipo        = ($movement_product->egress > 0) ? 'S' : 'E';
-        //                 $objMovement->codtienda   = $cod_tienda;
-        //                 $objMovement->codproducto = $movement_product->product->cod_fenovo;
-        //                 $objMovement->cantidad    = ($movement_product->egress > 0) ? $movement_product->egress : $movement_product->entry;
-
-        //                 array_push($arrMovements, $objMovement);
-        //             }
+        //         if (!($movement_product->entidad_tipo == 'C')) {
+        //             $objMovement              = new stdClass();
+        //             $objMovement->id          = $movement_product->id;
+        //             $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
+        //             $objMovement->tipo        = ($movement_product->egress > 0) ? 'S' : 'E';
+        //             $objMovement->codtienda   = DB::table('stores')->where('id', $movement_product->entidad_id)->select('cod_fenovo')->pluck('cod_fenovo')->first();
+        //             $objMovement->codproducto = $movement_product->product->cod_fenovo;
+        //             $objMovement->cantidad    = ($movement_product->egress > 0) ? $movement_product->egress : $movement_product->entry;
+        //             array_push($arrMovements, $objMovement);
         //         }
         //     }
         // }
-
         // return $arrMovements;
-
+        //
         //
 
-        return Excel::download(new MovementsExport($request), $archivo);
+        return Excel::download(new MovementsViewExport($request), 'movi.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+    }
+
+    public function printProductsPDF(Request $request)
+    {
+        $desde = $request->desde;
+        $hasta = $request->hasta;
+
+        if ($desde == '' or $hasta == '') {
+            $actualizacion = ActualizacionPrecio::orderBy('fecha', 'desc')->skip(1)->first();
+            $desde         = $actualizacion->fecha;
+
+            $actualizacion = ActualizacionPrecio::orderBy('fecha', 'desc')->first();
+            $hasta         = $actualizacion->fecha;
+        }
+
+        $productos = DB::table('products as t1')
+            ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
+            ->select(
+                't1.cod_fenovo',
+                't1.cod_proveedor',
+                't1.name',
+                't2.plistproveedor',
+                't2.descproveedor',
+                't2.costfenovo',
+                't2.mupfenovo',
+                't2.plist0neto',
+                't2.mup1',
+                't2.p1may',
+                't2.mupp1may',
+                't2.p1tienda',
+                't2.mupp1may',
+                't2.cantmay1',
+                't2.descp1',
+                't2.tasiva',
+                't1.barcode',
+                't1.unit_package',
+                't1.unit_type',
+                't1.unit_weight',
+                't2.mup2',
+                't2.p2tienda',
+                't1.package_palet',
+                't1.package_row',
+            )
+            ->where('t1.active', 1)
+            ->whereBetween(DB::raw('DATE(t2.updated_at)'), [$desde, $hasta])
+            ->get();
+
+        $pdf = PDF::loadView('admin.products.print.entreFechas', compact('productos', 'desde', 'hasta'));
+        return $pdf->stream('novedades_productos.pdf');
+    }
+
+    public function exportProductsToCsv(Request $request)
+    {
+        return Excel::download(new ProductsViewExport($request), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 }
