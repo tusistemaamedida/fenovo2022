@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\PrintController;
 use App\Http\Controllers\Admin\ProductController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('productos', [ProductController::class, 'list'])->name('products.list');
@@ -19,4 +21,6 @@ Route::post('producto/update', [ProductController::class, 'update'])->name('prod
 Route::get('productos/getProductByProveedor', [ProductController::class, 'getProductByProveedor'])->name('products.getProductByProveedor');
 
 Route::get('importar', [ProductController::class, 'importFromCsv'])->name('import.products');
-Route::get('exportar', [ProductController::class, 'exportToCsv'])->name('export.products');
+
+Route::get('productos/exportar', [PrintController::class, 'exportProductsToCsv'])->name('products.exportCSV');
+Route::get('productos/imprimir', [PrintController::class, 'printProductsPDF'])->name('products.printPDF');
