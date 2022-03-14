@@ -7,8 +7,17 @@
 
 <div class="row">
     <div class="col-6">
-        <label class="text-dark">Patente nro</label>
-        <input type="text" id="patente_nro" name="patente_nro" @if (isset($senasa)) value="{{$senasa->patente_nro}}" @else value="" @endif class="form-control" required>
+        <p>Patente nro</p>
+        <fieldset class="form-group mb-3">
+            <select class="js-example-basic-single js-states form-control bg-transparent" id="patente_nro" name="patente_nro" onchange="getSenasa(this.value)">
+                <option value="" selected>Patente ...</option> 
+                @foreach ( $vehiculos as $vehiculo )
+                <option value="{{$vehiculo->patente}}" @if (isset($senasa) && ($senasa->patente = $vehiculo->patente)) selected @endif>
+                    {{$vehiculo->patente }}
+                </option>
+                @endforeach
+            </select>
+        </fieldset>
     </div>
     <div class="col-6">
         <label class="text-dark">Habilitacion nro</label>

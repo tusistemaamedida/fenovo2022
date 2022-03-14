@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\Senasa;
 use App\Repositories\SenasaRepository;
+use App\Repositories\VehiculoRepository;
+
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,9 +17,10 @@ class SenasaController extends Controller
 {
     private $senasaRepository;
 
-    public function __construct(SenasaRepository $senasaRepository)
+    public function __construct(SenasaRepository $senasaRepository, VehiculoRepository $vehiculoRepository)
     {
-        $this->senasaRepository = $senasaRepository;
+        $this->senasaRepository   = $senasaRepository;
+        $this->vehiculoRepository = $vehiculoRepository;
     }
 
     public function index(Request $request)
@@ -48,10 +51,11 @@ class SenasaController extends Controller
     public function add()
     {
         try {
-            $senasa = null;
+            $senasa    = null;
+            $vehiculos = $this->vehiculoRepository->getAll();
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.movimientos.senasa.insertByAjax', compact('senasa'))->render(),
+                'html' => view('admin.movimientos.senasa.insertByAjax', compact('senasa', 'vehiculos'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -75,10 +79,11 @@ class SenasaController extends Controller
     public function edit(Request $request)
     {
         try {
-            $senasa = Senasa::find($request->id);
+            $senasa    = Senasa::find($request->id);
+            $vehiculos = $this->vehiculoRepository->getAll();
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.movimientos.senasa.insertByAjax', compact('senasa'))->render(),
+                'html' => view('admin.movimientos.senasa.insertByAjax', compact('senasa', 'vehiculos'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
