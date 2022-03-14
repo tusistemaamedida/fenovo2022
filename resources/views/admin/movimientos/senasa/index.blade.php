@@ -11,9 +11,9 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">
+                                    <h4 class="card-label mb-0 font-weight-bold text-body">
                                         Certificados Senasa
-                                    </h3>
+                                    </h4>
                                 </div>
                                 <div class="icons d-flex">
                                     <a href="javascript:void(0)" onclick="add('{{ route('senasa.add') }}')" class="ml-2">
@@ -40,7 +40,8 @@
                                                     <th>Destino</th>
                                                     <th>Vincular</th>
                                                     <th>Imprimir</th>
-                                                    <th>Editar</th>
+                                                    <th></th>
+                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -77,6 +78,7 @@
             {data: 'vincular', 'class':'text-center', searchable: false},
             {data: 'print', 'class':'text-center', searchable: false},
             {data: 'edit', 'class':'text-center', searchable: false},
+            {data: 'destroy', 'class':'text-center', searchable: false},
         ]
     });
 

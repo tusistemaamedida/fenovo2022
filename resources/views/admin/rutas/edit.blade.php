@@ -11,9 +11,9 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">
+                                    <h4 class="card-label mb-0 font-weight-bold text-body">
                                         Editar ruta
-                                    </h3>
+                                        </h3>
                                 </div>
                                 <div class="icons d-flex">
 
@@ -55,7 +55,6 @@
                                     <div class="col-6">
                                         <p>Localidades</p>
                                         <fieldset class="form-group mb-3">
-
                                             <select class="js-example-basic-single js-states form-control bg-transparent" name="localidades[]" id="localidades" multiple="multiple" size=10>
                                                 @foreach ( $localidades as $localidad )
                                                 <option value="{{$localidad->id}}" @if (isset($ruta) && in_array($localidad->id, $ruta->localidades->pluck('id')->toArray() )) selected @endif>
@@ -63,7 +62,6 @@
                                                 </option>
                                                 @endforeach
                                             </select>
-
                                         </fieldset>
                                     </div>
 

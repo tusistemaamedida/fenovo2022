@@ -9,9 +9,9 @@
             <div class="col-12 col-md-8 col-lg-6 col-xl-4">
                 <div class="card card-custom p-5">
                     <div class="card-title mb-0 text-center">
-                        <h3>
+                        <h4>
                             <img src="{{asset('assets/images/misc/logo.png')}}" alt="fenovo" class=" img-fluid">
-                        </h3>
+                        </h4>
                     </div>
                     <div class="card-body p-0">
                         <form method="POST" action="{{ route('login') }}" style="padding: 25px">
