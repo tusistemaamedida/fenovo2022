@@ -12,11 +12,11 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Roles
+                                        Ofertas y descuentos de precios
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="javascript:void(0)" onclick="add('{{ route('roles.add') }}')" class="ml-2">
+                                    <a href="javascript:void(0)" onclick="add('{{ route('descuento.add') }}')" class="ml-2">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
                                 </div>
@@ -32,7 +32,11 @@
                                     <thead>
                                         <tr class="bg-dark text-white">
                                             <th>No</th>
-                                            <th>Name</th>
+                                            <th>Codigo</th>
+                                            <th>Descripcion</th>
+                                            <th>Descuento</th>
+                                            <th>Cantidad</th>
+                                            <th>Tipo</th>
                                             <th></th>
                                             <th></th>
                                         </tr>
@@ -50,7 +54,7 @@
 
 </div>
 
-@include('admin.roles.modal')
+@include('admin.descuentos.modal')
 
 @endsection
 
@@ -59,12 +63,16 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
-        ajax: "{{ route('roles.index') }}",
+        ajax: "{{ route('descuento.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'name'},
-            {data: 'edit', name: 'Editar', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'destroy', name: 'Borrar', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'codigo'},
+            {data: 'descripcion', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'descuento', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'cantidad', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'tipo', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'edit', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'destroy','class':'text-center', orderable: false, searchable: false},
         ]
     });
 </script>

@@ -10,9 +10,9 @@
             <div class="col-12">
                 <div class="row mt-5">
                     <div class="col-lg-12 col-xl-6">
-                        <h3 class="card-label mb-0 font-weight-bold text-body">
+                        <h4 class="card-label mb-0 font-weight-bold text-body">
                             Menú :: Impresión | Exportación
-                        </h3>
+                        </h4>
                     </div>
                 </div>
                 <div class="row mt-3 mb-3">
@@ -73,7 +73,7 @@
 
                     <div class="row mt-3 ml-3 font-weight-bolder">
                         <div class="col-12">
-                            Productos a actualizar 
+                            Productos a actualizar
                         </div>
                     </div>
                     <div class="row m-2">
@@ -82,7 +82,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Desde</span>
                                 </div>
-                                {{-- {{ date('Y-m-d', strtotime($carbon::now()->subDays(2))) }}  --}}
+                                {{-- {{ date('Y-m-d', strtotime($carbon::now()->subDays(2))) }} --}}
                                 <input type="date" name="salidaDesdeProductos" id="salidaDesdeProductos" value="" class="form-control border-dark">
                             </fieldset>
                         </div>

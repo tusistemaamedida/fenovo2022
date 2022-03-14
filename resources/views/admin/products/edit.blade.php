@@ -31,9 +31,9 @@
 
                     <div class="card-header align-items-center  border-0">
                         <div class="card-title mb-0">
-                            <h3 class="card-label mb-0 font-weight-bold text-body">
+                            <h4 class="card-label mb-0 font-weight-bold text-body">
                                 Editar Producto - <small>{{ $product->cod_fenovo }} :: {{ $product->name }}</small>
-                            </h3>
+                            </h4>
                         </div>
                     </div>
 

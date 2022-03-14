@@ -55,7 +55,7 @@
 
             </div>
             <div class="col-3">
-                {!! Form::submit('actualizar', ['class' => 'link']) !!}
+                {!! Form::submit('actualizar', ['class' => 'btn btn-dark']) !!}
             </div>
         </div>
 
@@ -66,7 +66,7 @@
                     <div class="table-responsive">
                         <table class=" table table-hover table-striped table-light text-center">
                             <thead>
-                                <tr class=" bg-light-dark">
+                                <tr class=" bg-dark text-white-50">
                                     <td class="col-1">
                                         Fecha
                                     </td>
@@ -77,7 +77,7 @@
                                         Comprobante nro
                                     </td>
                                     <td class="col-1">
-                                        vincular
+                                        Vincular
                                     </td>
                                 </tr>
                             </thead>
@@ -111,7 +111,7 @@
 
             </div>
             <div class="col-3">
-                {!! Form::submit('actualizar', ['class' => 'link']) !!}
+                {!! Form::submit('actualizar', ['class' => 'btn btn-dark']) !!}
             </div>
         </div>
 

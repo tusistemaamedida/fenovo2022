@@ -11,11 +11,14 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">
+                                    <h4 class="card-label mb-0 font-weight-bold text-body">
                                         Actualizaciones de precios
-                                    </h3>
+                                    </h4>
                                 </div>
                                 <div class="icons d-flex">
+                                    <a href="{{route('descuento.index')}}" class="mr-4">
+                                        Menu descuentos
+                                    </a>
                                     <a href="javascript:void(0)" onclick="add('{{ route('actualizacion.add') }}')" class="ml-2">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>

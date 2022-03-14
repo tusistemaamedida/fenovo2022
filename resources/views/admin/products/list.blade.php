@@ -11,15 +11,15 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">
+                                    <h4 class="card-label mb-0 font-weight-bold text-body">
                                         Productos
-                                    </h3>
+                                    </h4>
                                 </div>
                                 <div class="icons d-flex">
                                     @can('products.create')
                                     
                                     <a href="{{route('actualizacion.index')}}" title="Actualización de precios" class="mr-4">
-                                        Actualizac. precios 
+                                     Actualización precios 
                                     </a>
 
                                     <a href="{{route('product.add')}}">
