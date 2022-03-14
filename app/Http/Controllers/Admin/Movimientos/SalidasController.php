@@ -384,6 +384,7 @@ class SalidasController extends Controller
                     $insert_data['unit_price'] = 0;
                     $insert_data['tasiva']     = 0;
                     break;
+                case 'DEVOLUCIONCLIENTE':
                 case 'VENTACLIENTE':
                     $customer       = $this->customerRepository->getById($to);
                     $listAssociates = [

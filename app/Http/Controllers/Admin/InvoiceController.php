@@ -291,6 +291,7 @@ class InvoiceController extends Controller
         $gravado = 0;
         $iva = 0;
         $ivas = [];
+
         foreach ($products as $product) {
             if($product->invoice && $product->egress > 0){
                 $obj_iva = new stdClass;
@@ -348,7 +349,7 @@ class InvoiceController extends Controller
                 array_push($ivas,$obj_iva);
             }
         }
-       // dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
+        //dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
         return ['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas];
     }
 

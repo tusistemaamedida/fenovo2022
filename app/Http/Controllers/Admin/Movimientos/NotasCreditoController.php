@@ -31,8 +31,8 @@ class NotasCreditoController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $arrTypes = ['DEVOLUCION'];
-            $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
+            $arrTypes = ['DEVOLUCION','DEVOLUCIONCLIENTE'];
+            $movement = Movement::all()->where('from', \Auth::user()->store_active)->whereIn('type', $arrTypes)->sortByDesc('created_at');
 
             return DataTables::of($movement)
                 ->addIndexColumn()
@@ -123,23 +123,29 @@ class NotasCreditoController extends Controller
                 $invoice              = Invoice::where('voucher_number',$request->input('voucher_number'))->first();
                 $movement_relacionado = Movement::where('id',$invoice->movement_id)->first();
                 $session_products = $this->sessionProductRepository->getByListId($list_id);
-                $enitidad_tipo = parent::getEntidadTipo($insert_data['type']);
+                $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
                 foreach ($session_products as $product) {
 
-                    // busco el balance del producto y el TO del movimento de salida para restarle la cantidad devuelta
-                    $latest = MovementProduct::all()
-                                            ->where('entidad_id', $movement_relacionado->to)
-                                            ->where('entidad_tipo', $enitidad_tipo)
-                                            ->where('product_id', $product->product_id)
-                                            ->sortByDesc('id')
-                                            ->first();
                     $kgs = $product->producto->unit_weight * $product->unit_package * $product->quantity;
-                    $balance = ($latest) ? $latest->balance - $kgs : 0;
+
+                    if($insert_data['type'] != 'DEVOLUCIONCLIENTE'){
+                        // busco el balance del producto y el TO del movimento de salida para restarle la cantidad devuelta
+                        $latest = MovementProduct::all()
+                                                ->where('entidad_id', $movement_relacionado->to)
+                                                ->where('entidad_tipo', $entidad_tipo)
+                                                ->where('product_id', $product->product_id)
+                                                ->sortByDesc('id')
+                                                ->first();
+
+                        $balance = ($latest) ? $latest->balance - $kgs : 0;
+                    }else{
+                        $balance =  $kgs;
+                    }
 
                     MovementProduct::firstOrCreate([
                         'entidad_id'     => $movement_relacionado->to,
-                        'entidad_tipo'   => $enitidad_tipo,
+                        'entidad_tipo'   => $entidad_tipo,
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
                         'unit_package'   => $product->unit_package, ], [
@@ -154,7 +160,7 @@ class NotasCreditoController extends Controller
 
                     $latest = MovementProduct::all()
                         ->where('entidad_id', \Auth::user()->store_active)
-                        ->where('entidad_tipo', $enitidad_tipo)
+                        ->where('entidad_tipo', 'S')
                         ->where('product_id', $product->product_id)
                         ->sortByDesc('id')->first();
 
