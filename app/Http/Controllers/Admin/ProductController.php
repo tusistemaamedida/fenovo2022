@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\ProductsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\AddProduct;
+use Illuminate\Support\Collection;
 
 use App\Http\Requests\Products\CalculatePrices;
 use App\Http\Requests\Products\UpdateProduct;
@@ -12,6 +13,8 @@ use App\Http\Requests\Products\UpdateProduct;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\Product;
+use App\Models\ProductPrice;
+use App\Models\SessionPrices;
 
 use App\Repositories\AlicuotaTypeRepository;
 use App\Repositories\ProducDescuentoRepository;
@@ -116,16 +119,25 @@ class ProductController extends Controller
     public function edit(Request $request)
     {
         try {
-            $product           = $this->productRepository->getByIdWith($request->id);
-            $alicuotas         = $this->alicuotaTypeRepository->get('value', 'DESC');
-            $senasaDefinitions = $this->senasaDefinitionRepository->get('product_name', 'DESC');
-            $categories        = $this->productCategoryRepository->getActives('name', 'ASC');
-            $descuentos        = $this->productDescuentoRepository->getActives('descripcion', 'ASC');
-            $proveedores       = $this->proveedorRepository->getActives('name', 'ASC');
-            $unit_package      = explode('|', $product->unit_package);
+            $fecha_actualizacion_activa = $request->input('fecha_actualizacion_activa');
+            $product             = $this->productRepository->getByIdWith($request->id);
+            $alicuotas           = $this->alicuotaTypeRepository->get('value', 'DESC');
+            $senasaDefinitions   = $this->senasaDefinitionRepository->get('product_name', 'DESC');
+            $categories          = $this->productCategoryRepository->getActives('name', 'ASC');
+            $descuentos          = $this->productDescuentoRepository->getActives('descripcion', 'ASC');
+            $proveedores         = $this->proveedorRepository->getActives('name', 'ASC');
+            $unit_package        = explode('|', $product->unit_package);
+
+            if($fecha_actualizacion_activa){
+                $pp1 = $product->product_price->toArray();
+                $ppsession = SessionPrices::where('id',$fecha_actualizacion_activa)->first()->toArray();
+                $new_prices = array_replace( $pp1,$ppsession);
+                $product->product_price = new ProductPrice($new_prices);
+            };
 
             if ($product) {
-                return view('admin.products.edit', compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions', 'product', 'unit_package'));
+                return view('admin.products.edit',
+                        compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions', 'product', 'unit_package','fecha_actualizacion_activa'));
             }
             $notification = [
                 'message'    => 'El producto no existe !',
@@ -144,11 +156,24 @@ class ProductController extends Controller
             $product_id           = $data['product_id'];
             $data['unit_package'] = implode('|', $data['unit_package']);
             $producto_actualizado = $this->productRepository->fill($product_id, $data);
+           // $preciosCalculados    = $this->calcularPrecios($request);
+           // $data                 = array_merge($data, $preciosCalculados);
+            //$producto             = $this->productRepository->getByIdWith($product_id);
+           // $this->productPriceRepository->fill($producto->product_price->id, $data);
+            return new JsonResponse(['type' => 'success', 'msj' => 'Producto actualizado correctamente!']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
+        }
+    }
+
+    public function updatePrices(CalculatePrices $request){
+        try {
+            $data                 = $request->except('_token');
+            $product_id           = $data['product_id'];
             $preciosCalculados    = $this->calcularPrecios($request);
             $data                 = array_merge($data, $preciosCalculados);
-            $producto             = $this->productRepository->getByIdWith($product_id);
-            $this->productPriceRepository->fill($producto->product_price->id, $data);
-            return new JsonResponse(['type' => 'success', 'msj' => 'Producto actualizado correctamente!']);
+            $prices               = SessionPrices::updateOrCreate(['product_id' => $data['product_id'],'fecha_actualizacion' => $data['fecha_actualizacion']],$data);
+            return new JsonResponse(['type' => 'success', 'msj' => 'Los precios se actualizarán el '.\Carbon\Carbon::parse($prices->fecha_actualizacion)->format('d/m/Y')]);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
         }

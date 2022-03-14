@@ -15,8 +15,9 @@ Route::get('calculate-product-prices', [ProductController::class, 'calculateProd
 
 Route::post('productos/destroy', [ProductController::class, 'destroy'])->middleware('can:products.edit')->name('product.destroy');
 
-Route::get('producto/edit', [ProductController::class, 'edit'])->middleware('can:products.edit')->name('product.edit');
+Route::get('producto/edit/{fecha_actualizacion?}', [ProductController::class, 'edit'])->middleware('can:products.edit')->name('product.edit');
 Route::post('producto/update', [ProductController::class, 'update'])->name('product.update');
+Route::post('producto/actualizar-precios', [ProductController::class, 'updatePrices'])->name('actualizar.precios');
 
 Route::get('productos/getProductByProveedor', [ProductController::class, 'getProductByProveedor'])->name('products.getProductByProveedor');
 

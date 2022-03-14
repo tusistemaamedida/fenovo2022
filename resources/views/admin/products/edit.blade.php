@@ -60,6 +60,7 @@
                                 @csrf
                                 @if (isset($product))
                                 <input type="hidden" name="product_id" value="{{$product->id}}">
+                                <input type="hidden" name="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
                                 @endif
                                 <div class="col-12">
                                     <div class="tab-content" id="v-pills-tabContent1">
@@ -73,9 +74,6 @@
                                             @include('admin.products.form-product-images')
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-12" style="float: right">
-                                    <button type="button" class="btn btn-primary" onclick="updateProduct('{{ route('product.update') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
                                 </div>
                             </form>
                         </div>
@@ -98,42 +96,104 @@
     });
 
     function updateProduct(route){
-            var elements = document.querySelectorAll('.is-invalid');
-            var form = jQuery('#formData').serialize();
-            jQuery.ajax({
-                url: route,
-                type: 'POST',
-                data: form,
-                beforeSend: function () {
-                    for (var i = 0; i < elements.length; i++) {
-                        elements[i].classList.remove('is-invalid');
+        ymz.jq_confirm({
+            title: 'Actualización!',
+            text: "Actualizar producto ?",
+            no_btn: "Cancelar",
+            yes_btn: "Confirmar",
+            no_fn: function () {
+                return false;
+            },
+            yes_fn: function () {
+                var elements = document.querySelectorAll('.is-invalid');
+                var form = jQuery('#formData').serialize();
+                jQuery.ajax({
+                    url: route,
+                    type: 'POST',
+                    data: form,
+                    beforeSend: function () {
+                        for (var i = 0; i < elements.length; i++) {
+                            elements[i].classList.remove('is-invalid');
+                        }
+                        jQuery('#loader').removeClass('hidden');
+                    },
+                    success: function (data) {
+                        if (data['type'] == 'success') {
+                            toastr.info(data['msj'],'Actualización');
+                        } else {
+                            toastr.error(data['html'], 'Verifique');
+                        }
+                    },
+                    error: function (data) {
+                        var lista_errores = "";
+                        var data = data.responseJSON;
+                        jQuery.each(data.errors, function (index, value) {
+                            lista_errores += value + '<br />';
+                            jQuery('#' + index).addClass('is-invalid');
+                        });
+                        toastr.error(lista_errores, 'Verifique');
+                    },
+                    complete: function () {
+                        jQuery('#loader').addClass('hidden');
+                        setTimeout(() => {
+                            window.location= '{{ route('products.list') }}';
+                        }, 500);
+
                     }
-                    jQuery('#loader').removeClass('hidden');
-                },
-                success: function (data) {
-                    if (data['type'] == 'success') {
-                        toastr.info(data['msj'],'Actualización');                        
-                    } else {
-                        toastr.error(data['html'], 'Verifique');
+                });
+            }
+        });
+    };
+
+    function updatePrices(){
+        var fecha_actualizacion = jQuery("#fecha_actualizacion").val();
+        if(fecha_actualizacion){
+            ymz.jq_confirm({
+            title: 'Actualización!',
+            text: "Actualizar precios ?",
+            no_btn: "Cancelar",
+            yes_btn: "Confirmar",
+            no_fn: function () {
+                return false;
+            },
+            yes_fn: function () {
+                var elements = document.querySelectorAll('.is-invalid');
+                var form = jQuery('#formData').serialize();
+                jQuery.ajax({
+                    url: "{{route('actualizar.precios')}}",
+                    type: 'POST',
+                    data: form,
+                    beforeSend: function () {
+                        for (var i = 0; i < elements.length; i++) {
+                            elements[i].classList.remove('is-invalid');
+                        }
+                        jQuery('#loader').removeClass('hidden');
+                    },
+                    success: function (data) {
+                        if (data['type'] == 'success') {
+                            toastr.info(data['msj'],'Actualización');
+                        } else {
+                            toastr.error(data['html'], 'Verifique');
+                        }
+                    },
+                    error: function (data) {
+                        var lista_errores = "";
+                        var data = data.responseJSON;
+                        jQuery.each(data.errors, function (index, value) {
+                            lista_errores += value + '<br />';
+                            jQuery('#' + index).addClass('is-invalid');
+                        });
+                        toastr.error(lista_errores, 'Verifique');
+                    },
+                    complete: function () {
+                        jQuery('#loader').addClass('hidden');
                     }
-                },
-                error: function (data) {
-                    var lista_errores = "";
-                    var data = data.responseJSON;
-                    jQuery.each(data.errors, function (index, value) {
-                        lista_errores += value + '<br />';
-                        jQuery('#' + index).addClass('is-invalid');
-                    });
-                    toastr.error(lista_errores, 'Verifique');
-                },
-                complete: function () {
-                    jQuery('#loader').addClass('hidden');
-                    setTimeout(() => {
-                        window.location= '{{ route('products.list') }}';    
-                    }, 500);
-                    
-                }
-            });
-        };
+                });
+            }
+        });
+        }else{
+            alert('DEBE INGRESAR UNA FECHA DE ACTUALIZACIÓN');
+        }
+    }
 </script>
 @endsection

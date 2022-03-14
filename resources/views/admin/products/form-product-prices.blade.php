@@ -1,3 +1,24 @@
+@if (isset($product))
+    <div class="form-group row">
+        <div class="col-md-12">
+            <a href="{{route('product.edit',['id' => $product->id])}}#precios"
+                onclick="jQuery('#loader').removeClass('hidden')">
+                <span class="badge @if(!isset($fecha_actualizacion_activa)) badge-primary @else badge-secondary @endif" style="padding: 5px">
+                     ACTUAL
+                </span>
+            </a>
+            @foreach ($product->session_prices as $p)
+                <a href="{{route('product.edit',['id' => $product->id,'fecha_actualizacion_activa' => $p->id])}}#precios"
+                    onclick="jQuery('#loader').removeClass('hidden')">
+                    <span class="badge @if(isset($fecha_actualizacion_activa) && $p->id == $fecha_actualizacion_activa) badge-primary @else badge-secondary @endif" style="padding: 5px">
+                         {{\Carbon\Carbon::parse($p->fecha_actualizacion)->format('d/m/Y')}}
+                    </span>
+                </a>
+            @endforeach
+        </div>
+    </div>
+@endif
+
 <div class="form-group row">
     <div class="col-md-5">
         <div class="form-group row">
@@ -115,10 +136,25 @@
                     </div>
                 </fieldset>
             </div>
-
             <div class="col-md-12">
                 <p><small  id="info-calculate" style="margin-top: 0;font-size:13px;top: 30px;color:rgb(217 13 47)"></small></p>
             </div>
+            @if(isset($product))
+                <div class="col-md-12">
+                    <hr>
+                    <p>Seleccione y guarde la fecha de actualización de precio</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="date" id="fecha_actualizacion" name="fecha_actualizacion"  class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" id="btn-actualizar-precios" class="btn btn-primary" style="height: 30px;padding-top: 3px;" onclick="updatePrices()">
+                                <i class="fa  fa-paper-plane"></i> Guardar actualización
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 

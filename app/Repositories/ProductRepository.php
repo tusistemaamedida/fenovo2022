@@ -21,6 +21,7 @@ class ProductRepository extends BaseRepository
             'product_images',
             'product_nutricional',
             'product_price',
+            'session_prices'
         ]);
     }
 
