@@ -255,7 +255,8 @@
     </div>
 
 </div>
-
-<div class="col-12" style="float: right">
-    <button type="button" class="btn btn-primary" onclick="updateProduct('{{ route('product.update') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
-</div>
+@if (isset($product))
+    <div class="col-12" style="float: right">
+        <button type="button" class="btn btn-primary" onclick="updateProduct('{{ route('product.update') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+    </div>
+@endif
