@@ -112,6 +112,11 @@ class Product extends Model
         return $this->hasOne(ProductPrice::class);
     }
 
+    public function product_oferta()
+    {
+        return $this->hasOne(ProductOferta::class);
+    }
+
     public function session_prices()
     {
         return $this->hasMany(SessionPrices::class)->groupBy('fecha_actualizacion');

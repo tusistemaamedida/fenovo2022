@@ -16,9 +16,6 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{route('descuento.index')}}" class="mr-4">
-                                        Menu descuentos
-                                    </a>
                                     <a href="javascript:void(0)" onclick="add('{{ route('actualizacion.add') }}')" class="ml-2">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>

@@ -17,6 +17,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/productos.php';
         require __DIR__ . '/admin/actualizaciones-precios.php';
         require __DIR__ . '/admin/descuentos.php';
+        require __DIR__ . '/admin/ofertas.php';
         require __DIR__ . '/admin/tiendas.php';
         require __DIR__ . '/admin/clientes.php';
         require __DIR__ . '/admin/proveedores.php';

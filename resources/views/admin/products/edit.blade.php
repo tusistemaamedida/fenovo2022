@@ -95,6 +95,43 @@
         })
     });
 
+    const updateOferta = (id) => {
+        
+        const desde = jQuery("#fecha_oferta_desde").val();
+        const hasta = jQuery("#fecha_oferta_hasta").val();
+
+        if( desde == '' || hasta == '' ){
+            return false;
+        }
+
+        jQuery.ajax({
+            url: '{{ route('product.addOferta') }}',
+            type: 'POST',
+            data: {id, desde, hasta },
+            success: function (response) {                    
+                if (response['type'] == 'success') {
+                    toastr.info(response['msj'], 'Actualización'); 
+                }
+            }
+        });
+        
+    }
+
+    const deleteOferta = (id) => {
+        jQuery.ajax({
+            url: '{{ route('product.deleteOferta') }}',
+            type: 'POST',
+            data: {id},
+            success: function (response) {                    
+                if (response['type'] == 'success') {
+                    toastr.error(response['msj'], 'Actualización'); 
+                    jQuery("#fecha_oferta_desde").val('');
+                    jQuery("#fecha_oferta_hasta").val('');
+                }
+            }
+        });        
+    }
+
     function updateProduct(route){
         ymz.jq_confirm({
             title: 'Actualización!',

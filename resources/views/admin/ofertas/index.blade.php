@@ -12,13 +12,8 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Descuentos de precios
+                                        Ofertas de precios
                                     </h4>
-                                </div>
-                                <div class="icons d-flex">
-                                    <a href="javascript:void(0)" onclick="add('{{ route('descuento.add') }}')" class="ml-2">
-                                        <i class="fa fa-2x fa-plus-circle text-primary"></i>
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -32,10 +27,9 @@
                                     <thead>
                                         <tr class="bg-dark text-white">
                                             <th>No</th>
-                                            <th>Codigo</th>
-                                            <th>Descripcion</th>
-                                            <th>Descuento</th>
-                                            <th>Cantidad</th>
+                                            <th>Nombre del producto</th>
+                                            <th>Desde</th>
+                                            <th>Hasta</th>
                                             <th></th>
                                             <th></th>
                                         </tr>
@@ -53,7 +47,7 @@
 
 </div>
 
-@include('admin.descuentos.modal')
+@include('admin.ofertas.modal')
 
 @endsection
 
@@ -62,13 +56,12 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
-        ajax: "{{ route('descuento.index') }}",
+        ajax: "{{ route('oferta.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'codigo'},
-            {data: 'descripcion', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'descuento', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'cantidad', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'producto'},
+            {data: 'fechadesde'},
+            {data: 'fechahasta'},
             {data: 'edit', 'class':'text-center', orderable: false, searchable: false},
             {data: 'destroy','class':'text-center', orderable: false, searchable: false},
         ]

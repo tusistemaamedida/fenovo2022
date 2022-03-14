@@ -29,12 +29,11 @@
     </div>
 </div>
 
-<div class="form-group mt-5 mb-5">
+<div class="form-group mt-5 mb-5 d-none ">
     <p>Tipo</p>
     <fieldset class="form-group mb-3">
         <select class="js-example-basic-single js-states form-control bg-transparent" id="tipo" name="tipo">
-            <option value="DESCUENTO" @if (isset($descuento) && ($descuento->tipo == 'DESCUENTO')) selected @endif> DESCUENTO</option>
-            <option value="OFERTA" @if (isset($descuento) && ($descuento->tipo == 'OFERTA')) selected @endif> OFERTA</option>
+            <option value="DESCUENTO" @if (isset($descuento) && ($descuento->tipo = 'DESCUENTO')) selected @endif> DESCUENTO</option>
         </select>
     </fieldset>
 </div>
@@ -52,7 +51,5 @@
         </fieldset>
     </div>
 </div>
-
-
-<input type="hidden" name="descuento_id" value="{{$descuento->id}}" />
+<input type="hidden" name="descuento_id" id="descuento_id" value="{{$descuento->id}}" />
 @endif

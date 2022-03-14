@@ -84,7 +84,7 @@ class DescuentoController extends Controller
         try {
             $data           = $request->except(['_token', 'descuento_id']);
             $data['active'] = ($request->has('active')) ? 1 : 0;
-            $this->descuentoRepository->update($request->input('descuento_id'), $data);
+            $this->descuentoRepository->fill($request->input('descuento_id'), $data);
             return new JsonResponse([
                 'msj'  => 'Actualización correcta !',
                 'type' => 'success',

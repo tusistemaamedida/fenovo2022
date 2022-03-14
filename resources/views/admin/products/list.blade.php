@@ -18,11 +18,19 @@
                                 <div class="icons d-flex">
                                     @can('products.create')
                                     
-                                    <a href="{{route('actualizacion.index')}}" title="Actualización de precios" class="mr-4">
-                                     Actualización precios 
+                                    <a href="{{url('oferta')}}" title="Oferta de precios" class="mt-1 mr-3">
+                                        Ofertas
                                     </a>
 
-                                    <a href="{{route('product.add')}}">
+                                    <a href="{{url('descuento')}}" title="Lista de descuentos" class="mt-1 mr-3">
+                                        Descuentos
+                                    </a>
+
+                                    <a href="{{url('actualizacion')}}" title="Actualización de precios" class="mt-1 mr-3">
+                                        Actualizaciones
+                                    </a>
+
+                                    <a href="{{route('product.add')}}" title="Agregar un producto ">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
                                     @endcan
