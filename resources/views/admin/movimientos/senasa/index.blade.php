@@ -79,6 +79,21 @@
             {data: 'edit', 'class':'text-center', searchable: false},
         ]
     });
+
+    const getSenasa = (patente) => {
+
+        jQuery.ajax({
+            url: '{{ route('vehiculos.getHabilitacion') }}',
+            type: 'GET',
+            data: { patente },
+            success: function (data) {                    
+                if (data['type'] == 'success') {
+                   jQuery("#habilitacion_nro").val(data['data']);
+                }
+            }
+        });
+    }
+
 </script>
 
 @endsection
