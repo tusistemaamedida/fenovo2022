@@ -16,9 +16,7 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="javascript:void(0)" onclick="add('{{ route('actualizacion.add') }}')" class="ml-2">
-                                        <i class="fa fa-2x fa-plus-circle text-primary"></i>
-                                    </a>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -32,9 +30,12 @@
                                     <thead>
                                         <tr class="bg-dark text-white">
                                             <th>No</th>
-                                            <th>Fecha</th>
-                                            <th>Productos actualizados</th>
-                                            <th></th>
+                                            <th>Fecha actualización</th>
+                                            <th>Cod Fenovo</th>
+                                            <th>Nombre de producto</th>
+                                            <th>$ P1 Tienda</th>
+                                            <th>$ P2 Tienda</th>                                            
+                                            <th>$ P1 Mayorista</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -63,10 +64,13 @@
         ajax: "{{ route('actualizacion.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'fecha'},
-            {data: 'registros', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'edit', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'destroy','class':'text-center', orderable: false, searchable: false},
+            {data: 'fecha_actualizacion'},
+            {data: 'cod_fenovo'},
+            {data: 'product'},
+            {data: 'p1tienda'},
+            {data: 'p2tienda'},
+            {data: 'p1may'},
+            {data: 'destroy', 'class':'text-center', orderable: false, searchable: false},
         ]
     });
 </script>

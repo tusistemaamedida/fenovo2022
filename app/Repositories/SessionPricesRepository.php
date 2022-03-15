@@ -2,20 +2,18 @@
 
 namespace App\Repositories;
 
-use App\Models\ActualizacionPrecio;
+use App\Models\SessionPrices;
 
-class ActualizacionRepository extends BaseRepository
+class SessionPricesRepository extends BaseRepository
 {
     public function getModel()
     {
-        return new ActualizacionPrecio();
+        return new SessionPrices();
     }
 
     protected function selectList()
     {
-        return $this->newQuery()->with(
-            []
-        );
+        return $this->newQuery()->with([]);
     }
 
     public function paginate($cant)
@@ -27,6 +25,6 @@ class ActualizacionRepository extends BaseRepository
 
     public function getOne($id)
     {
-        return ActualizacionPrecio::find($id);
+        return SessionPrices::find($id);
     }
 }

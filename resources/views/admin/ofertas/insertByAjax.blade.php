@@ -10,7 +10,8 @@
     <div class="col-md-12">
         <p>Productos</p>
         <fieldset class="form-group mb-3">
-            <select class="js-example-basic-single js-states form-control bg-transparent" name="product_id" id="product_id">
+            <select class="select2 form-control bg-transparent" name="product_id" id="product_id">
+                <option value="" selected>Seleccione un producto ...</option>
                 @foreach ( $productos as $product )
                 <option value="{{$product->id}}" @if (isset($oferta) && $product->id == $oferta->product_id) selected @endif>
                     {{$product->name}}

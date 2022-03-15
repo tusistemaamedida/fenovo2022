@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ActualizacionPrecio;
-use App\Repositories\ActualizacionRepository;
+use App\Models\SessionPrices;
+use App\Repositories\SessionPricesRepository;
 use Illuminate\Http\JsonResponse;
 
 use Illuminate\Http\Request;
@@ -13,34 +13,45 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ActualizacionController extends Controller
 {
-    private $actualizacionRepository;
+    private $sessionPricesRepository;
 
-    public function __construct(ActualizacionRepository $actualizacionRepository)
+    public function __construct(SessionPricesRepository $sessionPricesRepository)
     {
-        $this->actualizacionRepository = $actualizacionRepository;
+        $this->sessionPricesRepository = $sessionPricesRepository;
     }
 
     public function index(Request $request)
     {
+        // $sessionPrices = SessionPrices::orderBy('fecha_actualizacion', 'desc')->first();
+        // return $sessionPrices->product->product_price;
+
         if ($request->ajax()) {
-            $actualizacion = ActualizacionPrecio::where('active', 1)->orderBy('fecha', 'desc')->get();
-            return Datatables::of($actualizacion)
+            $sessionPrices = SessionPrices::orderBy('fecha_actualizacion', 'asc')->get();
+            return Datatables::of($sessionPrices)
                 ->addIndexColumn()
-                ->addColumn('fecha', function ($actualizacion) {
-                    return date('d-m-Y', strtotime($actualizacion->fecha));
+                ->addColumn('fecha_actualizacion', function ($sessionPrices) {
+                    return date('d-m-Y', strtotime($sessionPrices->fecha_actualizacion));
                 })
-                ->editColumn('registros', function ($actualizacion) {
-                    return ($actualizacion->registros > 0) ? $actualizacion->registros : '<span class=" text-danger" >pendiente</span>';
+                ->addColumn('cod_fenovo', function ($sessionPrices) {
+                    return ($sessionPrices->product) ? $sessionPrices->product->cod_fenovo : null;
                 })
-                ->addColumn('edit', function ($actualizacion) {
-                    $ruta = 'edit(' . $actualizacion->id . ",'" . route('actualizacion.edit') . "')";
-                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                ->addColumn('product', function ($sessionPrices) {
+                    return ($sessionPrices->product) ? $sessionPrices->product->name : null;
                 })
-                ->addColumn('destroy', function ($actualizacion) {
-                    $ruta = 'destroy(' . $actualizacion->id . ",'" . route('actualizacion.destroy') . "')";
+                ->addColumn('p1tienda', function ($sessionPrices) {
+                    return ($sessionPrices->Product) ? $sessionPrices->product->product_price->p1tienda : null;
+                })
+                ->addColumn('p2tienda', function ($sessionPrices) {
+                    return ($sessionPrices->product) ? $sessionPrices->p1tienda : null;
+                })
+                ->addColumn('p1may', function ($sessionPrices) {
+                    return ($sessionPrices->product) ? $sessionPrices->p1tienda : null;
+                })
+                ->addColumn('destroy', function ($sessionPrices) {
+                    $ruta = 'destroy(' . $sessionPrices->id . ",'" . route('actualizacion.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['fecha', 'registros', 'edit', 'destroy'])
+                ->rawColumns(['fecha_actualizacion', 'cod_fenovo', 'product', 'p1tienda', 'p2tienda', 'p1may', 'destroy'])
                 ->make(true);
         }
         return view('admin.actualizaciones.index');
@@ -48,63 +59,23 @@ class ActualizacionController extends Controller
 
     public function add()
     {
-        try {
-            $actualizacion = null;
-            return new JsonResponse([
-                'type' => 'success',
-                'html' => view('admin.actualizaciones.insertByAjax', compact('actualizacion'))->render(),
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
     }
 
     public function store(Request $request)
     {
-        try {
-            $data           = $request->except(['_token']);
-            $data['active'] = 1;
-            ActualizacionPrecio::create($data);
-            return new JsonResponse([
-                'msj'  => 'Actualización correcta !',
-                'type' => 'success',
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
     }
 
     public function edit(Request $request)
     {
-        try {
-            $actualizacion = ActualizacionPrecio::find($request->id);
-            return new JsonResponse([
-                'type' => 'success',
-                'html' => view('admin.actualizaciones.insertByAjax', compact('actualizacion'))->render(),
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
     }
 
     public function update(Request $request)
     {
-        try {
-            $data['fecha']  = $request->fecha;
-            $data['active'] = ($request->has('active')) ? 1 : 0;
-            $this->actualizacionRepository->update($request->input('actualizacion_id'), $data);
-            return new JsonResponse([
-                'msj'  => 'Actualización correcta !',
-                'type' => 'success',
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
     }
 
     public function destroy(Request $request)
     {
-        ActualizacionPrecio::find($request->id)->update(['active' => 0]);
+        SessionPrices::find($request->id)->delete();
         return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
     }
 }

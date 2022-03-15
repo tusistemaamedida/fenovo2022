@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -23,5 +19,10 @@ class ProductOferta extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function stores()
+    {
+        return $this->belongsToMany(Store::class, OfertaStore::class, 'oferta_id', 'store_id');
     }
 }
