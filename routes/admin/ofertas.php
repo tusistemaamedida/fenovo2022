@@ -9,3 +9,6 @@ Route::post('oferta/store', [OfertaController::class, 'store'])->name('oferta.st
 Route::get('oferta/edit', [OfertaController::class, 'edit'])->name('oferta.edit');
 Route::post('oferta/update', [OfertaController::class, 'update'])->name('oferta.update');
 Route::post('oferta/destroy', [OfertaController::class, 'destroy'])->name('oferta.destroy');
+
+Route::get('oferta/vincular-tienda', [OfertaController::class, 'vincularTienda'])->name('oferta.vincular.tienda');
+Route::post('oferta/vincular-tienda', [OfertaController::class, 'vincularTiendaUpdate'])->name('oferta.vincular.tienda.update');

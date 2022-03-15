@@ -12,8 +12,13 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Ofertas de precios
+                                        Ofertas de precios vigentes
                                     </h4>
+                                </div>
+                                <div class="icons d-flex">
+                                    <a href="javascript:void(0)" onclick="add('{{ route('oferta.add') }}')" class="ml-2">
+                                        <i class="fa fa-2x fa-plus-circle text-primary"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -30,6 +35,8 @@
                                             <th>Nombre del producto</th>
                                             <th>Desde</th>
                                             <th>Hasta</th>
+                                            <th>Vincular</th>
+                                            <th>Asociadas</th>
                                             <th></th>
                                             <th></th>
                                         </tr>
@@ -54,6 +61,10 @@
 @section('js')
 
 <script>
+    jQuery("#product_id").select2({
+        placeholder: "Seleccione producto ... "
+    });
+
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
         ajax: "{{ route('oferta.index') }}",
@@ -62,8 +73,10 @@
             {data: 'producto'},
             {data: 'fechadesde'},
             {data: 'fechahasta'},
+            {data: 'vincular', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'asociadas', 'class':'text-center', orderable: false, searchable: false},
             {data: 'edit', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'destroy','class':'text-center', orderable: false, searchable: false},
+            {data: 'destroy', 'class':'text-center', orderable: false, searchable: false},
         ]
     });
 </script>
