@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int        $id
  * @property int|null   $product_id
- * @property float|null $costproveedor
  * @property float|null $plistproveedor
  * @property float|null $descproveedor
  * @property float|null $costfenovo
@@ -54,7 +53,6 @@ class SessionPrices extends Model
 
     protected $casts = [
         'product_id'        => 'int',
-        'costproveedor'     => 'float',
         'plistproveedor'    => 'float',
         'descproveedor'     => 'float',
         'costfenovo'        => 'float',
@@ -87,7 +85,6 @@ class SessionPrices extends Model
 
     protected $fillable = [
         'product_id',
-        'costproveedor',
         'plistproveedor',
         'descproveedor',
         'costfenovo',

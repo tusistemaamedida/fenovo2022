@@ -9,3 +9,5 @@ Route::post('actualizacion/store', [ActualizacionController::class, 'store'])->n
 Route::get('actualizacion/edit', [ActualizacionController::class, 'edit'])->name('actualizacion.edit');
 Route::post('actualizacion/update', [ActualizacionController::class, 'update'])->name('actualizacion.update');
 Route::post('actualizacion/destroy', [ActualizacionController::class, 'destroy'])->name('actualizacion.destroy');
+
+Route::get('actualizacion/exportar', [ActualizacionController::class, 'exportToCsv'])->name('actualizacion.exportCSV');
