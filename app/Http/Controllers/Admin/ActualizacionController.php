@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ActualizViewExport;
 use App\Http\Controllers\Controller;
 use App\Models\SessionPrices;
 use App\Repositories\SessionPricesRepository;
 use Illuminate\Http\JsonResponse;
 
 use Illuminate\Http\Request;
-
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class ActualizacionController extends Controller
@@ -42,10 +43,10 @@ class ActualizacionController extends Controller
                     return ($sessionPrices->Product) ? $sessionPrices->product->product_price->p1tienda : null;
                 })
                 ->addColumn('p2tienda', function ($sessionPrices) {
-                    return ($sessionPrices->product) ? $sessionPrices->p1tienda : null;
+                    return ($sessionPrices->Product) ? $sessionPrices->product->product_price->p2tienda : null;
                 })
                 ->addColumn('p1may', function ($sessionPrices) {
-                    return ($sessionPrices->product) ? $sessionPrices->p1tienda : null;
+                    return ($sessionPrices->Product) ? $sessionPrices->product->product_price->p1may : null;
                 })
                 ->addColumn('destroy', function ($sessionPrices) {
                     $ruta = 'destroy(' . $sessionPrices->id . ",'" . route('actualizacion.destroy') . "')";
@@ -77,5 +78,10 @@ class ActualizacionController extends Controller
     {
         SessionPrices::find($request->id)->delete();
         return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
+    }
+
+    public function exportToCsv(Request $request)
+    {
+        return Excel::download(new ActualizViewExport($request), 'actualiz.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 }

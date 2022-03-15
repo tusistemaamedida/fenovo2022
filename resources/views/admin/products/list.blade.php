@@ -22,12 +22,12 @@
                                         Ofertas
                                     </a>
 
-                                    <a href="{{url('descuento')}}" title="Lista de descuentos" class="mt-1 mr-3">
-                                        Descuentos
-                                    </a>
-
                                     <a href="{{url('actualizacion')}}" title="Actualización de precios" class="mt-1 mr-3">
                                         Actualizaciones
+                                    </a>
+
+                                    <a href="{{url('descuento')}}" title="Lista de descuentos" class="mt-1 mr-3">
+                                        Descuentos
                                     </a>
 
                                     <a href="{{route('product.add')}}" title="Agregar un producto ">

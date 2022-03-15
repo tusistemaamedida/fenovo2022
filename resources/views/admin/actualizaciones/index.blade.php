@@ -16,7 +16,7 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    
+                                    <a href="javascript:void(0)" onclick="exportarActualizacionesCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
                                 </div>
                             </div>
                         </div>
@@ -59,17 +59,23 @@
 @section('js')
 
 <script>
+
+    const exportarActualizacionesCSV = ()=>{
+        let url = "{{route('actualizacion.exportCSV')}}";
+        window.location = url;
+    }
+
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
         ajax: "{{ route('actualizacion.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'fecha_actualizacion'},
-            {data: 'cod_fenovo'},
+            {data: 'fecha_actualizacion', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'cod_fenovo', 'class':'text-center', orderable: false, searchable: true},
             {data: 'product'},
-            {data: 'p1tienda'},
-            {data: 'p2tienda'},
-            {data: 'p1may'},
+            {data: 'p1tienda', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'p2tienda', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'p1may', 'class':'text-center', orderable: false, searchable: false},
             {data: 'destroy', 'class':'text-center', orderable: false, searchable: false},
         ]
     });
