@@ -49,7 +49,7 @@
 
             <div class="col-md-12 mb-3">
                 <label class="text-body">Descripción pública (web)</label>
-                <textarea type="text" name="description" rows="4" id="txtarea" class="autoexpand-textarea form-control" @if (isset($product)) value="{{$product->description}}" @else value="" @endif>@if (isset($product)){{$product->description}}@else value="" @endif</textarea>
+                <textarea type="text" name="description" rows="4" id="txtarea" class="autoexpand-textarea form-control" @if (isset($product)) value="{{$product->description}}" @else value="" @endif>@if (isset($product)){{$product->description}} @endif</textarea>
             </div>
 
             <div class="col-md-6">

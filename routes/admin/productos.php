@@ -12,6 +12,7 @@ Route::post('productos/store', [ProductController::class, 'store'])->name('produ
 
 Route::get('product-validate-code', [ProductController::class, 'validateCode'])->name('product.validate.code');
 Route::get('calculate-product-prices', [ProductController::class, 'calculateProductPrices'])->name('calculate.product.prices');
+Route::get('descuento-por-rubro', [ProductController::class, 'getDescuentoAplicado'])->name('get.descuento.aplicado');
 
 Route::post('productos/destroy', [ProductController::class, 'destroy'])->middleware('can:products.edit')->name('product.destroy');
 
