@@ -14,6 +14,7 @@ use App\Models\Product;
 use App\Models\ProductOferta;
 use App\Models\ProductPrice;
 use App\Models\SessionPrices;
+use App\Models\ProductDescuento;
 
 use App\Repositories\AlicuotaTypeRepository;
 use App\Repositories\ProducDescuentoRepository;
@@ -211,8 +212,26 @@ class ProductController extends Controller
         return new JsonResponse(['msj' => 'Ok', 'type' => 'success']);
     }
 
-    public function calculateProductPrices(CalculatePrices $request)
-    {
+    public function getDescuentoAplicado(Request $request){
+        $cod_descuento = $request->input('cod_descuento');
+        $desc = ProductDescuento::where('codigo',$cod_descuento)->first();
+        if($desc){
+            return new JsonResponse([ 'type' =>'success', 'descp1' =>(int) $desc->descuento]);
+        }
+        return new JsonResponse([ 'type' =>'success', 'descp1' => 0]);
+    }
+
+    public function calculateProductPrices(CalculatePrices $request)    {
+        $cod_descuento = $request->input('cod_descuento');
+        $desc = ProductDescuento::where('codigo',$cod_descuento)->first();
+        $descp1   = ($request->has('descp1')) ? $request->input('descp1') : 0;
+
+        if($desc && $desc->descuento > $descp1){
+            return new JsonResponse([
+                'type' =>'error',
+                'descp1' =>(int) $desc->descuento,
+                'msj' => 'El descuento mayorista no debe ser menor al descuento por rubro aplicado: <br>'.$desc->descripcion]);
+        }
         $array_prices = $this->calcularPrecios($request);
         if ($request->ajax()) {
             return new JsonResponse($array_prices);
@@ -279,9 +298,10 @@ class ProductController extends Controller
     private function descp2($p2may, $p2tienda)
     {
         try {
+            $p2tienda = ($p2tienda)?$p2tienda:1;
             return abs(round(((($p2may - $p2tienda) * 100) / $p2tienda), 2));
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('descp2 '.$e->getMessage());
         }
     }
 
@@ -290,7 +310,7 @@ class ProductController extends Controller
         try {
             return round(($p2may / $plist0Iva - 1) * 100, 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('mupp2may '.$e->getMessage());
         }
     }
 
@@ -299,7 +319,7 @@ class ProductController extends Controller
         try {
             return round($p2tienda - $p2tienda * ($descp2 / 100), 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('p2may '.$e->getMessage());
         }
     }
 
@@ -308,7 +328,7 @@ class ProductController extends Controller
         try {
             return round(($p2tienda / $plist0Iva - 1) * 100, 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('mup2 '.$e->getMessage());
         }
     }
 
@@ -317,7 +337,7 @@ class ProductController extends Controller
         try {
             return round(($p1may / $plist0Iva - 1) * 100, 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('mupp1may '.$e->getMessage());
         }
     }
 
@@ -326,7 +346,7 @@ class ProductController extends Controller
         try {
             return round($p1tienda - $p1tienda * ($descp1 / 100), 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('p1may '.$e->getMessage());
         }
     }
 
@@ -335,7 +355,7 @@ class ProductController extends Controller
         try {
             return round(($p1tienda / $plist0Iva - 1) * 100, 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('mup1 '.$e->getMessage());
         }
     }
 
@@ -344,7 +364,7 @@ class ProductController extends Controller
         try {
             return round($plistproveedor - $plistproveedor * ($descproveedor / 100), 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('costFenovo '.$e->getMessage());
         }
     }
 
@@ -353,7 +373,7 @@ class ProductController extends Controller
         try {
             return round($costFenovo * ($mupfenovo / 100 + 1) * ($contribution_fund / 100 + 1), 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('plist0Neto '.$e->getMessage());
         }
     }
 
@@ -362,7 +382,7 @@ class ProductController extends Controller
         try {
             return round($plist0Neto * ($tasiva / 100 + 1), 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('plist0Iva '.$e->getMessage());
         }
     }
 
@@ -371,7 +391,7 @@ class ProductController extends Controller
         try {
             return round($plist0Iva * ($muplist1 / 100 + 1), 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('plist1 '.$e->getMessage());
         }
     }
 
@@ -380,7 +400,7 @@ class ProductController extends Controller
         try {
             return round((($plist1 - $plist0Iva) / ($tasiva / 100 + 1) * 100) / $plist1, 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('comlista1 '.$e->getMessage());
         }
     }
 
@@ -389,7 +409,7 @@ class ProductController extends Controller
         try {
             return round($plist0Iva * ($muplist2 / 100 + 1), 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('plist2 '.$e->getMessage());
         }
     }
 
@@ -398,7 +418,7 @@ class ProductController extends Controller
         try {
             return round((($plist2 - $plist0Iva) / ($tasiva / 100 + 1)) * 100 / $plist2, 2);
         } catch (\Exception $e) {
-            throw $e;
+            throw new \Exception('comlista2 '.$e->getMessage());
         }
     }
 

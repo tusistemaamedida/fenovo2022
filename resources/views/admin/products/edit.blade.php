@@ -50,8 +50,10 @@
                             <form style="width: 100%;margin-top: 15px;" method="POST" action="{{route('product.update')}}" id="formData">
                                 @csrf
                                 @if (isset($product))
-                                <input type="hidden" name="product_id" value="{{$product->id}}">
-                                <input type="hidden" name="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
+                                    <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
+                                    <input type="hidden" name="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
+                                @else
+                                    <input type="hidden" name="product_id" id="product_id" value="0">
                                 @endif
                                 <div class="col-12">
                                     <div class="tab-content" id="v-pills-tabContent1">
@@ -87,7 +89,7 @@
     });
 
     const updateOferta = (id) => {
-        
+
         const desde = jQuery("#fecha_oferta_desde").val();
         const hasta = jQuery("#fecha_oferta_hasta").val();
 
@@ -99,13 +101,13 @@
             url: '{{ route('product.addOferta') }}',
             type: 'POST',
             data: {id, desde, hasta },
-            success: function (response) {                    
+            success: function (response) {
                 if (response['type'] == 'success') {
-                    toastr.info(response['msj'], 'Actualización'); 
+                    toastr.info(response['msj'], 'Actualización');
                 }
             }
         });
-        
+
     }
 
     const deleteOferta = (id) => {
@@ -113,14 +115,14 @@
             url: '{{ route('product.deleteOferta') }}',
             type: 'POST',
             data: {id},
-            success: function (response) {                    
+            success: function (response) {
                 if (response['type'] == 'success') {
-                    toastr.error(response['msj'], 'Actualización'); 
+                    toastr.error(response['msj'], 'Actualización');
                     jQuery("#fecha_oferta_desde").val('');
                     jQuery("#fecha_oferta_hasta").val('');
                 }
             }
-        });        
+        });
     }
 
     function updateProduct(route){
