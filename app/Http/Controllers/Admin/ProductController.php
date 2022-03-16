@@ -13,6 +13,7 @@ use App\Models\MovementProduct;
 use App\Models\Product;
 use App\Models\ProductOferta;
 use App\Models\ProductPrice;
+use App\Models\SessionOferta;
 use App\Models\SessionPrices;
 
 use App\Repositories\AlicuotaTypeRepository;
@@ -117,7 +118,7 @@ class ProductController extends Controller
         try {
             $fecha_actualizacion_activa = $request->input('fecha_actualizacion_activa');
             $product                    = $this->productRepository->getByIdWith($request->id);
-            $oferta                     = ProductOferta::where('product_id', $request->id)->first();
+            $oferta                     = SessionOferta::where('product_id', $request->id)->first();
             $alicuotas                  = $this->alicuotaTypeRepository->get('value', 'DESC');
             $senasaDefinitions          = $this->senasaDefinitionRepository->get('product_name', 'DESC');
             $categories                 = $this->productCategoryRepository->getActives('name', 'ASC');
@@ -179,21 +180,15 @@ class ProductController extends Controller
         }
     }
 
-    public function addOferta(Request $request)
+    public function updateOferta(CalculatePrices $request)
     {
         try {
-            ProductOferta::updateOrCreate(['product_id' => $request->id], ['product_id' => $request->id, 'fechadesde' => $request->desde, 'fechahasta' => $request->hasta]);
-            return new JsonResponse(['type' => 'success', 'msj' => 'Oferta activada !']);
-        } catch (\Exception $e) {
-            return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
-        }
-    }
-
-    public function deleteOferta(Request $request)
-    {
-        try {
-            ProductOferta::where('product_id', $request->id)->delete();
-            return new JsonResponse(['type' => 'success', 'msj' => 'Oferta eliminada !']);
+            $data              = $request->except('_token');
+            $product_id        = $data['product_id'];
+            $preciosCalculados = $this->calcularPrecios($request);
+            $data              = array_merge($data, $preciosCalculados);
+            $prices            = SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
+            return new JsonResponse(['type' => 'success', 'msj' => 'La oferta se activará ' . \Carbon\Carbon::parse($prices->fecha_desde)->format('d/m/Y')]);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
         }
@@ -541,8 +536,9 @@ class ProductController extends Controller
                 } else {
                     array_push($code_not_found, $cod_fenovo);
                 }
-            } */
+            }
             dd($code_not_found);
+             */
             return redirect()->route('products.list');
         } catch (\Exception $e) {
             dd($e->getMessage());

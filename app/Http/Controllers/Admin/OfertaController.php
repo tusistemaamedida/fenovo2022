@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductOferta;
+use App\Models\SessionOferta;
 use App\Models\Store;
 use App\Repositories\OfertaRepository;
 use App\Repositories\ProductRepository;
@@ -22,8 +23,7 @@ class OfertaController extends Controller
         OfertaRepository $ofertaRepository,
         ProductRepository $productRepository,
         StoreRepository $storeRepository
-    )
-    {
+    ) {
         $this->ofertaRepository  = $ofertaRepository;
         $this->productRepository = $productRepository;
         $this->storeRepository   = $storeRepository;
@@ -32,7 +32,7 @@ class OfertaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $oferta = ProductOferta::with('product')->get();
+            $oferta = SessionOferta::with('product')->all();
             return DataTables::of($oferta)
                 ->addIndexColumn()
 
@@ -59,7 +59,7 @@ class OfertaController extends Controller
                     $ruta = 'destroy(' . $oferta->id . ",'" . route('oferta.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['fechadesde', 'fechahasta', 'vincular', 'asociadas','edit', 'destroy'])
+                ->rawColumns(['fechadesde', 'fechahasta', 'vincular', 'asociadas', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.ofertas.index');
@@ -84,7 +84,7 @@ class OfertaController extends Controller
         try {
             $data           = $request->except(['_token']);
             $data['active'] = 1;
-            ProductOferta::create($data);
+            SessionOferta::create($data);
             return new JsonResponse([
                 'msj'  => 'Actualización correcta !',
                 'type' => 'success',
@@ -124,8 +124,8 @@ class OfertaController extends Controller
 
     public function destroy(Request $request)
     {
-        ProductOferta::find($request->id)->delete();
-        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
+        SessionOferta::find($request->id)->delete();
+        return new JsonResponse(['msj' => 'Oferta eliminada ... ', 'type' => 'success']);
     }
 
     public function vincularTienda(Request $request)
@@ -137,7 +137,7 @@ class OfertaController extends Controller
 
     public function vincularTiendaUpdate(Request $request)
     {
-        $oferta = ProductOferta::find($request->id);
+        $oferta = SessionOferta::find($request->id);
         $oferta->stores()->sync($request->get('stores'));
 
         return redirect()->route('oferta.index');

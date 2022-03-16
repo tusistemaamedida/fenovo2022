@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Models\ProductOferta;
+use App\Models\SessionOferta;
 
 class OfertaRepository extends BaseRepository
 {
     public function getModel()
     {
-        return new ProductOferta();
+        return new SessionOferta();
     }
 
     protected function selectList()
@@ -19,13 +19,13 @@ class OfertaRepository extends BaseRepository
     public function paginate($cant)
     {
         return $this->selectList()
-            ->orderBy('fechadesde', 'ASC')
+            ->orderBy('fecha_desde', 'ASC')
             ->orderBy('product_id', 'ASC')
             ->paginate($cant);
     }
 
     public function getOne($id)
     {
-        return ProductOferta::find($id);
+        return SessionOferta::find($id);
     }
 }

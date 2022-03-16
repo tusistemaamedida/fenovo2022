@@ -18,6 +18,7 @@ Route::post('productos/destroy', [ProductController::class, 'destroy'])->middlew
 Route::get('producto/edit/{fecha_actualizacion?}', [ProductController::class, 'edit'])->middleware('can:products.edit')->name('product.edit');
 Route::post('producto/update', [ProductController::class, 'update'])->name('product.update');
 Route::post('producto/actualizar-precios', [ProductController::class, 'updatePrices'])->name('actualizar.precios');
+Route::post('producto/actualizar-oferta', [ProductController::class, 'updateOferta'])->name('actualizar.oferta');
 
 Route::post('producto/add-oferta', [ProductController::class, 'addOferta'])->name('product.addOferta');
 Route::post('producto/delete-oferta', [ProductController::class, 'deleteOferta'])->name('product.deleteOferta');
