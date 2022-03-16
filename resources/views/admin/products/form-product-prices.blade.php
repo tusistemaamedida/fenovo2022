@@ -8,11 +8,14 @@
         </a>
         @foreach ($product->session_prices as $p)
         <a href="{{route('product.edit',['id' => $product->id,'fecha_actualizacion_activa' => $p->id])}}#precios" onclick="jQuery('#loader').removeClass('hidden')">
-            <span class="badge @if(isset($fecha_actualizacion_activa) && $p->id == $fecha_actualizacion_activa) badge-primary @else badge-secondary @endif" style="padding: 5px">
+            <span class="badge @if(isset($fecha_actualizacion_activa) && $p->id == $fecha_actualizacion_activa) badge-primary @else badge-secondary @endif p-2">
                 {{\Carbon\Carbon::parse($p->fecha_actualizacion)->format('d/m/Y')}}
             </span>
         </a>
         @endforeach
+        @if(isset($oferta))
+            <span class=" badge badge-warning p-2">OFERTA</span>
+        @endif
     </div>
 </div>
 @endif
@@ -139,7 +142,7 @@
                 <p class=" font-italic">Fecha de <span class=" font-weight-bolder"> actualización </span> precio</p>
                 <div class="row">
                     <div class="col-md-5">
-                        <input type="date" id="fecha_actualizacion" name="fecha_actualizacion" class="form-control" required>
+                        <input type="date" id="fecha_actualizacion" name="fecha_actualizacion" class="form-control">
                     </div>
                     <div class="col-md-5">
                     </div>
@@ -156,25 +159,26 @@
                 <p class=" font-italic">Fecha período de <span class=" font-weight-bolder">oferta </span></p>
                 <div class="row">
                     <div class="col-md-5">
-                        <input type="date" id="fecha_oferta_desde" name="fecha_oferta_desde" value="{{ isset($oferta->fechadesde)?$oferta->fechadesde:null }}" class="form-control">
+                        <input type="date" id="fecha_desde" name="fecha_desde" value="{{ isset($oferta->fecha_desde)?$oferta->fecha_desde:null }}" class="form-control">
                     </div>
                     <div class="col-md-5">
-                        <input type="date" id="fecha_oferta_hasta" name="fecha_oferta_hasta" value="{{ isset($oferta->fechahasta)?$oferta->fechahasta:null }}" class="form-control">
+                        <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ isset($oferta->fecha_hasta)?$oferta->fecha_hasta:null }}" class="form-control">
                     </div>
                     <div class="col-md-1 mt-2">
-                        <a href="javascript:void(0)" title="Guardar producto en oferta " onclick="updateOferta({{ $product->id }})">
+                        <a href="javascript:void(0)" title="Guardar producto en oferta " onclick="updateOferta()">
                             <i class="fa fa-save text-dark"></i>
                         </a>
                     </div>
                     <div class="col-md-1 mt-2">
-                        <a href="javascript:void(0)" title="Quitar producto en oferta " onclick="deleteOferta({{ $product->id }})">
+                        @if(isset($oferta))
+                        <a href="javascript:void(0)" title="Quitar producto en oferta " onclick="deleteOferta({{ $oferta->id }})">
                             <i class=" fa fa-trash"></i>
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>
             @endif
-
         </div>
     </div>
 
