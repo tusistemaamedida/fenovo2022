@@ -11,7 +11,6 @@ use App\Http\Requests\Products\UpdateProduct;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\Product;
-use App\Models\ProductOferta;
 use App\Models\ProductPrice;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
@@ -118,6 +117,7 @@ class ProductController extends Controller
     {
         try {
             $fecha_actualizacion_activa = $request->input('fecha_actualizacion_activa');
+            $fecha_oferta               = $request->input('fecha_oferta');
             $product                    = $this->productRepository->getByIdWith($request->id);
             $oferta                     = SessionOferta::where('product_id', $request->id)->first();
             $alicuotas                  = $this->alicuotaTypeRepository->get('value', 'DESC');
@@ -131,6 +131,13 @@ class ProductController extends Controller
                 $pp1                    = $product->product_price->toArray();
                 $ppsession              = SessionPrices::where('id', $fecha_actualizacion_activa)->first()->toArray();
                 $new_prices             = array_replace($pp1, $ppsession);
+                $product->product_price = new ProductPrice($new_prices);
+            }
+
+            if ($fecha_oferta) {
+                $pp1                    = $product->product_price->toArray();
+                $poferta                = SessionOferta::where('id', $fecha_oferta)->first()->toArray();
+                $new_prices             = array_replace($pp1, $poferta);
                 $product->product_price = new ProductPrice($new_prices);
             }
 
@@ -185,11 +192,16 @@ class ProductController extends Controller
     {
         try {
             $data              = $request->except('_token');
-            $product_id        = $data['product_id'];
+            $product           = $this->productRepository->getByIdWith($request->product_id);
             $preciosCalculados = $this->calcularPrecios($request);
             $data              = array_merge($data, $preciosCalculados);
-            $prices            = SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
-            return new JsonResponse(['type' => 'success', 'msj' => 'La oferta se activará ' . \Carbon\Carbon::parse($prices->fecha_desde)->format('d/m/Y')]);
+            $data['p2tienda']  = $data['p1tienda'];
+            $oferta            = SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
+
+            return new JsonResponse([
+                'divPanel'  => view('admin.products.panel', compact('product', 'oferta'))->render(),
+                'divOferta' => view('admin.products.oferta', compact('oferta'))->render(),
+            ]);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
         }

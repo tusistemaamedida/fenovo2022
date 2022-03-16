@@ -25,7 +25,7 @@
     <div class="col-md-12">
         <p>Fecha desde</p>
         <fieldset class="form-group mb-3">
-            <input type="date" id="fechadesde" name="fechadesde" value="{{ isset($oferta->fechadesde)?$oferta->fechadesde:null }}" class="form-control" required>
+            <input type="date" id="fechadesde" name="fechadesde" value="{{ isset($oferta->fecha_desde)?$oferta->fecha_desde:null }}" class="form-control" required>
         </fieldset>
     </div>    
 </div>
@@ -33,7 +33,7 @@
     <div class="col-md-12">
         <p>Fecha hasta</p>
         <fieldset class="form-group mb-3">
-            <input type="date" id="fechahasta" name="fechahasta" value="{{ isset($oferta->fechahasta)?$oferta->fechahasta:null }}" class="form-control" required>
+            <input type="date" id="fechahasta" name="fechahasta" value="{{ isset($oferta->fecha_hasta)?$oferta->fecha_hasta:null }}" class="form-control" required>
         </fieldset>
     </div>    
 </div>
