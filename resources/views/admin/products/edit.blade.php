@@ -20,11 +20,15 @@
             <div class="col-lg-12 col-xl-12">
                 <div class="card card-custom gutter-b bg-white border-0">
 
-                    <div class="card-header align-items-center  border-0">
-                        <div class="card-title mb-0">
-                            <h4 class="card-label mb-0 font-weight-bold text-body">
-                                Editar Producto - <small>{{ $product->cod_fenovo }} :: {{ $product->name }}</small>
-                            </h4>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="card-header align-items-center  border-0">
+                                <div class="card-title mb-0">
+                                    <h4 class="card-label mb-0 font-weight-bold text-body">
+                                        Editar Producto - <small>{{ $product->cod_fenovo }} :: {{ $product->name }}</small>
+                                    </h4>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -87,43 +91,6 @@
             tags: true
         })
     });
-
-    const updateOferta = (id) => {
-
-        const desde = jQuery("#fecha_oferta_desde").val();
-        const hasta = jQuery("#fecha_oferta_hasta").val();
-
-        if( desde == '' || hasta == '' ){
-            return false;
-        }
-
-        jQuery.ajax({
-            url: '{{ route('product.addOferta') }}',
-            type: 'POST',
-            data: {id, desde, hasta },
-            success: function (response) {
-                if (response['type'] == 'success') {
-                    toastr.info(response['msj'], 'Actualización');
-                }
-            }
-        });
-
-    }
-
-    const deleteOferta = (id) => {
-        jQuery.ajax({
-            url: '{{ route('product.deleteOferta') }}',
-            type: 'POST',
-            data: {id},
-            success: function (response) {
-                if (response['type'] == 'success') {
-                    toastr.error(response['msj'], 'Actualización');
-                    jQuery("#fecha_oferta_desde").val('');
-                    jQuery("#fecha_oferta_hasta").val('');
-                }
-            }
-        });
-    }
 
     function updateProduct(route){
         ymz.jq_confirm({
@@ -224,6 +191,64 @@
         }else{
             alert('DEBE INGRESAR UNA FECHA DE ACTUALIZACIÓN');
         }
+    }
+
+    function updateOferta(){
+        var fecha_desde = jQuery("#fecha_desde").val();
+        var fecha_hasta = jQuery("#fecha_hasta").val();
+
+        if(fecha_desde !== '' && fecha_hasta !== '' ){
+
+            var elements = document.querySelectorAll('.is-invalid');
+            var form = jQuery('#formData').serialize();
+            jQuery.ajax({
+                url: "{{route('actualizar.oferta')}}",
+                type: 'POST',
+                data: form,
+                beforeSend: function () {
+                    for (var i = 0; i < elements.length; i++) {
+                        elements[i].classList.remove('is-invalid');
+                    }
+                    jQuery('#loader').removeClass('hidden');
+                },
+                success: function (data) {
+                    if (data['type'] == 'success') {
+                        toastr.info(data['msj'],'Oferta');
+                    } else {
+                        toastr.error(data['html'], 'Verifique');
+                    }
+                },
+                error: function (data) {
+                    var lista_errores = "";
+                    var data = data.responseJSON;
+                    jQuery.each(data.errors, function (index, value) {
+                        lista_errores += value + '<br />';
+                        jQuery('#' + index).addClass('is-invalid');
+                    });
+                    toastr.error(lista_errores, 'Verifique');
+                },
+                complete: function () {
+                    jQuery('#loader').addClass('hidden');
+                }
+            })
+        }else{
+            toastr.error('Ingrese FECHA DESDE - HASTA', 'Oferta');
+        }
+    }
+
+    const deleteOferta = (id) => {
+        jQuery.ajax({
+            url: '{{ route('oferta.destroy') }}',
+            type: 'POST',
+            data: {id},
+            success: function (response) {
+                if (response['type'] == 'success') {
+                    toastr.error(response['msj'], 'Oferta');
+                    jQuery("#fecha_desde").val('');
+                    jQuery("#fecha_hasta").val('');
+                }
+            }
+        });
     }
 </script>
 @endsection
