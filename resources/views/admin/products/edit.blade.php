@@ -30,6 +30,16 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-xs-12 col-md-6 mt-4 text-right">
+                            @can('products.create')
+                            <a href="{{url('oferta')}}" title="Oferta de precios" class="mr-3">
+                                Ofertas
+                            </a>
+                            <a href="{{url('actualizacion')}}" title="Actualización de precios" class="mr-3">
+                                Actualizaciones
+                            </a>
+                            @endcan
+                        </div>
                     </div>
 
                     <div class="card-body">
@@ -209,12 +219,9 @@
                     }
                     jQuery('#loader').removeClass('hidden');
                 },
-                success: function (data) {
-                    if (data['type'] == 'success') {
-                        toastr.info(data['msj'],'Oferta');
-                    } else {
-                        toastr.error(data['html'], 'Verifique');
-                    }
+                success: function (response) {
+                    jQuery("#divOferta").html(response['divOferta']);  
+                    jQuery("#divPanel").html(response['divPanel']);   
                 },
                 error: function (data) {
                     var lista_errores = "";
@@ -236,15 +243,12 @@
 
     const deleteOferta = (id) => {
         jQuery.ajax({
-            url: '{{ route('oferta.destroy') }}',
+            url: '{{ route('oferta.destroyReload') }}',
             type: 'POST',
             data: {id},
             success: function (response) {                    
-                if (response['type'] == 'success') {
-                    toastr.error(response['msj'], 'Oferta'); 
-                    jQuery("#fecha_desde").val('');
-                    jQuery("#fecha_hasta").val('');
-                }
+                jQuery("#divOferta").html(response['divOferta']);                
+                jQuery("#divPanel").html(response['divPanel']);                
             }
         });        
     }
