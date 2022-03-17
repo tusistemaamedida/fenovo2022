@@ -1,12 +1,9 @@
 @if (isset($product))
 <div class="form-group row">
     <div class="col-md-12">
-        <a href="{{route('product.edit',['id' => $product->id,'fecha_actualizacion_activa' => 0])}}#precios"
-            @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa != 0)
-                onclick="jQuery('#loader').removeClass('hidden')"
-            @endif>
-            <span class="badge @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa == 0) badge-primary @else badge-secondary @endif" style="padding: 5px" id="span-0">
-                ACTUAL
+        <a href="{{route('product.edit',['id' => $product->id])}}#precios" onclick="jQuery('#loader').removeClass('hidden')">
+            <span class="badge @if(!isset($fecha_actualizacion_activa)) badge-primary @else badge-secondary @endif" style="padding: 5px">
+                Precio actual
             </span>
         </a>
         @foreach ($product->session_prices as $p)
@@ -19,12 +16,14 @@
             </span>
         </a>
         @endforeach
-        @if(isset($oferta))
-            <span class=" badge badge-warning p-2">OFERTA</span>
-        @endif
+
+        <span id="divPanel">
+            @include('admin.products.panel')
+        </span>
     </div>
 </div>
 @endif
+
 
 <div class="form-group row">
     <div class="col-md-5">
@@ -160,29 +159,8 @@
                 </div>
             </div>
 
-            <div class="col-md-12">
-                <br />
-                <p class=" font-italic">Fecha período de <span class=" font-weight-bolder">oferta </span></p>
-                <div class="row">
-                    <div class="col-md-5">
-                        <input type="date" id="fecha_desde" name="fecha_desde" value="{{ isset($oferta->fecha_desde)?$oferta->fecha_desde:null }}" class="form-control">
-                    </div>
-                    <div class="col-md-5">
-                        <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ isset($oferta->fecha_hasta)?$oferta->fecha_hasta:null }}" class="form-control">
-                    </div>
-                    <div class="col-md-1 mt-2">
-                        <a href="javascript:void(0)" title="Guardar producto en oferta " onclick="updateOferta()">
-                            <i class="fa fa-save text-dark"></i>
-                        </a>
-                    </div>
-                    <div class="col-md-1 mt-2">
-                        @if(isset($oferta))
-                        <a href="javascript:void(0)" title="Quitar producto en oferta " onclick="deleteOferta({{ $oferta->id }})">
-                            <i class=" fa fa-trash"></i>
-                        </a>
-                        @endif
-                    </div>
-                </div>
+            <div id="divOferta" class="col-md-12">
+                @include('admin.products.oferta')
             </div>
             @endif
         </div>

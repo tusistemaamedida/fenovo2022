@@ -33,6 +33,7 @@
                                         <tr class="bg-dark text-white">
                                             <th>No</th>
                                             <th>Nombre del producto</th>
+                                            <th>P1_Tienda</th>
                                             <th>Desde</th>
                                             <th>Hasta</th>
                                             <th>Vincular</th>
@@ -71,6 +72,7 @@
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'producto'},
+            {data: 'p1tienda', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'fechadesde'},
             {data: 'fechahasta'},
             {data: 'vincular', 'class':'text-center col-1', orderable: false, searchable: false},

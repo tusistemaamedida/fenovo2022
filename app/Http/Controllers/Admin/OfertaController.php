@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Models\ProductOferta;
 use App\Models\SessionOferta;
 use App\Models\Store;
 use App\Repositories\OfertaRepository;
@@ -32,18 +31,21 @@ class OfertaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $oferta = SessionOferta::with('product')->all();
+            $oferta = SessionOferta::with('product')->get();
             return DataTables::of($oferta)
                 ->addIndexColumn()
 
                 ->addColumn('producto', function ($oferta) {
                     return ($oferta->product) ? $oferta->product->name : null;
                 })
+                ->editColumn('p1tienda', function ($oferta) {
+                    return $oferta->p1tienda;
+                })
                 ->editColumn('fechadesde', function ($oferta) {
-                    return date('d-m-Y', strtotime($oferta->fechadesde));
+                    return date('d-m-Y', strtotime($oferta->fecha_desde));
                 })
                 ->editColumn('fechahasta', function ($oferta) {
-                    return date('d-m-Y', strtotime($oferta->fechahasta));
+                    return date('d-m-Y', strtotime($oferta->fecha_hasta));
                 })
                 ->addColumn('vincular', function ($oferta) {
                     return '<a href="' . route('oferta.vincular.tienda', ['id' => $oferta->id]) . '"> <i class="fa fa-link"></i> </a>';
@@ -59,7 +61,7 @@ class OfertaController extends Controller
                     $ruta = 'destroy(' . $oferta->id . ",'" . route('oferta.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['fechadesde', 'fechahasta', 'vincular', 'asociadas', 'edit', 'destroy'])
+                ->rawColumns(['p1tienda', 'fechadesde', 'fechahasta', 'vincular', 'asociadas', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.ofertas.index');
@@ -126,6 +128,16 @@ class OfertaController extends Controller
     {
         SessionOferta::find($request->id)->delete();
         return new JsonResponse(['msj' => 'Oferta eliminada ... ', 'type' => 'success']);
+    }
+    public function destroyReload(Request $request)
+    {
+        SessionOferta::find($request->id)->delete();
+        return new JsonResponse(
+            [
+                'divOferta' => view('admin.products.oferta')->render(),
+                'divPanel'  => view('admin.products.panel')->render(),
+            ]
+        );
     }
 
     public function vincularTienda(Request $request)
