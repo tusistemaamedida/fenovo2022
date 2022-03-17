@@ -22,7 +22,7 @@
                     @can('products.index')
                     <li class="nav-item" title="Lista de Productos">
                         <a href="{{url('productos')}}" class="nav-link">
-                            <span class="svg-icon nav-icon"> <i class="fas fa-boxes"></i> </span>
+                            <span class="svg-icon nav-icon"> <i class="fas fa-barcode"></i> </span>
                             <span class="nav-text"> Productos </span>
                         </a>
                     </li>
