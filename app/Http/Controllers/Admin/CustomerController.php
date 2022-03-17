@@ -39,7 +39,7 @@ class CustomerController extends Controller
             return Datatables::of($customer)
                 ->addIndexColumn()
                 ->addColumn('tienda', function ($customer) {
-                    return $customer->store->description;
+                    return ($customer->store)?$customer->store->description:null;
                 })
                 ->addColumn('inactivo', function ($customer) {
                     return ($customer->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;

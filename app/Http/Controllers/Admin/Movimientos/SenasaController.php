@@ -131,12 +131,8 @@ class SenasaController extends Controller
     {
         $senasa = Senasa::find($request->id);
         $senasa->movements()->sync($request->get('movements'));
-        $notification = [
-            'message'    => 'Relacion actualizada !',
-            'alert-type' => 'info',
-        ];
 
-        return redirect()->route('senasa.index')->with($notification);
+        return redirect()->route('senasa.index');
     }
 
     public function print(Request $request)

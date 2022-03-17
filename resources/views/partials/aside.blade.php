@@ -53,14 +53,6 @@
                             </a>
                         </div>
                     </li>
-                    <li class="nav-item" title="Impresión / Exportación">
-                        <a href="{{ route('movement.menu.print') }}" class="nav-link">
-                            <span class="svg-icon nav-icon">
-                                <i class="fas fa-print"></i>
-                            </span>
-                            <span class="nav-text"> Impresión </span>
-                        </a>
-                    </li>
                     <li class="nav-item" title="Lista de Friotekas">
                         <a href="{{ url('tiendas') }}" class="nav-link">
                             <span class="svg-icon nav-icon">
@@ -75,6 +67,14 @@
                                 <i class="fas fa-user-friends"></i>
                             </span>
                             <span class="nav-text">Clientes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" title="Impresión / Exportación">
+                        <a href="{{ route('movement.menu.print') }}" class="nav-link">
+                            <span class="svg-icon nav-icon">
+                                <i class="fas fa-print"></i>
+                            </span>
+                            <span class="nav-text"> Impresión </span>
                         </a>
                     </li>
                     <li class="dropdown dropright">

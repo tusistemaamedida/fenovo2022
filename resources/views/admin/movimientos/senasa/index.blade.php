@@ -38,7 +38,7 @@
                                                     <th>Habilitacion</th>
                                                     <th>Precintos</th>
                                                     <th>Destino</th>
-                                                    <th>Vincular</th>
+                                                    <th>Vincular c/salidas</th>
                                                     <th>Imprimir</th>
                                                     <th></th>
                                                     <th></th>
