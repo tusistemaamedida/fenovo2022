@@ -45,11 +45,15 @@
 </div>
 <div class="form-group">
     <div class="row">
-        <div class="col-6">
+        <div class="col-12">
             <label class="text-dark">Fecha salida</label>
             <input type="date" id="fecha_salida" name="fecha_salida" @if (isset($senasa)) value="{{$senasa->fecha_salida}}" @else value="" @endif class="form-control">
         </div>
-        <div class="col-6">
+    </div>
+</div>
+<div class="form-group">
+    <div class="row mb-5">
+        <div class="col-12">
             <label class="text-dark">Hora salida</label>
             <input type="time" id="hora_salida" name="hora_salida" @if (isset($senasa)) value="{{$senasa->hora_salida}}" @else value="" @endif class="form-control">
         </div>

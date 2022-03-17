@@ -123,7 +123,7 @@ class ProductController extends Controller
             $product                    = $this->productRepository->getByIdWith($request->id);
             $oferta                     = SessionOferta::where('product_id', $request->id)->first();
             $alicuotas                  = $this->alicuotaTypeRepository->get('value', 'DESC');
-            $senasaDefinitions          = $this->senasaDefinitionRepository->get('product_name', 'DESC');
+            $senasaDefinitions          = $this->senasaDefinitionRepository->get('product_name', 'ASC');
             $categories                 = $this->productCategoryRepository->getActives('name', 'ASC');
             $descuentos                 = $this->productDescuentoRepository->getActives('descripcion', 'ASC');
             $proveedores                = $this->proveedorRepository->getActives('name', 'ASC');

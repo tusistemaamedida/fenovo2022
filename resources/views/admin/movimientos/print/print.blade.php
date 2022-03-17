@@ -70,43 +70,6 @@
                             <a href="javascript:void(0)" onclick="printMovimientos()"> <i class=" fa fa-print"></i> Imprimir</a>
                         </div>
                     </div>
-
-                    <div class="row mt-3 ml-3 font-weight-bolder">
-                        <div class="col-12">
-                            Productos a actualizar
-                        </div>
-                    </div>
-                    <div class="row m-2">
-                        <div class="col-3">
-                            <fieldset class="input-group form-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Desde</span>
-                                </div>
-                                {{-- {{ date('Y-m-d', strtotime($carbon::now()->subDays(2))) }} --}}
-                                <input type="date" name="salidaDesdeProductos" id="salidaDesdeProductos" value="" class="form-control border-dark">
-                            </fieldset>
-                        </div>
-                        <div class="col-3">
-                            <fieldset class="input-group form-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Hasta</span>
-                                </div>
-                                <input type="date" name="salidaHastaProductos" id="salidaHastaProductos" value="" class="form-control border-dark">
-                            </fieldset>
-                        </div>
-                        <div class="col-3">
-                        </div>
-                        <div class="col-3">
-                        </div>
-                    </div>
-                    <div class="row mb-5 ml-2 border-bottom-dark">
-                        <div class="col-3">
-                            <a href="javascript:void(0)" onclick="exportarProductosCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
-                        </div>
-                        <div class="col-3">
-                            <a href="javascript:void(0)" onclick="printProductos()"> <i class=" fa fa-print"></i> Imprimir</a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -127,10 +90,6 @@
         hasta = jQuery("#salidaHasta").val();
         tipo = jQuery("#tiposalida").val();
     }
-    const leerDatosProductos = ()=>{
-        desde = jQuery("#salidaDesdeProductos").val();
-        hasta = jQuery("#salidaHastaProductos").val();
-    }
 
     const exportarMovimientosCSV = ()=>{
         leerDatos();
@@ -141,18 +100,6 @@
     const printMovimientos= ()=>{
         leerDatos();
         let url = "{{route('movement.printPDF', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
-        window.location = url;
-    }
-
-    const exportarProductosCSV = ()=>{
-        leerDatosProductos();
-        let url = "{{route('products.exportCSV', '')}}"+"?desde="+desde+"&hasta="+hasta;
-        window.location = url;
-    }
-
-    const printProductos= ()=>{
-        leerDatosProductos();
-        let url = "{{route('products.printPDF', '')}}"+"?desde="+desde+"&hasta="+hasta;
         window.location = url;
     }
 

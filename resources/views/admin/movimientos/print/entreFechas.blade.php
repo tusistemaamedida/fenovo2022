@@ -36,9 +36,24 @@
             <tr>
                 <td>{{$salida->id}}</th>
                 <td>{{ date('d-m-Y',strtotime($salida->date)) }}</td>
-                <td>{{ $salida->From($salida->type); }}</td>
-                <td>{{ $salida->To($salida->type); }}</td>
-                <td>{{ $salida->type }}</td>
+                @if ( in_array($salida->type, ['DEVOLUCION', 'DEVOLUCIONCLIENTE']) )
+                    <td>
+                        {{ $salida->To($salida->type); }}        
+                    </td>
+                    <td>
+                        {{ $salida->From($salida->type); }}
+                    </td>                
+                @else
+                    <td>
+                        {{ $salida->From($salida->type); }}        
+                    </td>
+                    <td>
+                        {{ $salida->To($salida->type); }}
+                    </td>                    
+                @endif                
+                <td>
+                    {{ $salida->type }}
+                </td>
                 <td>{{ $salida->voucher_number }}</td>
                 <td>{{ $salida->totalKgrs() }}</td>
             </tr>
