@@ -16,9 +16,7 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="javascript:void(0)" onclick="add('{{ route('oferta.add') }}')" class="ml-2">
-                                        <i class="fa fa-2x fa-plus-circle text-primary"></i>
-                                    </a>
+                                    
                                 </div>
                             </div>
                         </div>

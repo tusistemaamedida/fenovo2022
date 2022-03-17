@@ -40,13 +40,13 @@ class ActualizacionController extends Controller
                     return ($sessionPrices->product) ? $sessionPrices->product->name : null;
                 })
                 ->addColumn('p1tienda', function ($sessionPrices) {
-                    return ($sessionPrices->Product) ? $sessionPrices->product->product_price->p1tienda : null;
+                    return ($sessionPrices->Product) ? number_format($sessionPrices->p1tienda,2) : null;
                 })
                 ->addColumn('p2tienda', function ($sessionPrices) {
-                    return ($sessionPrices->Product) ? $sessionPrices->product->product_price->p2tienda : null;
+                    return ($sessionPrices->Product) ? number_format($sessionPrices->p2tienda,2) : null;
                 })
                 ->addColumn('p1may', function ($sessionPrices) {
-                    return ($sessionPrices->Product) ? $sessionPrices->product->product_price->p1may : null;
+                    return ($sessionPrices->Product) ? number_format($sessionPrices->p1may,2) : null;
                 })
                 ->addColumn('destroy', function ($sessionPrices) {
                     $ruta = 'destroy(' . $sessionPrices->id . ",'" . route('actualizacion.destroy') . "')";
