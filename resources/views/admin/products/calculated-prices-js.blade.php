@@ -80,22 +80,46 @@
         calculatePrices()
     });
 
+    jQuery("#cod_descuento").change(function(){
+        getDescuento();
+    });
+
+    function getDescuento(){
+        var cod_descuento = jQuery("#cod_descuento").val();
+        jQuery.ajax({
+            url:"{{ route('get.descuento.aplicado') }}",
+            type:'GET',
+            data:{cod_descuento},
+            beforeSend: function() {},
+            success:function(data){
+                if(data['type'] == 'success'){
+                    jQuery("#descp1").val(data['descp1']);
+                }
+            },
+            error: function (data) {},
+            complete: function () {}
+        });
+    }
+
     function calculatePrices(){
         var text = "Aguarde por favor, se están claculando los precios..."
         var spanId = "#info-calculate";
         var elements = document.querySelectorAll('.is-invalid');
         var plistproveedor = jQuery("#plistproveedor").val();
-        var descproveedor = jQuery("#descproveedor").val();
+        var descproveedor  = jQuery("#descproveedor").val();
         var contribution_fund = jQuery("#contribution_fund").val();
         var mupfenovo = jQuery("#mupfenovo").val();
-        var tasiva = jQuery("#tasiva").val();
-        var muplist1 = jQuery("#muplist1").val();
-        var muplist2 = jQuery("#muplist2").val();
-        var p1tienda = jQuery("#p1tienda").val();
-        var descp1 = jQuery("#descp1").val();
+        var tasiva    = jQuery("#tasiva").val();
+        var muplist1  = jQuery("#muplist1").val();
+        var muplist2  = jQuery("#muplist2").val();
+        var p1tienda  = jQuery("#p1tienda").val();
+        var descp1    = jQuery("#descp1").val();
 
-        var p2tienda = jQuery("#p2tienda").val();
-        var descp2 = jQuery("#descp2").val();
+        var p2tienda      = jQuery("#p2tienda").val();
+        var descp2        = jQuery("#descp2").val();
+        var cod_descuento = jQuery("#cod_descuento").val();
+
+        var product_id = jQuery("#product_id").val();
 
         jQuery.ajax({
             url:"{{ route('calculate.product.prices') }}",
@@ -111,7 +135,9 @@
                 p1tienda,
                 descp1,
                 descp2,
-                p2tienda
+                p2tienda,
+                cod_descuento,
+                product_id
             },
             beforeSend: function() {
                 jQuery(spanId).html(text)
@@ -136,6 +162,7 @@
                     jQuery("#mupp2may").val(data['mupp2may']);
                     jQuery("#descp2").val(data['descp2']);
                 }else{
+                    if(data['descp1']) jQuery("#descp1").val(data['descp1']);
                     toastr.error(data['msj'],'ERROR!');
                 }
                 jQuery(spanId).html('')

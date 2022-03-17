@@ -64,8 +64,10 @@
                             <form style="width: 100%;margin-top: 15px;" method="POST" action="{{route('product.update')}}" id="formData">
                                 @csrf
                                 @if (isset($product))
-                                <input type="hidden" name="product_id" value="{{$product->id}}">
-                                <input type="hidden" name="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
+                                    <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
+                                    <input type="hidden" name="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
+                                @else
+                                    <input type="hidden" name="product_id" id="product_id" value="0">
                                 @endif
                                 <div class="col-12">
                                     <div class="tab-content" id="v-pills-tabContent1">
@@ -206,7 +208,7 @@
         var fecha_hasta = jQuery("#fecha_hasta").val();
 
         if(fecha_desde !== '' && fecha_hasta !== '' ){
-   
+
             var elements = document.querySelectorAll('.is-invalid');
             var form = jQuery('#formData').serialize();
             jQuery.ajax({
@@ -234,7 +236,7 @@
                 },
                 complete: function () {
                     jQuery('#loader').addClass('hidden');
-                }                
+                }
             })
         }else{
             toastr.error('Ingrese FECHA DESDE - HASTA', 'Oferta');
@@ -248,9 +250,9 @@
             data: {id},
             success: function (response) {                    
                 jQuery("#divOferta").html(response['divOferta']);                
-                jQuery("#divPanel").html(response['divPanel']);                
+                jQuery("#divPanel").html(response['divPanel']);
             }
-        });        
+        });
     }
 </script>
 @endsection
