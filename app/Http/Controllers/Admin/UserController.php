@@ -60,7 +60,7 @@ class UserController extends Controller
                     $ruta = 'destroy(' . $user->id . ",'" . route('users.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['user_id','rol', 'vincular', 'tienda', 'asociadas', 'edit', 'destroy'])
+                ->rawColumns(['user_id', 'rol', 'vincular', 'tienda', 'asociadas', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.users.index');
@@ -69,10 +69,11 @@ class UserController extends Controller
     public function add()
     {
         try {
-            $roles = $this->roleRepository->getActives();
+            $roles  = $this->roleRepository->getActives();
+            $stores = $this->storeRepository->getAll();
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.users.insertByAjax', compact('roles'))->render(),
+                'html' => view('admin.users.insertByAjax', compact('roles', 'stores'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
