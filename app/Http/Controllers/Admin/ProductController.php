@@ -117,7 +117,8 @@ class ProductController extends Controller
     {
         try {
             $fecha_actualizacion_label  = '';
-            $fecha_actualizacion_activa = $request->input('fecha_actualizacion_activa');
+            $fecha_actualizacion  = null;
+            $fecha_actualizacion_activa = ($request->has('fecha_actualizacion_activa'))?$request->input('fecha_actualizacion_activa'):0;
             $fecha_oferta               = $request->input('fecha_oferta');
             $product                    = $this->productRepository->getByIdWith($request->id);
             $oferta                     = SessionOferta::where('product_id', $request->id)->first();
@@ -131,7 +132,8 @@ class ProductController extends Controller
             if ($fecha_actualizacion_activa) {
                 $pp1                    = $product->product_price->toArray();
                 $ppsession              = SessionPrices::where('id', $fecha_actualizacion_activa)->first()->toArray();
-                $fecha_actualizacion_label  = \Carbon\Carbon::parse($ppsession->fecha_actualizacion)->format('d/m/Y');
+                $fecha_actualizacion_label  = \Carbon\Carbon::parse($ppsession['fecha_actualizacion'])->format('d/m/Y');
+                $fecha_actualizacion        =  $ppsession['fecha_actualizacion'];
                 $new_prices             = array_replace($pp1, $ppsession);
                 $product->product_price = new ProductPrice($new_prices);
             }
@@ -146,7 +148,8 @@ class ProductController extends Controller
             if ($product) {
                 return view(
                     'admin.products.edit',
-                    compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions', 'product', 'unit_package', 'fecha_actualizacion_activa', 'oferta','fecha_actualizacion_label')
+                    compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions', 'fecha_actualizacion',
+                            'product', 'unit_package', 'fecha_actualizacion_activa', 'oferta','fecha_actualizacion_label')
                 );
             }
             $notification = [
@@ -166,10 +169,16 @@ class ProductController extends Controller
             $product_id           = $data['product_id'];
             $data['unit_package'] = implode('|', $data['unit_package']);
             $producto_actualizado = $this->productRepository->fill($product_id, $data);
-            // $preciosCalculados    = $this->calcularPrecios($request);
-            // $data                 = array_merge($data, $preciosCalculados);
-            //$producto             = $this->productRepository->getByIdWith($product_id);
-            // $this->productPriceRepository->fill($producto->product_price->id, $data);
+            $preciosCalculados    = $this->calcularPrecios($request);
+            $data              = array_merge($data, $preciosCalculados);
+            if($data['fecha_actualizacion_activa'] == 0){
+                $producto             = $this->productRepository->getByIdWith($product_id);
+                $this->productPriceRepository->fill($producto->product_price->id, $data);
+            }else{
+                $session_prices = SessionPrices::where('id',$data['fecha_actualizacion_activa'])->first();
+                $session_prices->fill($data);
+                $session_prices->save();
+            }
             return new JsonResponse(['type' => 'success', 'msj' => 'Producto actualizado correctamente!']);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
@@ -184,7 +193,10 @@ class ProductController extends Controller
             $preciosCalculados = $this->calcularPrecios($request);
             $data              = array_merge($data, $preciosCalculados);
             $prices            = SessionPrices::updateOrCreate(['product_id' => $data['product_id'], 'fecha_actualizacion' => $data['fecha_actualizacion']], $data);
-            return new JsonResponse(['type' => 'success', 'msj' => 'Los precios se actualizarán el ' . \Carbon\Carbon::parse($prices->fecha_actualizacion)->format('d/m/Y')]);
+            $divFechasPrecios = "<a href='javascript:void(0)'><span class='badge  badge-primary p-2'>". \Carbon\Carbon::parse($prices->fecha_actualizacion)->format('d/m/Y')."</span></a>";
+            return new JsonResponse(['type' => 'success',
+                                     'msj' => 'Los precios se actualizarán el ' . \Carbon\Carbon::parse($prices->fecha_actualizacion)->format('d/m/Y'),
+                                    'divFechasPrecios' => $divFechasPrecios]);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
         }

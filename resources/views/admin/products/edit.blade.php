@@ -65,8 +65,8 @@
                                 @csrf
                                 @if (isset($product))
                                     <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
-                                    <input type="hidden" name="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
-                                    <input type="hidden" name="fecha_actualizacion_label" value="{{$fecha_actualizacion_label}}">
+                                    <input type="hidden" name="fecha_actualizacion_activa"  id="fecha_actualizacion_activa"  value="{{$fecha_actualizacion_activa}}">
+                                    <input type="hidden" name="fecha_actualizacion_label" id="fecha_actualizacion_label"  value="{{$fecha_actualizacion_label}}">
                                 @else
                                     <input type="hidden" name="product_id" id="product_id" value="0">
                                 @endif
@@ -157,10 +157,9 @@
                     },
                     complete: function () {
                         jQuery('#loader').addClass('hidden');
-                        setTimeout(() => {
+                        /* setTimeout(() => {
                             window.location= '{{ route('products.list') }}';
-                        }, 500);
-
+                        }, 500); */
                     }
                 });
             }
@@ -197,6 +196,10 @@
                         } else {
                             toastr.error(data['html'], 'Verifique');
                         }
+                        jQuery(".badge").removeClass('badge-primary');
+                        jQuery(".badge").addClass('badge-secondary');
+                        var divOferta = document.getElementById("divFechasPrecio");
+                        divOferta.innerHTML += data['divFechasPrecios'];
                     },
                     error: function (data) {
                         var lista_errores = "";
@@ -237,8 +240,8 @@
                     jQuery('#loader').removeClass('hidden');
                 },
                 success: function (response) {
-                    jQuery("#divOferta").html(response['divOferta']);  
-                    jQuery("#divPanel").html(response['divPanel']);   
+                    jQuery("#divOferta").html(response['divOferta']);
+                    jQuery("#divPanel").html(response['divPanel']);
                 },
                 error: function (data) {
                     var lista_errores = "";
@@ -263,8 +266,8 @@
             url: '{{ route('oferta.destroyReload') }}',
             type: 'POST',
             data: {id},
-            success: function (response) {                    
-                jQuery("#divOferta").html(response['divOferta']);                
+            success: function (response) {
+                jQuery("#divOferta").html(response['divOferta']);
                 jQuery("#divPanel").html(response['divPanel']);
             }
         });

@@ -1,21 +1,26 @@
 @if (isset($product))
 <div class="form-group row">
-    <div class="col-md-12">
-        <a href="{{route('product.edit',['id' => $product->id])}}#precios" onclick="jQuery('#loader').removeClass('hidden')">
-            <span class="badge @if(!isset($fecha_actualizacion_activa)) badge-primary @else badge-secondary @endif" style="padding: 5px">
-                Precio actual
-            </span>
-        </a>
-        @foreach ($product->session_prices as $p)
-        <a href="{{route('product.edit',['id' => $product->id,'fecha_actualizacion_activa' => $p->id])}}#precios"
-            @if(isset($fecha_actualizacion_activa) && $p->id != $fecha_actualizacion_activa)
-                onclick="jQuery('#loader').removeClass('hidden')"
-            @endif>
-            <span class="badge @if(isset($fecha_actualizacion_activa) && $p->id == $fecha_actualizacion_activa) badge-primary @else badge-secondary @endif p-2" id="span-{{$p->id}}">
-                {{\Carbon\Carbon::parse($p->fecha_actualizacion)->format('d/m/Y')}}
-            </span>
-        </a>
-        @endforeach
+    <div class="col-md-12" >
+        <span id="divFechasPrecio">
+            <a href="{{route('product.edit',['id' => $product->id])}}#precios"
+                @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa != 0)
+                    onclick="jQuery('#loader').removeClass('hidden')"
+                @endif>
+                <span class="badge @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa == 0) badge-primary @else badge-secondary @endif" style="padding: 5px">
+                    Precio actual
+                </span>
+            </a>
+            @foreach ($product->session_prices as $p)
+            <a href="{{route('product.edit',['id' => $product->id,'fecha_actualizacion_activa' => $p->id])}}#precios"
+                @if(isset($fecha_actualizacion_activa) && $p->id != $fecha_actualizacion_activa)
+                    onclick="jQuery('#loader').removeClass('hidden')"
+                @endif>
+                <span class="badge @if(isset($fecha_actualizacion_activa) && $p->id == $fecha_actualizacion_activa) badge-primary @else badge-secondary @endif p-2" id="span-{{$p->id}}">
+                    {{\Carbon\Carbon::parse($p->fecha_actualizacion)->format('d/m/Y')}}
+                </span>
+            </a>
+            @endforeach
+        </span>
 
         <span id="divPanel">
             @include('admin.products.panel')
@@ -147,7 +152,10 @@
                 <p class=" font-italic">Fecha de <span class=" font-weight-bolder"> actualización </span> precio</p>
                 <div class="row">
                     <div class="col-md-5">
-                        <input type="date" id="fecha_actualizacion" name="fecha_actualizacion" class="form-control">
+                        <input type="date" id="fecha_actualizacion" name="fecha_actualizacion" class="form-control"
+                        @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa != 0)
+                            value="{{$fecha_actualizacion}}"
+                        @endif>
                     </div>
                     <div class="col-md-5">
                     </div>
