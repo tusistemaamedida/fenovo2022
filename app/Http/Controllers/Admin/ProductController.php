@@ -117,6 +117,7 @@ class ProductController extends Controller
     public function edit(Request $request)
     {
         try {
+            $fecha_actualizacion_label  = '';
             $fecha_actualizacion_activa = $request->input('fecha_actualizacion_activa');
             $product                    = $this->productRepository->getByIdWith($request->id);
             $oferta                     = SessionOferta::where('product_id', $request->id)->first();
@@ -130,6 +131,7 @@ class ProductController extends Controller
             if ($fecha_actualizacion_activa) {
                 $pp1                    = $product->product_price->toArray();
                 $ppsession              = SessionPrices::where('id', $fecha_actualizacion_activa)->first()->toArray();
+                $fecha_actualizacion_label  = \Carbon\Carbon::parse($ppsession->fecha_actualizacion)->format('d/m/Y');
                 $new_prices             = array_replace($pp1, $ppsession);
                 $product->product_price = new ProductPrice($new_prices);
             }
@@ -137,7 +139,7 @@ class ProductController extends Controller
             if ($product) {
                 return view(
                     'admin.products.edit',
-                    compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions', 'product', 'unit_package', 'fecha_actualizacion_activa', 'oferta')
+                    compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions', 'product', 'unit_package', 'fecha_actualizacion_activa', 'oferta','fecha_actualizacion_label')
                 );
             }
             $notification = [
@@ -217,11 +219,13 @@ class ProductController extends Controller
     }
 
     public function calculateProductPrices(CalculatePrices $request)    {
+        $oferta = null;
         $cod_descuento = $request->input('cod_descuento');
         $desc = ProductDescuento::where('codigo',$cod_descuento)->first();
         $descp1   = ($request->has('descp1')) ? $request->input('descp1') : 0;
+        if((int) $request->input('product_id') != 0) $oferta = SessionOferta::where('product_id', $request->input('product_id'))->first();
 
-        if($desc && $desc->descuento > $descp1){
+        if($desc && $desc->descuento > $descp1 && !$oferta){
             return new JsonResponse([
                 'type' =>'error',
                 'descp1' =>(int) $desc->descuento,

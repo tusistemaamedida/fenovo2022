@@ -56,6 +56,7 @@
                                 @if (isset($product))
                                     <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
                                     <input type="hidden" name="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
+                                    <input type="hidden" name="fecha_actualizacion_label" value="{{$fecha_actualizacion_label}}">
                                 @else
                                     <input type="hidden" name="product_id" id="product_id" value="0">
                                 @endif
@@ -72,6 +73,12 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                @if (isset($product))
+                                    <div class="col-12" style="float: right">
+                                        <button type="button" class="btn btn-primary" onclick="updateProduct('{{ route('product.update') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+                                    </div>
+                                @endif
                             </form>
                         </div>
                     </div>
@@ -93,9 +100,17 @@
     });
 
     function updateProduct(route){
+        var text = '';
+        var fecha_actualizacion = jQuery("#fecha_actualizacion_activa").val();
+        var fecha_actualizacion_label = jQuery("#fecha_actualizacion_label").val();
+        if(fecha_actualizacion == 0 || fecha_actualizacion == '0'){
+            text = 'Está por modificar los precios actuales!';
+        }else{
+            text = 'Está por modificar los precios del ' + fecha_actualizacion_label +'!';
+        }
         ymz.jq_confirm({
             title: 'Actualización!',
-            text: "Actualizar producto ?",
+            text: text,
             no_btn: "Cancelar",
             yes_btn: "Confirmar",
             no_fn: function () {
