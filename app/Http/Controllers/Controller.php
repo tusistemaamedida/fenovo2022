@@ -11,7 +11,8 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function getActionsButonTable($actions){
+    public function getActionsButonTable($actions)
+    {
         return '<div class="card-toolbar text-right">
             <button class="btn p-0 shadow-none" type="button" id="dropdowneditButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="svg-icon">
@@ -20,10 +21,11 @@ class Controller extends BaseController
                     </svg>
                 </span>
             </button>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton" >'.$actions. '</div></div>';
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdowneditButton" >' . $actions . '</div></div>';
     }
 
-    public static function getEntidadTipo($tipo){
+    public static function getEntidadTipo($tipo)
+    {
         switch ($tipo) {
             case 'COMPRA':
                 return 'P';
@@ -31,14 +33,14 @@ class Controller extends BaseController
             case 'TRASLADO':
             case 'DEVOLUCION':
             case 'VENTA':
-            case 'DEVOLUCIONCLIENTE':
                 return 'S';
                 break;
+            case 'DEVOLUCIONCLIENTE':
             case 'VENTACLIENTE':
                 return 'C';
                 break;
             default:
-                # code...
+                // code...
                 break;
         }
     }
