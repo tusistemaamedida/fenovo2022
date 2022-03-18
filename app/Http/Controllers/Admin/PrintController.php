@@ -146,8 +146,5 @@ class PrintController extends Controller
         return $pdf->stream('novedades_productos.pdf');
     }
 
-    public function exportProductsToCsv(Request $request)
-    {
-        return Excel::download(new ProductsViewExport($request), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
-    }
+    
 }

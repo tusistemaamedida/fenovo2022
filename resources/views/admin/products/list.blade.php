@@ -28,6 +28,10 @@
                                 Descuentos
                             </a>
 
+                            <a href="{{route('products.exportCSV')}}" title="Exportar todos los productos" class="mt-1 mr-3">
+                                <i class=" fa fa-file-csv"></i>
+                            </a>                          
+                            
                             <a href="{{route('product.add')}}" title="Agregar un producto ">
                                 <i class="fa fa-2x fa-plus-circle text-primary"></i>
                             </a>
