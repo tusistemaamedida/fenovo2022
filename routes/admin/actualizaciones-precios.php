@@ -7,7 +7,7 @@ Route::get('actualizacion', [ActualizacionController::class, 'index'])->name('ac
 Route::get('actualizacion/add', [ActualizacionController::class, 'add'])->name('actualizacion.add');
 Route::post('actualizacion/store', [ActualizacionController::class, 'store'])->name('actualizacion.store');
 Route::get('actualizacion/edit', [ActualizacionController::class, 'edit'])->name('actualizacion.edit');
-Route::post('actualizacion/update', [ActualizacionController::class, 'update'])->name('actualizacion.update');
+Route::get('actualizacion/update', [ActualizacionController::class, 'update'])->name('actualizacion.update');
 Route::post('actualizacion/destroy', [ActualizacionController::class, 'destroy'])->name('actualizacion.destroy');
 
 Route::get('actualizacion/exportar', [ActualizacionController::class, 'exportToCsv'])->name('actualizacion.exportCSV');

@@ -27,4 +27,8 @@ class SessionPricesRepository extends BaseRepository
     {
         return SessionPrices::find($id);
     }
+
+    public function getBy($column,$value){
+        return SessionPrices::where($column,$value)->get();
+    }
 }
