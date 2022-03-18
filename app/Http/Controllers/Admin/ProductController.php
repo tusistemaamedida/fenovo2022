@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\DescuentosViewExport;
+use App\Exports\PresentacionesViewExport;
 use App\Exports\ProductsViewExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\AddProduct;
@@ -28,9 +30,9 @@ use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -499,6 +501,16 @@ class ProductController extends Controller
     public function exportProductsToCsv(Request $request)
     {
         return Excel::download(new ProductsViewExport($request), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+    }
+
+    public function exportDescuentosToCsv(Request $request)
+    {
+        return Excel::download(new DescuentosViewExport($request), 'des.txt', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/txt']);
+    }
+
+    public function exportPresentacionesToCsv(Request $request)
+    {
+        return Excel::download(new PresentacionesViewExport($request), 'bultos.txt', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/txt']);
     }
 
     private function descp2($p2may, $p2tienda)

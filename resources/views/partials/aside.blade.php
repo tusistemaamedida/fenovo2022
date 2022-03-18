@@ -70,7 +70,7 @@
                         </a>
                     </li>
                     <li class="nav-item" title="Impresión / Exportación">
-                        <a href="{{ route('movement.menu.print') }}" class="nav-link">
+                        <a href="{{ route('menu.print') }}" class="nav-link">
                             <span class="svg-icon nav-icon">
                                 <i class="fas fa-print"></i>
                             </span>

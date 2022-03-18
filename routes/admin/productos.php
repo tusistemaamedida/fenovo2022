@@ -28,5 +28,8 @@ Route::get('productos/getProductByProveedor', [ProductController::class, 'getPro
 
 Route::get('importar', [ProductController::class, 'importFromCsv'])->name('import.products');
 
-Route::get('productos/exportar', [ProductController::class, 'exportProductsToCsv'])->name('products.exportCSV');
 Route::get('productos/imprimir', [PrintController::class, 'printProductsPDF'])->name('products.printPDF');
+
+Route::get('productos/exportar', [ProductController::class, 'exportProductsToCsv'])->name('products.exportCSV');
+Route::get('productos-presentaciones/exportar', [ProductController::class, 'exportPresentacionesToCsv'])->name('products.exportPresentacionesCSV');
+Route::get('productos-descuentos/exportar', [ProductController::class, 'exportDescuentosToCsv'])->name('products.exportDescuentosCSV');

@@ -15,9 +15,6 @@ class ProductDescuento extends Model
         'descripcion',
         'descuento',
         'cantidad',
-        'tipo',
-        'fechadesde',
-        'fechahasta',
         'active',
     ];
 
