@@ -21,13 +21,6 @@ class ProductsViewExport implements FromView
         $desde = $this->request->desde;
         $hasta = $this->request->hasta;
 
-        if ($desde == '' or $hasta == '') {
-            $actualizacion = ActualizacionPrecio::orderBy('fecha', 'desc')->skip(1)->first();
-            $desde         = $actualizacion->fecha;
-
-            $actualizacion = ActualizacionPrecio::orderBy('fecha', 'desc')->first();
-            $hasta         = $actualizacion->fecha;
-        }
         $productos = DB::table('products as t1')
             ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
             ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
@@ -61,7 +54,6 @@ class ProductsViewExport implements FromView
                 't4.codigo',
             )
             ->where('t1.active', 1)
-            ->whereBetween(DB::raw('DATE(t2.updated_at)'), [$desde, $hasta])
             ->get();
 
         $anio      = date('Y', time());

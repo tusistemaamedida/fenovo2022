@@ -28,5 +28,5 @@ Route::get('productos/getProductByProveedor', [ProductController::class, 'getPro
 
 Route::get('importar', [ProductController::class, 'importFromCsv'])->name('import.products');
 
-Route::get('productos/exportar', [PrintController::class, 'exportProductsToCsv'])->name('products.exportCSV');
+Route::get('productos/exportar', [ProductController::class, 'exportProductsToCsv'])->name('products.exportCSV');
 Route::get('productos/imprimir', [PrintController::class, 'printProductsPDF'])->name('products.printPDF');
