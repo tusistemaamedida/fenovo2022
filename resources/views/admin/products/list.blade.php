@@ -29,7 +29,7 @@
                             </a>
 
                             <a href="{{route('products.exportCSV')}}" title="Exportar todos los productos" class="mt-1 mr-3">
-                                <i class=" fa fa-file-csv"></i>
+                                Exportar
                             </a>                          
                             
                             <a href="{{route('product.add')}}" title="Agregar un producto ">
