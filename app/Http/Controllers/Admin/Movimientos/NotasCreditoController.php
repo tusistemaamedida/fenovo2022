@@ -4,17 +4,17 @@ namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
 
+use App\Models\Invoice;
+use App\Models\Movement;
+
+use App\Models\MovementProduct;
+use App\Models\Store;
+use App\Repositories\InvoicesRepository;
+use App\Repositories\SessionProductRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\Movement;
-use App\Models\MovementProduct;
-use App\Models\Store;
-use App\Models\Invoice;
-use App\Repositories\SessionProductRepository;
-
-use App\Repositories\InvoicesRepository;
 
 class NotasCreditoController extends Controller
 {
@@ -23,15 +23,17 @@ class NotasCreditoController extends Controller
 
     public function __construct(
         InvoicesRepository $invoiceRepository,
-        SessionProductRepository $sessionProductRepository) {
-        $this->invoiceRepository = $invoiceRepository;
+        SessionProductRepository $sessionProductRepository
+    )
+    {
+        $this->invoiceRepository        = $invoiceRepository;
         $this->sessionProductRepository = $sessionProductRepository;
     }
 
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $arrTypes = ['DEVOLUCION','DEVOLUCIONCLIENTE'];
+            $arrTypes = ['DEVOLUCION', 'DEVOLUCIONCLIENTE'];
             $movement = Movement::all()->where('from', \Auth::user()->store_active)->whereIn('type', $arrTypes)->sortByDesc('created_at');
 
             return DataTables::of($movement)
@@ -40,7 +42,9 @@ class NotasCreditoController extends Controller
                     return $movement->origenData($movement->type);
                 })
                 ->addColumn('comprobante_nc', function ($movement) {
-                    if(isset($movement->invoice)) return $movement->invoice->voucher_number;
+                    if (isset($movement->invoice)) {
+                        return $movement->invoice->voucher_number;
+                    }
                     return '--';
                 })
                 ->editColumn('date', function ($movement) {
@@ -57,18 +61,19 @@ class NotasCreditoController extends Controller
                     if ($movement->invoice && !is_null($movement->invoice->cae)) {
                         $links .= '<a class="flex-button" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
                     } else {
-                        $ruta = "'".route('create.invoice', ['movment_id' => $movement->id])."'";
-                        $links .= '<a class="flex-button"  href="javascript:void(0)" onclick="createInvoice('. $ruta .')"> <i class="fas fa-file-invoice"></i> </a>';
+                        $ruta = "'" . route('create.invoice', ['movment_id' => $movement->id]) . "'";
+                        $links .= '<a class="flex-button"  href="javascript:void(0)" onclick="createInvoice(' . $ruta . ')"> <i class="fas fa-file-invoice"></i> </a>';
                     }
                     return $links;
                 })
-                ->rawColumns(['origen', 'date', 'type', 'acciones','comprobante_nc'])
+                ->rawColumns(['origen', 'date', 'type', 'acciones', 'comprobante_nc'])
                 ->make(true);
         }
         return view('admin.movimientos.notas-credito.index');
     }
 
-    public function add(){
+    public function add()
+    {
         $this->sessionProductRepository->deleteDevoluciones();
         return view('admin.movimientos.notas-credito.add');
     }
@@ -84,32 +89,33 @@ class NotasCreditoController extends Controller
     {
         $term        = $request->term ?: '';
         $valid_names = [];
-        $invoices = $this->invoiceRepository->search($term);
+        $invoices    = $this->invoiceRepository->search($term);
         foreach ($invoices as $invoice) {
-            $valid_names[] = ['id' => $invoice->voucher_number, 'text' => $invoice->voucher_number . ' [ '.$invoice->client_name.' ]'];
+            $valid_names[] = ['id' => $invoice->voucher_number, 'text' => $invoice->voucher_number . ' [ ' . $invoice->client_name . ' ]'];
         }
         return new JsonResponse($valid_names);
     }
 
-    public function validateVoucherTo(Request $request){
-        $to = $request->input('to');
+    public function validateVoucherTo(Request $request)
+    {
+        $to             = $request->input('to');
         $voucher_number = $request->input('voucher_number');
-        $invoice = Invoice::where('voucher_number',$voucher_number)->first();
-        if($invoice){
-            $movement_relacionado = Movement::where('id',$invoice->movement_id)->first();
+        $invoice        = Invoice::where('voucher_number', $voucher_number)->first();
+        if ($invoice) {
+            $movement_relacionado = Movement::where('id', $invoice->movement_id)->first();
 
-            if($movement_relacionado && $movement_relacionado->to == $to){
-                return new JsonResponse(['type'=> 'success']);
-            }else{
-                return new JsonResponse(['type'=> 'error','msj' => 'El número de facura con corresponde a la tienda seleccionada']);
+            if ($movement_relacionado && $movement_relacionado->to == $to) {
+                return new JsonResponse(['type' => 'success']);
             }
+            return new JsonResponse(['type' => 'error', 'msj' => 'El número de facura con corresponde a la tienda seleccionada']);
         }
-        return new JsonResponse(['type'=> 'error','msj' => 'El número de facura con corresponde a la tienda seleccionada']);
+        return new JsonResponse(['type' => 'error', 'msj' => 'El número de facura con corresponde a la tienda seleccionada']);
     }
 
-    public function storeNotaCredito(Request $request){
+    public function storeNotaCredito(Request $request)
+    {
         try {
-            if($request->input('voucher_number') != '' || !is_null($request->input('voucher_number'))){
+            if ($request->input('voucher_number') != '' || !is_null($request->input('voucher_number'))) {
                 $list_id                       = $request->input('session_list_id');
                 $explode                       = explode('_', $list_id);
                 $insert_data['type']           = $explode[0];
@@ -120,31 +126,30 @@ class NotasCreditoController extends Controller
                 $insert_data['voucher_number'] = $request->input('voucher_number');
 
                 $movement             = Movement::create($insert_data);
-                $invoice              = Invoice::where('voucher_number',$request->input('voucher_number'))->first();
-                $movement_relacionado = Movement::where('id',$invoice->movement_id)->first();
-                $session_products = $this->sessionProductRepository->getByListId($list_id);
-                $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
+                //$invoice              = Invoice::where('voucher_number', $request->input('voucher_number'))->first();
+                //$movement_relacionado = Movement::where('id', $invoice->movement_id)->first();
+                $session_products     = $this->sessionProductRepository->getByListId($list_id);
+                $entidad_tipo         = parent::getEntidadTipo($insert_data['type']);
 
                 foreach ($session_products as $product) {
-
                     $kgs = $product->producto->unit_weight * $product->unit_package * $product->quantity;
 
-                    if($insert_data['type'] != 'DEVOLUCIONCLIENTE'){
-                        // busco el balance del producto y el TO del movimento de salida para restarle la cantidad devuelta
-                        $latest = MovementProduct::all()
-                                                ->where('entidad_id', $movement_relacionado->to)
+                    //if($insert_data['type'] != 'DEVOLUCIONCLIENTE'){
+                    // busco el balance del producto y el TO del movimento de salida para restarle la cantidad devuelta
+                    $latest = MovementProduct::all()
+                                                ->where('entidad_id', $movement->to)
                                                 ->where('entidad_tipo', $entidad_tipo)
                                                 ->where('product_id', $product->product_id)
                                                 ->sortByDesc('id')
                                                 ->first();
 
-                        $balance = ($latest) ? $latest->balance - $kgs : 0;
-                    }else{
-                        $balance =  $kgs;
-                    }
+                    $balance = ($latest) ? $latest->balance - $kgs : $kgs;
+                    //}else{
+                    //   $balance =  $kgs;
+                    //}
 
                     MovementProduct::firstOrCreate([
-                        'entidad_id'     => $movement_relacionado->to,
+                        'entidad_id'     => $movement->to,
                         'entidad_tipo'   => $entidad_tipo,
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
@@ -156,7 +161,7 @@ class NotasCreditoController extends Controller
                             'bultos'     => $product->quantity,
                             'egress'     => $kgs,
                             'balance'    => $balance,
-                    ]);
+                        ]);
 
                     $latest = MovementProduct::all()
                         ->where('entidad_id', \Auth::user()->store_active)
