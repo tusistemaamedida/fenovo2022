@@ -11,10 +11,10 @@ use App\Http\Requests\Products\UpdateProduct;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\Product;
+use App\Models\ProductDescuento;
 use App\Models\ProductPrice;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
-use App\Models\ProductDescuento;
 
 use App\Repositories\AlicuotaTypeRepository;
 use App\Repositories\ProducDescuentoRepository;
@@ -27,6 +27,7 @@ use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -38,6 +39,7 @@ class ProductController extends Controller
     private $productDescuentoRepository;
     private $proveedorRepository;
     private $senasaDefinitionRepository;
+    private $productImport;
 
     public function __construct(
         ProductRepository $productRepository,
@@ -117,8 +119,8 @@ class ProductController extends Controller
     {
         try {
             $fecha_actualizacion_label  = '';
-            $fecha_actualizacion  = null;
-            $fecha_actualizacion_activa = ($request->has('fecha_actualizacion_activa'))?$request->input('fecha_actualizacion_activa'):0;
+            $fecha_actualizacion        = null;
+            $fecha_actualizacion_activa = ($request->has('fecha_actualizacion_activa')) ? $request->input('fecha_actualizacion_activa') : 0;
             $fecha_oferta               = $request->input('fecha_oferta');
             $product                    = $this->productRepository->getByIdWith($request->id);
             $oferta                     = SessionOferta::where('product_id', $request->id)->first();
@@ -130,12 +132,12 @@ class ProductController extends Controller
             $unit_package               = explode('|', $product->unit_package);
 
             if ($fecha_actualizacion_activa) {
-                $pp1                    = $product->product_price->toArray();
-                $ppsession              = SessionPrices::where('id', $fecha_actualizacion_activa)->first()->toArray();
-                $fecha_actualizacion_label  = \Carbon\Carbon::parse($ppsession['fecha_actualizacion'])->format('d/m/Y');
-                $fecha_actualizacion        =  $ppsession['fecha_actualizacion'];
-                $new_prices             = array_replace($pp1, $ppsession);
-                $product->product_price = new ProductPrice($new_prices);
+                $pp1                       = $product->product_price->toArray();
+                $ppsession                 = SessionPrices::where('id', $fecha_actualizacion_activa)->first()->toArray();
+                $fecha_actualizacion_label = \Carbon\Carbon::parse($ppsession['fecha_actualizacion'])->format('d/m/Y');
+                $fecha_actualizacion       = $ppsession['fecha_actualizacion'];
+                $new_prices                = array_replace($pp1, $ppsession);
+                $product->product_price    = new ProductPrice($new_prices);
             }
 
             if ($fecha_oferta) {
@@ -148,8 +150,19 @@ class ProductController extends Controller
             if ($product) {
                 return view(
                     'admin.products.edit',
-                    compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions', 'fecha_actualizacion',
-                            'product', 'unit_package', 'fecha_actualizacion_activa', 'oferta','fecha_actualizacion_label')
+                    compact(
+                        'alicuotas',
+                        'categories',
+                        'descuentos',
+                        'proveedores',
+                        'senasaDefinitions',
+                        'fecha_actualizacion',
+                        'product',
+                        'unit_package',
+                        'fecha_actualizacion_activa',
+                        'oferta',
+                        'fecha_actualizacion_label'
+                    )
                 );
             }
             $notification = [
@@ -170,12 +183,12 @@ class ProductController extends Controller
             $data['unit_package'] = implode('|', $data['unit_package']);
             $producto_actualizado = $this->productRepository->fill($product_id, $data);
             $preciosCalculados    = $this->calcularPrecios($request);
-            $data              = array_merge($data, $preciosCalculados);
-            if($data['fecha_actualizacion_activa'] == 0){
-                $producto             = $this->productRepository->getByIdWith($product_id);
+            $data                 = array_merge($data, $preciosCalculados);
+            if ($data['fecha_actualizacion_activa'] == 0) {
+                $producto = $this->productRepository->getByIdWith($product_id);
                 $this->productPriceRepository->fill($producto->product_price->id, $data);
-            }else{
-                $session_prices = SessionPrices::where('id',$data['fecha_actualizacion_activa'])->first();
+            } else {
+                $session_prices = SessionPrices::where('id', $data['fecha_actualizacion_activa'])->first();
                 $session_prices->fill($data);
                 $session_prices->save();
             }
@@ -193,10 +206,10 @@ class ProductController extends Controller
             $preciosCalculados = $this->calcularPrecios($request);
             $data              = array_merge($data, $preciosCalculados);
             $prices            = SessionPrices::updateOrCreate(['product_id' => $data['product_id'], 'fecha_actualizacion' => $data['fecha_actualizacion']], $data);
-            $divFechasPrecios = "<a href='javascript:void(0)'><span class='badge  badge-primary p-2'>". \Carbon\Carbon::parse($prices->fecha_actualizacion)->format('d/m/Y')."</span></a>";
+            $divFechasPrecios  = "<a href='javascript:void(0)'><span class='badge  badge-primary p-2'>" . \Carbon\Carbon::parse($prices->fecha_actualizacion)->format('d/m/Y') . '</span></a>';
             return new JsonResponse(['type' => 'success',
-                                     'msj' => 'Los precios se actualizarán el ' . \Carbon\Carbon::parse($prices->fecha_actualizacion)->format('d/m/Y'),
-                                    'divFechasPrecios' => $divFechasPrecios]);
+                'msj'                       => 'Los precios se actualizarán el ' . \Carbon\Carbon::parse($prices->fecha_actualizacion)->format('d/m/Y'),
+                'divFechasPrecios'          => $divFechasPrecios, ]);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
         }
@@ -233,27 +246,31 @@ class ProductController extends Controller
         return new JsonResponse(['msj' => 'Ok', 'type' => 'success']);
     }
 
-    public function getDescuentoAplicado(Request $request){
+    public function getDescuentoAplicado(Request $request)
+    {
         $cod_descuento = $request->input('cod_descuento');
-        $desc = ProductDescuento::where('codigo',$cod_descuento)->first();
-        if($desc){
-            return new JsonResponse([ 'type' =>'success', 'descp1' =>(int) $desc->descuento]);
+        $desc          = ProductDescuento::where('codigo', $cod_descuento)->first();
+        if ($desc) {
+            return new JsonResponse(['type' => 'success', 'descp1' => (int)$desc->descuento]);
         }
-        return new JsonResponse([ 'type' =>'success', 'descp1' => 0]);
+        return new JsonResponse(['type' => 'success', 'descp1' => 0]);
     }
 
-    public function calculateProductPrices(CalculatePrices $request)    {
-        $oferta = null;
+    public function calculateProductPrices(CalculatePrices $request)
+    {
+        $oferta        = null;
         $cod_descuento = $request->input('cod_descuento');
-        $desc = ProductDescuento::where('codigo',$cod_descuento)->first();
-        $descp1   = ($request->has('descp1')) ? $request->input('descp1') : 0;
-        if((int) $request->input('product_id') != 0) $oferta = SessionOferta::where('product_id', $request->input('product_id'))->first();
+        $desc          = ProductDescuento::where('codigo', $cod_descuento)->first();
+        $descp1        = ($request->has('descp1')) ? $request->input('descp1') : 0;
+        if ((int)$request->input('product_id') != 0) {
+            $oferta = SessionOferta::where('product_id', $request->input('product_id'))->first();
+        }
 
-        if($desc && $desc->descuento > $descp1 && !$oferta){
+        if ($desc && $desc->descuento > $descp1 && !$oferta) {
             return new JsonResponse([
-                'type' =>'error',
-                'descp1' =>(int) $desc->descuento,
-                'msj' => 'El descuento mayorista no debe ser menor al descuento por rubro aplicado: <br>'.$desc->descripcion]);
+                'type'   => 'error',
+                'descp1' => (int)$desc->descuento,
+                'msj'    => 'El descuento mayorista no debe ser menor al descuento por rubro aplicado: <br>' . $desc->descripcion, ]);
         }
         $array_prices = $this->calcularPrecios($request);
         if ($request->ajax()) {
@@ -321,10 +338,10 @@ class ProductController extends Controller
     private function descp2($p2may, $p2tienda)
     {
         try {
-            $p2tienda = ($p2tienda)?$p2tienda:1;
+            $p2tienda = ($p2tienda) ? $p2tienda : 1;
             return abs(round(((($p2may - $p2tienda) * 100) / $p2tienda), 2));
         } catch (\Exception $e) {
-            throw new \Exception('descp2 '.$e->getMessage());
+            throw new \Exception('descp2 ' . $e->getMessage());
         }
     }
 
@@ -333,7 +350,7 @@ class ProductController extends Controller
         try {
             return round(($p2may / $plist0Iva - 1) * 100, 2);
         } catch (\Exception $e) {
-            throw new \Exception('mupp2may '.$e->getMessage());
+            throw new \Exception('mupp2may ' . $e->getMessage());
         }
     }
 
@@ -342,7 +359,7 @@ class ProductController extends Controller
         try {
             return round($p2tienda - $p2tienda * ($descp2 / 100), 2);
         } catch (\Exception $e) {
-            throw new \Exception('p2may '.$e->getMessage());
+            throw new \Exception('p2may ' . $e->getMessage());
         }
     }
 
@@ -351,7 +368,7 @@ class ProductController extends Controller
         try {
             return round(($p2tienda / $plist0Iva - 1) * 100, 2);
         } catch (\Exception $e) {
-            throw new \Exception('mup2 '.$e->getMessage());
+            throw new \Exception('mup2 ' . $e->getMessage());
         }
     }
 
@@ -360,7 +377,7 @@ class ProductController extends Controller
         try {
             return round(($p1may / $plist0Iva - 1) * 100, 2);
         } catch (\Exception $e) {
-            throw new \Exception('mupp1may '.$e->getMessage());
+            throw new \Exception('mupp1may ' . $e->getMessage());
         }
     }
 
@@ -369,7 +386,7 @@ class ProductController extends Controller
         try {
             return round($p1tienda - $p1tienda * ($descp1 / 100), 2);
         } catch (\Exception $e) {
-            throw new \Exception('p1may '.$e->getMessage());
+            throw new \Exception('p1may ' . $e->getMessage());
         }
     }
 
@@ -378,7 +395,7 @@ class ProductController extends Controller
         try {
             return round(($p1tienda / $plist0Iva - 1) * 100, 2);
         } catch (\Exception $e) {
-            throw new \Exception('mup1 '.$e->getMessage());
+            throw new \Exception('mup1 ' . $e->getMessage());
         }
     }
 
@@ -387,7 +404,7 @@ class ProductController extends Controller
         try {
             return round($plistproveedor - $plistproveedor * ($descproveedor / 100), 2);
         } catch (\Exception $e) {
-            throw new \Exception('costFenovo '.$e->getMessage());
+            throw new \Exception('costFenovo ' . $e->getMessage());
         }
     }
 
@@ -396,7 +413,7 @@ class ProductController extends Controller
         try {
             return round($costFenovo * ($mupfenovo / 100 + 1) * ($contribution_fund / 100 + 1), 2);
         } catch (\Exception $e) {
-            throw new \Exception('plist0Neto '.$e->getMessage());
+            throw new \Exception('plist0Neto ' . $e->getMessage());
         }
     }
 
@@ -405,7 +422,7 @@ class ProductController extends Controller
         try {
             return round($plist0Neto * ($tasiva / 100 + 1), 2);
         } catch (\Exception $e) {
-            throw new \Exception('plist0Iva '.$e->getMessage());
+            throw new \Exception('plist0Iva ' . $e->getMessage());
         }
     }
 
@@ -414,7 +431,7 @@ class ProductController extends Controller
         try {
             return round($plist0Iva * ($muplist1 / 100 + 1), 2);
         } catch (\Exception $e) {
-            throw new \Exception('plist1 '.$e->getMessage());
+            throw new \Exception('plist1 ' . $e->getMessage());
         }
     }
 
@@ -423,7 +440,7 @@ class ProductController extends Controller
         try {
             return round((($plist1 - $plist0Iva) / ($tasiva / 100 + 1) * 100) / $plist1, 2);
         } catch (\Exception $e) {
-            throw new \Exception('comlista1 '.$e->getMessage());
+            throw new \Exception('comlista1 ' . $e->getMessage());
         }
     }
 
@@ -432,7 +449,7 @@ class ProductController extends Controller
         try {
             return round($plist0Iva * ($muplist2 / 100 + 1), 2);
         } catch (\Exception $e) {
-            throw new \Exception('plist2 '.$e->getMessage());
+            throw new \Exception('plist2 ' . $e->getMessage());
         }
     }
 
@@ -441,7 +458,7 @@ class ProductController extends Controller
         try {
             return round((($plist2 - $plist0Iva) / ($tasiva / 100 + 1)) * 100 / $plist2, 2);
         } catch (\Exception $e) {
-            throw new \Exception('comlista2 '.$e->getMessage());
+            throw new \Exception('comlista2 ' . $e->getMessage());
         }
     }
 
@@ -499,10 +516,20 @@ class ProductController extends Controller
                     'package_row'   => $importData[23],
                     'cod_descuento' => ($importData[24] != '' && !is_null($importData[24])) ? $importData[24] : null,
                 ];
-                $producto_nuevo = $this->productRepository->create($insertData);
+                $this->productImport = $insertData;
+                $producto_nuevo      = $this->productRepository->create($insertData);
 
+                $importData[8]  = ((int)$importData[8] == 0) ? 1 : $importData[8];
+                $importData[12] = ((int)$importData[12] == 0) ? 1 : $importData[12];
+                $importData[15] = ((int)$importData[15] == 0) ? 1 : $importData[15];
+                $importData[21] = ((int)$importData[21] == 0) ? 1 : $importData[21];
+                
                 $plist1 = round($importData[8] * ($importData[15] / 100 + 1) * (10 / 100 + 1), 2);
                 $plist2 = round($importData[8] * ($importData[15] / 100 + 1) * (20 / 100 + 1), 2);
+
+                $plist1 = ((int)$plist1 == 0) ? 1 : $plist1;
+                $plist2 = ((int)$plist2 == 0) ? 1 : $plist2;
+                
                 $data   = [
                     'product_id'        => $producto_nuevo->id,
                     'plistproveedor'    => $importData[4],
@@ -589,7 +616,7 @@ class ProductController extends Controller
              */
             return redirect()->route('products.list');
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            Log::info(json_encode($this->productImport));
         }
     }
 }
