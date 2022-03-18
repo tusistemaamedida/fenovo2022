@@ -70,6 +70,26 @@
                             <a href="javascript:void(0)" onclick="printMovimientos()"> <i class=" fa fa-print"></i> Imprimir</a>
                         </div>
                     </div>
+
+                    <div class="row mb-5 ml-2 border-bottom-dark">
+                        <div class="col-3">
+                            <a href="{{route('products.exportCSV')}}" title="Exportar todos los productos" class="mt-1 mr-3">
+                                <i class=" fa fa-file-csv"></i> Exportar productos
+                            </a>
+                        </div>
+                        <div class="col-3">
+                            <a href="{{route('products.exportPresentacionesCSV')}}" title="Exportar presentaciones" class="mt-1 mr-3">
+                                <i class=" fa fa-file-csv"></i> Exportar presentaciones
+                            </a>
+                        </div>
+
+                        <div class="col-3">
+                            <a href="{{route('products.exportDescuentosCSV')}}" title="Exportar descuentos" class="mt-1 mr-3">
+                                <i class=" fa fa-file-csv"></i> Exportar descuentos
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -15,7 +15,7 @@
                         </div>
                         <div class="icons d-flex">
                             @can('products.create')
-                            
+
                             <a href="{{url('oferta')}}" title="Oferta de precios" class="mt-1 mr-3">
                                 Ofertas
                             </a>
@@ -28,10 +28,6 @@
                                 Descuentos
                             </a>
 
-                            <a href="{{route('products.exportCSV')}}" title="Exportar todos los productos" class="mt-1 mr-3">
-                                Exportar
-                            </a>                          
-                            
                             <a href="{{route('product.add')}}" title="Agregar un producto ">
                                 <i class="fa fa-2x fa-plus-circle text-primary"></i>
                             </a>
@@ -49,7 +45,7 @@
                     </div>
                 </div>
             </div>
-        </div>            
+        </div>
     </div>
 </div>
 @endsection

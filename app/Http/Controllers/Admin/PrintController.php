@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\MovementsViewExport;
-use App\Exports\ProductsViewExport;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActualizacionPrecio;
@@ -47,7 +46,7 @@ class PrintController extends Controller
     public function menuPrint(Request $request)
     {
         $tiposalidas = $this->enumRepository->getType('movimientos');
-        return view('admin.movimientos.print.print', compact('tiposalidas'));
+        return view('admin.print.print', compact('tiposalidas'));
     }
 
     public function printMovimientosPDF(Request $request)
@@ -145,6 +144,4 @@ class PrintController extends Controller
         $pdf = PDF::loadView('admin.products.print.entreFechas', compact('productos', 'desde', 'hasta'));
         return $pdf->stream('novedades_productos.pdf');
     }
-
-    
 }
