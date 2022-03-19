@@ -15,8 +15,7 @@
 
                     <div class="card-header align-items-center  border-0">
                         <div class="card-title mb-0">
-                            <h4 class="card-label mb-0 font-weight-bold text-body">
-                                </h3>
+                            <h4 class="card-label mb-0 font-weight-bold text-body">  </h4>
                         </div>
                     </div>
 
@@ -25,14 +24,11 @@
                             <div class="col-12">
                                 <div class="tab-content" id="v-pills-tabContent1">
                                     <div class="tab-pane fade show active" id="home-basic" role="tabpanel" aria-labelledby="home-tab-basic">
-                                        <form id="formData">
-                                            @csrf
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    @include('admin.stores.form-details')
-                                                </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                @include('admin.stores.form-details')
                                             </div>
-                                        </form>
+                                        </div>                                        
                                     </div>
                                 </div>
                             </div>

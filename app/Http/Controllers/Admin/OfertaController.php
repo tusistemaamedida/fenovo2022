@@ -54,8 +54,8 @@ class OfertaController extends Controller
                     return count($oferta->stores);
                 })
                 ->addColumn('edit', function ($oferta) {
-                    $ruta = 'edit(' . $oferta->id . ",'" . route('oferta.edit') . "')";
-                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                    $ruta = route('product.edit',['id' => $oferta->product_id,'fecha_oferta' => $oferta->id])."#precios";
+                    return '<a href="'. $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($oferta) {
                     $ruta = 'destroy(' . $oferta->id . ",'" . route('oferta.destroy') . "')";
@@ -129,6 +129,7 @@ class OfertaController extends Controller
         SessionOferta::find($request->id)->delete();
         return new JsonResponse(['msj' => 'Oferta eliminada ... ', 'type' => 'success']);
     }
+    
     public function destroyReload(Request $request)
     {
         SessionOferta::find($request->id)->delete();

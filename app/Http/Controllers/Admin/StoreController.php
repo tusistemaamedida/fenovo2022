@@ -69,17 +69,10 @@ class StoreController extends Controller
 
     public function store(EditRequest $request)
     {
-        try {
-            $data           = $request->except(['_token']);
-            $data['active'] = 1;
-            return $this->storeRepository->create($data);
-            return new JsonResponse([
-                'msj'  => 'Actualización correcta !',
-                'type' => 'success',
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
+        $data           = $request->except(['_token']);
+        $data['active'] = 1;
+        $this->storeRepository->create($data);
+        return redirect()->route('stores.index');
     }
 
     public function edit(Request $request)
@@ -95,18 +88,11 @@ class StoreController extends Controller
 
     public function update(EditRequest $request)
     {
-        try {
-            $data                = $request->except(['_token', 'store_id', 'active', 'online_sale']);
-            $data['active']      = ($request->has('active')) ? 1 : 0;
-            $data['online_sale'] = ($request->has('online_sale')) ? 1 : 0;
-            $this->storeRepository->update($request->input('store_id'), $data);
-            return new JsonResponse([
-                'msj'  => 'Actualización correcta !',
-                'type' => 'success',
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
+        $data                = $request->except(['_token', 'store_id', 'active', 'online_sale']);
+        $data['active']      = ($request->has('active')) ? 1 : 0;
+        $data['online_sale'] = ($request->has('online_sale')) ? 1 : 0;
+        $this->storeRepository->update($request->input('store_id'), $data);
+        return redirect()->route('stores.index');
     }
 
     public function destroy(Request $request)
