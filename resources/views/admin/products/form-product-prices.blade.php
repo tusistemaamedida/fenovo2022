@@ -1,46 +1,45 @@
 @if (isset($product))
 <div class="form-group row">
-    <div class="col-md-6">
+    <div class="col-md-6 font-size-h5">
         <span id="divFechasPrecio">
-               
-
             <a href="{{route('product.edit',['id' => $product->id])}}#precios" @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0) onclick="jQuery('#loader').removeClass('hidden')" @endif>
-                <span class="badge @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null) badge-secondary @else badge-primary @endif" style="padding: 5px">
-                    ACTUAL
+                <span class="badge @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null) badge-secondary @else badge-primary @endif p-2">
+                    Precion actual
                 </span>
             </a>
             @foreach ($product->session_prices as $p)
-            <a href="{{route('product.edit',['id' => $product->id,'fecha_actualizacion_activa' => $p->id])}}#precios" @if(isset($fecha_actualizacion_activa) && $p->id != $fecha_actualizacion_activa)
-                onclick="jQuery('#loader').removeClass('hidden')"
-                @endif>
-                <span class="badge @if(isset($fecha_actualizacion_activa) && $p->id == $fecha_actualizacion_activa) badge-secondary @else badge-primary @endif p-2" id="span-{{$p->id}}">
-                    ACTUALIZACION :: {{\Carbon\Carbon::parse($p->fecha_actualizacion)->format('d/m/Y')}}
+            <a href="{{route('product.edit',['id' => $product->id,'fecha_actualizacion_activa' => $p->id])}}#precios" @if(isset($fecha_actualizacion_activa) && $p->id != $fecha_actualizacion_activa) onclick="jQuery('#loader').removeClass('hidden')" @endif>
+                <span class="badge @if(isset($fecha_actualizacion_activa) && $p->id != $fecha_actualizacion_activa) badge-primary @else badge-secondary @endif p-2">
+                    Actualización :: {{\Carbon\Carbon::parse($p->fecha_actualizacion)->format('d/m/Y')}}
                 </span>
             </a>
             @endforeach
         </span>
 
-        <span id="divPanel">
-            @include('admin.products.panel')
-        </span>
+        @if(isset($oferta))
+        <a href="{{route('product.edit',['id' => $product->id,'fecha_oferta' => $oferta->id])}}#precios" onclick="jQuery('#loader').removeClass('hidden')">
+            <span class="badge @if(Request::get('fecha_oferta') !== null) badge-secondary @else badge-primary @endif p-2">
+                Oferta :: {{\Carbon\Carbon::parse($oferta->fecha_desde)->format('d/m/Y')}} - {{\Carbon\Carbon::parse($oferta->fecha_hasta)->format('d/m/Y')}}
+            </span>
+        </a>
+        @endif
     </div>
-    <div class="col-md-6 text-right">
-        <span class="badge badge-primary p-2"> EDITANDO <strong>
-                @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null)
-                ACTUAL
-                @else
-                @if(Request::get('fecha_actualizacion_activa') !== null)
-                ACTUALIZACION
-                @endif
-                @if(Request::get('fecha_oferta') !== null)
-                OFERTA
-                @endif
-                @endif
-            </strong>
 
+    <div class="col-md-6 text-right d-none">
+        Estás editando
+        <span class="text-primary font-size-h5">
+            @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null)
+            <strong> precio actual </strong>
+            @else
+            @if(Request::get('fecha_actualizacion_activa') !== null)
+            actualización <strong> {{\Carbon\Carbon::parse($fecha_actualizacion)->format('d/m/Y')}} </strong>
+            @else
+            @if(Request::get('fecha_oferta') !== null)
+            precio en oferta
+            @endif
+            @endif
+            @endif
         </span>
-
-
     </div>
 </div>
 @endif
@@ -159,20 +158,31 @@
             <div class="col-md-12">
                 <p><small id="info-calculate" style="margin-top: 0;font-size:13px;top: 30px;color:rgb(217 13 47)"></small></p>
             </div>
+            <div class="col-md-12">
+                &nbsp;
+            </div>
+            
             @if(isset($product))
 
             <div class="col-md-12">
-                <p class=" font-italic">Fecha de <span class=" font-weight-bolder"> actualización </span> precio</p>
+                <p class=" font-italic">
+                    @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0)
+                        <span class=" badge badge-secondary p-2 font-size-h5"> Fecha de <span class=" font-weight-bolder"> actualización </span> precio </span>
+                    @else
+                        Fecha de <span class=" font-weight-bolder"> actualización </span> precio
+                    @endif    
+                </p>
+
                 <div class="row">
                     <div class="col-md-5">
                         <input type="date" id="fecha_actualizacion" name="fecha_actualizacion" class="form-control" @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0) value="{{$fecha_actualizacion}}" @endif>
                     </div>
-                    <div class="col-md-5">
-                    </div>
                     <div class="col-md-1">
                         <a href="javascript:void(0)" id="btn-actualizar-precios" onclick="updatePrices()">
-                            <i class="fa fa-save text-dark"></i>
+                            <i class="fa fa-save text-dark mt-3"></i>
                         </a>
+                    </div>
+                    <div class="col-md-5">
                     </div>
                 </div>
             </div>

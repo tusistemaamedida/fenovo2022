@@ -136,7 +136,6 @@ class OfertaController extends Controller
         return new JsonResponse(
             [
                 'divOferta' => view('admin.products.oferta')->render(),
-                'divPanel'  => view('admin.products.panel')->render(),
             ]
         );
     }
