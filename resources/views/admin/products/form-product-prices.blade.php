@@ -4,7 +4,7 @@
         <span id="divFechasPrecio">
             <a href="{{route('product.edit',['id' => $product->id])}}#precios" @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0) onclick="jQuery('#loader').removeClass('hidden')" @endif>
                 <span class="badge @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null) badge-secondary @else badge-primary @endif p-2">
-                    Precion actual
+                    Precio actual
                 </span>
             </a>
             @foreach ($product->session_prices as $p)
@@ -161,16 +161,16 @@
             <div class="col-md-12">
                 &nbsp;
             </div>
-            
+
             @if(isset($product))
 
             <div class="col-md-12">
                 <p class=" font-italic">
                     @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0)
-                        <span class=" badge badge-secondary p-2 font-size-h5"> Fecha de <span class=" font-weight-bolder"> actualización </span> precio </span>
+                    <span class=" badge badge-secondary p-2 font-size-h5"> Fecha de <span class=" font-weight-bolder"> actualización </span> precio </span>
                     @else
-                        Fecha de <span class=" font-weight-bolder"> actualización </span> precio
-                    @endif    
+                    Fecha de <span class=" font-weight-bolder"> actualización </span> precio
+                    @endif
                 </p>
 
                 <div class="row">
