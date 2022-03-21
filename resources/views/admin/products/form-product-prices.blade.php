@@ -158,22 +158,24 @@
             <div class="col-md-12">
                 <p><small id="info-calculate" style="margin-top: 0;font-size:13px;top: 30px;color:rgb(217 13 47)"></small></p>
             </div>
-            <div class="col-md-12">
+            <div class="row mb-1">
                 &nbsp;
             </div>
 
             @if(isset($product))
 
             <div class="col-md-12">
-                <p class=" font-italic">
-                    @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0)
-                    <span class=" badge badge-secondary p-2 font-size-h5"> Fecha de <span class=" font-weight-bolder"> actualización </span>  </span>
-                    @else
-                    Fecha de <span class=" font-weight-bolder"> actualización </span>
-                    @endif
-                </p>
+                <div class="row mb-2">
+                    <div class="col-md-12">
+                        @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0)
+                        <span class=" badge badge-secondary p-2 font-size-h5"> Fecha de <span class=" font-weight-bolder"> actualización </span> </span>
+                        @else
+                        Fecha de <span class=" font-weight-bolder"> actualización </span>
+                        @endif
+                    </div>
+                </div>
 
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-md-5">
                         <input type="date" id="fecha_actualizacion" name="fecha_actualizacion" class="form-control" @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0) value="{{$fecha_actualizacion}}" @endif>
                     </div>
@@ -187,8 +189,33 @@
                 </div>
             </div>
 
-            <div id="divOferta" class="col-md-12">
-                @include('admin.products.oferta')
+            <div id="divOferta" class="col-md-12 mt-2">
+                <div class="row">
+                    <div class="col-md-12">
+                        @if(Request::get('fecha_oferta') !== null)
+                        <span class=" badge badge-secondary p-2 font-size-h5">
+                            Fecha de <span class=" font-weight-bolder">oferta </span>
+                        </span>
+                        @else
+                        Fecha de <span class=" font-weight-bolder">oferta </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-5">
+                        <input type="date" id="fecha_desde" name="fecha_desde" @if(Request::get('fecha_oferta') !==null) value="{{ $oferta->fecha_desde}}" @else value="" @endif class="form-control">
+                    </div>
+                    <div class="col-md-5">
+                        <input type="date" id="fecha_hasta" name="fecha_hasta" @if(Request::get('fecha_oferta') !==null) value="{{ $oferta->fecha_hasta}}" @else value="" @endif class="form-control">
+                    </div>
+                    <div class="col-md-1 mt-2">
+
+                    </div>
+                    <div class="col-md-1 mt-2">
+
+                    </div>
+                </div>
             </div>
             @endif
         </div>
