@@ -198,7 +198,10 @@ class ProductController extends Controller
                     $data['p2tienda'] = $data['p1tienda'];
                     SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
                     $tipo = ' de oferta ';
-                } else {
+                } elseif(isset($data['fecha_actualizacion'])) {
+                    $prices = SessionPrices::updateOrCreate(['product_id' => $data['product_id'], 'fecha_actualizacion' => $data['fecha_actualizacion']], $data);
+                    $tipo = ' de actualización ';
+                }elseif(isset($data['fecha_actualizacion_activa']) && $data['fecha_actualizacion_activa'] != 0){
                     $session_prices = SessionPrices::where('id', $data['fecha_actualizacion_activa'])->first();
                     $session_prices->fill($data);
                     $session_prices->save();
