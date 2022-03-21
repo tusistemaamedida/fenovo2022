@@ -188,15 +188,24 @@ class ProductController extends Controller
             $producto_actualizado = $this->productRepository->fill($product_id, $data);
             $preciosCalculados    = $this->calcularPrecios($request);
             $data                 = array_merge($data, $preciosCalculados);
-            if ($data['fecha_actualizacion_activa'] == 0) {
+
+            if ($data['fecha_actualizacion_activa'] == 0 && !(isset($data['fecha_desde'], $data['fecha_hasta']))) {
                 $producto = $this->productRepository->getByIdWith($product_id);
                 $this->productPriceRepository->fill($producto->product_price->id, $data);
+                $tipo = 'actual';
             } else {
-                $session_prices = SessionPrices::where('id', $data['fecha_actualizacion_activa'])->first();
-                $session_prices->fill($data);
-                $session_prices->save();
+                if (isset($data['fecha_desde'], $data['fecha_hasta'])) {
+                    $data['p2tienda'] = $data['p1tienda'];
+                    SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
+                    $tipo = ' de oferta ';
+                } else {
+                    $session_prices = SessionPrices::where('id', $data['fecha_actualizacion_activa'])->first();
+                    $session_prices->fill($data);
+                    $session_prices->save();
+                    $tipo = ' de actualización ';
+                }
             }
-            return new JsonResponse(['type' => 'success', 'msj' => 'Producto actualizado correctamente!']);
+            return new JsonResponse(['type' => 'success', 'msj' => 'Precio ' . $tipo . ' modificado correctamente!']);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
         }
