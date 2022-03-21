@@ -180,9 +180,7 @@
                         <input type="date" id="fecha_actualizacion" name="fecha_actualizacion" class="form-control" @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0) value="{{$fecha_actualizacion}}" @endif>
                     </div>
                     <div class="col-md-1">
-                        <a href="javascript:void(0)" id="btn-actualizar-precios" onclick="updatePrices()">
-                            <i class="fa fa-save text-dark mt-3"></i>
-                        </a>
+
                     </div>
                     <div class="col-md-5">
                     </div>

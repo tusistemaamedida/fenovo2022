@@ -188,8 +188,8 @@ class ProductController extends Controller
             $producto_actualizado = $this->productRepository->fill($product_id, $data);
             $preciosCalculados    = $this->calcularPrecios($request);
             $data                 = array_merge($data, $preciosCalculados);
-
-            if ($data['fecha_actualizacion_activa'] == 0 && !(isset($data['fecha_desde'], $data['fecha_hasta']))) {
+            //dd($data);
+            if ($data['fecha_actualizacion_activa'] == 0 && is_null($data['fecha_desde']) && is_null($data['fecha_hasta']) && is_null($data['fecha_actualizacion'])) {
                 $producto = $this->productRepository->getByIdWith($product_id);
                 $this->productPriceRepository->fill($producto->product_price->id, $data);
                 $tipo = 'actual';
@@ -198,7 +198,7 @@ class ProductController extends Controller
                     $data['p2tienda'] = $data['p1tienda'];
                     SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
                     $tipo = ' de oferta ';
-                } elseif(isset($data['fecha_actualizacion'])) {
+                } elseif(!is_null($data['fecha_actualizacion']) && $data['fecha_actualizacion_activa'] == 0 ) {
                     $prices = SessionPrices::updateOrCreate(['product_id' => $data['product_id'], 'fecha_actualizacion' => $data['fecha_actualizacion']], $data);
                     $tipo = ' de actualización ';
                 }elseif(isset($data['fecha_actualizacion_activa']) && $data['fecha_actualizacion_activa'] != 0){
