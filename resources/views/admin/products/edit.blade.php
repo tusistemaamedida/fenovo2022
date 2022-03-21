@@ -122,14 +122,15 @@
         var fecha_actualizacion_label   = jQuery("#fecha_actualizacion_label").val();
         var fecha_desde                 = jQuery("#fecha_desde").val();
         var fecha_hasta                 = jQuery("#fecha_hasta").val();
+        var fecha_act                   = jQuery("#fecha_actualizacion").val();
 
         if(fecha_desde !== '' && fecha_hasta !== ''){
             text = 'Modifica los precios de <strong> Oferta </strong> ?';
         }else{
-            if(fecha_actualizacion == 0 || fecha_actualizacion == '0'){
+            if((fecha_actualizacion == 0 || fecha_actualizacion == '0') && fecha_act == ''){
                 text = 'Modifica los precios <strong> Actuales </strong> ?';
             }else{
-                text = 'Modifica la actualización para el <strong>' + fecha_actualizacion_label + '</strong> ?';
+                text = 'Modifica la actualización para el <strong>' + fecha_act + '</strong> ?';
             }
         }
 
@@ -157,6 +158,9 @@
                     success: function (data) {
                         if (data['type'] == 'success') {
                             toastr.info(data['msj'],'Actualización');
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 500);
                         } else {
                             toastr.error(data['html'], 'Verifique');
                         }
@@ -172,9 +176,6 @@
                     },
                     complete: function () {
                         jQuery('#loader').addClass('hidden');
-                        /* setTimeout(() => {
-                            window.location= '{{ route('products.list') }}';
-                        }, 500); */
                     }
                 });
             }

@@ -188,6 +188,7 @@ class ProductController extends Controller
             $producto_actualizado = $this->productRepository->fill($product_id, $data);
             $preciosCalculados    = $this->calcularPrecios($request);
             $data                 = array_merge($data, $preciosCalculados);
+
             //dd($data);
             if ($data['fecha_actualizacion_activa'] == 0 && is_null($data['fecha_desde']) && is_null($data['fecha_hasta']) && is_null($data['fecha_actualizacion'])) {
                 $producto = $this->productRepository->getByIdWith($product_id);
