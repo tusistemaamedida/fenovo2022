@@ -1,5 +1,15 @@
 <br />
-<p class=" font-italic">Fecha período de <span class=" font-weight-bolder">oferta </span></p>
+
+<p class=" font-italic">
+    @if(Request::get('fecha_oferta') !== null)
+        <span class=" badge badge-secondary p-2 font-size-h5">
+            Fecha período de <span class=" font-weight-bolder">oferta </span>
+        </span>    
+    @else    
+        Fecha período de <span class=" font-weight-bolder">oferta </span>
+    @endif
+</p>
+
 <div class="row">
     <div class="col-md-5">
         <input type="date" id="fecha_desde" name="fecha_desde" value="{{ isset($oferta->fecha_desde)?$oferta->fecha_desde:null }}" class="form-control">

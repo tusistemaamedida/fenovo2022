@@ -241,7 +241,6 @@
                 },
                 success: function (response) {
                     jQuery("#divOferta").html(response['divOferta']);
-                    jQuery("#divPanel").html(response['divPanel']);
                 },
                 error: function (data) {
                     var lista_errores = "";
@@ -268,7 +267,6 @@
             data: {id},
             success: function (response) {
                 jQuery("#divOferta").html(response['divOferta']);
-                jQuery("#divPanel").html(response['divPanel']);
             }
         });
     }

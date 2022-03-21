@@ -32,7 +32,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
-use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -224,14 +223,12 @@ class ProductController extends Controller
     {
         try {
             $data              = $request->except('_token');
-            $product           = $this->productRepository->getByIdWith($request->product_id);
             $preciosCalculados = $this->calcularPrecios($request);
             $data              = array_merge($data, $preciosCalculados);
             $data['p2tienda']  = $data['p1tienda'];
             $oferta            = SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
 
             return new JsonResponse([
-                'divPanel'  => view('admin.products.panel', compact('product', 'oferta'))->render(),
                 'divOferta' => view('admin.products.oferta', compact('oferta'))->render(),
             ]);
         } catch (\Exception $e) {
