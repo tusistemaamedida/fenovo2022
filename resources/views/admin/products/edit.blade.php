@@ -64,12 +64,19 @@
                             <form style="width: 100%;margin-top: 15px;" method="POST" action="{{route('product.update')}}" id="formData">
                                 @csrf
                                 @if (isset($product))
-                                    <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
-                                    <input type="hidden" name="fecha_actualizacion_activa"  id="fecha_actualizacion_activa"  value="{{$fecha_actualizacion_activa}}">
-                                    <input type="hidden" name="fecha_actualizacion_label" id="fecha_actualizacion_label"  value="{{$fecha_actualizacion_label}}">
+                                <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
+                                <input type="hidden" name="fecha_actualizacion_activa" id="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
+                                <input type="hidden" name="fecha_actualizacion_label" id="fecha_actualizacion_label" value="{{$fecha_actualizacion_label}}">
                                 @else
-                                    <input type="hidden" name="product_id" id="product_id" value="0">
+                                <input type="hidden" name="product_id" id="product_id" value="0">
                                 @endif
+
+                                @if(Request::get('fecha_oferta') !== null)
+                                <input type="hidden" name="oferta_id" id="oferta_id" value="{{$oferta->id}}">
+                                @else
+                                <input type="hidden" name="oferta_id" id="oferta_id" value="0">
+                                @endif
+
                                 <div class="col-12">
                                     <div class="tab-content" id="v-pills-tabContent1">
                                         <div class="tab-pane fade show active" id="detalle" role="tabpanel" aria-labelledby="home-tab-basic">
@@ -85,9 +92,9 @@
                                 </div>
 
                                 @if (isset($product))
-                                    <div class="col-12" style="float: right">
-                                        <button type="button" class="btn btn-primary" onclick="updateProduct('{{ route('product.update') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
-                                    </div>
+                                <div class="col-12" style="float: right">
+                                    <button type="button" class="btn btn-primary" onclick="updateProduct('{{ route('product.update') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+                                </div>
                                 @endif
                             </form>
                         </div>
@@ -111,16 +118,24 @@
 
     function updateProduct(route){
         var text = '';
-        var fecha_actualizacion = jQuery("#fecha_actualizacion_activa").val();
-        var fecha_actualizacion_label = jQuery("#fecha_actualizacion_label").val();
-        if(fecha_actualizacion == 0 || fecha_actualizacion == '0'){
-            text = 'Está por modificar los precios actuales!';
+        var fecha_actualizacion         = jQuery("#fecha_actualizacion_activa").val();
+        var fecha_actualizacion_label   = jQuery("#fecha_actualizacion_label").val();
+        var fecha_desde                 = jQuery("#fecha_desde").val();
+        var fecha_hasta                 = jQuery("#fecha_hasta").val();
+
+        if(fecha_desde !== '' && fecha_hasta !== ''){
+            text = 'Modifica los precios de <strong> Oferta </strong> ?';
         }else{
-            text = 'Está por modificar los precios del ' + fecha_actualizacion_label +'!';
+            if(fecha_actualizacion == 0 || fecha_actualizacion == '0'){
+                text = 'Modifica los precios <strong> Actuales </strong> ?';
+            }else{
+                text = 'Modifica la actualización para el <strong>' + fecha_actualizacion_label + '</strong> ?';
+            }
         }
+
         ymz.jq_confirm({
-            title: 'Actualización!',
-            text: text,
+            title: 'Actualización',
+            text: '<div class="text-center">'+ text +'</div>',
             no_btn: "Cancelar",
             yes_btn: "Confirmar",
             no_fn: function () {
