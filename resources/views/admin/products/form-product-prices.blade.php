@@ -18,7 +18,7 @@
 
         @foreach ($ofertas as $precio_oferta)
         <a href="{{route('product.edit',['id' => $product->id, 'oferta_id' => $precio_oferta->id,'fecha_oferta' => $precio_oferta->fecha_desde ])}}#precios" onclick="jQuery('#loader').removeClass('hidden')">
-            <span class="badge @if(Request::get('fecha_oferta') !== null && Request::get('oferta_id') == $oferta->id) badge-secondary @else badge-primary @endif p-2">
+            <span class="badge @if(Request::get('fecha_oferta') !== null && Request::get('oferta_id') == $precio_oferta->id) badge-secondary @else badge-primary @endif p-2">
                 Oferta :: {{\Carbon\Carbon::parse($precio_oferta->fecha_desde)->format('d/m/Y')}} - {{\Carbon\Carbon::parse($precio_oferta->fecha_hasta)->format('d/m/Y')}}
             </span>
         </a>

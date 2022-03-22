@@ -64,11 +64,11 @@
                             <form style="width: 100%;margin-top: 15px;" method="POST" action="{{route('product.update')}}" id="formData">
                                 @csrf
                                 @if (isset($product))
-                                    <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
-                                    <input type="hidden" name="fecha_actualizacion_activa" id="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
-                                    <input type="hidden" name="fecha_actualizacion_label" id="fecha_actualizacion_label" value="{{$fecha_actualizacion_label}}">
+                                <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
+                                <input type="hidden" name="fecha_actualizacion_activa" id="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
+                                <input type="hidden" name="fecha_actualizacion_label" id="fecha_actualizacion_label" value="{{$fecha_actualizacion_label}}">
                                 @else
-                                    <input type="hidden" name="product_id" id="product_id" value="0">
+                                <input type="hidden" name="product_id" id="product_id" value="0">
                                 @endif
 
                                 @if(Request::get('fecha_oferta') !== null)
@@ -122,7 +122,8 @@
         var fecha_actualizacion_label   = jQuery("#fecha_actualizacion_label").val();
         var fecha_desde                 = jQuery("#fecha_desde").val();
         var fecha_hasta                 = jQuery("#fecha_hasta").val();
-        var fecha_act                   = jQuery("#fecha_actualizacion").val();
+        var fecha                       = jQuery("#fecha_actualizacion").val().split('-');
+        var fecha_act                   = (jQuery("#fecha_actualizacion").val() !== '') ? fecha[2] + '/' + fecha[1] + '/' + fecha[0] : '';
 
         if(fecha_desde !== '' && fecha_hasta !== ''){
             text = 'Modifica los precios de <strong> Oferta </strong> ?';
