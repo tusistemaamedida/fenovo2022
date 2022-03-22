@@ -16,13 +16,14 @@
             @endforeach
         </span>
 
-        @if(isset($oferta))
-        <a href="{{route('product.edit',['id' => $product->id,'fecha_oferta' => $oferta->id])}}#precios" onclick="jQuery('#loader').removeClass('hidden')">
-            <span class="badge @if(Request::get('fecha_oferta') !== null) badge-secondary @else badge-primary @endif p-2">
-                Oferta :: {{\Carbon\Carbon::parse($oferta->fecha_desde)->format('d/m/Y')}} - {{\Carbon\Carbon::parse($oferta->fecha_hasta)->format('d/m/Y')}}
+        @foreach ($ofertas as $precio_oferta)
+        <a href="{{route('product.edit',['id' => $product->id, 'oferta_id' => $precio_oferta->id,'fecha_oferta' => $precio_oferta->fecha_desde ])}}#precios" onclick="jQuery('#loader').removeClass('hidden')">
+            <span class="badge @if(Request::get('fecha_oferta') !== null && Request::get('oferta_id') == $oferta->id) badge-secondary @else badge-primary @endif p-2">
+                Oferta :: {{\Carbon\Carbon::parse($precio_oferta->fecha_desde)->format('d/m/Y')}} - {{\Carbon\Carbon::parse($precio_oferta->fecha_hasta)->format('d/m/Y')}}
             </span>
         </a>
-        @endif
+        @endforeach
+
     </div>
 
     <div class="col-md-3 text-right">
@@ -35,7 +36,7 @@
             actualización <strong> {{\Carbon\Carbon::parse($fecha_actualizacion)->format('d/m/Y')}} </strong>
             @else
             @if(Request::get('fecha_oferta') !== null)
-            precio en oferta
+            oferta desde el <strong> {{\Carbon\Carbon::parse($oferta->fecha_desde)->format('d/m/Y')}} </strong>
             @endif
             @endif
             @endif

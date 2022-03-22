@@ -127,7 +127,8 @@ class ProductController extends Controller
             $fecha_actualizacion_activa = ($request->has('fecha_actualizacion_activa')) ? $request->input('fecha_actualizacion_activa') : 0;
             $fecha_oferta               = $request->input('fecha_oferta');
             $product                    = $this->productRepository->getByIdWith($request->id);
-            $oferta                     = SessionOferta::where('product_id', $request->id)->first();
+            $ofertas                    = SessionOferta::where('product_id', $request->id)->get();
+            $oferta                     = ($request->has('fecha_oferta')) ? SessionOferta::where('id', $request->oferta_id)->first() : null;
             $alicuotas                  = $this->alicuotaTypeRepository->get('value', 'DESC');
             $senasaDefinitions          = $this->senasaDefinitionRepository->get('product_name', 'ASC');
             $categories                 = $this->productCategoryRepository->getActives('name', 'ASC');
@@ -146,7 +147,7 @@ class ProductController extends Controller
 
             if ($fecha_oferta) {
                 $pp1                    = $product->product_price->toArray();
-                $poferta                = SessionOferta::where('id', $fecha_oferta)->first()->toArray();
+                $poferta                = SessionOferta::where('id', $oferta->id)->first()->toArray();
                 $new_prices             = array_replace($pp1, $poferta);
                 $product->product_price = new ProductPrice($new_prices);
             }
@@ -165,6 +166,7 @@ class ProductController extends Controller
                         'unit_package',
                         'fecha_actualizacion_activa',
                         'oferta',
+                        'ofertas',
                         'fecha_actualizacion_label'
                     )
                 );
@@ -196,7 +198,12 @@ class ProductController extends Controller
             } else {
                 if (isset($data['fecha_desde'], $data['fecha_hasta'])) {
                     $data['p2tienda'] = $data['p1tienda'];
-                    SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
+                    SessionOferta::updateOrCreate([
+                        'product_id'  => $data['product_id'],
+                        'fecha_desde' => $data['fecha_desde'],
+                        'fecha_hasta' => $data['fecha_hasta'],
+                    ], $data);
+
                     $tipo = ' de oferta ';
                 } else {
                     $session_prices = SessionPrices::where('id', $data['fecha_actualizacion_activa'])->first();
