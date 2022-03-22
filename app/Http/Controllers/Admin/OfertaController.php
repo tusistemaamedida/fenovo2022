@@ -54,7 +54,7 @@ class OfertaController extends Controller
                     return count($oferta->stores);
                 })
                 ->addColumn('edit', function ($oferta) {
-                    $ruta = route('product.edit',['id' => $oferta->product_id,'fecha_oferta' => $oferta->id])."#precios";
+                    $ruta = route('product.edit',['id' => $oferta->product_id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios";
                     return '<a href="'. $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($oferta) {
