@@ -16,7 +16,7 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    
+                                    <a href="{{ route('oferta.exportCSV') }}"> <i class=" fa fa-file-csv"></i> Exportar</a>
                                 </div>
                             </div>
                         </div>
@@ -29,7 +29,7 @@
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
                                         <tr class="bg-dark text-white">
-                                            <th>No</th>
+                                            <th>CodFenovo</th>
                                             <th>Nombre del producto</th>
                                             <th>P1_Tienda</th>
                                             <th>Desde</th>
@@ -68,7 +68,7 @@
         @include('partials.table.setting'),
         ajax: "{{ route('oferta.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'cod_fenovo', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'producto'},
             {data: 'p1tienda', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'fechadesde'},

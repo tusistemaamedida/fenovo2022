@@ -14,3 +14,5 @@ Route::post('oferta/destroyReload', [OfertaController::class, 'destroyReload'])-
 
 Route::get('oferta/vincular-tienda', [OfertaController::class, 'vincularTienda'])->name('oferta.vincular.tienda');
 Route::post('oferta/vincular-tienda', [OfertaController::class, 'vincularTiendaUpdate'])->name('oferta.vincular.tienda.update');
+
+Route::get('oferta/exportar', [OfertaController::class, 'exportToCsv'])->name('oferta.exportCSV');

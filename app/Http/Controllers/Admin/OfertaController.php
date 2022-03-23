@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\OfertaViewExport;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\SessionOferta;
@@ -12,6 +13,7 @@ use App\Repositories\StoreRepository;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class OfertaController extends Controller
@@ -31,10 +33,15 @@ class OfertaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
+
             $oferta = SessionOferta::with('product')->get();
+
             return DataTables::of($oferta)
                 ->addIndexColumn()
 
+                ->addColumn('cod_fenovo', function ($oferta) {
+                    return ($oferta->product) ? $oferta->product->cod_fenovo : null;
+                })
                 ->addColumn('producto', function ($oferta) {
                     return ($oferta->product) ? $oferta->product->name : null;
                 })
@@ -61,7 +68,7 @@ class OfertaController extends Controller
                     $ruta = 'destroy(' . $oferta->id . ",'" . route('oferta.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['p1tienda', 'fechadesde', 'fechahasta', 'vincular', 'asociadas', 'edit', 'destroy'])
+                ->rawColumns(['cod_fenovo', 'p1tienda', 'fechadesde', 'fechahasta', 'vincular', 'asociadas', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.ofertas.index');
@@ -153,5 +160,10 @@ class OfertaController extends Controller
         $oferta->stores()->sync($request->get('stores'));
 
         return redirect()->route('oferta.index');
+    }
+
+    public function exportToCsv(Request $request)
+    {	
+        return Excel::download(new OfertaViewExport($request), 'oferta.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 }
