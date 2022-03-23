@@ -25,6 +25,7 @@ class ActualizacionPrecios extends Controller
         $this->ofertaRepository        = new OfertaRepository();
 
         $hoy = Carbon::parse(now())->format('Y-m-d');
+        $ayer = Carbon::parse(now())->subDays(1)->format('Y-m-d');
         $session_prices = $this->sessionPricesRepository->getBy('fecha_actualizacion',$hoy);
         foreach ($session_prices as $sp) {
             $prices = $sp->toArray();
@@ -35,6 +36,6 @@ class ActualizacionPrecios extends Controller
             HistorialActualizacion::create($product_updated);
             $this->sessionPricesRepository->delete($sp->id);
         }
-        $this->ofertaRepository->deleteWhere('fecha_hasta',$hoy);
+        $this->ofertaRepository->deleteWhere('fecha_hasta',$ayer);
     }
 }
