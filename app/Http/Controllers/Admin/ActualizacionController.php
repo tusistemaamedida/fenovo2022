@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\ActualizViewExport;
 use App\Http\Controllers\Controller;
+use App\Models\HistorialActualizacion;
 use App\Models\SessionPrices;
 use App\Repositories\SessionPricesRepository;
 use Illuminate\Http\JsonResponse;
@@ -40,13 +41,13 @@ class ActualizacionController extends Controller
                     return ($sessionPrices->product) ? $sessionPrices->product->name : null;
                 })
                 ->addColumn('p1tienda', function ($sessionPrices) {
-                    return ($sessionPrices->Product) ? number_format($sessionPrices->p1tienda,2) : null;
+                    return ($sessionPrices->Product) ? number_format($sessionPrices->p1tienda, 2) : null;
                 })
                 ->addColumn('p2tienda', function ($sessionPrices) {
-                    return ($sessionPrices->Product) ? number_format($sessionPrices->p2tienda,2) : null;
+                    return ($sessionPrices->Product) ? number_format($sessionPrices->p2tienda, 2) : null;
                 })
                 ->addColumn('p1may', function ($sessionPrices) {
-                    return ($sessionPrices->Product) ? number_format($sessionPrices->p1may,2) : null;
+                    return ($sessionPrices->Product) ? number_format($sessionPrices->p1may, 2) : null;
                 })
                 ->addColumn('destroy', function ($sessionPrices) {
                     $ruta = 'destroy(' . $sessionPrices->id . ",'" . route('actualizacion.destroy') . "')";
@@ -56,6 +57,39 @@ class ActualizacionController extends Controller
                 ->make(true);
         }
         return view('admin.actualizaciones.index');
+    }
+
+    public function historial(Request $request)
+    {
+        // $historialPrices = HistorialActualizacion::orderBy('updated_at', 'desc')->get();
+        // $historialPrices->product->name;
+
+        if ($request->ajax()) {
+            $historialPrices = HistorialActualizacion::orderBy('updated_at', 'desc')->get();
+            return Datatables::of($historialPrices)
+                ->addIndexColumn()
+                ->addColumn('fecha_actualizacion', function ($historialPrices) {
+                    return date('d-m-Y', strtotime($historialPrices->updated_at));
+                })
+                ->addColumn('cod_fenovo', function ($historialPrices) {
+                    return ($historialPrices->product) ? $historialPrices->product->cod_fenovo : null;
+                })
+                ->addColumn('product', function ($historialPrices) {
+                    return ($historialPrices->product) ? $historialPrices->product->name : null;
+                })
+                ->addColumn('p1tienda', function ($historialPrices) {
+                    return ($historialPrices->Product) ? number_format($historialPrices->p1tienda, 2) : null;
+                })
+                ->addColumn('p2tienda', function ($historialPrices) {
+                    return ($historialPrices->Product) ? number_format($historialPrices->p2tienda, 2) : null;
+                })
+                ->addColumn('p1may', function ($historialPrices) {
+                    return ($historialPrices->Product) ? number_format($historialPrices->p1may, 2) : null;
+                })
+                ->rawColumns(['fecha_actualizacion', 'cod_fenovo', 'product', 'p1tienda', 'p2tienda', 'p1may'])
+                ->make(true);
+        }
+        return view('admin.actualizaciones.historial');
     }
 
     public function add()
