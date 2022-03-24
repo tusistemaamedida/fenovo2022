@@ -1,10 +1,6 @@
 <table>
     <tr>
-        <td>cod_fenovo</td>
-        <td>producto</td>
-        <td>p1tienda</td>
-        <td>fecha_desde</td>
-        <td>fecha_hasta</td>
+        <td colspan="5">{{ $data }}</td>
     </tr>
     @foreach($sessionOfertas as $sessionOferta)
     <tr>

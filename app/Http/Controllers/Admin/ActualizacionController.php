@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ActualizMatrif1ViewExport;
+use App\Exports\ActualizMatrif2ViewExport;
 use App\Exports\ActualizViewExport;
 use App\Http\Controllers\Controller;
 use App\Models\HistorialActualizacion;
@@ -117,5 +119,15 @@ class ActualizacionController extends Controller
     public function exportToCsv(Request $request)
     {
         return Excel::download(new ActualizViewExport($request), 'actualiz.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+    }
+
+    public function exportToCsvM1(Request $request)
+    {
+        return Excel::download(new ActualizMatrif1ViewExport($request), 'actualp1.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+    }
+
+    public function exportToCsvM2(Request $request)
+    {
+        return Excel::download(new ActualizMatrif2ViewExport($request), 'actualp2.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 }

@@ -19,8 +19,14 @@
                                     <a href="{{ route('actualizacion.historial') }}" class="mr-2"> 
                                         <i class=" fa fa-clock"></i> Historial
                                     </a>
-                                    <a href="javascript:void(0)" onclick="exportarActualizacionesCSV()"> 
-                                        <i class=" fa fa-file-csv"></i> Exportar
+                                    <a href="{{ route('actualizacion.exportCSVM1') }}" class="ml-2 mr-2"> 
+                                        <i class=" fa fa-file-csv"></i> PList1
+                                    </a>
+                                    <a href="{{ route('actualizacion.exportCSVM2') }}" class="ml-2 mr-2"> 
+                                        <i class=" fa fa-file-csv"></i> Plist2
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="exportarActualizacionesCSV()" class="ml-2"> 
+                                        <i class=" fa fa-file-csv"></i> Exportar todas
                                     </a>
                                 </div>
                             </div>

@@ -12,15 +12,14 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Ofertas de precios vigentes
+                                        Excepciones vigentes
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{ route('oferta.excepciones') }}" class="mr-2"> 
-                                        Excepciones
+                                    <a href="{{ route('oferta.index') }}" class="mr-2">
+                                        Ofertas
                                     </a>
-
-                                    <a href="{{ route('oferta.exportCSV') }}"> <i class=" fa fa-file-csv"></i> Exportar</a>
+                                    <a href="{{ route('oferta.excepciones.exportCSV') }}"> <i class=" fa fa-file-csv"></i> Exportar</a>
                                 </div>
                             </div>
                         </div>
@@ -70,7 +69,7 @@
 
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
-        ajax: "{{ route('oferta.index') }}",
+        ajax: "{{ route('oferta.excepciones') }}",
         columns: [
             {data: 'cod_fenovo', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'producto'},

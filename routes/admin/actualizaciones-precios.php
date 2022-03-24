@@ -13,3 +13,5 @@ Route::get('actualizacion/update', [ActualizacionController::class, 'update'])->
 Route::post('actualizacion/destroy', [ActualizacionController::class, 'destroy'])->name('actualizacion.destroy');
 
 Route::get('actualizacion/exportar', [ActualizacionController::class, 'exportToCsv'])->name('actualizacion.exportCSV');
+Route::get('actualizacion/exportarM1', [ActualizacionController::class, 'exportToCsvM1'])->name('actualizacion.exportCSVM1');
+Route::get('actualizacion/exportarM2', [ActualizacionController::class, 'exportToCsvM2'])->name('actualizacion.exportCSVM2');
