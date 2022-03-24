@@ -12,16 +12,11 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Actualizaciones de precios
+                                        Historial de actualizaciones
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{ route('actualizacion.historial') }}" class="mr-2"> 
-                                        <i class=" fa fa-clock"></i> Historial
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="exportarActualizacionesCSV()"> 
-                                        <i class=" fa fa-file-csv"></i> Exportar
-                                    </a>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -65,14 +60,9 @@
 
 <script>
 
-    const exportarActualizacionesCSV = ()=>{
-        let url = "{{route('actualizacion.exportCSV')}}";
-        window.location = url;
-    }
-
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
-        ajax: "{{ route('actualizacion.index') }}",
+        ajax: "{{ route('actualizacion.historial') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'fecha_actualizacion', 'class':'text-center', orderable: false, searchable: false},
@@ -81,7 +71,6 @@
             {data: 'p1tienda', 'class':'text-center', orderable: false, searchable: false},
             {data: 'p2tienda', 'class':'text-center', orderable: false, searchable: false},
             {data: 'p1may', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'destroy', 'class':'text-center', orderable: false, searchable: false},
         ]
     });
 </script>

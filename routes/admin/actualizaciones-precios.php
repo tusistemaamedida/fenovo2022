@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\ActualizacionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('actualizacion', [ActualizacionController::class, 'index'])->name('actualizacion.index');
+Route::get('actualizacion/historial', [ActualizacionController::class, 'historial'])->name('actualizacion.historial');
+
 Route::get('actualizacion/add', [ActualizacionController::class, 'add'])->name('actualizacion.add');
 Route::post('actualizacion/store', [ActualizacionController::class, 'store'])->name('actualizacion.store');
 Route::get('actualizacion/edit', [ActualizacionController::class, 'edit'])->name('actualizacion.edit');
