@@ -1,4 +1,7 @@
 <table>
+    <tr>
+        <td colspan="4">{{ $data }}</td>
+    </tr>
     @foreach($descuentos as $descuento)
     <tr>
         <td>{{ $descuento->codigo}}</td>

@@ -522,12 +522,12 @@ class ProductController extends Controller
 
     public function exportDescuentosToCsv(Request $request)
     {
-        return Excel::download(new DescuentosViewExport($request), 'des.txt', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/txt']);
+        return Excel::download(new DescuentosViewExport($request), 'des.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function exportPresentacionesToCsv(Request $request)
     {
-        return Excel::download(new PresentacionesViewExport($request), 'bultos.txt', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/txt']);
+        return Excel::download(new PresentacionesViewExport($request), 'bultos.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     private function descp2($p2may, $p2tienda)
