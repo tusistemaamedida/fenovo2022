@@ -6,7 +6,7 @@ use App\Models\SessionOferta;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 
-class OfertaViewExport implements FromView
+class ExcepViewExport implements FromView
 {
     protected $request;
 
@@ -17,7 +17,7 @@ class OfertaViewExport implements FromView
 
     public function view(): View
     {
-        $sessionOfertas = SessionOferta::orderBy('fecha_desde', 'asc')->get();
+        $sessionOfertas = SessionOferta::has('stores')->with('stores')->orderBy('fecha_desde', 'asc')->get();
 
         $anio      = date('Y', time());
         $mes       = date('m', time());
@@ -28,6 +28,6 @@ class OfertaViewExport implements FromView
 
         $data = $anio . $mes . $dia . $hora . $min . $registros;
 
-        return view('exports.oferta', compact('sessionOfertas', 'data'));
+        return view('exports.excepciones', compact('sessionOfertas', 'data'));
     }
 }
