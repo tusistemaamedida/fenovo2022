@@ -1,6 +1,6 @@
 <table>
     <tr>
-        <td colspan="6">{{ $data }}</td>
+        <td colspan="7">{{ $data }}</td>
     </tr>
     @foreach($sessionOfertas as $sessionOferta)
     @foreach($sessionOferta->stores as $store)
@@ -12,6 +12,7 @@
         <td>{{ $sessionOferta->product->name}}</td>
         <td>{{ $sessionOferta->plist0neto}}</td>
         <td>{{ $sessionOferta->p1tienda}}</td>
+        <td>{{ $sessionOferta->p1may}}</td>
     </tr>
     @endforeach
     @endforeach
