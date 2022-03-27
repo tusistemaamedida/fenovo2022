@@ -1,13 +1,13 @@
 <table>
     <tr>
-        <td colspan="26">{{ $data }}</td>
+        <td colspan="25">{{ $data }}</td>
     </tr>
     @foreach($productos as $producto)
     <tr>
         <td>{{ $producto->cod_fenovo}}</td>
         <td>
             @if ($producto->cod_proveedor == null or $producto->cod_proveedor == '')
-            0
+            &nbsp;
             @else
             {{ $producto->cod_proveedor }}
             @endif
@@ -20,16 +20,15 @@
         <td>{{ $producto->mupfenovo}}</td>
         <td>{{ $producto->plist0neto}}</td>
         <td>{{ $producto->mup1}}</td>
-        <td>{{ $producto->p1may}}</td>
-        <td>{{ $producto->mupp1may}}</td>
         <td>{{ $producto->p1tienda}}</td>
         <td>{{ $producto->mupp1may}}</td>
+        <td>{{ $producto->p1may}}</td>
         <td>{{ $producto->cantmay1}}</td>
         <td>{{ $producto->descp1}}</td>
         <td>{{ $producto->tasiva}}</td>
         <td>
             @if ($producto->barcode == null or $producto->barcode == '')
-            0
+            &nbsp;
             @else
             {{ $producto->barcode}}
             @endif
@@ -43,7 +42,7 @@
         <td>{{ $producto->package_row}}</td>
         <td>
             @if ($producto->codigo == null or $producto->codigo == '')
-            0
+            &nbsp;
             @else
             {{ $producto->codigo}}
             @endif
