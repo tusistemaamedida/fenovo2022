@@ -3,13 +3,18 @@
     <div class="col-md-9 font-size-h5">
         <span id="divFechasPrecio">
             <a href="{{route('product.edit',['id' => $product->id])}}#precios" @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0) onclick="jQuery('#loader').removeClass('hidden')" @endif>
-                <span class="badge @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null) badge-secondary @else badge-primary @endif p-2">
+                <span class="badge @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null) badge-secondary @else badge-light @endif p-2">
                     Precio actual
                 </span>
             </a>
             @foreach ($product->session_prices as $p)
             <a href="{{route('product.edit',['id' => $product->id,'fecha_actualizacion_activa' => $p->id])}}#precios" @if(isset($fecha_actualizacion_activa) && $p->id != $fecha_actualizacion_activa) onclick="jQuery('#loader').removeClass('hidden')" @endif>
-                <span class="badge @if(isset($fecha_actualizacion_activa) && $p->id != $fecha_actualizacion_activa) badge-primary @else badge-secondary @endif p-2">
+                <span class="badge
+                @if(isset($fecha_actualizacion_activa) && $p->id != $fecha_actualizacion_activa)
+                    badge-light
+                @else
+                    badge-primary
+                @endif p-2">
                     Actualización :: {{\Carbon\Carbon::parse($p->fecha_actualizacion)->format('d/m/Y')}}
                 </span>
             </a>
@@ -18,7 +23,7 @@
 
         @foreach ($ofertas as $precio_oferta)
         <a href="{{route('product.edit',['id' => $product->id, 'oferta_id' => $precio_oferta->id,'fecha_oferta' => $precio_oferta->fecha_desde ])}}#precios" onclick="jQuery('#loader').removeClass('hidden')">
-            <span class="badge @if(Request::get('fecha_oferta') !== null && Request::get('oferta_id') == $precio_oferta->id) badge-secondary @else badge-primary @endif p-2">
+            <span class="badge @if(Request::get('fecha_oferta') !== null && Request::get('oferta_id') == $precio_oferta->id) badge-primary @else badge-light @endif p-2">
                 Oferta :: {{\Carbon\Carbon::parse($precio_oferta->fecha_desde)->format('d/m/Y')}} - {{\Carbon\Carbon::parse($precio_oferta->fecha_hasta)->format('d/m/Y')}}
             </span>
         </a>
@@ -30,13 +35,20 @@
         Estás editando
         <span class="text-primary font-size-h5">
             @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null)
-            <strong> precio actual </strong>
+                <strong> precio actual </strong>
+                @php
+                    $color = '#f49d2a';
+                @endphp
             @else
+                @php
+                    $color = '#ae69f5';
+                @endphp
             @if(Request::get('fecha_actualizacion_activa') !== null)
-            actualización <strong> {{\Carbon\Carbon::parse($fecha_actualizacion)->format('d/m/Y')}} </strong>
+                actualización <strong> {{\Carbon\Carbon::parse($fecha_actualizacion)->format('d/m/Y')}} </strong>
+
             @else
             @if(Request::get('fecha_oferta') !== null)
-            oferta desde el <strong> {{\Carbon\Carbon::parse($oferta->fecha_desde)->format('d/m/Y')}} </strong>
+                oferta desde el <strong> {{\Carbon\Carbon::parse($oferta->fecha_desde)->format('d/m/Y')}} </strong>
             @endif
             @endif
             @endif
@@ -46,7 +58,7 @@
 @endif
 
 
-<div class="form-group row">
+<div class="form-group row" style="background-color: {{$color}}">
     <div class="col-md-5">
         <div class="form-group row">
             <div class="col-md-12">
@@ -125,24 +137,7 @@
                 </fieldset>
             </div>
 
-            <div class="col-md-4">
-                <label class="text-body">Iva</label>
-                <fieldset class="form-group mb-3">
-                    <select class="js-example-basic-single js-states form-control bg-transparent" name="tasiva" id="tasiva">
-                        @foreach ($alicuotas as $alicuota)
-                        <option value="{{$alicuota->value}}" @if(isset($product) && ((float)$product->product_price->tasiva == (float)$alicuota->value*100))
-                            selected
-                            @elseif($alicuota->value * 100 == 21)
-                            selected
-                            @endif>
-                            {{$alicuota->description}}
-                        </option>
-                        @endforeach
-                    </select>
-                </fieldset>
-            </div>
-
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <label class="text-body">Lista 0 neto + Iva</label>
                 <fieldset class="input-group form-group mb-3">
                     <div class="input-group-prepend">
@@ -156,6 +151,20 @@
                     </div>
                 </fieldset>
             </div>
+
+            <div class="col-md-6">
+                <label class="text-body">Descuento</label>
+                <fieldset class="form-group mb-3">
+                    <select class="form-control" disabled>
+                        @foreach ($descuentos as $descuento)
+                            <option value="" @if (isset($product) && $product->cod_descuento == $descuento->codigo) selected @endif>
+                                {{$descuento->descripcion}}
+                            </option>
+                        @endforeach
+                    </select>
+                </fieldset>
+            </div>
+
             <div class="col-md-12">
                 <p><small id="info-calculate" style="margin-top: 0;font-size:13px;top: 30px;color:rgb(217 13 47)"></small></p>
             </div>

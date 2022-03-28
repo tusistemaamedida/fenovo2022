@@ -45,13 +45,13 @@
                     <div class="card-body">
                         <ul class="nav nav-pills mb-3" id="pills-tab1" role="tablist">
                             <li class="nav-item mr-2">
-                                <a class="nav-link btn-light active shadow-none" id="detalle-tab-basic" data-toggle="pill" href="#detalle" role="tab" aria-controls="detalle" aria-selected="true">
-                                    Detalles
+                                <a class="nav-link btn-light active shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="true">
+                                    Precios
                                 </a>
                             </li>
                             <li class="nav-item mr-2" id="nav-item-precios">
-                                <a class="nav-link btn-light shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="false">
-                                    Precios
+                                <a class="nav-link btn-light shadow-none" id="detalle-tab-basic" data-toggle="pill" href="#detalle" role="tab" aria-controls="detalle" aria-selected="false">
+                                    Detalles
                                 </a>
                             </li>
                             <li class="nav-item mr-2" id="nav-item-imagenes">
@@ -79,11 +79,11 @@
 
                                 <div class="col-12">
                                     <div class="tab-content" id="v-pills-tabContent1">
-                                        <div class="tab-pane fade show active" id="detalle" role="tabpanel" aria-labelledby="home-tab-basic">
-                                            @include('admin.products.form-product-details')
-                                        </div>
-                                        <div class="tab-pane fade" id="precios" role="tabpanel" aria-labelledby="service-tab-basic">
+                                        <div class="tab-pane fade show active" id="precios" role="tabpanel" aria-labelledby="home-tab-basic">
                                             @include('admin.products.form-product-prices')
+                                        </div>
+                                        <div class="tab-pane fade" id="detalle" role="tabpanel" aria-labelledby="service-tab-basic">
+                                            @include('admin.products.form-product-details')
                                         </div>
                                         <div class="tab-pane fade" id="imagenes" role="tabpanel" aria-labelledby="account-tab-basic">
                                             @include('admin.products.form-product-images')
