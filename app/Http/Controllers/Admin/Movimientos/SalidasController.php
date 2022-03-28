@@ -22,6 +22,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use stdClass;
+use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -377,11 +378,41 @@ class SalidasController extends Controller
             }
             $insert_data = [];
             $product     = $this->productRepository->getByIdWith($product_id);
+
+            $excepcion = false;
+            // busco el producto en session oferta ordenados asc para tomar el primero
+            $session_oferta = SessionOferta::where('fecha_desde','>=',Carbon::parse(now())->format('Y-m-d'))
+                                            ->where('product_id',$product_id)
+                                            ->orderBy('fecha_hasta','ASC')
+                                            ->first();
+            if($session_oferta){
+                // si existe una oferta busco si esa oferta es una excepcion
+                $ofertaStore = OfertaStore::where('session_id',$session_oferta->id)->first();
+
+                if($ofertaStore){
+                    // si la oferta esta en oferta_store es porque es una excepcion y solo se aplica a la store vinculada
+                    $excepcion = true;
+                    if($ofertaStore->store_id == $to){
+                        // si la store a la que envio esta en la oferta_store aplica la oferta
+                        $prices = $session_oferta;
+                    }else{
+                        // si la store a la que envio NO esta en la oferta_store NO s aplica la oferta
+                        $prices = $product->product_price;
+                    }
+                }else{
+                    // como existe la oferta y no esta en oferta_store (excepcion) los precios son de la oferta
+                    $prices = $session_oferta;
+                }
+            }else{
+                $prices = $product->product_price;
+            }
+
             switch ($to_type) {
                 case 'DEVOLUCION':
                 case 'VENTA':
-                    $insert_data['unit_price'] = $product->product_price->plist0neto;
-                    $insert_data['tasiva']     = $product->product_price->tasiva;
+                    //$ofertaStore = OfertaStore::where('store_id',$to)
+                    $insert_data['unit_price'] = $prices->plist0neto;
+                    $insert_data['tasiva']     = $prices->tasiva;
                     break;
                 case 'TRASLADO':
                     $insert_data['unit_price'] = 0;
@@ -391,12 +422,12 @@ class SalidasController extends Controller
                 case 'VENTACLIENTE':
                     $customer       = $this->customerRepository->getById($to);
                     $listAssociates = [
-                        'L0' => $product->product_price->plist0,
-                        'L1' => $product->product_price->plist1,
-                        'L2' => $product->product_price->plist2,
+                        'L0' => $prices->plist0,
+                        'L1' => $prices->plist1,
+                        'L2' => $prices->plist2,
                     ];
                     $insert_data['unit_price'] = $listAssociates[$customer->listprice_associate];
-                    $insert_data['tasiva']     = $product->product_price->tasiva;
+                    $insert_data['tasiva']     = $prices->tasiva;
                     break;
             }
 

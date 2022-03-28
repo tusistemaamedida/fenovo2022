@@ -379,7 +379,7 @@ class ProductController extends Controller
     public function importFromCsv()
     {
         try {
-            /* $filepath = public_path('/imports/FROZEN.TXT');
+            $filepath = public_path('/imports/FROZEN.TXT');
             $file     = fopen($filepath, 'r');
 
             $importData_arr = [];
@@ -459,7 +459,7 @@ class ProductController extends Controller
                     'cantmay2' => $importData[13],
                 ];
                 $this->productPriceRepository->create($data);
-            } */
+            }
 
             $filepath = public_path('/imports/ST.TXT');
             $file     = fopen($filepath, 'r');
