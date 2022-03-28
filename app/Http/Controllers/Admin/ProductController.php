@@ -379,7 +379,7 @@ class ProductController extends Controller
     public function importFromCsv()
     {
         try {
-            $filepath = public_path('/imports/FROZEN.TXT');
+            /* $filepath = public_path('/imports/FROZEN.TXT');
             $file     = fopen($filepath, 'r');
 
             $importData_arr = [];
@@ -459,9 +459,9 @@ class ProductController extends Controller
                     'cantmay2' => $importData[13],
                 ];
                 $this->productPriceRepository->create($data);
-            }
+            } */
 
-            /* $filepath = public_path('/imports/ST.TXT');
+            $filepath = public_path('/imports/ST.TXT');
             $file     = fopen($filepath, 'r');
 
             $importData_arr2 = [];
@@ -507,8 +507,8 @@ class ProductController extends Controller
                     array_push($code_not_found, $cod_fenovo);
                 }
             }
-            dd($code_not_found);
-             */
+            //dd($code_not_found);
+
             return redirect()->route('products.list');
         } catch (\Exception $e) {
             Log::info(json_encode($this->productImport));

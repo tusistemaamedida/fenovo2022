@@ -14,6 +14,9 @@ use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
 
+use App\Models\SessionOferta;
+use App\Models\OfertaStore;
+
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
