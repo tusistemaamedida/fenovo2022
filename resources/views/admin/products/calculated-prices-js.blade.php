@@ -162,7 +162,7 @@
                     jQuery("#mupp2may").val(data['mupp2may']);
                     jQuery("#descp2").val(data['descp2']);
                 }else{
-                    if(data['descp1']) jQuery("#descp1").val(data['descp1']);
+                    //if(data['descp1']) jQuery("#descp1").val(data['descp1']);
                     toastr.error(data['msj'],'ERROR!');
                 }
                 jQuery(spanId).html('')

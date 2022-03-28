@@ -188,7 +188,26 @@ class ProductController extends Controller
             $product_id           = $data['product_id'];
             $data['unit_package'] = implode('|', $data['unit_package']);
             $producto_actualizado = $this->productRepository->fill($product_id, $data);
+
+            $cod_descuento = $request->input('cod_descuento');
+            $desc          = ProductDescuento::where('codigo', $cod_descuento)->first();
+            $descp1        = ($request->has('descp1')) ? $request->input('descp1') : 0;
+            if ((int)$product_id != 0) {
+                $oferta = SessionOferta::where('product_id', $product_id )->first();
+            }
+
+            if ($desc && $desc->descuento > $descp1 && !$oferta) {
+                return new JsonResponse([
+                    'type'   => 'error',
+                    'descp1' => (int)$desc->descuento,
+                    'msj'    => 'El descuento mayorista no debe ser menor al descuento por rubro aplicado: <br>' . $desc->descripcion, ]);
+            }
+
+
             $preciosCalculados    = $this->calcularPrecios($request);
+
+            if($preciosCalculados['type'] == 'error') return new JsonResponse(['type' => 'error', 'msj' => $preciosCalculados['msj']]);
+
             $data                 = array_merge($data, $preciosCalculados);
 
             //dd($data);
@@ -323,7 +342,7 @@ class ProductController extends Controller
             $plist0Iva  = $this->plist0Iva($plist0Neto, $tasiva);
             $plist1     = $this->plist1($plist0Iva, $muplist1);
             $comlista1  = $this->comlista1($plist0Iva, $plist1, $tasiva);
-            $plist2     = $this->plist2($plist0Iva, $muplist2);
+            $plist2     = $this->plist2($plist0Iva, $muplist2, $plist1 );
             $comlista2  = $this->comlista2($plist0Iva, $plist2, $tasiva);
             $mup1       = $this->mup1($plist0Iva, $p1tienda);
             $p1may      = $this->p1may($p1tienda, $descp1);
@@ -332,6 +351,10 @@ class ProductController extends Controller
             $p2may      = $p1may;
             $descp2     = $this->descp2($p2may, $p2tienda);
             $mupp2may   = $this->mupp2may($p2may, $plist0Iva);
+
+            if($p2tienda <  $p1tienda){
+                return ['type' => 'error', 'msj' => "El precio tienda 2 no debe ser menor a la tienda 1"];
+            }
 
             return [
                 'type'       => 'success',
@@ -639,7 +662,7 @@ class ProductController extends Controller
         }
     }
 
-    private function plist2($plist0Iva, $muplist2)
+    private function plist2($plist0Iva, $muplist2, $plist1 )
     {
         try {
             return round($plist0Iva * ($muplist2 / 100 + 1), 2);

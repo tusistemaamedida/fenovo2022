@@ -163,7 +163,7 @@
                                 window.location.reload();
                             }, 500);
                         } else {
-                            toastr.error(data['html'], 'Verifique');
+                            toastr.error(data['msj'], 'Verifique');
                         }
                     },
                     error: function (data) {
