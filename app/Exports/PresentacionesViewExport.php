@@ -32,6 +32,14 @@ class PresentacionesViewExport implements FromView
             }
         }
 
-        return view('exports.presentaciones', compact('arrPresentaciones'));
+        $anio      = date('Y', time());
+        $mes       = date('m', time());
+        $dia       = date('d', time());
+        $hora      = date('H', time());
+        $min       = date('i', time());
+        $registros = str_pad(count($arrPresentaciones), 4, '0', STR_PAD_LEFT);
+        $data = $anio . $mes . $dia . $hora . $min . $registros;
+
+        return view('exports.presentaciones', compact('arrPresentaciones', 'data'));
     }
 }

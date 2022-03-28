@@ -12,15 +12,11 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Ofertas de precios vigentes
+                                        Historial de actualizaciones
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{ route('oferta.excepciones') }}" class="mr-2"> 
-                                        Excepciones
-                                    </a>
-
-                                    <a href="{{ route('oferta.exportCSV') }}"> <i class=" fa fa-file-csv"></i> Exportar</a>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -33,14 +29,13 @@
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
                                         <tr class="bg-dark text-white">
-                                            <th>CodFenovo</th>
-                                            <th>Nombre del producto</th>
-                                            <th>P1_Tienda</th>
-                                            <th>Desde</th>
-                                            <th>Hasta</th>
-                                            <th>Vincular</th>
-                                            <th>Asociadas</th>
-                                            <th></th>
+                                            <th>No</th>
+                                            <th>Fecha actualización</th>
+                                            <th>Cod Fenovo</th>
+                                            <th>Nombre de producto</th>
+                                            <th>$ P1 Tienda</th>
+                                            <th>$ P2 Tienda</th>                                            
+                                            <th>$ P1 Mayorista</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -57,30 +52,25 @@
 
 </div>
 
-@include('admin.ofertas.modal')
+@include('admin.actualizaciones.modal')
 
 @endsection
 
 @section('js')
 
 <script>
-    jQuery("#product_id").select2({
-        placeholder: "Seleccione producto ... "
-    });
 
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
-        ajax: "{{ route('oferta.index') }}",
+        ajax: "{{ route('actualizacion.historial') }}",
         columns: [
-            {data: 'cod_fenovo', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'producto'},
-            {data: 'p1tienda', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'fechadesde'},
-            {data: 'fechahasta'},
-            {data: 'vincular', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'asociadas', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'edit', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'destroy', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
+            {data: 'fecha_actualizacion', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'cod_fenovo', 'class':'text-center', orderable: false, searchable: true},
+            {data: 'product'},
+            {data: 'p1tienda', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'p2tienda', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'p1may', 'class':'text-center', orderable: false, searchable: false},
         ]
     });
 </script>
