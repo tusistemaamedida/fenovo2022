@@ -44,7 +44,7 @@ return [
         'csv' => [
             'delimiter'              => ',',
             'enclosure'              => '',
-            'line_ending'            => PHP_EOL,
+            'line_ending'            => "\r\n",
             'use_bom'                => false,
             'include_separator_line' => false,
             'excel_compatibility'    => false,
