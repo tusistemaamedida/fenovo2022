@@ -40,8 +40,8 @@
                     <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
                     <td class=" text-center ">
                         <input type="number"
-                               name="unidades_{{(float)$stock_presentaciones[$i]['presentacion']}}"
-                               id="{{(float)$stock_presentaciones[$i]['presentacion']}}"
+                               name="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
+                               id="{{$stock_presentaciones[$i]['presentacion']}}"
                                class="form-control calculate text-center"
                                @if($stock_total==0) disabled @endif
                                max="{{$stock_presentaciones[$i]['bultos']}}"
