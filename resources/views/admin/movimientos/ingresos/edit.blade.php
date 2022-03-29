@@ -170,7 +170,9 @@
         if(valido){
             jQuery('.calculate').each(function() {
                 let valor = parseFloat(jQuery(this).val());
-                let presentacion = jQuery(this).attr("id");
+                let presentacion_input = jQuery(this).attr("id").split('_');
+                let presentacion = presentacion_input[1];
+
                 total = total + (valor*presentacion);
             });
             if(total > 0){
