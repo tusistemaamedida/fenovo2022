@@ -16,6 +16,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
     Route::group(['namespace' => 'Admin', 'middleware' => ['auth']], function () {
         require __DIR__ . '/admin/productos.php';
         require __DIR__ . '/admin/actualizaciones-precios.php';
+        require __DIR__ . '/admin/senasa-definitions.php';
         require __DIR__ . '/admin/descuentos.php';
         require __DIR__ . '/admin/ofertas.php';
         require __DIR__ . '/admin/tiendas.php';

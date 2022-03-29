@@ -7,7 +7,7 @@
         <td>{{ date('d-m-Y', strtotime($sessionPrice->fecha_actualizacion)) }}</td>
         <td>{{ $sessionPrice->product->cod_fenovo}}</td>
         <td>{{ $sessionPrice->product->name}}</td>
-        <td>{{ $sessionPrice->plist1 }}</td>
+        <td>{{ $sessionPrice->p1tienda }}</td>
     </tr>
     @endforeach
 </table>
