@@ -381,10 +381,11 @@ class SalidasController extends Controller
 
             $excepcion = false;
             // busco el producto en session oferta ordenados asc para tomar el primero
-            $session_oferta = SessionOferta::where('fecha_desde','>=',Carbon::parse(now())->format('Y-m-d'))
+            $session_oferta = SessionOferta::where('fecha_desde','<=',Carbon::parse(now())->format('Y-m-d'))
                                             ->where('product_id',$product_id)
                                             ->orderBy('fecha_hasta','ASC')
                                             ->first();
+
             if($session_oferta){
                 // si existe una oferta busco si esa oferta es una excepcion
                 $ofertaStore = OfertaStore::where('session_id',$session_oferta->id)->first();
