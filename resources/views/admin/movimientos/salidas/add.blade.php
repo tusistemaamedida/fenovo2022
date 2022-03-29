@@ -199,8 +199,6 @@
     });
     }
 
-    
-
     function cargarTablaProductos(){
         var to_type = jQuery("#to_type").val();
         var to = jQuery("#to").val();
@@ -376,5 +374,9 @@
         });
     }
 
+</script>
+
+<script>
+    jQuery(".yajra-datatable").DataTable();
 </script>
 @endsection

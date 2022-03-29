@@ -3,7 +3,7 @@
 <div class="table-datapos">
     <div class="table-responsive">
 
-<table class=" table table-hover table-sm text-center">
+<table class="table table-hover table-sm text-center yajra-datatable" id="show-salida">
     <tr class=" bg-dark text-white">
         <th>#</th>
         <th>Cod fenovo</th>
