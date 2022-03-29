@@ -24,7 +24,7 @@ class VehiculoController extends Controller
     {
         if ($request->ajax()) {
             if ($request->ajax()) {
-                $vehiculo = Vehiculo::all();
+                $vehiculo = Vehiculo::where('active', 1)->get();
 
                 return Datatables::of($vehiculo)
                     ->addIndexColumn()
@@ -115,16 +115,15 @@ class VehiculoController extends Controller
     }
 
     public function getHabilitacion(Request $request)
-    {	
-        try {            
+    {
+        try {
             $habilitacion = DB::table('vehiculos')->where('patente', $request->patente)->select('senasa')->pluck('senasa')->first();
             return new JsonResponse([
-                'data'  => $habilitacion,
+                'data' => $habilitacion,
                 'type' => 'success',
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
-
     }
 }
