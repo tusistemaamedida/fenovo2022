@@ -6,7 +6,7 @@
 
                     <div class="table-datapos">
                         <div class="table-responsive">
-                            <table class="table table-striped  text-body">
+                            <table class="table table-striped  text-body yajra-datatable">
                                 <thead>
                                     <tr class="">
                                         <th class="border-0  header-heading" scope="col">#</th>
@@ -154,3 +154,7 @@
         </div>
     </div>
 </div>
+
+<script>
+    jQuery(".yajra-datatable").DataTable();
+</script>

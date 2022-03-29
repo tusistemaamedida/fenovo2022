@@ -69,8 +69,4 @@
 
     @section('js')
 
-        <script>
-            jQuery("#show-salida").DataTable();
-        </script>
-
     @endsection
