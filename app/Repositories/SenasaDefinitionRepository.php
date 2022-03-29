@@ -9,4 +9,9 @@ class SenasaDefinitionRepository extends BaseRepository {
     public function getModel(){
         return new SenasaDefinition();
     }
+
+    public function getOne($id)
+    {
+        return SenasaDefinition::find($id);
+    }
 }

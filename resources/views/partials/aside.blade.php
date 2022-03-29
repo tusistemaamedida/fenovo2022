@@ -85,7 +85,6 @@
                             <a class="dropdown-item" href="{{ url('users') }}">
                                 <span class="text-black-50"> Usuarios </span>
                             </a>
-
                             @role('superadmin')
                             <a class="dropdown-item" href="{{ route('roles.index') }}">
                                 <span class="text-black-50"> Roles </span>
@@ -94,6 +93,9 @@
                                 <span class="text-black-50"> Permisos </span>
                             </a>
                             @endrole
+                            <a class="dropdown-item" href="{{ route('senasa-definition.index') }}">
+                                <span class="text-black-50"> Categorias SENASA </span>
+                            </a>
                         </div>
                     </li>
                     <li class="nav-item" title="Proveedores">
