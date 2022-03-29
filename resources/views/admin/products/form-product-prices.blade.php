@@ -3,7 +3,7 @@
     <div class="col-md-9 font-size-h5">
         <span id="divFechasPrecio">
             <a href="{{route('product.edit',['id' => $product->id])}}#precios" @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0) onclick="jQuery('#loader').removeClass('hidden')" @endif>
-                <span class="badge @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null) badge-secondary @else badge-light @endif p-2">
+                <span class="badge @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null) badge-primary @else badge-light @endif p-2">
                     Precio actual
                 </span>
             </a>
@@ -37,7 +37,7 @@
             @if ( Request::get('fecha_oferta') == null AND Request::get('fecha_actualizacion_activa') == null)
                 <strong> precio actual </strong>
                 @php
-                    $color = '#f49d2a';
+                    $color = '#ffffff';
                 @endphp
             @else
                 @php
@@ -316,14 +316,8 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="col-md-3">
-                <label class="text-body">Cant. mayorista</label>
-                <fieldset class="input-group form-group mb-3">
-                    <input type="number" step="0.50" min="0" name="cantmay1" id="cantmay1" @if (isset($product)) value="{{$product->product_price->cantmay1}}" @else value="0" @endif class="form-control border-dark">
-                </fieldset>
-            </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="text-body">Desc. mayorista</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="number" step="0.50" min="0" name="descp1" id="descp1" @if (isset($product)) value="{{$product->product_price->descp1}}" @else value="0" @endif class="form-control border-dark">
@@ -332,7 +326,7 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-5">
                 <label class="text-body">Precio 1 mayorista</label>
                 <fieldset class="input-group form-group mb-3">
                     <div class="input-group-prepend">
@@ -346,7 +340,7 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-5">
                 <label class="text-body">Markup</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="number" step="0.50" min="0" name="mupp1may" id="mupp1may" @if (isset($product)) value="{{$product->product_price->mupp1may}}" @else value="0" @endif disabled class="form-control border-dark">
@@ -375,6 +369,7 @@
                     </div>
                 </fieldset>
             </div>
+
             <div class="col-md-6">
                 <label class="text-body">Markup precio tienda 2</label>
                 <fieldset class="input-group form-group mb-3">
@@ -386,14 +381,8 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="col-md-3">
-                <label class="text-body">Cant. mayorista</label>
-                <fieldset class="input-group form-group mb-3">
-                    <input type="number" step="0.50" min="0" name="cantmay2" @if (isset($product)) value="{{$product->product_price->cantmay2}}" @else value="0" @endif class="form-control border-dark">
-                </fieldset>
-            </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="text-body">Desc. mayorista</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="number" step="0.50" min="0" name="descp2" id="descp2" readonly @if (isset($product)) value="{{$product->product_price->descp2}}" @else value="0" @endif class="form-control border-dark">
@@ -402,7 +391,7 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-5">
                 <label class="text-body">Precio 2 mayorista</label>
                 <fieldset class="input-group form-group mb-3">
                     <div class="input-group-prepend">
@@ -416,7 +405,7 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-5">
                 <label class="text-body">Markup</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="number" step="0.50" min="0" name="mupp2may" id="mupp2may" @if (isset($product)) value="{{$product->product_price->mupp2may}}" @else value="0" @endif disabled class="form-control border-dark">

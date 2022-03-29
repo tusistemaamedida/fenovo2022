@@ -49,11 +49,13 @@
     });
 
     jQuery("#p1tienda").keyup(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#p1tienda").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#descp1").keyup(function(){
@@ -65,11 +67,13 @@
     });
 
     jQuery("#p2tienda").keyup(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#p2tienda").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#descp2").keyup(function(){
@@ -101,7 +105,7 @@
         });
     }
 
-    function calculatePrices(){
+    function calculatePrices(validate = 1){
         var text = "Aguarde por favor, se están claculando los precios..."
         var spanId = "#info-calculate";
         var elements = document.querySelectorAll('.is-invalid');
@@ -125,6 +129,7 @@
             url:"{{ route('calculate.product.prices') }}",
             type:'GET',
             data:{
+                validate,
                 plistproveedor,
                 descproveedor,
                 mupfenovo,

@@ -323,6 +323,7 @@ class ProductController extends Controller
     private function calcularPrecios($request)
     {
         try {
+            $validate =   ($request->has('validate')) ? (bool) $request->input('validate') : 1; ;
             $plistproveedor = ($request->has('plistproveedor')) ? $request->input('plistproveedor') : 0;
             $descproveedor  = ($request->has('descproveedor')) ? $request->input('descproveedor') : 0;
 
@@ -352,7 +353,7 @@ class ProductController extends Controller
             $descp2     = $this->descp2($p2may, $p2tienda);
             $mupp2may   = $this->mupp2may($p2may, $plist0Iva);
 
-            if($p2tienda <  $p1tienda){
+            if(($p2tienda <  $p1tienda )&& $validate){
                 return ['type' => 'error', 'msj' => "El precio tienda 2 no debe ser menor a la tienda 1"];
             }
 

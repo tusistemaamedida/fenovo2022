@@ -220,8 +220,8 @@
 
     <div class="col-md-12">
         <div class="form-group row">
-            <div class="col-md-2" style="display: inline-flex">
-                <label class="text-body mr-2 mt-1" >Iva</label>
+            <div class="col-md-2">
+                <label class="text-body" >Iva</label>
                 <fieldset class="form-group mb-3" style="width: 100%">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="tasiva" id="tasiva" >
                         @foreach ($alicuotas as $alicuota)
@@ -236,6 +236,21 @@
                     </select>
                 </fieldset>
             </div>
+
+            <div class="col-md-2">
+                <label class="text-body">Cant. mayorista T1</label>
+                <fieldset class="input-group form-group mb-3">
+                    <input type="number" step="0.50" min="0" name="cantmay1" id="cantmay1" @if (isset($product)) value="{{$product->product_price->cantmay1}}" @else value="0" @endif class="form-control border-dark">
+                </fieldset>
+            </div>
+
+            <div class="col-md-2">
+                <label class="text-body">Cant. mayorista T2</label>
+                <fieldset class="input-group form-group mb-3">
+                    <input type="number" step="0.50" min="0" name="cantmay2" @if (isset($product)) value="{{$product->product_price->cantmay2}}" @else value="0" @endif class="form-control border-dark">
+                </fieldset>
+            </div>
+
             <div class="col-md-2">
                 <div class="switch-h d-flex mb-3">
                     <label style="margin-right: 5px">Ventas online?</label>
@@ -246,7 +261,7 @@
                 </div>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <div class="switch-h d-flex mb-3">
                     <label style="margin-right: 5px">Activo?</label>
                     <div class="custom-control switch custom-switch custom-control-inline mr-0">
@@ -256,8 +271,8 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <fieldset class="form-group mb-3">
+            <div class="col-md-3">
+                <fieldset class="form-group mb-3" style="width: 100%">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="senasa_id">
                         <option value="">Agrupación SENASA</option>
                         @foreach ($senasaDefinitions as $senasaDefinition)
