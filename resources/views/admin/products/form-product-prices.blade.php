@@ -177,11 +177,7 @@
             <div class="col-md-12">
                 <div class="row mb-2">
                     <div class="col-md-12">
-                        @if(isset($fecha_actualizacion_activa) && $fecha_actualizacion_activa !=0)
-                        <span class=" badge badge-secondary p-2 font-size-h5"> Fecha de <span class=" font-weight-bolder"> actualización </span> </span>
-                        @else
                         Fecha de <span class=" font-weight-bolder"> actualización </span>
-                        @endif
                     </div>
                 </div>
 
