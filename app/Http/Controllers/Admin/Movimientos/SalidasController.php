@@ -5,24 +5,24 @@ namespace App\Http\Controllers\Admin\Movimientos;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\MovementProduct;
+use App\Models\OfertaStore;
+use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\SessionProductRepository;
+
 use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
 
-use App\Models\SessionOferta;
-use App\Models\OfertaStore;
-
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use stdClass;
-use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -119,9 +119,10 @@ class SalidasController extends Controller
                     return '<span class="badge badge-primary">' . $count . '</span>';
                 })
                 ->addColumn('destroy', function ($pendiente) {
-                    $ruta = 'eliminarPendiente(' . $pendiente->id . ",'" . route('salidas.pendiente.destroy') . "')";
+                    $ruta = "borrarPendiente('" . $pendiente->list_id . "','" . route('salidas.pendiente.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
+
                 ->addColumn('edit', function ($pendiente) {
                     return '<a href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
                 })
@@ -149,7 +150,7 @@ class SalidasController extends Controller
         $explode          = explode('_', $request->input('list_id'));
         $tipo             = $explode[0];
         $destino          = $this->origenData($tipo, $explode[1], true);
-        $pdf              = PDF::loadView('admin.movimientos.print.pendientes', compact('session_products', 'destino'));
+        $pdf              = PDF::loadView('admin.print.pendientes', compact('session_products', 'destino'));
         return $pdf->stream('salidas.pdf');
     }
 
@@ -244,7 +245,7 @@ class SalidasController extends Controller
     public function searchProducts(Request $request)
     {
         $term        = $request->term ?: '';
-        $show_stock  = $request->has('show_stock') ? (bool)$request->show_stock: true;
+        $show_stock  = $request->has('show_stock') ? (bool)$request->show_stock : true;
         $valid_names = [];
         $products    = $this->productRepository->search($term);
 
@@ -252,8 +253,8 @@ class SalidasController extends Controller
             $disabled      = '';
             $text_no_stock = '';
 
-            if($show_stock){
-                $stock         = $product->stock(null, Auth::user()->store_active);
+            if ($show_stock) {
+                $stock = $product->stock(null, Auth::user()->store_active);
                 if (!$stock) {
                     $disabled      = 'disabled';
                     $text_no_stock = ' -- SIN STOCK --';
@@ -308,9 +309,9 @@ class SalidasController extends Controller
     {
         try {
             if ($request->has('id') && $request->input('id') != '') {
-                $product          = $this->productRepository->getById($request->input('id'));
-                $list_id          = $request->input('list_id');
-                $devolucion       = str_contains($list_id, 'DEVOLUCION_');
+                $product    = $this->productRepository->getById($request->input('id'));
+                $list_id    = $request->input('list_id');
+                $devolucion = str_contains($list_id, 'DEVOLUCION_');
 
                 if ($product) {
                     $stock_presentaciones = [];
@@ -337,10 +338,12 @@ class SalidasController extends Controller
                         $stock_presentaciones[$i]['bultos'] = (int)$bultos;
                     }
 
-                    $view = ($devolucion)?'admin.movimientos.notas-credito.partials.inserByAjax':'admin.movimientos.salidas.partials.inserByAjax';
+                    $view = ($devolucion) ? 'admin.movimientos.notas-credito.partials.inserByAjax' : 'admin.movimientos.salidas.partials.inserByAjax';
                     return new JsonResponse([
                         'type' => 'success',
-                        'html' => view($view,compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total')
+                        'html' => view(
+                            $view,
+                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total')
                         )->render(),
                     ]);
                 }
@@ -381,30 +384,30 @@ class SalidasController extends Controller
 
             $excepcion = false;
             // busco el producto en session oferta ordenados asc para tomar el primero
-            $session_oferta = SessionOferta::where('fecha_desde','<=',Carbon::parse(now())->format('Y-m-d'))
-                                            ->where('product_id',$product_id)
-                                            ->orderBy('fecha_hasta','ASC')
+            $session_oferta = SessionOferta::where('fecha_desde', '<=', Carbon::parse(now())->format('Y-m-d'))
+                                            ->where('product_id', $product_id)
+                                            ->orderBy('fecha_hasta', 'ASC')
                                             ->first();
 
-            if($session_oferta){
+            if ($session_oferta) {
                 // si existe una oferta busco si esa oferta es una excepcion
-                $ofertaStore = OfertaStore::where('session_id',$session_oferta->id)->first();
+                $ofertaStore = OfertaStore::where('session_id', $session_oferta->id)->first();
 
-                if($ofertaStore){
+                if ($ofertaStore) {
                     // si la oferta esta en oferta_store es porque es una excepcion y solo se aplica a la store vinculada
                     $excepcion = true;
-                    if($ofertaStore->store_id == $to){
+                    if ($ofertaStore->store_id == $to) {
                         // si la store a la que envio esta en la oferta_store aplica la oferta
                         $prices = $session_oferta;
-                    }else{
+                    } else {
                         // si la store a la que envio NO esta en la oferta_store NO s aplica la oferta
                         $prices = $product->product_price;
                     }
-                }else{
+                } else {
                     // como existe la oferta y no esta en oferta_store (excepcion) los precios son de la oferta
                     $prices = $session_oferta;
                 }
-            }else{
+            } else {
                 $prices = $product->product_price;
             }
 
@@ -569,7 +572,7 @@ class SalidasController extends Controller
 
     public function pendienteDestroy(Request $request)
     {
-        SessionProduct::find($request->id)->delete();
+        SessionProduct::where('list_id', $request->list_id)->delete();
         return new JsonResponse(
             [
                 'msj'  => 'Eliminado ... ',

@@ -156,5 +156,7 @@
 </div>
 
 <script>
-    jQuery(".yajra-datatable").DataTable();
+    jQuery(".yajra-datatable").DataTable({
+        ordering: false,
+    });
 </script>

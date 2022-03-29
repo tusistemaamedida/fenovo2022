@@ -81,9 +81,7 @@
         ]
     });
 
-    const eliminarPendiente = (id, route) => {
-
-
+    const borrarPendiente = (list_id, route) => {
         ymz.jq_confirm({
             title: 'Eliminar',
             text: "confirma borrar registro ?",
@@ -97,7 +95,7 @@
                     url: route,
                     type: 'POST',
                     dataType: 'json',
-                    data: { id: id },
+                    data: { list_id },
                     success: function (data) {
                         if (data['type'] == 'success') {
                             table.ajax.reload();

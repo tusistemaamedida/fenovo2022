@@ -27,7 +27,7 @@
         <div class="col-12 mt-3 mb-3">&nbsp;</div>
     </div>
 
-    <form name="unidades_a_enviar" id="unidades_a_enviar">
+    <form name="unidades_a_enviar" id="unidades_a_enviar" onsubmit=" return false;">
         <table class="table">
             <thead>
                 <tr>
