@@ -200,13 +200,7 @@
             <div id="divOferta" class="col-md-12 mt-2">
                 <div class="row">
                     <div class="col-md-12">
-                        @if(Request::get('fecha_oferta') !== null)
-                        <span class=" badge badge-secondary p-2 font-size-h5">
-                            Fecha de <span class=" font-weight-bolder">oferta </span>
-                        </span>
-                        @else
                         Fecha de <span class=" font-weight-bolder">oferta </span>
-                        @endif
                     </div>
                 </div>
 
@@ -318,7 +312,7 @@
             </div>
 
             <div class="col-md-2">
-                <label class="text-body">Desc. mayorista</label>
+                <label class="text-body">Desc.May</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="number" step="0.50" min="0" name="descp1" id="descp1" @if (isset($product)) value="{{$product->product_price->descp1}}" @else value="0" @endif class="form-control border-dark">
                     <div class="input-group-prepend">
@@ -383,7 +377,7 @@
             </div>
 
             <div class="col-md-2">
-                <label class="text-body">Desc. mayorista</label>
+                <label class="text-body">Desc.May</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="number" step="0.50" min="0" name="descp2" id="descp2" readonly @if (isset($product)) value="{{$product->product_price->descp2}}" @else value="0" @endif class="form-control border-dark">
                     <div class="input-group-prepend">
