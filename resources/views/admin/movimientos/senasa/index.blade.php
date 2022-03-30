@@ -16,6 +16,10 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
+
+                                    <a href="{{ route('senasa-definition.index') }}" class="ml-2 mt-1">
+                                        Categorias SENASA
+                                    </a>
                                     <a href="javascript:void(0)" onclick="add('{{ route('senasa.add') }}')" class="ml-2">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>

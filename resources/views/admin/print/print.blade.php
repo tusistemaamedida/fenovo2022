@@ -20,9 +20,9 @@
                         &nbsp;
                     </div>
                 </div>
-                <div class="card card-custom gutter-b bg-white border-0">
+                <div class="card card-body gutter-b bg-white border-0">
 
-                    <div class="row mt-3 ml-3 font-weight-bolder">
+                    <div class="row mt-3 ml-3 mb-4 font-weight-bolder">
                         <div class="col-12">
                             Movimientos
                         </div>
@@ -44,10 +44,10 @@
                                 <input type="date" name="salidaHasta" id="salidaHasta" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark">
                             </fieldset>
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <fieldset class="input-group form-group mb-3">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Movimiento</span>
+                                    <span class="input-group-text">Movim</span>
                                 </div>
                                 <select class="rounded form-control bg-transparent" name="tiposalida" id="tiposalida">
                                     <option value="">TODOS</option>
@@ -59,37 +59,55 @@
                                 </select>
                             </fieldset>
                         </div>
-                        <div class="col-3">
-                        </div>
-                    </div>
-                    <div class="row mb-5 ml-2 border-bottom-dark">
-                        <div class="col-3">
+                        
+                        <div class="col-2 text-center">
                             <a href="javascript:void(0)" onclick="exportarMovimientosCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
                         </div>
-                        <div class="col-3">
+
+                        <div class="col-2 text-center">
                             <a href="javascript:void(0)" onclick="printMovimientos()"> <i class=" fa fa-print"></i> Imprimir</a>
                         </div>
-                    </div>
 
+                    </div>
+                </div>    
+
+                <div class="card card-body gutter-b bg-white border-0">
+                    <div class="row mt-3 ml-3 mb-4 font-weight-bolder">
+                        <div class="col-12">
+                            Exportación Diaria Fenovo
+                        </div>
+                    </div>
                     <div class="row mb-5 ml-2 border-bottom-dark">
-                        <div class="col-3">
+                        <div class="col-2">
                             <a href="{{route('products.exportCSV')}}" title="Exportar todos los productos" class="mt-1 mr-3">
-                                <i class=" fa fa-file-csv"></i> Exportar productos
+                                <i class=" fa fa-file-csv"></i> Productos
                             </a>
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <a href="{{route('products.exportPresentacionesCSV')}}" title="Exportar presentaciones" class="mt-1 mr-3">
-                                <i class=" fa fa-file-csv"></i> Exportar presentaciones
+                                <i class=" fa fa-file-csv"></i> Presentaciones
                             </a>
                         </div>
 
-                        <div class="col-3">
+                        <div class="col-2">
                             <a href="{{route('products.exportDescuentosCSV')}}" title="Exportar descuentos" class="mt-1 mr-3">
-                                <i class=" fa fa-file-csv"></i> Exportar descuentos
+                                <i class=" fa fa-file-csv"></i> Descuentos
                             </a>
                         </div>
-                    </div>
 
+                        <div class="col-2">
+                            <a href="{{ route('oferta.exportCSV') }}"> 
+                                <i class=" fa fa-file-csv"></i> Ofertas
+                            </a>
+                        </div>
+
+                        <div class="col-2">
+                            <a href="{{ route('oferta.excepciones.exportCSV') }}"> 
+                                <i class=" fa fa-file-csv"></i> Excepciones
+                            </a>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

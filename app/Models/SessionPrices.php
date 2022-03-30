@@ -1,55 +1,16 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
-/**
- * Class SessionPrices
- *
- * @property int        $id
- * @property int|null   $product_id
- * @property float|null $plistproveedor
- * @property float|null $descproveedor
- * @property float|null $costfenovo
- * @property float|null $costdolar
- * @property float|null $mupfenovo
- * @property float|null $tasiva
- * @property float|null $plist0
- * @property float|null $plist0neto
- * @property float|null $plist0iva
- * @property float|null $contribution_fund
- * @property float|null $plist1
- * @property float|null $muplist1
- * @property float|null $plist2
- * @property float|null $muplist2
- * @property float|null $p1tienda
- * @property float|null $mup1
- * @property float|null $descp1
- * @property float|null $p1may
- * @property float|null $mupp1may
- * @property int|null   $cantmay1
- * @property float|null $p2tienda
- * @property float|null $mup2
- * @property float|null $descp2
- * @property float|null $p2may
- * @property float|null $mupp2may
- * @property int|null   $cantmay2
- * @property float|null $comlista1
- * @property float|null $comlista2
- *
- * @property Product|null $product
- *
- * @package App\Models
- */
 class SessionPrices extends Model
 {
     protected $table   = 'session_prices';
     public $timestamps = true;
+
+    use Notifiable;
 
     protected $casts = [
         'product_id'        => 'int',
@@ -113,7 +74,7 @@ class SessionPrices extends Model
         'cantmay2',
         'comlista1',
         'comlista2',
-        'fecha_actualizacion'
+        'fecha_actualizacion',
     ];
 
     public function product()

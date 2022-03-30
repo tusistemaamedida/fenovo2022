@@ -209,9 +209,8 @@ class OfertaController extends Controller
 
     public function exportToCsv(Request $request)
     {	
-        return Excel::download(new OfertaViewExport($request), 'oferta.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        return Excel::download(new OfertaViewExport($request), 'ofertas.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
-
 
     public function exportExcepcionesToCsv(Request $request)
     {	

@@ -12,11 +12,11 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Roles
+                                        Categorias SENASA
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="javascript:void(0)" onclick="add('{{ route('roles.add') }}')" class="ml-2">
+                                    <a href="javascript:void(0)" onclick="add('{{ route('senasa-definition.add') }}')" class="ml-2">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
                                 </div>
@@ -32,7 +32,7 @@
                                     <thead>
                                         <tr class="bg-dark text-white">
                                             <th>No</th>
-                                            <th>Name</th>
+                                            <th>Nombre de la categoria</th>
                                             <th></th>
                                             <th></th>
                                         </tr>
@@ -50,7 +50,7 @@
 
 </div>
 
-@include('admin.roles.modal')
+@include('admin.senasa-definition.modal')
 
 @endsection
 
@@ -59,10 +59,10 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
-        ajax: "{{ route('roles.index') }}",
+        ajax: "{{ route('senasa-definition.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
-            {data: 'name'},
+            {data: 'categoria'},
             {data: 'edit', name: 'Editar', 'class':'text-center', orderable: false, searchable: false},
             {data: 'destroy', name: 'Borrar', 'class':'text-center', orderable: false, searchable: false},
         ]

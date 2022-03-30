@@ -25,7 +25,8 @@ class SenasaDefinition extends Model
 	public $timestamps = false;
 
 	protected $fillable = [
-		'product_name'
+		'product_name',
+		'active'
 	];
 
 	public function products()
