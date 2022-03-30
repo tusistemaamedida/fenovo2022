@@ -11,26 +11,29 @@ use App\Http\Requests\Products\AddProduct;
 use App\Http\Requests\Products\CalculatePrices;
 use App\Http\Requests\Products\UpdateProduct;
 
+use App\Mail\NovedadMail;
 use App\Models\Movement;
+
 use App\Models\MovementProduct;
 use App\Models\Product;
 use App\Models\ProductDescuento;
 use App\Models\ProductPrice;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
-
 use App\Repositories\AlicuotaTypeRepository;
+
 use App\Repositories\ProducDescuentoRepository;
 use App\Repositories\ProductCategoryRepository;
 use App\Repositories\ProductPriceRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProveedorRepository;
-
 use App\Repositories\SenasaDefinitionRepository;
+
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -193,7 +196,7 @@ class ProductController extends Controller
             $desc          = ProductDescuento::where('codigo', $cod_descuento)->first();
             $descp1        = ($request->has('descp1')) ? $request->input('descp1') : 0;
             if ((int)$product_id != 0) {
-                $oferta = SessionOferta::where('product_id', $product_id )->first();
+                $oferta = SessionOferta::where('product_id', $product_id)->first();
             }
 
             if ($desc && $desc->descuento > $descp1 && !$oferta) {
@@ -203,14 +206,14 @@ class ProductController extends Controller
                     'msj'    => 'El descuento mayorista no debe ser menor al descuento por rubro aplicado: <br>' . $desc->descripcion, ]);
             }
 
+            $preciosCalculados = $this->calcularPrecios($request);
 
-            $preciosCalculados    = $this->calcularPrecios($request);
+            if ($preciosCalculados['type'] == 'error') {
+                return new JsonResponse(['type' => 'error', 'msj' => $preciosCalculados['msj']]);
+            }
 
-            if($preciosCalculados['type'] == 'error') return new JsonResponse(['type' => 'error', 'msj' => $preciosCalculados['msj']]);
+            $data = array_merge($data, $preciosCalculados);
 
-            $data                 = array_merge($data, $preciosCalculados);
-
-            //dd($data);
             if ($data['fecha_actualizacion_activa'] == 0 && is_null($data['fecha_desde']) && is_null($data['fecha_hasta']) && is_null($data['fecha_actualizacion'])) {
                 $producto = $this->productRepository->getByIdWith($product_id);
                 $this->productPriceRepository->fill($producto->product_price->id, $data);
@@ -224,17 +227,20 @@ class ProductController extends Controller
                         'fecha_hasta' => $data['fecha_hasta'],
                     ], $data);
 
-                    $tipo = ' de oferta ';
-                } elseif(!is_null($data['fecha_actualizacion']) && $data['fecha_actualizacion_activa'] == 0 ) {
+                    $tipo = ' de ofertas ';
+                } elseif (!is_null($data['fecha_actualizacion']) && $data['fecha_actualizacion_activa'] == 0) {
                     $prices = SessionPrices::updateOrCreate(['product_id' => $data['product_id'], 'fecha_actualizacion' => $data['fecha_actualizacion']], $data);
-                    $tipo = ' de actualización ';
-                }elseif(isset($data['fecha_actualizacion_activa']) && $data['fecha_actualizacion_activa'] != 0){
+                    $tipo   = ' de actualización ';
+                } elseif (isset($data['fecha_actualizacion_activa']) && $data['fecha_actualizacion_activa'] != 0) {
                     $session_prices = SessionPrices::where('id', $data['fecha_actualizacion_activa'])->first();
                     $session_prices->fill($data);
                     $session_prices->save();
                     $tipo = ' de actualización ';
                 }
             }
+
+            Mail::to('novedades@frioteka.com')->bcc('cachoalbornoz@gmail.com')->send(new NovedadMail($tipo));
+
             return new JsonResponse(['type' => 'success', 'msj' => 'Precio ' . $tipo . ' modificado correctamente!']);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
@@ -323,7 +329,7 @@ class ProductController extends Controller
     private function calcularPrecios($request)
     {
         try {
-            $validate =   ($request->has('validate')) ? (bool) $request->input('validate') : 1; ;
+            $validate       = ($request->has('validate')) ? (bool)$request->input('validate') : 1;
             $plistproveedor = ($request->has('plistproveedor')) ? $request->input('plistproveedor') : 0;
             $descproveedor  = ($request->has('descproveedor')) ? $request->input('descproveedor') : 0;
 
@@ -343,7 +349,7 @@ class ProductController extends Controller
             $plist0Iva  = $this->plist0Iva($plist0Neto, $tasiva);
             $plist1     = $this->plist1($plist0Iva, $muplist1);
             $comlista1  = $this->comlista1($plist0Iva, $plist1, $tasiva);
-            $plist2     = $this->plist2($plist0Iva, $muplist2, $plist1 );
+            $plist2     = $this->plist2($plist0Iva, $muplist2, $plist1);
             $comlista2  = $this->comlista2($plist0Iva, $plist2, $tasiva);
             $mup1       = $this->mup1($plist0Iva, $p1tienda);
             $p1may      = $this->p1may($p1tienda, $descp1);
@@ -353,8 +359,8 @@ class ProductController extends Controller
             $descp2     = $this->descp2($p2may, $p2tienda);
             $mupp2may   = $this->mupp2may($p2may, $plist0Iva);
 
-            if(($p2tienda <  $p1tienda )&& $validate){
-                return ['type' => 'error', 'msj' => "El precio tienda 2 no debe ser menor a la tienda 1"];
+            if (($p2tienda < $p1tienda) && $validate) {
+                return ['type' => 'error', 'msj' => 'El precio tienda 2 no debe ser menor a la tienda 1'];
             }
 
             return [
@@ -663,7 +669,7 @@ class ProductController extends Controller
         }
     }
 
-    private function plist2($plist0Iva, $muplist2, $plist1 )
+    private function plist2($plist0Iva, $muplist2, $plist1)
     {
         try {
             return round($plist0Iva * ($muplist2 / 100 + 1), 2);
