@@ -19,7 +19,6 @@
                                     <a href="{{ route('oferta.index') }}" class="mr-2">
                                         Ofertas
                                     </a>
-                                    <a href="{{ route('oferta.excepciones.exportCSV') }}"> <i class=" fa fa-file-csv"></i> Exportar</a>
                                 </div>
                             </div>
                         </div>
