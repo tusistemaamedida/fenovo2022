@@ -14,5 +14,6 @@ class MailController extends Controller
         Mail::to('novedades@frioteka.com')
         ->bcc('cachoalbornoz@gmail.com')
         ->send(new NovedadMail('oferta de precios'));
+        return 'Mail enviado';
     }
 }
