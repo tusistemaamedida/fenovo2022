@@ -116,6 +116,9 @@ class ProductController extends Controller
             $producto_nuevo       = $this->productRepository->create($data);
             $data['product_id']   = $producto_nuevo->id;
             $this->productPriceRepository->create($data);
+
+            Mail::to('novedades@frioteka.com')->bcc('cachoalbornoz@gmail.com')->send(new NovedadMail('producto creado'));
+
             return new JsonResponse(['type' => 'success', 'msj' => 'Producto agregado correctamente!']);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
