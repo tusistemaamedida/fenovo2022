@@ -93,9 +93,6 @@
                                 <span class="text-black-50"> Permisos </span>
                             </a>
                             @endrole
-                            <a class="dropdown-item" href="{{ route('senasa-definition.index') }}">
-                                <span class="text-black-50"> Categorias SENASA </span>
-                            </a>
                         </div>
                     </li>
                     <li class="nav-item" title="Proveedores">

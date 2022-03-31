@@ -17,13 +17,7 @@
                                 </div>
                                 <div class="icons d-flex">
                                     <a href="{{ route('actualizacion.historial') }}" class="mr-2"> 
-                                        <i class=" fa fa-clock"></i> Historial
-                                    </a>
-                                    <a href="{{ route('actualizacion.exportCSVM1') }}" class="ml-2 mr-2"> 
-                                        <i class=" fa fa-file-csv"></i> PList1
-                                    </a>
-                                    <a href="{{ route('actualizacion.exportCSVM2') }}" class="ml-2 mr-2"> 
-                                        <i class=" fa fa-file-csv"></i> Plist2
+                                        <i class=" fa fa-clock"></i> Historial actualizaciones
                                     </a>
                                     <a href="javascript:void(0)" onclick="exportarActualizacionesCSV()" class="ml-2"> 
                                         <i class=" fa fa-file-csv"></i> Exportar todas
