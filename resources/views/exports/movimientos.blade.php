@@ -1,4 +1,7 @@
 <table>
+    <tr>
+        <td colspan="6">{{ $data }}</td>
+    </tr>
     @foreach($arrMovements as $arrMovement)
     <tr>
         <td>{{ $arrMovement->id         }}</td>

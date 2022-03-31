@@ -33,7 +33,7 @@ class MovementsViewExport implements FromView
             foreach ($movement->movement_products as $movement_product) {
                 if (!($movement_product->entidad_tipo == 'C')) {
                     $objMovement              = new stdClass();
-                    $objMovement->id          = $movement_product->id;
+                    $objMovement->id          = 'R'.str_pad($movement->id, 8, '0', STR_PAD_LEFT);;
                     $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
                     $objMovement->tipo        = ($movement_product->egress > 0) ? 'S' : 'E';
                     $objMovement->codtienda   = DB::table('stores')->where('id', $movement_product->entidad_id)->select('cod_fenovo')->pluck('cod_fenovo')->first();
@@ -43,6 +43,16 @@ class MovementsViewExport implements FromView
                 }
             }
         }
-        return view('exports.movimientos', compact('arrMovements'));
+
+        $anio      = date('Y', time());
+        $mes       = date('m', time());
+        $dia       = date('d', time());
+        $hora      = date('H', time());
+        $min       = date('i', time());
+        $registros = str_pad(count($arrMovements), 4, '0', STR_PAD_LEFT);
+
+        $data = $anio . $mes . $dia . $hora . $min . $registros;
+
+        return view('exports.movimientos', compact('arrMovements', 'data'));
     }
 }
