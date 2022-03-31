@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\ExcepViewExport;
 use App\Exports\OfertaViewExport;
 use App\Http\Controllers\Controller;
+use App\Mail\NovedadMail;
 use App\Models\Product;
 use App\Models\SessionOferta;
 use App\Models\Store;
@@ -14,6 +15,7 @@ use App\Repositories\StoreRepository;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -203,7 +205,7 @@ class OfertaController extends Controller
     {
         $oferta = SessionOferta::find($request->id);
         $oferta->stores()->sync($request->get('stores'));
-
+        Mail::to('novedades@frioteka.com')->bcc('cachoalbornoz@gmail.com')->send(new NovedadMail('Excepcion creada'));
         return redirect()->route('oferta.index');
     }
 
