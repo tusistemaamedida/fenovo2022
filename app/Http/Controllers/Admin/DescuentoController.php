@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NovedadMail;
 use App\Models\ProductDescuento;
 use App\Repositories\DescuentoRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 
 class DescuentoController extends Controller
@@ -57,6 +59,9 @@ class DescuentoController extends Controller
             $data           = $request->except(['_token']);
             $data['active'] = 1;
             ProductDescuento::create($data);
+
+            Mail::to('novedades@frioteka.com')->bcc('cachoalbornoz@gmail.com')->send(new NovedadMail('descuento creado'));
+
             return new JsonResponse([
                 'msj'  => 'Actualización correcta !',
                 'type' => 'success',

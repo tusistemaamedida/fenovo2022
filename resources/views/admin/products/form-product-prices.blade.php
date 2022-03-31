@@ -45,7 +45,6 @@
                 @endphp
             @if(Request::get('fecha_actualizacion_activa') !== null)
                 actualización <strong> {{\Carbon\Carbon::parse($fecha_actualizacion)->format('d/m/Y')}} </strong>
-
             @else
             @if(Request::get('fecha_oferta') !== null)
                 oferta desde el <strong> {{\Carbon\Carbon::parse($oferta->fecha_desde)->format('d/m/Y')}} </strong>
@@ -55,6 +54,10 @@
         </span>
     </div>
 </div>
+@else
+    @php
+    $color = '#ffffff';
+    @endphp
 @endif
 
 
