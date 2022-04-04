@@ -414,13 +414,10 @@ class SalidasController extends Controller
             switch ($to_type) {
                 case 'DEVOLUCION':
                 case 'VENTA':
+                case 'TRASLADO':
                     //$ofertaStore = OfertaStore::where('store_id',$to)
                     $insert_data['unit_price'] = $prices->plist0neto;
                     $insert_data['tasiva']     = $prices->tasiva;
-                    break;
-                case 'TRASLADO':
-                    $insert_data['unit_price'] = 0;
-                    $insert_data['tasiva']     = 0;
                     break;
                 case 'DEVOLUCIONCLIENTE':
                 case 'VENTACLIENTE':
