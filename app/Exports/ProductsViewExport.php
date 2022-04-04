@@ -20,8 +20,8 @@ class ProductsViewExport implements FromView
     public function view(): View
     {
         $productos = DB::table('products as t1')
-            ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
-            ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
+            ->leftJoin('product_prices as t2', 't1.id', '=', 't2.product_id')
+            ->leftJoin('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
             ->leftJoin('product_descuentos as t4', 't1.cod_descuento', '=', 't4.codigo')
             ->select(
                 't1.id',
@@ -53,17 +53,17 @@ class ProductsViewExport implements FromView
                 't4.codigo'
             )
             ->where('t1.active', 1)
+            ->orderBy('t1.cod_fenovo')
             ->get();
 
         $arrProductos = [];
 
-        $hoy       = Carbon::parse(now())->format('Y-m-d');
+        $hoy = Carbon::parse(now())->format('Y-m-d');
 
         foreach ($productos as $producto) {
-            
             $oferta = DB::table('products as t1')
             ->join('session_ofertas as t2', 't1.id', '=', 't2.product_id')
-            ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
+            ->leftJoin('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
             ->leftJoin('product_descuentos as t4', 't1.cod_descuento', '=', 't4.codigo')
             ->select(
                 't1.id',
