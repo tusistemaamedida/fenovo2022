@@ -61,7 +61,7 @@ class PrintController extends Controller
             ->whereBetween(DB::raw('DATE(created_at)'), [$request->desde, $request->hasta])
             ->get();
 
-        $pdf = PDF::loadView('admin.movimientos.print.entreFechas', compact('salidas', 'desde', 'hasta'));
+        $pdf = PDF::loadView('admin.print.entreFechas', compact('salidas', 'desde', 'hasta'));
         return $pdf->stream('salidas_fechas.pdf');
     }
 
@@ -94,54 +94,5 @@ class PrintController extends Controller
         //
 
         return Excel::download(new MovementsViewExport($request), 'movi.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
-    }
-
-    public function printProductsPDF(Request $request)
-    {
-        $desde = $request->desde;
-        $hasta = $request->hasta;
-
-        if ($desde == '' or $hasta == '') {
-            $actualizacion = ActualizacionPrecio::orderBy('fecha', 'desc')->skip(1)->first();
-            $desde         = $actualizacion->fecha;
-
-            $actualizacion = ActualizacionPrecio::orderBy('fecha', 'desc')->first();
-            $hasta         = $actualizacion->fecha;
-        }
-
-        $productos = DB::table('products as t1')
-            ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
-            ->select(
-                't1.cod_fenovo',
-                't1.cod_proveedor',
-                't1.name',
-                't2.plistproveedor',
-                't2.descproveedor',
-                't2.costfenovo',
-                't2.mupfenovo',
-                't2.plist0neto',
-                't2.mup1',
-                't2.p1may',
-                't2.mupp1may',
-                't2.p1tienda',
-                't2.mupp1may',
-                't2.cantmay1',
-                't2.descp1',
-                't2.tasiva',
-                't1.barcode',
-                't1.unit_package',
-                't1.unit_type',
-                't1.unit_weight',
-                't2.mup2',
-                't2.p2tienda',
-                't1.package_palet',
-                't1.package_row',
-            )
-            ->where('t1.active', 1)
-            ->whereBetween(DB::raw('DATE(t2.updated_at)'), [$desde, $hasta])
-            ->get();
-
-        $pdf = PDF::loadView('admin.products.print.entreFechas', compact('productos', 'desde', 'hasta'));
-        return $pdf->stream('novedades_productos.pdf');
     }
 }
