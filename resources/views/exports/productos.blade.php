@@ -2,7 +2,7 @@
     <tr>
         <td colspan="25">{{ $data }}</td>
     </tr>
-    @foreach($productos as $producto)
+    @foreach($arrProductos as $producto)
     <tr>
         <td>{{ $producto->cod_fenovo}}</td>
         <td>

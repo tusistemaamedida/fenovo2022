@@ -15,6 +15,7 @@ use App\Mail\NovedadMail;
 use App\Models\Movement;
 
 use App\Models\MovementProduct;
+use App\Models\OfertaStore;
 use App\Models\Product;
 use App\Models\ProductDescuento;
 use App\Models\ProductPrice;
@@ -28,10 +29,11 @@ use App\Repositories\ProductPriceRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProveedorRepository;
 use App\Repositories\SenasaDefinitionRepository;
-
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -116,6 +118,9 @@ class ProductController extends Controller
             $producto_nuevo       = $this->productRepository->create($data);
             $data['product_id']   = $producto_nuevo->id;
             $this->productPriceRepository->create($data);
+
+            Mail::to('novedades@frioteka.com')->bcc('cachoalbornoz@gmail.com')->send(new NovedadMail('producto creado'));
+
             return new JsonResponse(['type' => 'success', 'msj' => 'Producto agregado correctamente!']);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);

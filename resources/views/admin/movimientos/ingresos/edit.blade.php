@@ -51,7 +51,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" style=" min-height: 200px ">
                     <div class="col-4">
                         <div class="row font-weight-bold">
                             <div class="col-12"> Producto</div>
@@ -197,13 +197,14 @@
             if(isNaN(parseFloat(jQuery(this).val()))){
                 valido = false;
             }else{
-                let unit_package    = parseFloat(jQuery(this).attr("id"));
-                let valor           = parseFloat(jQuery(this).val());
-                let presentacion    = parseFloat(jQuery(this).attr("id"));
-                let entry           = (valor*presentacion)*peso_unitario;
-                let egress          = 0;
-                let balance         = 0;
-                let entidad_tipo    = 'S';
+                let presentacion_input  = jQuery(this).attr("id").split('_');
+                let presentacion        = presentacion_input[1];
+                let unit_package        = presentacion;
+                let valor               = parseFloat(jQuery(this).val());
+                let entry               = (valor*presentacion)*peso_unitario;
+                let egress              = 0;
+                let balance             = 0;
+                let entidad_tipo        = 'S';
 
                 if(entry > 0){
 
@@ -223,7 +224,7 @@
                 }
             }
         });
-       console.log(arrMovimientos)
+       
         jQuery.ajax({
             url: '{{ route('detalle-ingresos.store') }}',
             type: 'POST',
