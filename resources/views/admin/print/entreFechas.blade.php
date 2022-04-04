@@ -8,7 +8,7 @@
 
 @section('content')
 
-@include('admin.movimientos.print.salidas-header')
+@include('admin.print.salidas-header')
 
 <div class="table-datapos">
     <div class="table-responsive">

@@ -60,12 +60,12 @@
                             </fieldset>
                         </div>
 
-                        <div class="col-2 text-center">
-                            <a href="javascript:void(0)" onclick="exportarMovimientosCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
+                        <div class="col-2">
+                            <a href="javascript:void(0)" onclick="printMovimientos()"> <i class=" fa fa-print"></i> Imprimir</a>
                         </div>
 
-                        <div class="col-2 text-center">
-                            <a href="javascript:void(0)" onclick="printMovimientos()"> <i class=" fa fa-print"></i> Imprimir</a>
+                        <div class="col-2">
+                            <a href="javascript:void(0)" onclick="exportarMovimientosCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
                         </div>
 
                     </div>
