@@ -311,7 +311,7 @@ class ProductController extends Controller
         return new JsonResponse(['type' => 'success', 'descp1' => 0]);
     }
 
-    public function calculateProductPrices(CalculatePrices $request)
+    public function calculateProductPrices(Request $request)
     {
         $oferta        = null;
         $cod_descuento = $request->input('cod_descuento');
