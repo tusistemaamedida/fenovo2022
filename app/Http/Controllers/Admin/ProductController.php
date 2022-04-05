@@ -22,6 +22,7 @@ use App\Models\ProductPrice;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
 use App\Repositories\AlicuotaTypeRepository;
+use App\Models\Proveedor;
 
 use App\Repositories\ProducDescuentoRepository;
 use App\Repositories\ProductCategoryRepository;
@@ -127,14 +128,17 @@ class ProductController extends Controller
         }
     }
 
-    public function edit(Request $request)
-    {
+    public function edit(Request $request){
         try {
             $fecha_actualizacion_label  = '';
             $fecha_actualizacion        = null;
             $fecha_actualizacion_activa = ($request->has('fecha_actualizacion_activa')) ? $request->input('fecha_actualizacion_activa') : 0;
             $fecha_oferta               = $request->input('fecha_oferta');
             $product                    = $this->productRepository->getByIdWith($request->id);
+
+            //$productosProveedor         = Product::where('proveedor_id',$product->proveedor_id)->cursorPaginate(1);
+            //dd($productosProveedor);
+
             $ofertas                    = SessionOferta::where('product_id', $request->id)->get();
             $oferta                     = ($request->has('fecha_oferta')) ? SessionOferta::where('id', $request->oferta_id)->first() : null;
             $alicuotas                  = $this->alicuotaTypeRepository->get('value', 'DESC');
@@ -143,6 +147,8 @@ class ProductController extends Controller
             $descuentos                 = $this->productDescuentoRepository->getActives('descripcion', 'ASC');
             $proveedores                = $this->proveedorRepository->getActives('name', 'ASC');
             $unit_package               = explode('|', $product->unit_package);
+
+            $productosProveedor         = Product::where('proveedor_id',$product->proveedor_id)->paginate(1);
 
             if ($fecha_actualizacion_activa) {
                 $pp1                       = $product->product_price->toArray();
@@ -175,7 +181,8 @@ class ProductController extends Controller
                         'fecha_actualizacion_activa',
                         'oferta',
                         'ofertas',
-                        'fecha_actualizacion_label'
+                        'fecha_actualizacion_label',
+                        'productosProveedor'
                     )
                 );
             }
@@ -255,7 +262,7 @@ class ProductController extends Controller
         }
     }
 
-    public function updatePrices(CalculatePrices $request)
+    public function updatePrices(Request $request)
     {
         try {
             $data              = $request->except('_token');

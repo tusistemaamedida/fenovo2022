@@ -23,24 +23,73 @@
         }
     }
 
-    jQuery("#plistproveedor").keypress(function(){
-        let validate = 0;
-        calculatePrices(validate)
+    jQuery("#plistproveedor").keypress(function(event){
+        if (event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
     });
 
-    jQuery("#descproveedor").keypress(function(){
-        let validate = 0;
-        calculatePrices(validate)
+    jQuery("#descproveedor").keypress(function(event){
+        if (event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
     });
 
-    jQuery("#mupfenovo").keypress(function(){
-        let validate = 0;
-        calculatePrices(validate)
+    jQuery("#contribution_fund").keypress(function(event){
+        if (event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
     });
 
-    jQuery("#contribution_fund").keypress(function(){
-        let validate = 0;
-        calculatePrices(validate)
+
+    jQuery("#mupfenovo").keypress(function(event){
+        if (event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
+    });
+    jQuery("#muplist1").keypress(function(event){
+        if (event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
+    });
+    jQuery("#muplist2").keypress(function(event){
+        if (event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#p1tienda").keypress(function(event){
+        if (event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#descp1").keypress(function(event){
+        if (event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#p2tienda").keypress(function(event){
+        if (event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#descp2").keypress(function(event){
+        if (event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
     });
 
     jQuery("#descproveedor").change(function(){
@@ -63,17 +112,7 @@
         calculatePrices(validate)
     });
 
-    jQuery("#muplist1").keypress(function(){
-        let validate = 0;
-        calculatePrices(validate)
-    });
-
     jQuery("#muplist1").change(function(){
-        let validate = 0;
-        calculatePrices(validate)
-    });
-
-    jQuery("#muplist2").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
@@ -83,17 +122,7 @@
         calculatePrices(validate)
     });
 
-    jQuery("#p1tienda").keypress(function(){
-        let validate = 0;
-        calculatePrices(validate)
-    });
-
     jQuery("#p1tienda").change(function(){
-        let validate = 0;
-        calculatePrices(validate)
-    });
-
-    jQuery("#descp1").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
@@ -103,17 +132,7 @@
         calculatePrices(validate)
     });
 
-    jQuery("#p2tienda").keypress(function(){
-        let validate = 0;
-        calculatePrices(validate)
-    });
-
     jQuery("#p2tienda").change(function(){
-        let validate = 0;
-        calculatePrices(validate)
-    });
-
-    jQuery("#descp2").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
