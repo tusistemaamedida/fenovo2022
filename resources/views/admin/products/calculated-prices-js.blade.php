@@ -1,5 +1,28 @@
 <script>
 
+    jQuery("#fecha_actualizacion").change(function(){
+        validateBtn()
+    })
+
+    jQuery("#fecha_desde").change(function(){
+        validateBtn()
+    })
+
+    jQuery("#fecha_hasta").change(function(){
+        validateBtn()
+    })
+
+    function validateBtn(){
+        var fecha       = jQuery("#fecha_actualizacion").val();
+        var fecha_desde = jQuery("#fecha_desde").val();
+        var fecha_hasta = jQuery("#fecha_hasta").val();
+        if(fecha != '' || (fecha_desde != '' && fecha_hasta != '')){
+            jQuery("#btn_product").attr('disabled',false);
+        }else{
+            jQuery("#btn_product").attr('disabled',true);
+        }
+    }
+
     jQuery("#plistproveedor").keyup(function(){
         calculatePrices()
     });

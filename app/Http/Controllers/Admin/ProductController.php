@@ -218,8 +218,11 @@ class ProductController extends Controller
             }
 
             $data = array_merge($data, $preciosCalculados);
-
-            if ($data['fecha_actualizacion_activa'] == 0 && is_null($data['fecha_desde']) && is_null($data['fecha_hasta']) && is_null($data['fecha_actualizacion'])) {
+            $hoy = \Carbon\Carbon::parse(now())->format('Y-m-d');
+            if ($data['fecha_actualizacion_activa'] == 0 &&
+                is_null($data['fecha_desde']) &&
+                is_null($data['fecha_hasta']) &&
+                ($data['fecha_actualizacion'] == $hoy)) {
                 $producto = $this->productRepository->getByIdWith($product_id);
                 $this->productPriceRepository->fill($producto->product_price->id, $data);
                 $tipo = 'actual';
