@@ -23,22 +23,22 @@
         }
     }
 
-    jQuery("#plistproveedor").keypres(function(){
+    jQuery("#plistproveedor").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
 
-    jQuery("#descproveedor").keypres(function(){
+    jQuery("#descproveedor").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
 
-    jQuery("#mupfenovo").keypres(function(){
+    jQuery("#mupfenovo").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
 
-    jQuery("#contribution_fund").keypres(function(){
+    jQuery("#contribution_fund").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
@@ -63,7 +63,7 @@
         calculatePrices(validate)
     });
 
-    jQuery("#muplist1").keypres(function(){
+    jQuery("#muplist1").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
@@ -73,7 +73,7 @@
         calculatePrices(validate)
     });
 
-    jQuery("#muplist2").keypres(function(){
+    jQuery("#muplist2").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
@@ -83,7 +83,7 @@
         calculatePrices(validate)
     });
 
-    jQuery("#p1tienda").keypres(function(){
+    jQuery("#p1tienda").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
@@ -93,7 +93,7 @@
         calculatePrices(validate)
     });
 
-    jQuery("#descp1").keypres(function(){
+    jQuery("#descp1").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
@@ -103,7 +103,7 @@
         calculatePrices(validate)
     });
 
-    jQuery("#p2tienda").keypres(function(){
+    jQuery("#p2tienda").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
@@ -113,7 +113,7 @@
         calculatePrices(validate)
     });
 
-    jQuery("#descp2").keypres(function(){
+    jQuery("#descp2").keypress(function(){
         let validate = 0;
         calculatePrices(validate)
     });
