@@ -42,6 +42,7 @@
                                                     <th>Items</th>
                                                     <th>Kgrs</th>
                                                     <th>Nro compra</th>
+                                                    <th>Edicion</th>
                                                     <th>Detalle</th>
                                                 </tr>
                                             </thead>
@@ -59,6 +60,8 @@
     </div>
 </div>
 
+@include('admin.movimientos.ingresos.modalIngreso')
+
 @endsection
 
 @section('js')
@@ -73,8 +76,9 @@
             {data: 'origen'},
             {data: 'items', 'class':'text-center', searchable: false},
             {data: 'kgrs', 'class':'text-center', searchable: false},
-            {data: 'voucher_number',  'class':'text-center'},
+            {data: 'voucher',  'class':'text-center'},
             {data: 'edit', 'class':'text-center', searchable: false},
+            {data: 'show', 'class':'text-center', searchable: false},
         ],
         });
 </script>

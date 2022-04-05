@@ -51,12 +51,21 @@ class IngresosController extends Controller
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
                 })
-                ->addColumn('edit', function ($movement) {
-                    return ($movement->status == 'CREATED')
-                    ? '<a class="dropdown-item" href="' . route('ingresos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-edit text-primary"></i> </a>'
-                    : '<a class="dropdown-item" href="' . route('ingresos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                ->addColumn('voucher', function ($movement) {
+                    $ruta = 'edit(' . $movement->id . ",'" . route('ingresos.editIngreso') . "')";
+                    return (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin')
+                    ? '<a href="javascript:void(0)" onclick="' . $ruta . '">' . $movement->voucher_number . '</a>'
+                    : $movement->voucher_number;
                 })
-                ->rawColumns(['origen', 'date', 'items', 'kgrs','edit'])
+                ->addColumn('edit', function ($movement) {
+                    return (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin')
+                    ? '<a href="' . route('ingresos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-edit text-primary"></i> </a>'
+                    : null;
+                })
+                ->addColumn('show', function ($movement) {
+                    return '<a href="' . route('ingresos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                })
+                ->rawColumns(['origen', 'date', 'items', 'kgrs', 'edit', 'voucher', 'show'])
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.index');
@@ -83,6 +92,30 @@ class IngresosController extends Controller
         return view('admin.movimientos.ingresos.edit', compact('movement', 'proveedor', 'productos', 'movimientos'));
     }
 
+    public function editIngreso(Request $request)
+    {
+        try {
+            $movement  = Movement::find($request->id);
+            $proveedor = Proveedor::find($movement->from);
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.movimientos.ingresos.insertByAjaxIngreso', compact('movement', 'proveedor'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function updateIngreso(Request $request)
+    {
+        try {
+            Movement::find($request->movement_id)->update($request->all());
+            return new JsonResponse(['msj' => 'Actualización correcta !', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
     public function editProduct(Request $request)
     {
         try {
@@ -101,7 +134,7 @@ class IngresosController extends Controller
     {
         try {
             $data['unit_package'] = implode('|', $request->unit_package);
-            $data['unit_weight'] = $request->unit_weight;
+            $data['unit_weight']  = $request->unit_weight;
             Product::find($request->product_id)->update($data);
             return new JsonResponse(['msj' => 'Actualización correcta !', 'type' => 'success']);
         } catch (\Exception $e) {
