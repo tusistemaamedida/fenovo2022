@@ -226,11 +226,16 @@ class ProductController extends Controller
             } else {
                 if (isset($data['fecha_desde'], $data['fecha_hasta'])) {
                     $data['p2tienda'] = $data['p1tienda'];
-                    SessionOferta::updateOrCreate([
-                        'product_id'  => $data['product_id'],
-                        'fecha_desde' => $data['fecha_desde'],
-                        'fecha_hasta' => $data['fecha_hasta'],
-                    ], $data);
+                    if ($data['oferta_id'] > 0) {
+                        SessionOferta::updateOrCreate(['product_id'  => $data['product_id'],], $data);
+                    }
+                    else{
+                        SessionOferta::updateOrCreate([
+                            'product_id'  => $data['product_id'],
+                            'fecha_desde' => $data['fecha_desde'],
+                            'fecha_hasta' => $data['fecha_hasta'],
+                        ], $data);
+                    }
 
                     $tipo = ' de ofertas ';
                 } elseif (!is_null($data['fecha_actualizacion']) && $data['fecha_actualizacion_activa'] == 0) {
