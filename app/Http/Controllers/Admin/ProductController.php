@@ -15,7 +15,6 @@ use App\Mail\NovedadMail;
 use App\Models\Movement;
 
 use App\Models\MovementProduct;
-use App\Models\OfertaStore;
 use App\Models\Product;
 use App\Models\ProductDescuento;
 use App\Models\ProductPrice;
@@ -29,11 +28,9 @@ use App\Repositories\ProductPriceRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProveedorRepository;
 use App\Repositories\SenasaDefinitionRepository;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -113,6 +110,9 @@ class ProductController extends Controller
         try {
             $data                 = $request->all();
             $data['unit_package'] = implode('|', $data['unit_package']);
+            $data['online_sale']  = isset($request->online_sale) ? 1 : 0;
+            $data['iibb']         = isset($request->iibb) ? 1 : 0;
+            $data['active']       = isset($request->active) ? 1 : 0;
             $preciosCalculados    = $this->calcularPrecios($request);
             $data                 = array_merge($data, $preciosCalculados);
             $producto_nuevo       = $this->productRepository->create($data);
@@ -193,6 +193,9 @@ class ProductController extends Controller
     {
         try {
             $data                 = $request->except('_token');
+            $data['online_sale']  = isset($request->online_sale) ? 1 : 0;
+            $data['iibb']         = isset($request->iibb) ? 1 : 0;
+            $data['active']       = isset($request->active) ? 1 : 0;
             $product_id           = $data['product_id'];
             $data['unit_package'] = implode('|', $data['unit_package']);
             $producto_actualizado = $this->productRepository->fill($product_id, $data);
@@ -227,9 +230,8 @@ class ProductController extends Controller
                 if (isset($data['fecha_desde'], $data['fecha_hasta'])) {
                     $data['p2tienda'] = $data['p1tienda'];
                     if ($data['oferta_id'] > 0) {
-                        SessionOferta::updateOrCreate(['product_id'  => $data['product_id'],], $data);
-                    }
-                    else{
+                        SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
+                    } else {
                         SessionOferta::updateOrCreate([
                             'product_id'  => $data['product_id'],
                             'fecha_desde' => $data['fecha_desde'],
@@ -419,87 +421,87 @@ class ProductController extends Controller
     public function importFromCsv()
     {
         try {
-           /*  $filepath = public_path('/imports/FROZEN.TXT');
-            $file     = fopen($filepath, 'r');
+            /*  $filepath = public_path('/imports/FROZEN.TXT');
+             $file     = fopen($filepath, 'r');
 
-            $importData_arr = [];
-            $i              = 0;
+             $importData_arr = [];
+             $i              = 0;
 
-            while (($filedata = fgetcsv($file, 0, ',')) !== false) {
-                $num = count($filedata);
-                for ($c = 0; $c < $num; $c++) {
-                    $importData_arr[$i][] = $filedata[$c];
-                }
-                $i++;
-            }
+             while (($filedata = fgetcsv($file, 0, ',')) !== false) {
+                 $num = count($filedata);
+                 for ($c = 0; $c < $num; $c++) {
+                     $importData_arr[$i][] = $filedata[$c];
+                 }
+                 $i++;
+             }
 
-            fclose($file);
-            foreach ($importData_arr as $importData) {
-                $data       = [];
-                $proveedor  = $this->proveedorRepository->getByName($importData[2]);
-                $insertData = [
-                    'cod_fenovo'    => $importData[0],
-                    'cod_proveedor' => $importData[1],
-                    'name'          => $importData[3],
-                    'proveedor_id'  => $proveedor->id,
-                    'categorie_id'  => 1,
-                    'barcode'       => $importData[16],
-                    'unit_type'     => $importData[18],
-                    'unit_weight'   => $importData[19],
-                    'unit_package'  => $importData[17],
-                    'package_palet' => $importData[22],
-                    'package_row'   => $importData[23],
-                    'cod_descuento' => ($importData[24] != '' && !is_null($importData[24])) ? $importData[24] : null,
-                ];
-                $this->productImport = $insertData;
-                $producto_nuevo      = $this->productRepository->create($insertData);
+             fclose($file);
+             foreach ($importData_arr as $importData) {
+                 $data       = [];
+                 $proveedor  = $this->proveedorRepository->getByName($importData[2]);
+                 $insertData = [
+                     'cod_fenovo'    => $importData[0],
+                     'cod_proveedor' => $importData[1],
+                     'name'          => $importData[3],
+                     'proveedor_id'  => $proveedor->id,
+                     'categorie_id'  => 1,
+                     'barcode'       => $importData[16],
+                     'unit_type'     => $importData[18],
+                     'unit_weight'   => $importData[19],
+                     'unit_package'  => $importData[17],
+                     'package_palet' => $importData[22],
+                     'package_row'   => $importData[23],
+                     'cod_descuento' => ($importData[24] != '' && !is_null($importData[24])) ? $importData[24] : null,
+                 ];
+                 $this->productImport = $insertData;
+                 $producto_nuevo      = $this->productRepository->create($insertData);
 
-                $importData[8]  = ((int)$importData[8] == 0) ? 1 : $importData[8];
-                $importData[12] = ((int)$importData[12] == 0) ? 1 : $importData[12];
-                $importData[15] = ((int)$importData[15] == 0) ? 1 : $importData[15];
-                $importData[21] = ((int)$importData[21] == 0) ? 1 : $importData[21];
+                 $importData[8]  = ((int)$importData[8] == 0) ? 1 : $importData[8];
+                 $importData[12] = ((int)$importData[12] == 0) ? 1 : $importData[12];
+                 $importData[15] = ((int)$importData[15] == 0) ? 1 : $importData[15];
+                 $importData[21] = ((int)$importData[21] == 0) ? 1 : $importData[21];
 
-                $plist1 = round($importData[8] * ($importData[15] / 100 + 1) * (10 / 100 + 1), 2);
-                $plist2 = round($importData[8] * ($importData[15] / 100 + 1) * (20 / 100 + 1), 2);
+                 $plist1 = round($importData[8] * ($importData[15] / 100 + 1) * (10 / 100 + 1), 2);
+                 $plist2 = round($importData[8] * ($importData[15] / 100 + 1) * (20 / 100 + 1), 2);
 
-                $plist1 = ((int)$plist1 == 0) ? 1 : $plist1;
-                $plist2 = ((int)$plist2 == 0) ? 1 : $plist2;
+                 $plist1 = ((int)$plist1 == 0) ? 1 : $plist1;
+                 $plist2 = ((int)$plist2 == 0) ? 1 : $plist2;
 
-                $data = [
-                    'product_id'        => $producto_nuevo->id,
-                    'plistproveedor'    => $importData[4],
-                    'descproveedor'     => $importData[5],
-                    'costfenovo'        => $importData[6],
-                    'mupfenovo'         => $importData[7],
-                    'tasiva'            => $importData[15],
-                    'plist0neto'        => $importData[8],
-                    'plist0iva'         => $importData[8] * ($importData[15] / 100 + 1),
-                    'contribution_fund' => 0.5,
+                 $data = [
+                     'product_id'        => $producto_nuevo->id,
+                     'plistproveedor'    => $importData[4],
+                     'descproveedor'     => $importData[5],
+                     'costfenovo'        => $importData[6],
+                     'mupfenovo'         => $importData[7],
+                     'tasiva'            => $importData[15],
+                     'plist0neto'        => $importData[8],
+                     'plist0iva'         => $importData[8] * ($importData[15] / 100 + 1),
+                     'contribution_fund' => 0.5,
 
-                    'p1tienda' => $importData[10],
-                    'mup1'     => $importData[9],
-                    'mupp1may' => $importData[11],
-                    'descp1'   => $importData[14],
-                    'p1may'    => $importData[12],
-                    'muplist1' => 10,
-                    'muplist2' => 20,
+                     'p1tienda' => $importData[10],
+                     'mup1'     => $importData[9],
+                     'mupp1may' => $importData[11],
+                     'descp1'   => $importData[14],
+                     'p1may'    => $importData[12],
+                     'muplist1' => 10,
+                     'muplist2' => 20,
 
-                    'plist1'    => $plist1,
-                    'plist2'    => $plist2,
-                    'comlista1' => round((($plist1 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist1, 2),
-                    'comlista2' => round((($plist2 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist2, 2),
+                     'plist1'    => $plist1,
+                     'plist2'    => $plist2,
+                     'comlista1' => round((($plist1 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist1, 2),
+                     'comlista2' => round((($plist2 - $importData[8] * ($importData[15] / 100 + 1)) / ($importData[15] / 100 + 1) * 100) / $plist2, 2),
 
-                    'p2tienda' => $importData[21],
-                    'mup2'     => $importData[20],
-                    'p2may'    => $importData[12],
-                    'descp2'   => abs((($importData[12] - $importData[21]) * 100) / $importData[21]),
-                    'mupp2may' => round(($importData[12] / ($importData[8] * ($importData[15] / 100 + 1)) - 1) * 100, 2),
+                     'p2tienda' => $importData[21],
+                     'mup2'     => $importData[20],
+                     'p2may'    => $importData[12],
+                     'descp2'   => abs((($importData[12] - $importData[21]) * 100) / $importData[21]),
+                     'mupp2may' => round(($importData[12] / ($importData[8] * ($importData[15] / 100 + 1)) - 1) * 100, 2),
 
-                    'cantmay1' => $importData[13],
-                    'cantmay2' => $importData[13],
-                ];
-                $this->productPriceRepository->create($data);
-            } */
+                     'cantmay1' => $importData[13],
+                     'cantmay2' => $importData[13],
+                 ];
+                 $this->productPriceRepository->create($data);
+             } */
 
             $filepath = public_path('/imports/ST.TXT');
             $file     = fopen($filepath, 'r');

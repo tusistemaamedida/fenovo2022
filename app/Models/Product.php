@@ -27,6 +27,7 @@ class Product extends Model
         'categorie_id'     => 'int',
         'type_id'          => 'int',
         'senasa_id'        => 'int',
+        'iibb'             => 'int',
         'active'           => 'int',
     ];
 
@@ -68,6 +69,7 @@ class Product extends Model
         'categorie_id',
         'cod_descuento',
         'senasa_id',
+        'iibb',
         'active',
     ];
 
