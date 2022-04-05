@@ -189,7 +189,7 @@ class ProductController extends Controller
         }
     }
 
-    public function update(UpdateProduct $request)
+    public function update(CalculatePrices $request)
     {
         try {
             $data                 = $request->except('_token');

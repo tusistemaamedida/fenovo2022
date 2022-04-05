@@ -19,14 +19,14 @@ class CalculatePrices extends FormRequest
     public function rules(){
         return [
             'plistproveedor'=> 'required|numeric',
-            'descproveedor' => 'nullable|numeric|max:99.9',
-            'mupfenovo'     => 'nullable|numeric|max:99.9',
-            'contribution_fund' => 'nullable|numeric|max:99.9',
+            'descproveedor' => 'nullable|numeric|max:100',
+            'mupfenovo'     => 'nullable|numeric|max:100',
+            'contribution_fund' => 'nullable|numeric|max:100',
             'tasiva'    => 'nullable|numeric',
-            'muplist2'  => 'nullable|numeric|max:99.9',
-            'muplist2'  => 'nullable|numeric|max:99.9',
+            'muplist2'  => 'nullable|numeric|max:100',
+            'muplist2'  => 'nullable|numeric|max:100',
             'p1tienda'  => 'nullable|numeric',
-            'descp1'    => 'nullable|numeric|max:99.9',
+            'descp1'    => 'nullable|numeric|max:100',
             'p2tienda'  => 'nullable|numeric',
             'descp2'    => 'nullable|numeric',
         ];

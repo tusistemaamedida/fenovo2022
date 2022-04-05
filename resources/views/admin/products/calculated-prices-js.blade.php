@@ -23,55 +23,67 @@
         }
     }
 
-    jQuery("#plistproveedor").keyup(function(){
-        calculatePrices()
+    jQuery("#plistproveedor").keypres(function(){
+        let validate = 0;
+        calculatePrices(validate)
     });
 
-    jQuery("#descproveedor").keyup(function(){
-        calculatePrices()
+    jQuery("#descproveedor").keypres(function(){
+        let validate = 0;
+        calculatePrices(validate)
     });
 
-    jQuery("#mupfenovo").keyup(function(){
-        calculatePrices()
+    jQuery("#mupfenovo").keypres(function(){
+        let validate = 0;
+        calculatePrices(validate)
     });
 
-    jQuery("#contribution_fund").keyup(function(){
-        calculatePrices()
+    jQuery("#contribution_fund").keypres(function(){
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#descproveedor").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#mupfenovo").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#contribution_fund").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#tasiva").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
-    jQuery("#muplist1").keyup(function(){
-        calculatePrices()
+    jQuery("#muplist1").keypres(function(){
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#muplist1").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
-    jQuery("#muplist2").keyup(function(){
-        calculatePrices()
+    jQuery("#muplist2").keypres(function(){
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#muplist2").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
-    jQuery("#p1tienda").keyup(function(){
+    jQuery("#p1tienda").keypres(function(){
         let validate = 0;
         calculatePrices(validate)
     });
@@ -81,15 +93,17 @@
         calculatePrices(validate)
     });
 
-    jQuery("#descp1").keyup(function(){
-        calculatePrices()
+    jQuery("#descp1").keypres(function(){
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#descp1").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
-    jQuery("#p2tienda").keyup(function(){
+    jQuery("#p2tienda").keypres(function(){
         let validate = 0;
         calculatePrices(validate)
     });
@@ -99,12 +113,14 @@
         calculatePrices(validate)
     });
 
-    jQuery("#descp2").keyup(function(){
-        calculatePrices()
+    jQuery("#descp2").keypres(function(){
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#descp2").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#cod_descuento").change(function(){
