@@ -35,3 +35,5 @@ Route::get('productos-presentaciones/exportar', [ProductController::class, 'expo
 Route::get('productos-descuentos/exportar', [ProductController::class, 'exportDescuentosToCsv'])->name('products.exportDescuentosCSV');
 
 Route::get('productos/importar/movimientos', [ProductController::class, 'importProductsMovement'])->name('products.importMovement');
+Route::get('producto/ajsute-stock', [ProductController::class, 'getDataStock'])->name('getData.stock');
+Route::post('producto/ajsutar-stock', [ProductController::class, 'ajustarStock'])->name('ajustar.stock');

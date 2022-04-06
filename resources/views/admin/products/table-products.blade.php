@@ -9,8 +9,9 @@
                     <th>Tipo senasa</th>
                     <th>Proveedor</th>
                     @can('products.create')
-                    <th></th>
-                    <th></th>
+                    <th>Ajust Stock</th>
+                    <th>Editar</th>
+                    <th>Borrar</th>
                     @endcan
                 </tr>
             </thead>

@@ -82,6 +82,10 @@ class ProductController extends Controller
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
                 })
+                ->addColumn('ajuste', function ($producto) {
+                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
+                })
                 ->addColumn('editar', function ($producto) {
                     return '<a class="btn-link" title="Editar" href="' . route('product.edit', ['id' => $producto->id]) . '"><i class="fa fa-edit"></i></a>';
                 })
@@ -89,7 +93,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'senasa', 'borrar', 'editar'])
+                ->rawColumns(['stock', 'senasa', 'borrar', 'editar','ajuste'])
                 ->make(true);
         }
 
@@ -125,6 +129,60 @@ class ProductController extends Controller
             return new JsonResponse(['type' => 'success', 'msj' => 'Producto agregado correctamente!']);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
+        }
+    }
+
+    public function getDataStock(Request $request){
+        try {
+            $product = $this->productRepository->getByIdWith($request->id);
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.products.insertByAjax', compact('product'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function ajustarStock(Request $request){
+        try {
+            $insert_data = [];
+            $insert_data['type']           = 'AJUSTE';
+            $insert_data['to']             = Auth::user()->store_active;
+            $insert_data['date']           = now();
+            $insert_data['from']           = Auth::user()->store_active;
+            $insert_data['status']         = 'FINISHED';
+            $insert_data['voucher_number'] = time();
+            $insert_data['flete']          = 0;
+
+            $latest   = MovementProduct::all()->where('entidad_id', Auth::user()->store_active)
+                                            ->where('entidad_tipo', 'S')
+                                            ->where('product_id', $request->product_id)
+                                            ->sortByDesc('id')
+                                            ->first()->toArray();
+            $nuevo_stock = $request->nuevo_stock;
+            $balance     = $latest['balance'];
+            $entry = $egress = 0;
+
+            if($balance<$nuevo_stock){
+                $entry = $nuevo_stock - $balance;
+            }elseif($balance>$nuevo_stock){
+                $egress = $balance - $nuevo_stock;
+            }
+
+            if($entry >0 || $egress >0){
+                $movement = Movement::create($insert_data);
+                $latest['balance'] = $nuevo_stock;
+                $latest['entry'] = $entry;
+                $latest['egress'] = $egress;
+                $latest['movement_id'] = $movement->id;
+                MovementProduct::create($latest);
+            }
+
+            return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
+
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 

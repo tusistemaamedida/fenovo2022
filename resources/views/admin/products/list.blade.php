@@ -48,6 +48,8 @@
         </div>
     </div>
 </div>
+
+@include('admin.products.modal-ajuste')
 @endsection
 
 @section('js')
@@ -64,11 +66,64 @@
             {data: 'senasa', orderable: false, searchable: false},
             {data: 'proveedor', orderable: false},
             @can('products.create')
+            {data: 'ajuste', class:'text-center', orderable: false, searchable: false},
             {data: 'editar', class:'text-center', orderable: false, searchable: false},
             {data: 'borrar', class:'text-center', orderable: false, searchable: false},
             @endcan
         ]
     });
+
+    const getDataStockProduct = (id, route) => {
+        var elements = document.querySelectorAll('.is-invalid');
+        jQuery.ajax({
+            url: route,
+            type: 'GET',
+            data: { id },
+            success: function (data) {
+                if (data['type'] == 'success') {
+                    jQuery("#insertByAjax").html(data['html']);
+                    jQuery(".btn-guardar").hide()
+                    jQuery(".btn-actualizar").show()
+                    jQuery('.editpopup').addClass('offcanvas-on');
+                } else {
+                    toastr.error(data['html'], 'Verifique');
+                }
+            }
+        });
+    }
+
+    const cerrarModal = () =>{
+        jQuery('.editpopup').removeClass('offcanvas-on');
+    }
+
+    const ajustarStock = () =>{
+        var url ="{{ route('ajustar.stock') }}";
+        jQuery.ajax({
+            url:url,
+            type:'POST',
+            data:jQuery("#ajuste-stock").serialize(),
+            beforeSend: function() {
+                jQuery('#loader').removeClass('hidden');
+            },
+            success:function(data){
+                if (data['type'] != 'success') {
+                    toastr.error(data['msj'], 'Verifique');
+                }else{
+                    jQuery('.editpopup').removeClass('offcanvas-on');
+                    toastr.success(data['msj'], 'Exito');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1200);
+                }
+                jQuery('#loader').addClass('hidden');
+            },
+            error: function (data) {
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
+            }
+        });
+    }
 </script>
 
 @endsection
