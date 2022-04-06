@@ -10,17 +10,18 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
-class FleteController extends Controller
+class FleteSettingController extends Controller
 {
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $flete = FleteSetting::all()->orderBy('hasta', 'asc')->get();
+            $flete = FleteSetting::orderBy('hasta', 'asc')->get();
 
             return Datatables::of($flete)
                 ->addIndexColumn()
                 ->addColumn('edit', function ($flete) {
-                    return '<a href="' . route('fletes.edit', ['id' => $flete->id]) . '"> <i class="fa fa-edit"></i> </a>';
+                    $ruta = 'edit(' . $flete->id . ",'" . route('fletes.edit') . "')";
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($flete) {
                     $flete = 'destroy(' . $flete->id . ",'" . route('fletes.destroy') . "')";
@@ -50,7 +51,7 @@ class FleteController extends Controller
         try {
             $data           = $request->except(['_token']);
             $data['active'] = 1;
-            $this->fleteRepository->create($data);
+            FleteSetting::create($data);
             return new JsonResponse([
                 'msj'  => 'Actualización correcta !',
                 'type' => 'success',
@@ -62,16 +63,31 @@ class FleteController extends Controller
 
     public function edit(Request $request)
     {
-        $flete = FleteSetting::find($request->id);
-        return view('admin.fletes.edit', compact('flete'));
+        try {
+            $flete = FleteSetting::find($request->id);
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.fletes.insertByAjax', compact('flete'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
     }
 
     public function update(Request $request)
     {
-        $data           = $request->all();
-        $data['active'] = ($request->has('active')) ? 1 : 0;
-        FleteSetting::find($request->id)->update($data);
-        return redirect()->route('fletes.index');
+        try {
+            $data           = $request->all();
+            $data['active'] = ($request->has('active')) ? 1 : 0;
+            FleteSetting::find($request->flete_id)->update($data);
+            $flete = FleteSetting::find($request->flete_id);
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.fletes.insertByAjax', compact('flete'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
     }
 
     public function destroy(Request $request)
