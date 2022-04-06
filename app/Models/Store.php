@@ -6,7 +6,6 @@
 
 namespace App\Models;
 
-use App\Repositories\EnumRepository;
 use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
@@ -21,6 +20,7 @@ class Store extends Model
         'lat'                 => 'float',
         'lon'                 => 'float',
         'delivery_percentage' => 'float',
+        'delivery_km'         => 'int',
         'stock_capacity'      => 'int',
         'online_sale'         => 'int',
         'active'              => 'int',
@@ -45,6 +45,7 @@ class Store extends Model
         'lat',
         'lon',
         'delivery_percentage',
+        'delivery_km',
         'stock_capacity',
         'online_sale',
         'active',
