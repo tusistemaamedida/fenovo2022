@@ -38,6 +38,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/transportistas.php';
         require __DIR__ . '/admin/vehiculos.php';
         require __DIR__ . '/admin/rutas.php';
+        require __DIR__ . '/admin/fletes.php';
         //
         require __DIR__ . '/admin/localidades.php';
     });

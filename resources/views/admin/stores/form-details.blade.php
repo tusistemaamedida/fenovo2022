@@ -94,16 +94,12 @@
         <input type="text" id="delivery_percentage" name="delivery_percentage" @if (isset($store)) value="{{$store->delivery_percentage}}" @else value="" @endif class="form-control">
     </div>
     <div class="col-xs-12 col-md-2">
-        <label class="text-dark">Capacidad</label>
-        <input type="text" id="stock_capacity" name="stock_capacity" @if (isset($store)) value="{{$store->stock_capacity}}" @else value="" @endif class="form-control">
+        <label class="text-dark">Km Flete</label>
+        <input type="text" id="delivery_km" name="delivery_km" @if (isset($store)) value="{{$store->delivery_km}}" @else value="" @endif class="form-control">
     </div>
     <div class="col-xs-12 col-md-2">
-        <fieldset>
-            <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" @if (isset($store) && $store->online_sale) checked="" @endif name="online_sale" id="online_sale" value='1'>
-                <label class="custom-control-label" for="online_sale">Vta OnLine</label>
-            </div>
-        </fieldset>
+        <label class="text-dark">Capacidad</label>
+        <input type="text" id="stock_capacity" name="stock_capacity" @if (isset($store)) value="{{$store->stock_capacity}}" @else value="" @endif class="form-control">
     </div>
 
 </div>
@@ -173,22 +169,29 @@
 </div>
 
 
-@if (isset($store))
-{!! Form::model($store, []) !!}
-<input type="hidden" name="store_id" value="{{$store->id}}" />
-
 <div class="row">
-    <div class="col-6">
-        <fieldset>
-            <label>
-                {{ Form::checkbox('active', $store->id ) }}
-                Activo
-            </label>
-        </fieldset>
-    </div>
-</div>
 
-@endif
+    @if (isset($store))   
+        <input type="hidden" name="store_id" value="{{$store->id}}" />
+    @endif
+
+    <div class="col-3">
+        <p>Activo :</p>
+        <div class="custom-control switch custom-switch custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="active" name="active" @if (isset($store) && $store->active) checked="" @elseif(isset($store) && !$store->active)) unchecked="" @else checked="" @endif value="1">
+            <label class="custom-control-label mr-1" for="active"></label>
+        </div>
+    </div>
+
+    <div class="col-3">
+        <p>Vta-OnLine:</p>
+        <div class="custom-control switch custom-switch custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="online_sale" name="online_sale" @if (isset($store) && $store->online_sale) checked="" @elseif((isset($store) && !$store->online_sale) ) unchecked="" @else checked="" @endif value="1">
+            <label class="custom-control-label mr-1" for="online_sale"></label>
+        </div>
+    </div>
+    
+</div>
 
 <div class="row mt-3">
     <div class="col-12 text-right">
