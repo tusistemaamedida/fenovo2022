@@ -28,6 +28,7 @@ class MovementProduct extends Model
         'product_id',
         'unit_package',
         'invoice',
+        'iibb',
         'bultos',
         'entry',
         'egress',

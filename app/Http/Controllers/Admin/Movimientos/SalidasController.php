@@ -414,13 +414,10 @@ class SalidasController extends Controller
             switch ($to_type) {
                 case 'DEVOLUCION':
                 case 'VENTA':
+                case 'TRASLADO':
                     //$ofertaStore = OfertaStore::where('store_id',$to)
                     $insert_data['unit_price'] = $prices->plist0neto;
                     $insert_data['tasiva']     = $prices->tasiva;
-                    break;
-                case 'TRASLADO':
-                    $insert_data['unit_price'] = 0;
-                    $insert_data['tasiva']     = 0;
                     break;
                 case 'DEVOLUCIONCLIENTE':
                 case 'VENTACLIENTE':
@@ -438,6 +435,7 @@ class SalidasController extends Controller
             $insert_data['list_id']    = $to_type . '_' . $to;
             $insert_data['store_id']   = Auth::user()->store_active;
             $insert_data['invoice']    = true;
+            $insert_data['iibb']       = $product->iibb;
             $insert_data['product_id'] = $product_id;
             for ($i = 0; $i < count($unidades); $i++) {
                 $unidad   = $unidades[$i];
@@ -502,6 +500,7 @@ class SalidasController extends Controller
                     'product_id'     => $product->product_id,
                     'unit_package'   => $product->unit_package, ], [
                         'invoice'    => $product->invoice,
+                        'iibb'       => $product->iibb,
                         'unit_price' => $product->unit_price,
                         'tasiva'     => $product->tasiva,
                         'entry'      => 0,

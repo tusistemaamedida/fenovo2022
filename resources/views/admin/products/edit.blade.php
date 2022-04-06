@@ -93,7 +93,7 @@
 
                                 @if (isset($product))
                                 <div class="col-12" style="float: right">
-                                    <button type="button" class="btn btn-primary" onclick="updateProduct('{{ route('product.update') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+                                    <button type="button" id="btn_product" disabled  class="btn btn-primary" onclick="updateProduct('{{ route('product.update') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
                                 </div>
                                 @endif
                             </form>
