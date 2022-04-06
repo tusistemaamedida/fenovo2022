@@ -123,56 +123,6 @@
                     </div>
                 </div>
 
-                <div class="card card-body gutter-b bg-white border-0">
-                    <div class="row mt-3 ml-3 mb-4 font-weight-bolder">
-                        <div class="col-12">
-                            Importar movimientos
-                        </div>
-                    </div>
-                    <div class="row m-2">
-                        <div class="col-3">
-                            <fieldset class="input-group form-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Desde</span>
-                                </div>
-                                <input type="date" name="movimientoDesde" id="movimientoDesde" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark" autofocus>
-                            </fieldset>
-                        </div>
-                        <div class="col-3">
-                            <fieldset class="input-group form-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Hasta</span>
-                                </div>
-                                <input type="date" name="movimientoHasta" id="movimientoHasta" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark">
-                            </fieldset>
-                        </div>
-                        <div class="col-2">
-                            <fieldset class="input-group form-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Tiendas</span>
-                                </div>
-                                <select class="rounded form-control bg-transparent" name="store" id="store">
-                                    <option value="">TODOS</option>
-                                    @foreach ($stores as $store)
-                                    <option value="{{$store->id}}">
-                                        {{$store->description }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </fieldset>
-                        </div>
-
-                        <div class="col-2">
-                            <a href="javascript:void(0)" onclick="importMovimientos()"> <i class=" fa fa-file-import"></i> Importar</a>
-                        </div>
-
-                        <div class="col-2">
-
-                        </div>
-
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
@@ -203,14 +153,6 @@
         let url = "{{route('movement.printPDF', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
         window.location = url;
     }
-
-    const importMovimientos= ()=>{
-        desde = jQuery("#movimientoDesde").val();
-        hasta = jQuery("#movimientoHasta").val();
-        let url = "{{route('products.importMovement', '')}}"+"?desde="+desde+"&hasta="+hasta;
-        window.location = url;
-    }
-
 
     </script>
 
