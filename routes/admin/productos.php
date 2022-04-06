@@ -33,3 +33,5 @@ Route::get('productos/imprimir', [PrintController::class, 'printProductsPDF'])->
 Route::get('productos/exportar', [ProductController::class, 'exportProductsToCsv'])->name('products.exportCSV');
 Route::get('productos-presentaciones/exportar', [ProductController::class, 'exportPresentacionesToCsv'])->name('products.exportPresentacionesCSV');
 Route::get('productos-descuentos/exportar', [ProductController::class, 'exportDescuentosToCsv'])->name('products.exportDescuentosCSV');
+
+Route::get('productos/importar/movimientos', [ProductController::class, 'importProductsMovement'])->name('products.importMovement');

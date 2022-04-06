@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\MovementsViewExport;
 
 use App\Http\Controllers\Controller;
-use App\Models\ActualizacionPrecio;
 use App\Models\Movement;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
@@ -46,7 +45,8 @@ class PrintController extends Controller
     public function menuPrint(Request $request)
     {
         $tiposalidas = $this->enumRepository->getType('movimientos');
-        return view('admin.print.print', compact('tiposalidas'));
+        $stores      = $this->storeRepository->getActives();
+        return view('admin.print.print', compact('tiposalidas', 'stores'));
     }
 
     public function printMovimientosPDF(Request $request)
