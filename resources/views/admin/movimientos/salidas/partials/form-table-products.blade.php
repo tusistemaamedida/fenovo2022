@@ -100,6 +100,8 @@
                                     </tr>
                                 </tfoot>
                             </table>
+
+                            <input type="hidden" name="total_from_session" id="total_from_session" value="{{$subtotal +$total_iva}}">
                         </div>
                     </div>
 

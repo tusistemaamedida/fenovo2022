@@ -231,15 +231,17 @@
         var to_type = jQuery("#to_type").val();
         var to = jQuery("#to").val();
         var list_id = to_type+'_'+to;
-        var formData =  {list_id};
+        var total_from_session = jQuery("#total_from_session").val();
+        var formData =  {list_id,total_from_session};
         var url ="{{ route('get.flete.session.products') }}";
+
         jQuery.ajax({
             url:url,
             type:'GET',
             data:formData,
             success:function(data){
-                jQuery("#montoFlete").html(data['flete']);
-                let flete = parseFloat(data['flete']/100);
+                jQuery("#porcentajeFlete").html(data['porcentaje']);
+                let flete = parseFloat(data['porcentaje']/100);
                 jQuery("#flete").val(parseFloat(jQuery("#subTotal").val()*flete).toFixed(2));
             },
             error: function (data) {
