@@ -111,7 +111,7 @@
             <div class="col-md-4">
                 <label class="text-body">Markup Fenovo</label>
                 <fieldset class="input-group form-group mb-3">
-                    <input type="number" step="0.50" min="0" @if (isset($product)) value="{{$product->product_price->mupfenovo}}" @else value="16" @endif name="mupfenovo" id="mupfenovo" class="form-control border-dark">
+                    <input type="number" step="0.50" min="0" max="100" @if (isset($product)) value="{{$product->product_price->mupfenovo}}" @else value="16" @endif name="mupfenovo" id="mupfenovo" class="form-control border-dark">
                     <div class="input-group-prepend">
                         <span class="input-group-text">%</span>
                     </div>
@@ -310,7 +310,7 @@
                 </fieldset>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-4">
                 <label class="text-body">Desc.May</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="number" step="0.50" min="0" name="descp1" id="descp1" @if (isset($product)) value="{{$product->product_price->descp1}}" @else value="0" @endif class="form-control border-dark">
@@ -319,7 +319,7 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <label class="text-body">Precio 1 mayorista</label>
                 <fieldset class="input-group form-group mb-3">
                     <div class="input-group-prepend">
@@ -333,7 +333,7 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <label class="text-body">Markup</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="number" step="0.50" min="0" name="mupp1may" id="mupp1may" @if (isset($product)) value="{{$product->product_price->mupp1may}}" @else value="0" @endif disabled class="form-control border-dark">
@@ -375,7 +375,7 @@
                 </fieldset>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-4">
                 <label class="text-body">Desc.May</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="number" step="0.50" min="0" name="descp2" id="descp2" readonly @if (isset($product)) value="{{$product->product_price->descp2}}" @else value="0" @endif class="form-control border-dark">
@@ -384,7 +384,7 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <label class="text-body">Precio 2 mayorista</label>
                 <fieldset class="input-group form-group mb-3">
                     <div class="input-group-prepend">
@@ -398,7 +398,7 @@
                     </div>
                 </fieldset>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <label class="text-body">Markup</label>
                 <fieldset class="input-group form-group mb-3">
                     <input type="number" step="0.50" min="0" name="mupp2may" id="mupp2may" @if (isset($product)) value="{{$product->product_price->mupp2may}}" @else value="0" @endif disabled class="form-control border-dark">

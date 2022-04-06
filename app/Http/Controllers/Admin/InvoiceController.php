@@ -170,7 +170,7 @@ class InvoiceController extends Controller
           default:
             return "0%";
         }
-      }
+    }
 
     private function createVoucher($movement){
         $data_invoice = $this->dataInvoice($movement);
@@ -228,10 +228,11 @@ class InvoiceController extends Controller
 
                 $importe = $this->importes($movement);
                 $importe_gravado = $importe['gravado'];
+                $importe_total_iibb = $importe['total_iibb'];
                 $importe_exento_iva = 0;
                 $importe_iva = $importe['iva'];
 
-                $importe_no_gravado = ($iibb>0)?($importe_gravado * $iibb /100):0;
+                $importe_no_gravado = ($iibb>0)?($importe_total_iibb * $iibb /100):0;
 
                 $dataAfip =[
                     'CantReg' 	=>  1, // Cantidad de facturas a registrar
@@ -290,6 +291,7 @@ class InvoiceController extends Controller
         $products = $movement->movement_salida_products;
         $gravado = 0;
         $iva = 0;
+        $total_iibb = 0;
         $ivas = [];
 
         foreach ($products as $product) {
@@ -299,6 +301,7 @@ class InvoiceController extends Controller
                 $subtotal = $product->bultos * $product->unit_price * $product->unit_package; // cantidad de salida por el precio del producto
                 $iva_price = ($subtotal * $tasiva)/100; // iva del subtotal del precio
 
+                if($product->iibb) $total_iibb += $subtotal;
                 $gravado += $subtotal;
                 $iva += $iva_price;
 
@@ -330,8 +333,9 @@ class InvoiceController extends Controller
         //dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
         if(!is_null($movement->flete ) && $movement->flete > 0){
             $insert_new = true;
-            $iva += ($movement->flete * 0.21);
-            $gravado += $movement->flete;
+            $iva        += ($movement->flete * 0.21);
+            $gravado    += $movement->flete;
+            $total_iibb += $movement->flete;
 
             for ($cont=0; $cont <count($ivas) ; $cont++) {
                 $alicuota = $ivas[$cont];
@@ -350,7 +354,7 @@ class InvoiceController extends Controller
             }
         }
         //dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
-        return ['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas];
+        return ['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas, 'total_iibb' => $total_iibb];
     }
 
     private function get_alicuota_id($iva){
