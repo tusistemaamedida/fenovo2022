@@ -10,7 +10,7 @@ use App\Http\Requests\Products\AddProduct;
 
 use App\Http\Requests\Products\CalculatePrices;
 use App\Http\Requests\Products\UpdateProduct;
-
+use App\Imports\movementImport;
 use App\Mail\NovedadMail;
 use App\Models\Movement;
 
@@ -640,9 +640,10 @@ class ProductController extends Controller
         return Excel::download(new PresentacionesViewExport($request), 'bultos.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
-    public function importProductsMovement()
+    public function importProductsMovement(Request $request)
     {
-        return 'import products';
+        Excel::import(new movementImport(), $request->file('archivoMov')->store('temp'));
+        return back();
     }
 
     private function descp2($p2may, $p2tienda)
