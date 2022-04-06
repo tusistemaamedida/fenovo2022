@@ -582,6 +582,11 @@ class ProductController extends Controller
         return Excel::download(new PresentacionesViewExport($request), 'bultos.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
+    public function importProductsMovement()
+    {
+        return 'import products';
+    }
+
     private function descp2($p2may, $p2tienda)
     {
         try {
