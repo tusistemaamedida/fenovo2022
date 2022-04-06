@@ -290,9 +290,14 @@ class SalidasController extends Controller
         try {
             $total = $request->input('total_from_session');
             $km = $this->sessionProductRepository->getFlete($request->input('list_id'));
-            $fleteSetting = FleteSetting::where('hasta','>=',$km)->orderBy('hasta','ASC')->first();
-            $porcentaje = $fleteSetting->porcentaje;
-            $flete = round((($porcentaje * $total)/100),2);
+            if($km){
+                $fleteSetting = FleteSetting::where('hasta','>=',$km)->orderBy('hasta','ASC')->first();
+                $porcentaje = $fleteSetting->porcentaje;
+                $flete = round((($porcentaje * $total)/100),2);
+            }else{
+                $flete = 0;
+                $porcentaje = 0;
+            }
             return new JsonResponse([
                 'flete' => $flete,
                 'porcentaje' => $porcentaje
