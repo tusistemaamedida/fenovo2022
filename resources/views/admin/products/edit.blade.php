@@ -114,6 +114,7 @@
         jQuery("#unit_package").select2({
             tags: true
         })
+        validateBtn();
     });
 
     function updateProduct(route){
