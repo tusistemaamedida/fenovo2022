@@ -16,7 +16,7 @@
         <table class="table table-borderless">
             <tr>
                 <td>Consulta x fechas </td>
-                <td class=" text-center">Desde <strong> {{ date('d-m-Y',strtotime($desde)) }} </strong> - hasta <strong> {{ date('d-m-Y',strtotime($desde)) }} </strong> </td>
+                <td class=" text-center">Desde <strong> {{ date('d-m-Y',strtotime($desde)) }} </strong> - hasta <strong> {{ date('d-m-Y',strtotime($hasta)) }} </strong> </td>
                 <td class=" text-right">Página :: <strong> <span class="pagenum"></span> </strong> </td>
             </tr>
         </table>
