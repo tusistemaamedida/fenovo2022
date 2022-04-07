@@ -54,9 +54,9 @@ class SalidasController extends Controller
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
+                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('date');
             } else {
-                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('created_at', 'DESC')->get();
+                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->get();
             }
             return DataTables::of($movement)
                 ->addIndexColumn()

@@ -58,8 +58,10 @@ class PrintController extends Controller
         $salidas = Movement::query()
             ->whereIn('type', $arrTypes)
             ->orderBy('date', 'ASC')
-            ->whereBetween(DB::raw('DATE(created_at)'), [$request->desde, $request->hasta])
+            ->whereBetween(DB::raw('DATE(date)'), [$request->desde, $request->hasta])
             ->get();
+
+
 
         $pdf = PDF::loadView('admin.print.movimientos.entreFechas', compact('salidas', 'desde', 'hasta'));
         return $pdf->stream('salidas_fechas.pdf');
