@@ -51,17 +51,28 @@ class PrintController extends Controller
 
     public function printMovimientosPDF(Request $request)
     {
-        $desde    = $request->desde;
-        $hasta    = $request->hasta;
-        $arrTypes = ($request->tipo) ? [$request->tipo] : ['COMPRA', 'VENTA', 'VENTACLIENTE', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $desde = $request->desde;
+        $hasta = $request->hasta;
+
+        switch ($request->tipo) {
+            case 'ENTRADA':
+                $arrTypes = ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+                break;
+            case 'SALIDA':
+                $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+                break;
+            case 'TODOS':
+                $arrTypes = ['COMPRA', 'VENTA', 'VENTACLIENTE', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+                break;
+        }
 
         $salidas = Movement::query()
             ->whereIn('type', $arrTypes)
-            ->orderBy('created_at', 'ASC')
-            ->whereBetween(DB::raw('DATE(created_at)'), [$request->desde, $request->hasta])
+            ->orderBy('date', 'ASC')
+            ->whereBetween(DB::raw('DATE(date)'), [$request->desde, $request->hasta])
             ->get();
 
-        $pdf = PDF::loadView('admin.print.entreFechas', compact('salidas', 'desde', 'hasta'));
+        $pdf = PDF::loadView('admin.print.movimientos.entreFechas', compact('salidas', 'desde', 'hasta'));
         return $pdf->stream('salidas_fechas.pdf');
     }
 

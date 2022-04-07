@@ -50,12 +50,9 @@
                                     <span class="input-group-text">Movim</span>
                                 </div>
                                 <select class="rounded form-control bg-transparent" name="tiposalida" id="tiposalida">
-                                    <option value="">TODOS</option>
-                                    @foreach ($tiposalidas as $tiposalida)
-                                    <option value="{{$tiposalida['type']}}">
-                                        {{$tiposalida['type'] }}
-                                    </option>
-                                    @endforeach
+                                    <option value="TODOS">TODOS</option>                                    
+                                    <option value="ENTRADA">ENTRADA</option>
+                                    <option value="SALIDA">SALIDA</option>                                    
                                 </select>
                             </fieldset>
                         </div>
