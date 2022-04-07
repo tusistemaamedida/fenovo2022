@@ -23,7 +23,17 @@ class MovementsViewExport implements FromView
 
     public function view(): View
     {
-        $arrTypes  = ($this->request->tipo) ? [$this->request->tipo] : ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE', 'VENTA', 'VENTACLIENTE', 'TRASLADO'];
+        switch ($this->request->tipo) {
+            case 'ENTRADA':
+                $arrTypes = ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+                break;
+            case 'SALIDA':
+                $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+                break;
+            case 'TODOS':
+                $arrTypes = ['COMPRA', 'VENTA', 'VENTACLIENTE', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+                break;
+        }
         $movements = Movement::whereIn('type', $arrTypes)
             ->whereBetween(DB::raw('DATE(date)'), [$this->request->desde, $this->request->hasta])
             ->orderBy('id', 'ASC')->get();
@@ -33,7 +43,7 @@ class MovementsViewExport implements FromView
             foreach ($movement->movement_products as $movement_product) {
                 if (!($movement_product->entidad_tipo == 'C')) {
                     $objMovement              = new stdClass();
-                    $objMovement->id          = 'R'.str_pad($movement->id, 8, '0', STR_PAD_LEFT);;
+                    $objMovement->id          = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
                     $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
                     $objMovement->tipo        = ($movement_product->egress > 0) ? 'S' : 'E';
                     $objMovement->codtienda   = DB::table('stores')->where('id', $movement_product->entidad_id)->select('cod_fenovo')->pluck('cod_fenovo')->first();
