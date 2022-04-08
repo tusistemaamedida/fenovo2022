@@ -254,7 +254,7 @@
             </div>
 
             <div class="col-md-1">
-                <p>VTA-OLine:</p>
+                <p>Vta-OnLine:</p>
                 <div class="custom-control switch custom-switch custom-control-inline">
                     <input type="checkbox" class="custom-control-input" id="online_sale" name="online_sale" @if (isset($product) && $product->online_sale) checked="" @elseif((isset($product) && !$product->online_sale) ) unchecked="" @else checked="" @endif value="1">
                     <label class="custom-control-label mr-1" for="online_sale"></label>
@@ -280,9 +280,9 @@
 
 
             <div class="col-md-3">
-                <p>CATEGORIA SENASA</p>
+                <p>Categoria senasa</p>
                 <select class="js-example-basic-single js-states form-control bg-transparent" name="senasa_id">
-                    <option value="">SENASA</option>
+                    <option value="">seleccione ...</option>
                     @foreach ($senasaDefinitions as $senasaDefinition)
                     <option value="{{$senasaDefinition->id}}" @if (isset($product) && $product->senasa_id == $senasaDefinition->id) selected @endif
                         >{{$senasaDefinition->product_name}}</option>

@@ -159,9 +159,10 @@
                 <label class="text-body">Descuento</label>
                 <fieldset class="form-group mb-3">
                     <select class="form-control" disabled>
+                        <option value="">Seleccione un descuento </option>
                         @if (isset($product))
                             @foreach ($descuentos as $descuento)
-                                <option value="" @if (isset($product) && $product->cod_descuento == $descuento->codigo) selected @endif>
+                                <option value="{{$descuento->codigo }}" @if (isset($product) && $product->cod_descuento == $descuento->codigo) selected @endif>
                                     {{$descuento->descripcion}}
                                 </option>
                             @endforeach
