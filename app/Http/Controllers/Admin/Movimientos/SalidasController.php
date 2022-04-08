@@ -92,7 +92,7 @@ class SalidasController extends Controller
                             $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Generar factura"  href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
                         }
                     }
-                    $routeCreatePanama = route('print.panama',$movement->id);
+                    $routeCreatePanama = route('print.panama').'/'.$movement->id;
                     $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
                     $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Paper"  href="'.$routeCreatePanama.'" target="_blank"> <i class="fas fa-file"></i> </a>';
                     return $links;
