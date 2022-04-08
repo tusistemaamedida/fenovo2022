@@ -241,7 +241,7 @@
             data:formData,
             success:function(data){
                 jQuery("#porcentajeFlete").html(data['porcentaje']);
-                jQuery("#flete").val(parseFloat(*flete).toFixed(2));
+                jQuery("#flete").val(parseFloat(flete).toFixed(2));
             },
             error: function (data) {
             },
