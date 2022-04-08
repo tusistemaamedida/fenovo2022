@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="row m-2">
-                        <div class="col-3">
+                        <div class="col-2">
                             <fieldset class="input-group form-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Desde</span>
@@ -36,24 +36,12 @@
                                 <input type="date" name="salidaDesde" id="salidaDesde" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark" autofocus>
                             </fieldset>
                         </div>
-                        <div class="col-3">
+                        <div class="col-2">
                             <fieldset class="input-group form-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Hasta</span>
                                 </div>
                                 <input type="date" name="salidaHasta" id="salidaHasta" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark">
-                            </fieldset>
-                        </div>
-                        <div class="col-2">
-                            <fieldset class="input-group form-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Movim</span>
-                                </div>
-                                <select class="rounded form-control bg-transparent" name="tiposalida" id="tiposalida">
-                                    <option value="TODOS">TODOS</option>                                    
-                                    <option value="ENTRADA">ENTRADA</option>
-                                    <option value="SALIDA">SALIDA</option>                                    
-                                </select>
                             </fieldset>
                         </div>
 
@@ -63,6 +51,10 @@
 
                         <div class="col-2">
                             <a href="javascript:void(0)" onclick="exportarMovimientosCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
+                        </div>
+
+                        <div class="col-2">
+                
                         </div>
 
                     </div>
@@ -131,23 +123,21 @@
     <script>
         let desde;
         let hasta;
-        let tipo;
 
     const leerDatos = ()=>{
         desde = jQuery("#salidaDesde").val();
         hasta = jQuery("#salidaHasta").val();
-        tipo = jQuery("#tiposalida").val();
     }
 
     const exportarMovimientosCSV = ()=>{
         leerDatos();
-        let url = "{{route('movement.exportCSV', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
+        let url = "{{route('movement.exportCSV', '')}}"+"?desde="+desde+"&hasta="+hasta;
         window.location = url;
     }
 
     const printMovimientos= ()=>{
         leerDatos();
-        let url = "{{route('movement.printPDF', '')}}"+"?desde="+desde+"&hasta="+hasta+"&tipo="+tipo;
+        let url = "{{route('movement.printPDF', '')}}"+"?desde="+desde+"&hasta="+hasta;
         window.location = url;
     }
 

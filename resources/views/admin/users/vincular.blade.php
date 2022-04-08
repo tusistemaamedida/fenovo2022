@@ -37,7 +37,7 @@
 
                 @if ($loop->iteration % 8 == 0)
             </div>
-            <div class="col-4"> @endif
+            <div class="col-3"> @endif
                 @endforeach
             </div>
         </div>

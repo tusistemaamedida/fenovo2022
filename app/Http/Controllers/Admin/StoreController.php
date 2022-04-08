@@ -44,11 +44,11 @@ class StoreController extends Controller
                     return ($store->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
                 })
                 ->addColumn('edit', function ($store) {
-                    return '<a class="dropdown-item" href="' . route('stores.edit', ['id' => $store->id]) . '"> <i class="fa fa-edit"></i> </a>';
+                    return '<a href="' . route('stores.edit', ['id' => $store->id]) . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($store) {
                     $ruta = 'destroy(' . $store->id . ",'" . route('stores.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
                 ->rawColumns(['cod_fenovo', 'inactivo', 'edit', 'destroy'])
                 ->make(true);
