@@ -90,7 +90,7 @@ class PrintController extends Controller
                 }
             } else {
 
-                // Analizar los traslados
+                // Analizar las devoluciones
 
                 $tipo = ($movement->entry > 0) ? 'E' : 'S';
 

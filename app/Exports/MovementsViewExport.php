@@ -63,7 +63,7 @@ class MovementsViewExport implements FromView
                 }
             } else {
 
-                // Analizar los traslados
+                // Analizar las devoluciones
 
                 $tipo = ($movement->entry > 0) ? 'E' : 'S';
 
