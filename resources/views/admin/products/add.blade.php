@@ -62,6 +62,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-12" style="float: right">
                                     <button type="button" id="btn_product" class="btn btn-primary btn-guardar" onclick="store('{{ route('product.store') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
                                 </div>

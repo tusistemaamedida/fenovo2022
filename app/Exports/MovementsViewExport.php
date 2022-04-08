@@ -34,6 +34,7 @@ class MovementsViewExport implements FromView
                 $arrTypes = ['COMPRA', 'VENTA', 'VENTACLIENTE', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
                 break;
         }
+
         $movements = Movement::whereIn('type', $arrTypes)
             ->whereBetween(DB::raw('DATE(date)'), [$this->request->desde, $this->request->hasta])
             ->orderBy('id', 'ASC')->get();
@@ -42,14 +43,21 @@ class MovementsViewExport implements FromView
         foreach ($movements as $movement) {
             foreach ($movement->movement_products as $movement_product) {
                 if (!($movement_product->entidad_tipo == 'C')) {
-                    $objMovement              = new stdClass();
-                    $objMovement->id          = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
-                    $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
-                    $objMovement->tipo        = ($movement_product->egress > 0) ? 'S' : 'E';
-                    $objMovement->codtienda   = DB::table('stores')->where('id', $movement_product->entidad_id)->select('cod_fenovo')->pluck('cod_fenovo')->first();
-                    $objMovement->codproducto = $movement_product->product->cod_fenovo;
-                    $objMovement->cantidad    = ($movement_product->egress > 0) ? $movement_product->egress : $movement_product->entry;
-                    array_push($arrMovements, $objMovement);
+                    if ($movement_product->entry > 0) {
+                        $objMovement = new stdClass();
+
+                        $store_type = DB::table('stores')->where('id', $movement->from)->select('store_type')->pluck('store_type')->first();
+                        $cod_tienda = DB::table('stores')->where('id', $movement_product->entidad_id)->select('cod_fenovo')->pluck('cod_fenovo')->first();
+
+                        $objMovement->origen      = ($store_type == 'N') ? 'DEP_CEN' : 'DEP_PAN';
+                        $objMovement->id          = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+                        $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
+                        $objMovement->tipo        = ($this->request->tipo == 'SALIDA') ? 'E' : 'S';
+                        $objMovement->codtienda   = str_pad($cod_tienda, 3, '0', STR_PAD_LEFT);
+                        $objMovement->codproducto = str_pad($movement_product->product->cod_fenovo, 4, '0', STR_PAD_LEFT);
+                        $objMovement->cantidad    = $movement_product->bultos;
+                        array_push($arrMovements, $objMovement);
+                    }
                 }
             }
         }
