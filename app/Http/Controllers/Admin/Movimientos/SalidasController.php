@@ -92,9 +92,9 @@ class SalidasController extends Controller
                             $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Generar factura"  href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
                         }
                     }
-                    $routeCreatePanama = route('print.panama');
+                    $routeCreatePanama = route('print.panama', ['id' => $movement->id]);
                     $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
-                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Paper"  href="'.$routeCreatePanama.'/'.$movement->id.'" target="_blank"> <i class="fas fa-file"></i> </a>';
+                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Paper"  href="'.$routeCreatePanama.'" target="_blank"> <i class="fas fa-file"></i> </a>';
                     return $links;
                 })
                 ->rawColumns(['origen', 'date', 'type', 'kgrs', 'acciones', 'factura_nro'])
@@ -210,9 +210,9 @@ class SalidasController extends Controller
         }
     }
 
-    public function printPanama($id)
+    public function printPanama(Request $request)
     {
-        $movement = Movement::query()->where('id', $id)->with('panamas')->first();
+        $movement = Movement::query()->where('id', $request->id)->with('panamas')->first();
         if ($movement) {
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $neto            = 0;
