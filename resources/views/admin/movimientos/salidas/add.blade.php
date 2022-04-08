@@ -241,8 +241,7 @@
             data:formData,
             success:function(data){
                 jQuery("#porcentajeFlete").html(data['porcentaje']);
-                let flete = parseFloat(data['porcentaje']/100);
-                jQuery("#flete").val(parseFloat(jQuery("#subTotal").val()*flete).toFixed(2));
+                jQuery("#flete").val(parseFloat(*flete).toFixed(2));
             },
             error: function (data) {
             },
