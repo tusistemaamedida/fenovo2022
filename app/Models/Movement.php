@@ -60,6 +60,11 @@ class Movement extends Model
         return $this->hasMany(MovementProduct::class)->where('egress', '>', 0);
     }
 
+    public function panamas()
+    {
+        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('invoice',false);
+    }
+
     public function movement_ingreso_products()
     {
         return $this->hasMany(MovementProduct::class)->where('entry', '>', 0);
@@ -82,7 +87,7 @@ class Movement extends Model
             case 'VENTA':
             case 'TRASLADO':
             case 'DEVOLUCION':
-            case 'VENTACLIENTE':    
+            case 'VENTACLIENTE':
                 $Store = Store::find($this->from);
                 if ($returnObject) {
                     return $Store;

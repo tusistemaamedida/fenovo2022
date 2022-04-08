@@ -92,8 +92,9 @@ class SalidasController extends Controller
                             $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Generar factura"  href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
                         }
                     }
+                    $routeCreatePanama = route('print.panama',$movement->id);
                     $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
-
+                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Paper"  href="'.$routeCreatePanama.'" target="_blank"> <i class="fas fa-file"></i> </a>';
                     return $links;
                 })
                 ->rawColumns(['origen', 'date', 'type', 'kgrs', 'acciones', 'factura_nro'])
@@ -208,6 +209,35 @@ class SalidasController extends Controller
             return $pdf->download('remito.pdf');
         }
     }
+
+    public function printPanama($id)
+    {
+        $movement = Movement::query()->where('id', $id)->with('panamas')->first();
+        if ($movement) {
+            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $neto            = 0;
+            $array_productos = [];
+            $productos       = $movement->panamas;
+            foreach ($productos as $producto) {
+                $subtotal = $producto->bultos * $producto->unit_price * $producto->unit_package;
+                $objProduct             = new stdClass();
+                $objProduct->cant       = $producto->bultos;
+                $objProduct->codigo     = $producto->product->cod_fenovo;
+                $objProduct->name       = $producto->product->name;
+                $objProduct->unit_price = number_format($producto->unit_price, 2, ',', '.');
+                $objProduct->subtotal   = number_format($subtotal, 2, ',', '.');
+                $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
+                $objProduct->total_unit = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                $objProduct->class      = '';
+                $neto += $subtotal;
+                array_push($array_productos, $objProduct);
+            }
+
+            $pdf = PDF::loadView('print.panama', compact('destino', 'array_productos', 'neto'));
+            return $pdf->download('paper.pdf');
+        }
+    }
+
     public function add()
     {
         $this->sessionProductRepository->deleteDevoluciones();
