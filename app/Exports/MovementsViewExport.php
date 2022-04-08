@@ -23,42 +23,63 @@ class MovementsViewExport implements FromView
 
     public function view(): View
     {
-        switch ($this->request->tipo) {
-            case 'ENTRADA':
-                $arrTypes = ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
-                break;
-            case 'SALIDA':
-                $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-                break;
-            case 'TODOS':
-                $arrTypes = ['COMPRA', 'VENTA', 'VENTACLIENTE', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
-                break;
-        }
+        $desde = $this->request->desde;
+        $hasta = $this->request->hasta;
 
-        $movements = Movement::whereIn('type', $arrTypes)
-            ->whereBetween(DB::raw('DATE(date)'), [$this->request->desde, $this->request->hasta])
-            ->orderBy('id', 'ASC')->get();
+        $arrTipos   = ['VENTA', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $arrEntrada = ['VENTA', 'TRASLADO'];
+
+        $movimientos = DB::table('movements as t1')
+            ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
+            ->join('products as t3', 't2.product_id', '=', 't3.id')
+            ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
+            ->select('t1.id', 't1.type', 't1.date', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry')
+            ->whereIn('t1.type', $arrTipos)
+            ->whereBetween(DB::raw('DATE(date)'), [$desde, $hasta])
+            ->where('t2.entidad_tipo', '!=', 'C')
+            ->get();
 
         $arrMovements = [];
-        foreach ($movements as $movement) {
-            foreach ($movement->movement_products as $movement_product) {
-                if (!($movement_product->entidad_tipo == 'C')) {
-                    if ($movement_product->entry > 0) {
-                        $objMovement = new stdClass();
 
-                        $store_type = DB::table('stores')->where('id', $movement->from)->select('store_type')->pluck('store_type')->first();
-                        $cod_tienda = DB::table('stores')->where('id', $movement_product->entidad_id)->select('cod_fenovo')->pluck('cod_fenovo')->first();
+        foreach ($movimientos as $movement) {
+            $store_type = DB::table('stores')->where('id', $movement->from)->select('store_type')->pluck('store_type')->first();
 
-                        $objMovement->origen      = ($store_type == 'N') ? 'DEP_CEN' : 'DEP_PAN';
-                        $objMovement->id          = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
-                        $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
-                        $objMovement->tipo        = ($this->request->tipo == 'SALIDA') ? 'E' : 'S';
-                        $objMovement->codtienda   = str_pad($cod_tienda, 3, '0', STR_PAD_LEFT);
-                        $objMovement->codproducto = str_pad($movement_product->product->cod_fenovo, 4, '0', STR_PAD_LEFT);
-                        $objMovement->cantidad    = $movement_product->bultos;
-                        array_push($arrMovements, $objMovement);
-                    }
+            $creado = false;
+
+            if (in_array($movement->type, $arrEntrada)) {
+
+                // Venta o traslado
+
+                if ($movement->entry > 0) {
+                    $objMovement              = new stdClass();
+                    $creado                   = true;
+                    $objMovement->origen      = ($store_type == 'N') ? 'DEP_CEN' : 'DEP_PAN';
+                    $objMovement->id          = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+                    $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
+                    $objMovement->tipo        = 'E';
+                    $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
+                    $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
+                    $objMovement->cantidad    = $movement->bultos;
                 }
+            } else {
+
+                // Analizar los traslados
+
+                $tipo = ($movement->entry > 0) ? 'E' : 'S';
+
+                $objMovement              = new stdClass();
+                $creado                   = true;
+                $objMovement->origen      = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
+                $objMovement->id          = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+                $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
+                $objMovement->tipo        = $tipo;
+                $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
+                $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
+                $objMovement->cantidad    = $movement->bultos;
+            }
+
+            if ($creado) {
+                array_push($arrMovements, $objMovement);
             }
         }
 

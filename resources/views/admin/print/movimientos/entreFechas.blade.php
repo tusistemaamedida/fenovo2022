@@ -23,45 +23,28 @@
 
         <table class="table">
             <tr>
-                <td>#</td>
-                <td>Fecha</td>
-                <td>Origen</td>
-                <td>Destino</td>
-                <td>Tipo</td>
-                <td>Comprobante</td>
-                <td>Kgrs</td>
+                <td>origen </td>
+                <td>id </td>
+                <td>fecha </td>
+                <td>tipo </td>
+                <td>codtienda </td>
+                <td>codproducto </td>
+                <td>cantidad </td>
             </tr>
-            @if (isset($salidas))
-            @foreach ($salidas as $salida)
-            <tr>
-                <td>{{$salida->id}}</th>
-                <td>{{ date('d-m-Y',strtotime($salida->date)) }}</td>
-                @if ( in_array($salida->type, ['DEVOLUCION', 'DEVOLUCIONCLIENTE']) )
-                    <td>
-                        {{ $salida->To($salida->type); }}        
-                    </td>
-                    <td>
-                        {{ $salida->From($salida->type); }}
-                    </td>                
-                @else
-                    <td>
-                        {{ $salida->From($salida->type); }}        
-                    </td>
-                    <td>
-                        {{ $salida->To($salida->type); }}
-                    </td>                    
-                @endif                
-                <td>
-                    {{ $salida->type }}
-                </td>
-                <td>{{ $salida->voucher_number }}</td>
-                <td>{{ $salida->totalKgrs() }}</td>
-            </tr>
-            @endforeach
+            @if (isset($arrMovements))
+                @foreach ($arrMovements as $salida)
+                <tr>
+                    <td>{{ $salida->origen      }}</td>
+                    <td>{{ $salida->id          }}</td>
+                    <td>{{ $salida->fecha       }}</td>
+                    <td>{{ $salida->tipo        }}</td>
+                    <td>{{ $salida->codtienda   }}</td>
+                    <td>{{ $salida->codproducto }}</td>
+                    <td>{{ $salida->cantidad    }}</td>
+                </tr>
+                @endforeach
             @endif
-
         </table>
-
     </div>
 </div>
 
