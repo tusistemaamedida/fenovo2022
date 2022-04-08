@@ -13,7 +13,7 @@
             <div class="col-12">
                 <label class="text-dark">Ingrese un importe</label>
                 <fieldset class="form-group mb-3 d-flex">
-                    <input type="number" class="js-states form-control bg-transparent" name="neto" id="neto" />
+                    <input type="number" class="js-states form-control bg-transparent" step="any" name="neto" id="neto" />
                 </fieldset>
             </div>
         </div>
