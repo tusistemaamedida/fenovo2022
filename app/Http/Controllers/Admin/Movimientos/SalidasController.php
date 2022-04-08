@@ -9,6 +9,7 @@ use App\Models\OfertaStore;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
+use App\Models\FleteSetting;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -287,8 +288,19 @@ class SalidasController extends Controller
     public function getFleteSessionProducts(Request $request)
     {
         try {
+            $total = $request->input('total_from_session');
+            $km = $this->sessionProductRepository->getFlete($request->input('list_id'));
+            if($km){
+                $fleteSetting = FleteSetting::where('hasta','>=',$km)->orderBy('hasta','ASC')->first();
+                $porcentaje = $fleteSetting->porcentaje;
+                $flete = round((($porcentaje * $total)/100),2);
+            }else{
+                $flete = 0;
+                $porcentaje = 0;
+            }
             return new JsonResponse([
-                'flete' => $this->sessionProductRepository->getFlete($request->input('list_id')),
+                'flete' => $flete,
+                'porcentaje' => $porcentaje
             ]);
         } catch (\Exception $e) {
             return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);

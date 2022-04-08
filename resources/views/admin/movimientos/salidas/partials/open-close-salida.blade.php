@@ -20,7 +20,7 @@
 
         <div class="row mt-5">
             <div class="col-6">
-                <label class="text-dark">Flete <strong> <span id="montoFlete"></span> </strong> % </label>
+                <label class="text-dark">Flete <strong> <span id="porcentajeFlete"></span> </strong> % </label>
             </div>
             <div class="col-6">
                 <input type="text" name="flete" id="flete" value="0" class="form-control text-center">
