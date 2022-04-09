@@ -588,7 +588,7 @@ class ProductController extends Controller
 
             $movement = Movement::create([
                 'date'           => now(),
-                'type'           => 'COMPRA',
+                'type'           => 'AJUSTE',
                 'from'           => 1,
                 'to'             => 1,
                 'status'         => 'CREATED',

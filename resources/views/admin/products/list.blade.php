@@ -111,9 +111,7 @@
                 }else{
                     jQuery('.editpopup').removeClass('offcanvas-on');
                     toastr.success(data['msj'], 'Exito');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1200);
+                    table.ajax.reload();
                 }
                 jQuery('#loader').addClass('hidden');
             },
