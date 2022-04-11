@@ -2,7 +2,6 @@
 
 namespace App\Exports;
 
-use App\Models\Movement;
 use App\Traits\OriginDataTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -47,9 +46,7 @@ class MovementsViewExport implements FromView
             $creado = false;
 
             if (in_array($movement->type, $arrEntrada)) {
-
                 // Venta o traslado
-
                 if ($movement->entry > 0) {
                     $objMovement              = new stdClass();
                     $creado                   = true;
@@ -59,14 +56,11 @@ class MovementsViewExport implements FromView
                     $objMovement->tipo        = 'E';
                     $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                     $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
-                    $objMovement->cantidad    = $movement->bultos;
+                    $objMovement->cantidad    = $movement->entry;
                 }
             } else {
-
                 // Analizar las devoluciones
-
-                $tipo = ($movement->entry > 0) ? 'E' : 'S';
-
+                $tipo                     = ($movement->entry > 0) ? 'E' : 'S';
                 $objMovement              = new stdClass();
                 $creado                   = true;
                 $objMovement->origen      = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
@@ -75,7 +69,7 @@ class MovementsViewExport implements FromView
                 $objMovement->tipo        = $tipo;
                 $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                 $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
-                $objMovement->cantidad    = $movement->bultos;
+                $objMovement->cantidad    = $movement->entry;
             }
 
             if ($creado) {

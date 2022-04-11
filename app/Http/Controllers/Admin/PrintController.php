@@ -86,7 +86,7 @@ class PrintController extends Controller
                     $objMovement->tipo        = 'E';
                     $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                     $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
-                    $objMovement->cantidad    = $movement->bultos;
+                    $objMovement->cantidad    = $movement->entry;
                 }
             } else {
 
@@ -102,7 +102,7 @@ class PrintController extends Controller
                 $objMovement->tipo        = $tipo;
                 $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                 $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
-                $objMovement->cantidad    = $movement->bultos;
+                $objMovement->cantidad    = $movement->entry;
             }
 
             if ($creado) {
