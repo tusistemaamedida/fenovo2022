@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\AddProduct;
 
 use App\Http\Requests\Products\CalculatePrices;
-use App\Http\Requests\Products\UpdateProduct;
 use App\Imports\movementImport;
 use App\Mail\NovedadMail;
 use App\Models\Movement;
@@ -18,10 +17,10 @@ use App\Models\MovementProduct;
 use App\Models\Product;
 use App\Models\ProductDescuento;
 use App\Models\ProductPrice;
+use App\Models\Proveedor;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
 use App\Repositories\AlicuotaTypeRepository;
-use App\Models\Proveedor;
 
 use App\Repositories\ProducDescuentoRepository;
 use App\Repositories\ProductCategoryRepository;
@@ -35,6 +34,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use phpDocumentor\Reflection\Types\Float_;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -93,7 +93,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'senasa', 'borrar', 'editar','ajuste'])
+                ->rawColumns(['stock', 'senasa', 'borrar', 'editar', 'ajuste'])
                 ->make(true);
         }
 
@@ -132,7 +132,8 @@ class ProductController extends Controller
         }
     }
 
-    public function getDataStock(Request $request){
+    public function getDataStock(Request $request)
+    {
         try {
             $product = $this->productRepository->getByIdWith($request->id);
             return new JsonResponse([
@@ -144,9 +145,10 @@ class ProductController extends Controller
         }
     }
 
-    public function ajustarStock(Request $request){
+    public function ajustarStock(Request $request)
+    {
         try {
-            $insert_data = [];
+            $insert_data                   = [];
             $insert_data['type']           = 'AJUSTE';
             $insert_data['to']             = Auth::user()->store_active;
             $insert_data['date']           = now();
@@ -155,38 +157,46 @@ class ProductController extends Controller
             $insert_data['voucher_number'] = time();
             $insert_data['flete']          = 0;
 
-            $latest   = MovementProduct::all()->where('entidad_id', Auth::user()->store_active)
-                                            ->where('entidad_tipo', 'S')
-                                            ->where('product_id', $request->product_id)
-                                            ->sortByDesc('id')
-                                            ->first()->toArray();
-            $nuevo_stock = $request->nuevo_stock;
-            $balance     = $latest['balance'];
-            $entry = $egress = 0;
+            $latest = MovementProduct::where('entidad_id', Auth::user()->store_active)
+                ->where('entidad_tipo', 'S')
+                ->where('product_id', $request->product_id)
+                ->orderBy('id', 'desc')
+                ->first();
 
-            if($balance<$nuevo_stock){
-                $entry = $nuevo_stock - $balance;
-            }elseif($balance>$nuevo_stock){
-                $egress = $balance - $nuevo_stock;
+            $nuevo_stock = (Float)$request->nuevo_stock;
+
+            if ($latest) {
+                $latest  = $latest->toArray();
+                $balance = $latest['balance'];
+                $entry   = $egress   = 0;
+                if ($balance < $nuevo_stock) {
+                    $entry = $nuevo_stock - $balance;
+                } elseif ($balance > $nuevo_stock) {
+                    $egress = $balance - $nuevo_stock;
+                }
+            } else {
+                $entry  = $nuevo_stock;
+                $egress = 0;
             }
 
-            if($entry >0 || $egress >0){
-                $movement = Movement::create($insert_data);
-                $latest['balance'] = $nuevo_stock;
-                $latest['entry'] = $entry;
-                $latest['egress'] = $egress;
-                $latest['movement_id'] = $movement->id;
-                MovementProduct::create($latest);
-            }
+            $movement               = Movement::create($insert_data);
+            $latest['balance']      = $nuevo_stock;
+            $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
+            $latest['entidad_tipo'] = 'S';
+            $latest['product_id']   = $request->product_id;
+            $latest['entry']        = $entry;
+            $latest['egress']       = $egress;
+            $latest['movement_id']  = $movement->id;
+            MovementProduct::create($latest);
 
             return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
-
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
-    public function edit(Request $request){
+    public function edit(Request $request)
+    {
         try {
             $fecha_actualizacion_label  = '';
             $fecha_actualizacion        = null;
@@ -197,16 +207,16 @@ class ProductController extends Controller
             //$productosProveedor         = Product::where('proveedor_id',$product->proveedor_id)->cursorPaginate(1);
             //dd($productosProveedor);
 
-            $ofertas                    = SessionOferta::where('product_id', $request->id)->get();
-            $oferta                     = ($request->has('fecha_oferta')) ? SessionOferta::where('id', $request->oferta_id)->first() : null;
-            $alicuotas                  = $this->alicuotaTypeRepository->get('value', 'DESC');
-            $senasaDefinitions          = $this->senasaDefinitionRepository->get('product_name', 'ASC');
-            $categories                 = $this->productCategoryRepository->getActives('name', 'ASC');
-            $descuentos                 = $this->productDescuentoRepository->getActives('descripcion', 'ASC');
-            $proveedores                = $this->proveedorRepository->getActives('name', 'ASC');
-            $unit_package               = explode('|', $product->unit_package);
+            $ofertas           = SessionOferta::where('product_id', $request->id)->get();
+            $oferta            = ($request->has('fecha_oferta')) ? SessionOferta::where('id', $request->oferta_id)->first() : null;
+            $alicuotas         = $this->alicuotaTypeRepository->get('value', 'DESC');
+            $senasaDefinitions = $this->senasaDefinitionRepository->get('product_name', 'ASC');
+            $categories        = $this->productCategoryRepository->getActives('name', 'ASC');
+            $descuentos        = $this->productDescuentoRepository->getActives('descripcion', 'ASC');
+            $proveedores       = $this->proveedorRepository->getActives('name', 'ASC');
+            $unit_package      = explode('|', $product->unit_package);
 
-            $productosProveedor         = Product::where('proveedor_id',$product->proveedor_id)->paginate(1);
+            $productosProveedor = Product::where('proveedor_id', $product->proveedor_id)->paginate(1);
 
             if ($fecha_actualizacion_activa) {
                 $pp1                       = $product->product_price->toArray();
@@ -286,11 +296,8 @@ class ProductController extends Controller
             }
 
             $data = array_merge($data, $preciosCalculados);
-            $hoy = \Carbon\Carbon::parse(now())->format('Y-m-d');
-            if ($data['fecha_actualizacion_activa'] == 0 &&
-                is_null($data['fecha_desde']) &&
-                is_null($data['fecha_hasta']) &&
-                ($data['fecha_actualizacion'] == $hoy)) {
+            $hoy  = \Carbon\Carbon::parse(now())->format('Y-m-d');
+            if ($data['fecha_actualizacion_activa'] == 0 && is_null($data['fecha_desde']) && is_null($data['fecha_hasta']) && ($data['fecha_actualizacion'] == $hoy)) {
                 $producto = $this->productRepository->getByIdWith($product_id);
                 $this->productPriceRepository->fill($producto->product_price->id, $data);
                 $tipo = 'actual';

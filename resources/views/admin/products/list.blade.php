@@ -110,7 +110,7 @@
                     toastr.error(data['msj'], 'Verifique');
                 }else{
                     jQuery('.editpopup').removeClass('offcanvas-on');
-                    toastr.success(data['msj'], 'Exito');
+                    toastr.info(data['msj'], 'Exito');
                     table.ajax.reload();
                 }
                 jQuery('#loader').addClass('hidden');
