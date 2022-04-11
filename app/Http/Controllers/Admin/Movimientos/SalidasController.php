@@ -518,7 +518,7 @@ class SalidasController extends Controller
             $insert_data['from']           = $from;
             $insert_data['status']         = 'FINISHED';
             $insert_data['voucher_number'] = $request->input('voucher_number');
-            $insert_data['flete']          = (float)$request->input('flete');
+            $insert_data['flete']          = (isset($request->factura_flete))?(float)$request->input('flete'):0;
 
             $movement         = Movement::create($insert_data);
             $session_products = $this->sessionProductRepository->getByListId($list_id);
