@@ -24,21 +24,21 @@
     }
 
     jQuery("#plistproveedor").keypress(function(event){
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
         }
     });
 
     jQuery("#descproveedor").keypress(function(event){
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
         }
     });
 
     jQuery("#contribution_fund").keypress(function(event){
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
         }
@@ -46,47 +46,47 @@
 
 
     jQuery("#mupfenovo").keypress(function(event){
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
         }
     });
     jQuery("#muplist1").keypress(function(event){
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
         }
     });
     jQuery("#muplist2").keypress(function(event){
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
         }
     });
 
     jQuery("#p1tienda").keypress(function(event){
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
         }
     });
 
     jQuery("#descp1").keypress(function(event){
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
         }
     });
 
     jQuery("#p2tienda").keypress(function(event){
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
         }
     });
 
     jQuery("#descp2").keypress(function(event){
-        if (event.which == 13 || event.keyCode == 13) {
+        if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
         }
