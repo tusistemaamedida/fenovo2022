@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
+use App\Models\FleteSetting;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\OfertaStore;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
-use App\Models\FleteSetting;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -94,7 +94,7 @@ class SalidasController extends Controller
                     }
                     $routeCreatePanama = route('print.panama', ['id' => $movement->id]);
                     $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
-                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Paper"  href="'.$routeCreatePanama.'" target="_blank"> <i class="fas fa-file"></i> </a>';
+                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Paper"  href="' . $routeCreatePanama . '" target="_blank"> <i class="fas fa-file"></i> </a>';
                     return $links;
                 })
                 ->rawColumns(['origen', 'date', 'type', 'kgrs', 'acciones', 'factura_nro'])
@@ -219,7 +219,7 @@ class SalidasController extends Controller
             $array_productos = [];
             $productos       = $movement->panamas;
             foreach ($productos as $producto) {
-                $subtotal = $producto->bultos * $producto->unit_price * $producto->unit_package;
+                $subtotal               = $producto->bultos * $producto->unit_price * $producto->unit_package;
                 $objProduct             = new stdClass();
                 $objProduct->cant       = $producto->bultos;
                 $objProduct->codigo     = $producto->product->cod_fenovo;
@@ -319,18 +319,18 @@ class SalidasController extends Controller
     {
         try {
             $total = $request->input('total_from_session');
-            $km = $this->sessionProductRepository->getFlete($request->input('list_id'));
-            if($km){
-                $fleteSetting = FleteSetting::where('hasta','>=',$km)->orderBy('hasta','ASC')->first();
-                $porcentaje = $fleteSetting->porcentaje;
-                $flete = round((($porcentaje * $total)/100),2);
-            }else{
-                $flete = 0;
+            $km    = $this->sessionProductRepository->getFlete($request->input('list_id'));
+            if ($km) {
+                $fleteSetting = FleteSetting::where('hasta', '>=', $km)->orderBy('hasta', 'ASC')->first();
+                $porcentaje   = $fleteSetting->porcentaje;
+                $flete        = round((($porcentaje * $total) / 100), 2);
+            } else {
+                $flete      = 0;
                 $porcentaje = 0;
             }
             return new JsonResponse([
-                'flete' => $flete,
-                'porcentaje' => $porcentaje
+                'flete'      => $flete,
+                'porcentaje' => $porcentaje,
             ]);
         } catch (\Exception $e) {
             return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -518,7 +518,8 @@ class SalidasController extends Controller
             $insert_data['from']           = $from;
             $insert_data['status']         = 'FINISHED';
             $insert_data['voucher_number'] = $request->input('voucher_number');
-            $insert_data['flete']          = (isset($request->factura_flete))?(float)$request->input('flete'):0;
+            $insert_data['flete']          = $request->flete;
+            $insert_data['flete_invoice']  = (isset($request->factura_flete)) ? 1 : 0;
 
             $movement         = Movement::create($insert_data);
             $session_products = $this->sessionProductRepository->getByListId($list_id);

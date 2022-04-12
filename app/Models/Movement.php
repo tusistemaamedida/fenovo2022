@@ -48,6 +48,7 @@ class Movement extends Model
         'status',
         'voucher_number',
         'flete',
+        'flete_invoice',
     ];
 
     public function movement_products()
@@ -62,7 +63,7 @@ class Movement extends Model
 
     public function panamas()
     {
-        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('invoice',false);
+        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('invoice', false);
     }
 
     public function movement_ingreso_products()
