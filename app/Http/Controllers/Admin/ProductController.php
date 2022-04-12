@@ -69,7 +69,8 @@ class ProductController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $productos = $this->productRepository->all()->where('active', '=', 1);
+            $productos = $this->productRepository->all()->where('active', '=', 1);            
+
             return Datatables::of($productos)
                 ->addIndexColumn()
 
