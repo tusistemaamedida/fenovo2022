@@ -63,10 +63,12 @@ class InvoiceController extends Controller
     }
 
     public function generateInvoicePdf($movement_id){
+        $titulo = 'FACTURA ELECTRÓNICA';
         $array_productos = $alicuotas_array = [];
         $invoice = $this->invoiceRepository->getByMovement($movement_id);
         if(!is_null($invoice->cae)){
             $movement = Movement::where('id',$movement_id)->firstOrFail();
+            if($movement->type == 'DEVOLUCION' || $movement->type == 'DEVOLUCIONCLIENTE') $titulo = 'NOTA CRÉDITO';
             $productos = MovementProduct::where('movement_id',$movement_id)->where('invoice',1)->where('egress', '>', 0)->with('product')->get();
             foreach ($productos as $producto) {
                 $objProduct = new stdClass;
@@ -123,7 +125,7 @@ class InvoiceController extends Controller
 
             $qr_url = 'images/'.$invoice->voucher_number.'.svg';
             $voucherType = VoucherType::where('afip_id',$invoice->cbte_tipo)->first();
-            $pdf = PDF::loadView('print.invoice',compact('invoice','array_productos','alicuotas_array','voucherType','qr_url','paginas','total_lineas'));
+            $pdf = PDF::loadView('print.invoice',compact('titulo','invoice','array_productos','alicuotas_array','voucherType','qr_url','paginas','total_lineas'));
             return $pdf->stream('invoice.pdf');
         }
     }
