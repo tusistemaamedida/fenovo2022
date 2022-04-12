@@ -333,7 +333,7 @@ class InvoiceController extends Controller
             }
         }
         //dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
-        if(!is_null($movement->flete ) && $movement->flete > 0){
+        if(!is_null($movement->flete) && $movement->flete > 0 && $movement->flete_invoice){
             $insert_new = true;
             $iva        += ($movement->flete * 0.21);
             $gravado    += $movement->flete;
