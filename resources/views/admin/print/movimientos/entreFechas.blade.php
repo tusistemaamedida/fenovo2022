@@ -30,6 +30,7 @@
                 <td>codtienda </td>
                 <td>codproducto </td>
                 <td>cantidad </td>
+                <td>unidad </td>
             </tr>
             @if (isset($arrMovements))
                 @foreach ($arrMovements as $salida)
@@ -41,6 +42,7 @@
                     <td>{{ $salida->codtienda   }}</td>
                     <td>{{ $salida->codproducto }}</td>
                     <td>{{ $salida->cantidad    }}</td>
+                    <td>{{ $salida->unidad    }}</td>
                 </tr>
                 @endforeach
             @endif
