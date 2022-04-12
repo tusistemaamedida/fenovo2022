@@ -23,16 +23,57 @@
         }
     }
 
-    jQuery("#plistproveedor").keypress(function(event){
-        if (event.which == 9 || event.keyCode == 9) {
+    jQuery("#plistproveedor").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#mupfenovo").select();
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#mupfenovo").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#p1tienda").select();
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#descproveedor").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
             let validate = 0;
             calculatePrices(validate)
         }
     });
 
-    jQuery("#descproveedor").keypress(function(event){
-        if (event.which == 9 || event.keyCode == 9) {
+    jQuery("#p1tienda").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
             let validate = 0;
+            jQuery("#descp1").select();
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#descp1").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#p2tienda").select();
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#p2tienda").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#descp2").select();
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#descp2").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#plistproveedor").select();
             calculatePrices(validate)
         }
     });
@@ -44,13 +85,6 @@
         }
     });
 
-
-    jQuery("#mupfenovo").keypress(function(event){
-        if (event.which == 9 || event.keyCode == 9) {
-            let validate = 0;
-            calculatePrices(validate)
-        }
-    });
     jQuery("#muplist1").keypress(function(event){
         if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
@@ -58,34 +92,6 @@
         }
     });
     jQuery("#muplist2").keypress(function(event){
-        if (event.which == 9 || event.keyCode == 9) {
-            let validate = 0;
-            calculatePrices(validate)
-        }
-    });
-
-    jQuery("#p1tienda").keypress(function(event){
-        if (event.which == 9 || event.keyCode == 9) {
-            let validate = 0;
-            calculatePrices(validate)
-        }
-    });
-
-    jQuery("#descp1").keypress(function(event){
-        if (event.which == 9 || event.keyCode == 9) {
-            let validate = 0;
-            calculatePrices(validate)
-        }
-    });
-
-    jQuery("#p2tienda").keypress(function(event){
-        if (event.which == 9 || event.keyCode == 9) {
-            let validate = 0;
-            calculatePrices(validate)
-        }
-    });
-
-    jQuery("#descp2").keypress(function(event){
         if (event.which == 9 || event.keyCode == 9) {
             let validate = 0;
             calculatePrices(validate)
