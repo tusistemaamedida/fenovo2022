@@ -158,4 +158,18 @@ class Product extends Model
 
         return $stock;
     }
+
+    public function scopeName($query, $name)
+    {
+        if ($name) {
+            return $query->orWhere('name', 'like', $name.'%');
+        }
+    }
+
+    public function scopeCodFenovo($query, $codfenovo)
+    {
+        if ($codfenovo) {
+            return $query->orWhere('cod_fenovo', $codfenovo);
+        }
+    }
 }
