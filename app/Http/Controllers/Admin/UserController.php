@@ -33,6 +33,9 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
+        //return User::orderBy('username', 'ASC')->get();
+        //return User::on('tienda')->get();   
+
         if ($request->ajax()) {
             $user = User::orderBy('username', 'ASC')->get();
             return Datatables::of($user)
