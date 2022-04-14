@@ -10,6 +10,8 @@ Route::get('users/edit', [UserController::class, 'edit'])->name('users.edit');
 Route::post('users/update', [UserController::class, 'update'])->name('users.update');
 Route::post('users/destroy', [UserController::class, 'destroy'])->name('users.destroy');
 Route::get('users/edit-profile', [UserController::class, 'editProfile'])->name('users.editProfile');
+Route::post('users/reset-password', [UserController::class, 'ResetPassword'])->name('users.reset.password');
+
 
 Route::get('users/vincular-tienda', [UserController::class, 'vincularTienda'])->name('users.vincular.tienda');
 Route::post('users/vincular-tienda', [UserController::class, 'vincularTiendaUpdate'])->name('users.vincular.tienda.update');
