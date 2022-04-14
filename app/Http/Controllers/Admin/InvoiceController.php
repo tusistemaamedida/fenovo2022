@@ -82,7 +82,7 @@ class InvoiceController extends Controller
                 array_push($array_productos,$objProduct);
             }
 
-            if(!is_null($movement->flete ) && $movement->flete > 0){
+            if(!is_null($movement->flete ) && $movement->flete > 0 && $movement->flete_invoice){
                 $objProduct = new stdClass;
                 $objProduct->cant = 1;
                 $objProduct->iva = 21;
