@@ -189,4 +189,97 @@ class Movement extends Model
     {
         return count($this->hasMany(MovementProduct::class)->get()->groupBy('product_id'));
     }
+
+    public function neto21(){
+        $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
+
+        $neto = DB::table('movements as m')
+            ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
+            ->groupBy('mp.movement_id')
+            ->select([
+                DB::raw('SUM(mp.bultos * mp.unit_price * mp.unit_package) as neto21'),
+                DB::raw('SUM(mp.bultos * mp.unit_price * mp.unit_package * 0.21) as neto_iva21')
+            ])
+            ->orderBy('m.date', 'ASC')
+            ->where('mp.tasiva',21)
+            ->where('iibb',true)
+            ->where('m.id', $this->id)
+            ->whereIn('m.type', $arrEgreso)->first();
+
+
+        return $neto;
+    }
+
+    public function neto105(){
+        $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
+
+        $neto = DB::table('movements as m')
+            ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
+            ->groupBy('mp.movement_id')
+            ->select([
+                DB::raw('SUM(mp.bultos * mp.unit_price * mp.unit_package) as neto105'),
+                DB::raw('SUM(mp.bultos * mp.unit_price * mp.unit_package * 0.105) as neto_iva105')
+            ])
+            ->orderBy('m.date', 'ASC')
+            ->where('mp.tasiva',10.5)
+            ->where('iibb',true)
+            ->where('m.id', $this->id)
+            ->whereIn('m.type', $arrEgreso)->first();
+
+
+        return $neto;
+    }
+
+    public function totalConIva(){
+        $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
+
+        $neto = DB::table('movements as m')
+            ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
+            ->groupBy('mp.movement_id')
+            ->select([
+                DB::raw('SUM(mp.bultos * mp.unit_price * mp.unit_package * (1+(mp.tasiva/100))) as totalConIva')
+            ])
+            ->orderBy('m.date', 'ASC')
+            ->where('iibb',true)
+            ->where('m.id', $this->id)
+            ->whereIn('m.type', $arrEgreso)->first();
+
+
+        return $neto;
+    }
+
+    public function totalIibb(){
+        $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
+
+        $neto = DB::table('movements as m')
+            ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
+            ->groupBy('mp.movement_id')
+            ->select([
+                DB::raw('SUM(mp.bultos * mp.unit_price * mp.unit_package) as total_no_gravado')
+            ])
+            ->orderBy('m.date', 'ASC')
+            ->where('iibb',false)
+            ->where('m.id', $this->id)
+            ->whereIn('m.type', $arrEgreso)->first();
+
+
+        return $neto;
+    }
+
+    public function cosventa(){
+        $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
+
+        $neto = DB::table('movements as m')
+            ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
+            ->groupBy('mp.movement_id')
+            ->select([
+                DB::raw('SUM(mp.cost_fenovo) as cost_venta')
+            ])
+            ->orderBy('m.date', 'ASC')
+            ->where('m.id', $this->id)
+            ->whereIn('m.type', $arrEgreso)->first();
+
+
+        return $neto;
+    }
 }

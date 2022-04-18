@@ -498,7 +498,7 @@ class SalidasController extends Controller
                     $insert_data['tasiva']     = $prices->tasiva;
                     break;
             }
-
+            $insert_data['cost_fenovo'] = $prices->costfenovo;
             $insert_data['list_id']    = $to_type . '_' . $to;
             $insert_data['store_id']   = Auth::user()->store_active;
             $insert_data['invoice']    = true;
@@ -570,6 +570,7 @@ class SalidasController extends Controller
                         'invoice'    => $product->invoice,
                         'iibb'       => $product->iibb,
                         'unit_price' => $product->unit_price,
+                        'cost_fenovo' => $product->cost_fenovo,
                         'tasiva'     => $product->tasiva,
                         'entry'      => 0,
                         'bultos'     => $product->quantity,
@@ -620,7 +621,7 @@ class SalidasController extends Controller
             $this->sessionProductRepository->deleteList($list_id);
             return redirect()->route('salidas.add');
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            //($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
