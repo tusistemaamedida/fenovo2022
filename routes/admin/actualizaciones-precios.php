@@ -18,3 +18,4 @@ Route::get('actualizacion/exportarM2', [ActualizacionController::class, 'exportT
 
 
 Route::get('exportar/cabe-ped', [ActualizacionController::class, 'exportCabePed'])->name('export.cabePed');
+Route::get('exportar/cabe-ele', [ActualizacionController::class, 'exportCabeEle'])->name('export.cabeEle');

@@ -190,7 +190,7 @@ class Movement extends Model
         return count($this->hasMany(MovementProduct::class)->get()->groupBy('product_id'));
     }
 
-    public function neto21(){
+    public function neto21($invoice){
         $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
 
         $neto = DB::table('movements as m')
@@ -202,7 +202,8 @@ class Movement extends Model
             ])
             ->orderBy('m.date', 'ASC')
             ->where('mp.tasiva',21)
-            ->where('iibb',true)
+            ->where('mp.iibb',true)
+            ->where('mp.invoice',$invoice)
             ->where('m.id', $this->id)
             ->whereIn('m.type', $arrEgreso)->first();
 
@@ -210,7 +211,7 @@ class Movement extends Model
         return $neto;
     }
 
-    public function neto105(){
+    public function neto105($invoice){
         $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
 
         $neto = DB::table('movements as m')
@@ -222,7 +223,8 @@ class Movement extends Model
             ])
             ->orderBy('m.date', 'ASC')
             ->where('mp.tasiva',10.5)
-            ->where('iibb',true)
+            ->where('mp.iibb',true)
+            ->where('mp.invoice',$invoice)
             ->where('m.id', $this->id)
             ->whereIn('m.type', $arrEgreso)->first();
 
@@ -230,7 +232,7 @@ class Movement extends Model
         return $neto;
     }
 
-    public function totalConIva(){
+    public function totalConIva($invoice){
         $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
 
         $neto = DB::table('movements as m')
@@ -240,7 +242,8 @@ class Movement extends Model
                 DB::raw('SUM(mp.bultos * mp.unit_price * mp.unit_package * (1+(mp.tasiva/100))) as totalConIva')
             ])
             ->orderBy('m.date', 'ASC')
-            ->where('iibb',true)
+            ->where('mp.iibb',true)
+            ->where('mp.invoice',$invoice)
             ->where('m.id', $this->id)
             ->whereIn('m.type', $arrEgreso)->first();
 
@@ -248,7 +251,7 @@ class Movement extends Model
         return $neto;
     }
 
-    public function totalIibb(){
+    public function totalIibb($invoice){
         $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
 
         $neto = DB::table('movements as m')
@@ -258,7 +261,8 @@ class Movement extends Model
                 DB::raw('SUM(mp.bultos * mp.unit_price * mp.unit_package) as total_no_gravado')
             ])
             ->orderBy('m.date', 'ASC')
-            ->where('iibb',false)
+            ->where('mp.iibb',false)
+            ->where('mp.invoice',$invoice)
             ->where('m.id', $this->id)
             ->whereIn('m.type', $arrEgreso)->first();
 
@@ -266,7 +270,7 @@ class Movement extends Model
         return $neto;
     }
 
-    public function cosventa(){
+    public function cosventa($invoice){
         $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
 
         $neto = DB::table('movements as m')
@@ -277,6 +281,7 @@ class Movement extends Model
             ])
             ->orderBy('m.date', 'ASC')
             ->where('m.id', $this->id)
+            ->where('mp.invoice',$invoice)
             ->whereIn('m.type', $arrEgreso)->first();
 
 

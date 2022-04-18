@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\ActualizMatrif1ViewExport;
 use App\Exports\ActualizMatrif2ViewExport;
 use App\Exports\ActualizViewExport;
-use App\Exports\CabePedExport;
+use App\Exports\CabeExport;
 
 use App\Http\Controllers\Controller;
 use App\Models\HistorialActualizacion;
@@ -134,7 +134,13 @@ class ActualizacionController extends Controller
     }
 
     public function exportCabePed(Request $request){
-        return Excel::download(new CabePedExport($request), 'CABE_PED.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        $invoice = false;
+        return Excel::download(new CabeExport($request,$invoice), 'CABE_PED.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+    }
+
+    public function exportCabeEle(Request $request){
+        $invoice = true;
+        return Excel::download(new CabeExport($request,$invoice), 'CABE_ELE.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
 }
