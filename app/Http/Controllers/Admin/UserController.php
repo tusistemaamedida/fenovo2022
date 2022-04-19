@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\AddRequest;
-use App\Http\Requests\Users\EditRequest;
 use App\Models\Store;
 use App\Models\User;
 use App\Repositories\RoleRepository;
@@ -49,7 +48,7 @@ class UserController extends Controller
                     return ($user->rol() == 'tienda') ? $linkReset : null;
                 })
                 ->addColumn('vincular', function ($user) {
-                    return '<a href="' . route('users.vincular.tienda', ['id' => $user->id]) . '"> <i class="fa fa-link"></i> </a>';
+                    return ($user->rol() != 'tienda') ? '<a href="' . route('users.vincular.tienda', ['id' => $user->id]) . '"> <i class="fa fa-link"></i> </a>' : null;
                 })
                 ->addColumn('tienda', function ($user) {
                     return str_pad($user->store_active, 4, 0, STR_PAD_LEFT) . ' - ' . $user->store_active();
@@ -89,11 +88,12 @@ class UserController extends Controller
     public function store(AddRequest $request)
     {
         try {
-            $data             = $request->except(['_token', 'rol_id']);
-            $data['active']   = 1;
-            $data['password'] = Hash::make($data['password']);
-            $role             = $this->roleRepository->getOne($request->rol_id);
-            $user             = $this->userRepository->create($data);
+            $data               = $request->except(['_token', 'rol_id']);
+            $data['active']     = 1;
+            $data['password']   = Hash::make($data['password']);
+            $role               = $this->roleRepository->getOne($request->rol_id);
+            $user               = $this->userRepository->create($data);
+            $user->store_active = $data['store_active'];
 
             $user->assignRole($role);
 
@@ -112,9 +112,12 @@ class UserController extends Controller
                     'verified'   => 1,
                     'is_admin'   => 1,
                     'role_id'    => 2,
+                    'tienda_id'  => $data['store_active'],
                 ]);
             }
             //
+
+            $user->stores()->sync($request->get('store_active'));
 
             return new JsonResponse([
                 'msj'  => 'Usuario creado correctamente!',
@@ -148,15 +151,22 @@ class UserController extends Controller
         return view('admin.users.edit', compact('user', 'roles'));
     }
 
-    public function update(EditRequest $request)
+    public function update(Request $request)
     {
         try {
             $data = $request->except(['_token', 'user_id', 'active', 'rol_id', 'password', 'confirm-password']);
-            if ($request->password) {
+            if (isset($request->password)) {
                 $data['password'] = Hash::make($request->password);
             }
             $data['active'] = ($request->has('active')) ? 1 : 0;
             $this->userRepository->update($request->input('user_id'), $data);
+
+            // Actualizar user tienda
+            DB::connection('tienda')->table('users')
+                ->where('email', $request->email)
+                ->update([
+                    'tienda_id' => $data['store_active']
+                ]);
 
             $user = $this->userRepository->getOne($request->user_id);
             $role = $this->roleRepository->getOne($request->rol_id);
