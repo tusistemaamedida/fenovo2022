@@ -32,7 +32,7 @@ class CabeExport implements FromView {
 
             if($mov->type == "VENTA"){
                 $cliente = Store::where('id',$mov->to)->with('region')->first();
-                $element->ID_CLI = 'PVTA_'.str_pad($cliente->cod_fenovo,'0',3,STR_PAD_LEFT);
+                $element->ID_CLI = 'PVTA_'.str_pad($cliente->cod_fenovo,3,'0',STR_PAD_LEFT);
                 $element->NOMCLI = $cliente->razon_social;
                 $element->CUICLI = $cliente->cuit;
                 $element->IVACLI = $cliente->iva_type;
