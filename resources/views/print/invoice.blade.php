@@ -174,7 +174,7 @@
                         <span style="font-size: 18px;">
                           {{$titulo}} <br>
                           N°: {{ $invoice->voucher_number }} <br>
-                          Fecha: {{\Carbon\Carbon::parse(now())->format('d/m/y H:i')}}
+                          Fecha: {{\Carbon\Carbon::parse($invoice->created_at)->format('d/m/y H:i')}}
                           <!-- fecha de impresion -->
                         </span>
                       </th>
