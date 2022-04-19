@@ -73,6 +73,15 @@ class CabeExport implements FromView {
             array_push($arr_elementos, $element);
         }
 
-        return view('exports.cabePed', compact('arr_elementos'));
+        $anio      = date('Y', time());
+        $mes       = date('m', time());
+        $dia       = date('d', time());
+        $hora      = date('H', time());
+        $min       = date('i', time());
+        $registros = str_pad(count($arr_elementos), 4, '0', STR_PAD_LEFT);
+
+        $data = $anio . $mes . $dia . $hora . $min . $registros;
+
+        return view('exports.cabePed', compact('arr_elementos','data'));
     }
 }

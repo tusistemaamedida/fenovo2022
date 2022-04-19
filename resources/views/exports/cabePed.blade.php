@@ -1,5 +1,8 @@
 <table>
     <tr>
+        <td colspan="15">{{ $data }}</td>
+    </tr>
+    <tr>
         <td>IDCAJA</td>
         <td>NROCOM</td>
         <td>FECHA</td>
@@ -15,14 +18,6 @@
         <td>IVAA_2</td>
         <td>NOGRAV</td>
         <td>TOTVTA</td>
-        <td>PAGEFV</td>
-        <td>PAGTAR</td>
-        <td>PAGCTA</td>
-        <td>COSVTA</td>
-        <td>MARBTO</td>
-        <td>DESCTO</td>
-        <td>RECARG</td>
-        <td>TOTFIS</td>
     </tr>
     @foreach($arr_elementos as $element)
     <tr>
@@ -41,14 +36,6 @@
         <td>{{ $element->IVAA_2}}</td>
         <td>{{ $element->NOGRAV}}</td>
         <td>{{ $element->TOTVTA}}</td>
-        <td>{{ $element->PAGEFV}}</td>
-        <td>{{ $element->PAGTAR}}</td>
-        <td>{{ $element->PAGCTA}}</td>
-        <td>{{ $element->COSVTA}}</td>
-        <td>{{ $element->MARBTO}}</td>
-        <td>{{ $element->DESCTO}}</td>
-        <td>{{ $element->RECARG}}</td>
-        <td>{{ $element->TOTFIS}}</td>
     </tr>
     @endforeach
 </table>
