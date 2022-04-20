@@ -69,7 +69,7 @@ class ProductController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $productos = $this->productRepository->all()->where('active', '=', 1);            
+            $productos = $this->productRepository->all()->where('active', '=', 1);
 
             return Datatables::of($productos)
                 ->addIndexColumn()
@@ -79,6 +79,9 @@ class ProductController extends Controller
                 })
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();
+                })
+                ->addColumn('costo', function ($product) {
+                    return '$'.$product->product_price->costfenovo;
                 })
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
@@ -94,7 +97,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'senasa', 'borrar', 'editar', 'ajuste'])
+                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste','costo'])
                 ->make(true);
         }
 
