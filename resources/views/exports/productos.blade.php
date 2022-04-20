@@ -33,7 +33,18 @@
             {{ $producto->barcode}}
             @endif
         </td>
-        <td>{{ $producto->unit_package}}</td>
+        <td>
+            @php
+
+            $presentacion = explode('|', $producto->unit_package);
+
+            @endphp
+            @if (count($presentacion)>1)
+            0
+            @else
+            {{ $producto->unit_package}}
+            @endif
+        </td>
         <td>{{ $producto->unit_type}}</td>
         <td>{{ $producto->unit_weight}}</td>
         <td>{{ $producto->mup2}}</td>

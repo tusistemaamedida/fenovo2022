@@ -31,10 +31,10 @@ use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
-use phpDocumentor\Reflection\Types\Float_;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -167,7 +167,7 @@ class ProductController extends Controller
                 ->orderBy('id', 'desc')
                 ->first();
 
-            $nuevo_stock = (Float)$request->nuevo_stock;
+            $nuevo_stock = (float)$request->nuevo_stock;
 
             if ($latest) {
                 $latest  = $latest->toArray();
