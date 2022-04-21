@@ -498,7 +498,7 @@ class SalidasController extends Controller
                     $insert_data['tasiva']     = $prices->tasiva;
                     break;
             }
-            $insert_data['cost_fenovo'] = $prices->costfenovo;
+            $insert_data['costo_fenovo'] = $prices->costfenovo;
             $insert_data['list_id']    = $to_type . '_' . $to;
             $insert_data['store_id']   = Auth::user()->store_active;
             $insert_data['invoice']    = true;
@@ -537,10 +537,20 @@ class SalidasController extends Controller
         try {
             $list_id                       = $request->input('session_list_id');
             $explode                       = explode('_', $list_id);
+
+            if($explode[0] != 'TRASLADO'){
+                $count = Movement::where('from',$from)->whereIn('type', ['VENTA', 'VENTACLIENTE'])->count();
+            }else{
+                $count = Movement::where('from',$from)->where('type','TRASLADO')->count();
+            }
+
+            $orden = ($count)?$count+1:1;
+
             $insert_data['type']           = $explode[0];
             $insert_data['to']             = $explode[1];
             $insert_data['date']           = now();
             $insert_data['from']           = $from;
+            $insert_data['orden']          = $orden;
             $insert_data['status']         = 'FINISHED';
             $insert_data['voucher_number'] = $request->input('voucher_number');
             $insert_data['flete']          = $request->flete;
@@ -570,7 +580,7 @@ class SalidasController extends Controller
                         'invoice'    => $product->invoice,
                         'iibb'       => $product->iibb,
                         'unit_price' => $product->unit_price,
-                        'cost_fenovo' => $product->cost_fenovo,
+                        'cost_fenovo' => $product->costo_fenovo,
                         'tasiva'     => $product->tasiva,
                         'entry'      => 0,
                         'bultos'     => $product->quantity,

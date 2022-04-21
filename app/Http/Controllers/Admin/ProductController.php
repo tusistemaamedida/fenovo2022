@@ -152,12 +152,17 @@ class ProductController extends Controller
     public function ajustarStock(Request $request)
     {
         try {
+            $from = \Auth::user()->store_active;
+            $count = Movement::where('from',$from)->where('type', 'AJUSTE')->count();
+            $orden = ($count)?$count+1:1;
+
             $insert_data                   = [];
             $insert_data['type']           = 'AJUSTE';
             $insert_data['to']             = Auth::user()->store_active;
             $insert_data['date']           = now();
             $insert_data['from']           = Auth::user()->store_active;
             $insert_data['status']         = 'FINISHED';
+            $insert_data['orden']          = $orden;
             $insert_data['voucher_number'] = time();
             $insert_data['flete']          = 0;
 

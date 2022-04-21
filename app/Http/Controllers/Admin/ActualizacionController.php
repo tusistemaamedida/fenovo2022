@@ -6,6 +6,7 @@ use App\Exports\ActualizMatrif1ViewExport;
 use App\Exports\ActualizMatrif2ViewExport;
 use App\Exports\ActualizViewExport;
 use App\Exports\CabeExport;
+use App\Exports\CabeEleExport;
 
 use App\Http\Controllers\Controller;
 use App\Models\HistorialActualizacion;
@@ -140,7 +141,7 @@ class ActualizacionController extends Controller
 
     public function exportCabeEle(Request $request){
         $invoice = true;
-        return Excel::download(new CabeExport($request,$invoice), 'CABE_ELE.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        return Excel::download(new CabeEleExport($request,$invoice), 'CABE_ELE.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
 }

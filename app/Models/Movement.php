@@ -46,6 +46,7 @@ class Movement extends Model
         'from',
         'to',
         'status',
+        'orden',
         'voucher_number',
         'flete',
         'flete_invoice',
