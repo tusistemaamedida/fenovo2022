@@ -51,8 +51,8 @@ class CabeExport implements FromView {
 
             $element->IDCAJA = null;
             $element->NROCOM = $mov->orden;
-            $element->FECHA  = Carbon::parse($mov->creted_at)->format('d/m/Y');
-            $element->HORA   = Carbon::parse($mov->creted_at)->format('H:i');
+            $element->FECHA  = Carbon::parse($mov->created_at)->format('d/m/Y');
+            $element->HORA   = Carbon::parse($mov->created_at)->format('H:i');
             $element->FISCAL = null;
             $element->NETO_1 = (is_null($mov->neto105($this->invoice)) || is_null($mov->neto105($this->invoice)->neto105))?0:$mov->neto105($this->invoice)->neto105;
             $element->IVAA_1 = (is_null($mov->neto105($this->invoice)) || is_null($mov->neto105($this->invoice)->neto_iva105))?0:$mov->neto105($this->invoice)->neto_iva105;
