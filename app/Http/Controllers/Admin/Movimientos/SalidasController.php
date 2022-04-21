@@ -184,14 +184,16 @@ class SalidasController extends Controller
             $array_productos = [];
             $productos       = $movement->movement_salida_products;
             foreach ($productos as $producto) {
-                $objProduct             = new stdClass();
-                $objProduct->cant       = $producto->bultos;
-                $objProduct->codigo     = $producto->product->cod_fenovo;
-                $objProduct->name       = $producto->product->name;
-                $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
-                $objProduct->total_unit = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
-                $objProduct->class      = '';
-                array_push($array_productos, $objProduct);
+                if($producto->invoice){
+                    $objProduct             = new stdClass();
+                    $objProduct->cant       = $producto->bultos;
+                    $objProduct->codigo     = $producto->product->cod_fenovo;
+                    $objProduct->name       = $producto->product->name;
+                    $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
+                    $objProduct->total_unit = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                    $objProduct->class      = '';
+                    array_push($array_productos, $objProduct);
+                }
             }
 
             $total_lineas             = 27;
