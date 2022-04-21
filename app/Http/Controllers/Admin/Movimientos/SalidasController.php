@@ -218,7 +218,7 @@ class SalidasController extends Controller
     {
         $movement = Movement::query()->where('id', $request->id)->with('panamas')->first();
         if ($movement) {
-            $id_panama = 'P'.str_pad($movement->id, 8, "0", STR_PAD_LEFT);
+            $id_panama = '8888'.str_pad($movement->orden, 8, "0", STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $neto            = 0;
             $array_productos = [];
