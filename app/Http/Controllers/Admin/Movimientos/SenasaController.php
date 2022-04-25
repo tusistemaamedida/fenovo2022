@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin\Movimientos;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\Senasa;
+use App\Repositories\LocalidadRepository;
 use App\Repositories\SenasaRepository;
+use App\Repositories\VehiculoRepository;
+
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,9 +18,14 @@ class SenasaController extends Controller
 {
     private $senasaRepository;
 
-    public function __construct(SenasaRepository $senasaRepository)
-    {
-        $this->senasaRepository = $senasaRepository;
+    public function __construct(
+        SenasaRepository $senasaRepository,
+        VehiculoRepository $vehiculoRepository,
+        LocalidadRepository $localidadRepository
+    ) {
+        $this->senasaRepository    = $senasaRepository;
+        $this->vehiculoRepository  = $vehiculoRepository;
+        $this->localidadRepository = $localidadRepository;
     }
 
     public function index(Request $request)
@@ -39,7 +47,11 @@ class SenasaController extends Controller
                     $ruta = 'edit(' . $senasa->id . ",'" . route('senasa.edit') . "')";
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
-                ->rawColumns(['print', 'edit', 'vincular'])
+                ->addColumn('destroy', function ($senasa) {
+                    $ruta = 'destroy(' . $senasa->id . ",'" . route('senasa.destroy') . "')";
+                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                })
+                ->rawColumns(['print', 'vincular', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.movimientos.senasa.index');
@@ -48,10 +60,11 @@ class SenasaController extends Controller
     public function add()
     {
         try {
-            $senasa = null;
+            $senasa      = null;
+            $vehiculos   = $this->vehiculoRepository->getAll();
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.movimientos.senasa.insertByAjax', compact('senasa'))->render(),
+                'html' => view('admin.movimientos.senasa.insertByAjax', compact('senasa', 'vehiculos'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -75,10 +88,11 @@ class SenasaController extends Controller
     public function edit(Request $request)
     {
         try {
-            $senasa = Senasa::find($request->id);
+            $senasa      = Senasa::find($request->id);
+            $vehiculos   = $this->vehiculoRepository->getAll();
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.movimientos.senasa.insertByAjax', compact('senasa'))->render(),
+                'html' => view('admin.movimientos.senasa.insertByAjax', compact('senasa', 'vehiculos'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -99,10 +113,17 @@ class SenasaController extends Controller
         }
     }
 
+    public function destroy(Request $request)
+    {
+        Senasa::find($request->id)->delete();
+        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'danger']);
+    }
+
     public function vincular(Request $request)
     {
-        $senasa    = Senasa::find($request->id);
-        $movements = Movement::where('TYPE', '!=', 'COMPRA')->orderBy('id', 'desc')->limit(100)->get();
+        $senasa     = Senasa::find($request->id);
+        $arrayTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+        $movements  = Movement::whereIn('type', $arrayTypes)->orderBy('id', 'desc')->limit(100)->get();
         return view('admin.movimientos.senasa.vincular', compact('senasa', 'movements'));
     }
 
@@ -110,12 +131,8 @@ class SenasaController extends Controller
     {
         $senasa = Senasa::find($request->id);
         $senasa->movements()->sync($request->get('movements'));
-        $notification = [
-            'message'    => 'Relacion actualizada !',
-            'alert-type' => 'info',
-        ];
 
-        return redirect()->route('senasa.index')->with($notification);
+        return redirect()->route('senasa.index');
     }
 
     public function print(Request $request)

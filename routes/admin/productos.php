@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\PrintController;
 use App\Http\Controllers\Admin\ProductController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('productos', [ProductController::class, 'list'])->name('products.list');
@@ -10,13 +12,29 @@ Route::post('productos/store', [ProductController::class, 'store'])->name('produ
 
 Route::get('product-validate-code', [ProductController::class, 'validateCode'])->name('product.validate.code');
 Route::get('calculate-product-prices', [ProductController::class, 'calculateProductPrices'])->name('calculate.product.prices');
+Route::get('descuento-por-rubro', [ProductController::class, 'getDescuentoAplicado'])->name('get.descuento.aplicado');
 
 Route::post('productos/destroy', [ProductController::class, 'destroy'])->middleware('can:products.edit')->name('product.destroy');
 
-Route::get('producto/edit', [ProductController::class, 'edit'])->middleware('can:products.edit')->name('product.edit');
+Route::get('producto/edit/{fecha_actualizacion?}', [ProductController::class, 'edit'])->middleware('can:products.edit')->name('product.edit');
 Route::post('producto/update', [ProductController::class, 'update'])->name('product.update');
+Route::post('producto/actualizar-precios', [ProductController::class, 'updatePrices'])->name('actualizar.precios');
+Route::post('producto/actualizar-oferta', [ProductController::class, 'updateOferta'])->name('actualizar.oferta');
+
+Route::post('producto/add-oferta', [ProductController::class, 'addOferta'])->name('product.addOferta');
+Route::post('producto/delete-oferta', [ProductController::class, 'deleteOferta'])->name('product.deleteOferta');
 
 Route::get('productos/getProductByProveedor', [ProductController::class, 'getProductByProveedor'])->name('products.getProductByProveedor');
 
 Route::get('importar', [ProductController::class, 'importFromCsv'])->name('import.products');
-Route::get('exportar', [ProductController::class, 'exportToCsv'])->name('export.products');
+
+Route::get('productos/imprimir', [PrintController::class, 'printProductsPDF'])->name('products.printPDF');
+
+Route::get('productos/exportar', [ProductController::class, 'exportProductsToCsv'])->name('products.exportCSV');
+Route::get('productos-presentaciones/exportar', [ProductController::class, 'exportPresentacionesToCsv'])->name('products.exportPresentacionesCSV');
+Route::get('productos-descuentos/exportar', [ProductController::class, 'exportDescuentosToCsv'])->name('products.exportDescuentosCSV');
+
+Route::get('productos/importar/movimientos', [ProductController::class, 'importProductsMovement'])->name('products.importMovement');
+Route::get('producto/ajuste-stock', [ProductController::class, 'getDataStock'])->name('getData.stock');
+Route::post('producto/ajustar-stock', [ProductController::class, 'ajustarStock'])->name('ajustar.stock');
+

@@ -123,7 +123,8 @@
             delay: 250,
             data: function(params) {
                 return {
-                    term: params.term
+                    term: params.term,
+                    show_stock:0
                 }
             },
             processResults: function (data) {
@@ -195,7 +196,7 @@
             jQuery.ajax({
                 url: "{{route('get.presentaciones')}}",
                 type: 'GET',
-                data: { id, list_id },
+                data: { id, list_id},
                 beforeSend: function () {
                     jQuery('#loader').removeClass('hidden');
                 },
@@ -359,16 +360,9 @@
                 total = total + (valor*presentacion*unit_weight);
             });
         }
-
-        const max = parseInt(jQuery("#tope").val());
-        if(total > max){
-            toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
-            jQuery(obj).val(0).select();
-        }else{
-            jQuery("#envio_total").html('');
-            jQuery("#envio_total").html(total);
-            jQuery("#kg_totales").val(total);
-        }
+        jQuery("#envio_total").html('');
+        jQuery("#envio_total").html(total);
+        jQuery("#kg_totales").val(total);
     }
 </script>
 @endsection

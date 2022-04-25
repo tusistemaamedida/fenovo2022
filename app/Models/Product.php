@@ -27,6 +27,7 @@ class Product extends Model
         'categorie_id'     => 'int',
         'type_id'          => 'int',
         'senasa_id'        => 'int',
+        'iibb'             => 'int',
         'active'           => 'int',
     ];
 
@@ -68,6 +69,7 @@ class Product extends Model
         'categorie_id',
         'cod_descuento',
         'senasa_id',
+        'iibb',
         'active',
     ];
 
@@ -112,6 +114,21 @@ class Product extends Model
         return $this->hasOne(ProductPrice::class);
     }
 
+    public function product_oferta()
+    {
+        return $this->hasOne(ProductOferta::class);
+    }
+
+    public function session_prices()
+    {
+        return $this->hasMany(SessionPrices::class)->groupBy('fecha_actualizacion');
+    }
+
+    public function session_ofertas()
+    {
+        return $this->hasMany(SessionOferta::class);
+    }
+
     public function stock($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
     {
         $stock = 0.0;
@@ -140,5 +157,19 @@ class Product extends Model
         }
 
         return $stock;
+    }
+
+    public function scopeName($query, $name)
+    {
+        if ($name) {
+            return $query->orWhere('name', 'like', $name.'%');
+        }
+    }
+
+    public function scopeCodFenovo($query, $codfenovo)
+    {
+        if ($codfenovo) {
+            return $query->orWhere('cod_fenovo', $codfenovo);
+        }
     }
 }

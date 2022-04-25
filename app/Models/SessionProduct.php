@@ -62,6 +62,8 @@ class SessionProduct extends Model
         'unit_package',
         'quantity',
         'invoice',
+        'iibb',
+        'costo_fenovo'
     ];
 
     public function producto()

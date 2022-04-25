@@ -199,8 +199,6 @@
     });
     }
 
-    
-
     function cargarTablaProductos(){
         var to_type = jQuery("#to_type").val();
         var to = jQuery("#to").val();
@@ -233,16 +231,17 @@
         var to_type = jQuery("#to_type").val();
         var to = jQuery("#to").val();
         var list_id = to_type+'_'+to;
-        var formData =  {list_id};
+        var total_from_session = jQuery("#total_from_session").val();
+        var formData =  {list_id,total_from_session};
         var url ="{{ route('get.flete.session.products') }}";
+
         jQuery.ajax({
             url:url,
             type:'GET',
             data:formData,
             success:function(data){
-                jQuery("#montoFlete").html(data['flete']);
-                let flete = parseFloat(data['flete']/100);
-                jQuery("#flete").val(parseFloat(jQuery("#subTotal").val()*flete).toFixed(2));
+                jQuery("#porcentajeFlete").html(data['porcentaje']);
+                jQuery("#flete").val(parseFloat(data['flete']).toFixed(2));
             },
             error: function (data) {
             },
@@ -263,12 +262,15 @@
         if(valido){
             jQuery('.calculate').each(function() {
                 let valor = parseFloat(jQuery(this).val());
-                let presentacion = jQuery(this).attr("id");
+                let presentacion_input = jQuery(this).attr("id").split('_');
+                let presentacion = presentacion_input[1];
                 total = total + (valor*presentacion*unit_weight);
             });
+            total = total.toFixed(2);
         }
 
         const max = parseInt(jQuery("#tope").val());
+
         if(total > max){
             toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
             jQuery(obj).val(0).select();
@@ -374,5 +376,9 @@
         });
     }
 
+</script>
+
+<script>
+    jQuery(".yajra-datatable").DataTable();
 </script>
 @endsection

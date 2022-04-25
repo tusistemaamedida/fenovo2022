@@ -31,7 +31,7 @@ class StoreController extends Controller
     {
         if ($request->ajax()) {
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $store = Store::all();
+                $store = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
             } else {
                 $store = Auth::user()->stores;
             }
@@ -44,11 +44,11 @@ class StoreController extends Controller
                     return ($store->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
                 })
                 ->addColumn('edit', function ($store) {
-                    return '<a class="dropdown-item" href="' . route('stores.edit', ['id' => $store->id]) . '"> <i class="fa fa-edit"></i> </a>';
+                    return '<a href="' . route('stores.edit', ['id' => $store->id]) . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($store) {
                     $ruta = 'destroy(' . $store->id . ",'" . route('stores.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
                 ->rawColumns(['cod_fenovo', 'inactivo', 'edit', 'destroy'])
                 ->make(true);
@@ -69,17 +69,10 @@ class StoreController extends Controller
 
     public function store(EditRequest $request)
     {
-        try {
-            $data           = $request->except(['_token']);
-            $data['active'] = 1;
-            return $this->storeRepository->create($data);
-            return new JsonResponse([
-                'msj'  => 'Actualización correcta !',
-                'type' => 'success',
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
+        $data           = $request->except(['_token']);
+        $data['active'] = 1;
+        $this->storeRepository->create($data);
+        return redirect()->route('stores.index');
     }
 
     public function edit(Request $request)
@@ -95,18 +88,11 @@ class StoreController extends Controller
 
     public function update(EditRequest $request)
     {
-        try {
-            $data                = $request->except(['_token', 'store_id', 'active', 'online_sale']);
-            $data['active']      = ($request->has('active')) ? 1 : 0;
-            $data['online_sale'] = ($request->has('online_sale')) ? 1 : 0;
-            $this->storeRepository->update($request->input('store_id'), $data);
-            return new JsonResponse([
-                'msj'  => 'Actualización correcta !',
-                'type' => 'success',
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
+        $data                = $request->except(['_token', 'store_id', 'active', 'online_sale']);
+        $data['active']      = ($request->has('active')) ? 1 : 0;
+        $data['online_sale'] = ($request->has('online_sale')) ? 1 : 0;
+        $this->storeRepository->update($request->input('store_id'), $data);
+        return redirect()->route('stores.index');
     }
 
     public function destroy(Request $request)

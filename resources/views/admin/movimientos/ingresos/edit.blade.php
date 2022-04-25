@@ -51,7 +51,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" style=" min-height: 200px ">
                     <div class="col-4">
                         <div class="row font-weight-bold">
                             <div class="col-12"> Producto</div>
@@ -159,7 +159,7 @@
 
     const sumar = () => {
         let total = 0;
-        let valido = true; 
+        let valido = true;
 
         jQuery('.calculate').each(function() {
             if(isNaN(parseFloat(jQuery(this).val()))){
@@ -170,12 +170,14 @@
         if(valido){
             jQuery('.calculate').each(function() {
                 let valor = parseFloat(jQuery(this).val());
-                let presentacion = jQuery(this).attr("id");
+                let presentacion_input = jQuery(this).attr("id").split('_');
+                let presentacion = presentacion_input[1];
+
                 total = total + (valor*presentacion);
             });
             if(total > 0){
                 jQuery('#btn-guardar-producto').removeClass("d-none");
-            }    
+            }
             jQuery('.total').val(total)
         }else{
             jQuery('#btn-guardar-producto').addClass("d-none");
@@ -194,14 +196,15 @@
         jQuery('.calculate').each(function() {
             if(isNaN(parseFloat(jQuery(this).val()))){
                 valido = false;
-            }else{                       
-                let unit_package    = parseFloat(jQuery(this).attr("id"));
-                let valor           = parseFloat(jQuery(this).val());
-                let presentacion    = parseFloat(jQuery(this).attr("id"));
-                let entry           = (valor*presentacion)*peso_unitario;
-                let egress          = 0;
-                let balance         = 0;
-                let entidad_tipo    = 'S';
+            }else{
+                let presentacion_input  = jQuery(this).attr("id").split('_');
+                let presentacion        = presentacion_input[1];
+                let unit_package        = presentacion;
+                let valor               = parseFloat(jQuery(this).val());
+                let entry               = (valor*presentacion)*peso_unitario;
+                let egress              = 0;
+                let balance             = 0;
+                let entidad_tipo        = 'S';
 
                 if(entry > 0){
 
@@ -220,8 +223,8 @@
                     arrMovimientos.push(Movi);
                 }
             }
-        }); 
-                
+        });
+       
         jQuery.ajax({
             url: '{{ route('detalle-ingresos.store') }}',
             type: 'POST',
@@ -240,7 +243,7 @@
 
         jQuery('#loader').addClass('hidden');
     }
-    
+
     const actualizarIngreso = ()=>{
         const id = jQuery("#movement_id").val();
         jQuery.ajax({
@@ -299,9 +302,9 @@
                     dataType: 'json',
                     data: { id: id },
                     success: function (data) {
-                        if (data['type'] == 'success') {                 
+                        if (data['type'] == 'success') {
                             let ruta = "{{ route('ingresos.index') }}";
-                            window.location = ruta;                           
+                            window.location = ruta;
                         }
                     }
                 });
@@ -325,7 +328,7 @@
                     dataType: 'json',
                     data: { id: id },
                     success: function (data) {
-                        if (data['type'] == 'success') {                    
+                        if (data['type'] == 'success') {
                             let ruta = "{{ route('ingresos.index') }}";
                             window.location = ruta;
                         }

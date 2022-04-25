@@ -29,7 +29,7 @@ class EditRequest extends FormRequest
     public function messages()
     {
         return [
-            'description.required'   => 'Razon social de la tienda es requerido !',
+            'description.required'   => 'Nombre de la tienda es requerido !',
             'cod_fenovo.required'   => 'Cod Fenovo es requerido !',
             'cuit.required'   => 'Cuit es requerido !',
         ];

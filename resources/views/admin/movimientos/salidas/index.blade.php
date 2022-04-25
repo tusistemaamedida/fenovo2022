@@ -11,14 +11,12 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">
+                                    <h4 class="card-label mb-0 font-weight-bold text-body">
                                         Salidas cerrradas
-                                    </h3>
+                                    </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{ route('movement.menu.print') }}">
-                                        <i class=" fa fa-print"></i> Impresion | Exportación <i class="fas fa-file-csv"></i>
-                                    </a>
+
                                 </div>
                             </div>
                         </div>
@@ -34,7 +32,7 @@
                                         <table class="display table-hover yajra-datatable">
                                             <thead>
                                                 <tr class="bg-dark text-white">
-                                                    <th>No</th>
+                                                    <th>#</th>
                                                     <th>Fecha</th>
                                                     <th>Destino</th>
                                                     <th>Tipo</th>
@@ -75,7 +73,7 @@
         dom: '<lfrtip>',
         ajax: "{{ route('salidas.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center', orderable:false,searchable: false},
+            {data: 'id', 'class':'text-center', orderable:false,searchable: false},
             {data: 'date'},
             {data: 'destino'},
             {data: 'type', orderable:false},

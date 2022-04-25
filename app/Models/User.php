@@ -78,7 +78,7 @@ class User extends Authenticatable
 
     public function stores()
     {
-        return $this->belongsToMany(Store::class, UserStore::class);
+        return $this->belongsToMany(Store::class, UserStore::class)->orderBy('description', 'ASC');
     }
 
     public function rol()

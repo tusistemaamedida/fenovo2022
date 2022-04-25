@@ -49,7 +49,7 @@
 
             <div class="col-md-12 mb-3">
                 <label class="text-body">Descripción pública (web)</label>
-                <textarea type="text" name="description" rows="4" id="txtarea" class="autoexpand-textarea form-control" @if (isset($product)) value="{{$product->description}}" @else value="" @endif>@if (isset($product)){{$product->description}}@else value="" @endif</textarea>
+                <textarea type="text" name="description" rows="4" id="txtarea" class="autoexpand-textarea form-control" @if (isset($product)) value="{{$product->description}}" @else value="" @endif>@if (isset($product)){{$product->description}} @endif</textarea>
             </div>
 
             <div class="col-md-6">
@@ -111,9 +111,7 @@
                 <fieldset class="form-group mb-3">
                     <select class="js-example-basic-single js-states form-control bg-transparent" name="unit_package[]" id="unit_package" multiple="multiple">
 
-                        @for ($i = 1; $i < 101; $i +=0.5) <option value="{{$i}}">
-                            {{$i}}
-                            </option>
+                        @for ($i = 1; $i < 101; $i +=0.5) <option value="{{$i}}"> {{$i}} </option>
                             @endfor
 
                             @if(isset($product))
@@ -122,6 +120,10 @@
                                 {{$unit}}
                             </option>
                             @endforeach
+                            @else
+                            <option value="1" selected>
+                                1
+                            </option>
                             @endif
 
 
@@ -183,14 +185,14 @@
             <div class="col-md-6">
                 <label class="text-body">Bultos x pallet</label>
                 <fieldset class="form-group mb-3">
-                    <input type="number" class="form-control border-dark" name="package_palet" id="package_palet" @if (isset($product)) value="{{$product->package_palet}}" @else value="" @endif>
+                    <input type="number" class="form-control border-dark" name="package_palet" id="package_palet" @if (isset($product)) value="{{$product->package_palet}}" @else value="0" @endif>
                 </fieldset>
             </div>
 
             <div class="col-md-6">
                 <label class="text-body">Bultos x fila</label>
                 <fieldset class="form-group mb-3">
-                    <input type="number" class="form-control border-dark" name="package_row" @if (isset($product)) value="{{$product->package_row}}" @else value="" @endif>
+                    <input type="number" class="form-control border-dark" name="package_row" @if (isset($product)) value="{{$product->package_row}}" @else value="0" @endif>
                 </fieldset>
             </div>
 
@@ -220,36 +222,73 @@
 
     <div class="col-md-12">
         <div class="form-group row">
-            <div class="col-md-3">
-                <div class="switch-h d-flex mb-3">
-                    <label style="margin-right: 5px">Ventas online?</label>
-                    <div class="custom-control switch custom-switch custom-control-inline mr-0">
-                        <input type="checkbox" class="custom-control-input" id="online_sale" name="online_sale" @if (isset($product) && $product->online_sale) checked="" @elseif((isset($product) && !$product->online_sale) ) unchecked="" @else checked="" @endif value="1">
-                        <label class="custom-control-label mr-1" for="online_sale"></label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="switch-h d-flex mb-3">
-                    <label style="margin-right: 5px">Activo?</label>
-                    <div class="custom-control switch custom-switch custom-control-inline mr-0">
-                        <input type="checkbox" class="custom-control-input" id="active" name="active" @if (isset($product) && $product->active) checked="" @elseif(isset($product) && !$product->active)) unchecked="" @else checked="" @endif value="1">
-                        <label class="custom-control-label mr-1" for="active"></label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <fieldset class="form-group mb-3">
-                    <select class="js-example-basic-single js-states form-control bg-transparent" name="senasa_id">
-                        <option value="">Agrupación SENASA</option>
-                        @foreach ($senasaDefinitions as $senasaDefinition)
-                        <option value="{{$senasaDefinition->id}}" @if (isset($product) && $product->senasa_id == $senasaDefinition->id) selected @endif
-                            >{{$senasaDefinition->product_name}}</option>
+            <div class="col-md-2">
+                <label class="text-body">Iva</label>
+                <fieldset class="form-group mb-3" style="width: 100%">
+                    <select class="js-example-basic-single js-states form-control bg-transparent" name="tasiva" id="tasiva">
+                        @foreach ($alicuotas as $alicuota)
+                        <option value="{{$alicuota->value}}" @if(isset($product) && ((float)$product->product_price->tasiva == (float)$alicuota->value*100))
+                            selected
+                            @elseif($alicuota->value * 100 == 21)
+                            selected
+                            @endif>
+                            {{$alicuota->description}}
+                        </option>
                         @endforeach
                     </select>
                 </fieldset>
+            </div>
+
+            <div class="col-md-2">
+                <label class="text-body">Cant. mayorista T1</label>
+                <fieldset class="input-group form-group mb-3">
+                    <input type="number" step="0.50" min="0" name="cantmay1" id="cantmay1" @if (isset($product)) value="{{$product->product_price->cantmay1}}" @else value="0" @endif class="form-control border-dark">
+                </fieldset>
+            </div>
+
+            <div class="col-md-2">
+                <label class="text-body">Cant. mayorista T2</label>
+                <fieldset class="input-group form-group mb-3">
+                    <input type="number" step="0.50" min="0" name="cantmay2" @if (isset($product)) value="{{$product->product_price->cantmay2}}" @else value="0" @endif class="form-control border-dark">
+                </fieldset>
+            </div>
+
+            <div class="col-md-1">
+                <p>Vta-OnLine:</p>
+                <div class="custom-control switch custom-switch custom-control-inline">
+                    <input type="checkbox" class="custom-control-input" id="online_sale" name="online_sale" @if (isset($product) && $product->online_sale) checked="" @elseif((isset($product) && !$product->online_sale) ) unchecked="" @else checked="" @endif value="1">
+                    <label class="custom-control-label mr-1" for="online_sale"></label>
+                </div>
+
+            </div>
+
+            <div class="col-md-1">
+                <p>IIBB :</p>
+                <div class="custom-control switch custom-switch custom-control-inline">
+                    <input type="checkbox" class="custom-control-input" id="iibb" name="iibb" @if (isset($product) && $product->iibb) checked="" @elseif(isset($product) && !$product->iibb)) unchecked="" @else checked="" @endif value="1">
+                    <label class="custom-control-label mr-1" for="iibb"></label>
+                </div>
+            </div>
+
+            <div class="col-md-1">
+                <p>Activo :</p>
+                <div class="custom-control switch custom-switch custom-control-inline">
+                    <input type="checkbox" class="custom-control-input" id="active" name="active" @if (isset($product) && $product->active) checked="" @elseif(isset($product) && !$product->active)) unchecked="" @else checked="" @endif value="1">
+                    <label class="custom-control-label mr-1" for="active"></label>
+                </div>
+            </div>
+
+
+            <div class="col-md-3">
+                <p>Categoria senasa</p>
+                <select class="js-example-basic-single js-states form-control bg-transparent" name="senasa_id">
+                    <option value="">seleccione ...</option>
+                    @foreach ($senasaDefinitions as $senasaDefinition)
+                    <option value="{{$senasaDefinition->id}}" @if (isset($product) && $product->senasa_id == $senasaDefinition->id) selected @endif
+                        >{{$senasaDefinition->product_name}}</option>
+                    @endforeach
+                </select>
+
             </div>
         </div>
     </div>

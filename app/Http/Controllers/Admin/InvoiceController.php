@@ -8,6 +8,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Yajra\DataTables\Facades\DataTables;
 use App\Repositories\InvoicesRepository;
 use App\Models\Movement;
+use App\Models\Invoice;
 use App\Models\MovementProduct;
 use App\Models\Store;
 use App\Models\Customer;
@@ -63,10 +64,12 @@ class InvoiceController extends Controller
     }
 
     public function generateInvoicePdf($movement_id){
+        $titulo = 'FACTURA ELECTRÓNICA';
         $array_productos = $alicuotas_array = [];
         $invoice = $this->invoiceRepository->getByMovement($movement_id);
         if(!is_null($invoice->cae)){
             $movement = Movement::where('id',$movement_id)->firstOrFail();
+            if($movement->type == 'DEVOLUCION' || $movement->type == 'DEVOLUCIONCLIENTE') $titulo = 'NOTA CRÉDITO';
             $productos = MovementProduct::where('movement_id',$movement_id)->where('invoice',1)->where('egress', '>', 0)->with('product')->get();
             foreach ($productos as $producto) {
                 $objProduct = new stdClass;
@@ -80,7 +83,7 @@ class InvoiceController extends Controller
                 array_push($array_productos,$objProduct);
             }
 
-            if(!is_null($movement->flete ) && $movement->flete > 0){
+            if(!is_null($movement->flete ) && $movement->flete > 0 && $movement->flete_invoice){
                 $objProduct = new stdClass;
                 $objProduct->cant = 1;
                 $objProduct->iva = 21;
@@ -123,7 +126,7 @@ class InvoiceController extends Controller
 
             $qr_url = 'images/'.$invoice->voucher_number.'.svg';
             $voucherType = VoucherType::where('afip_id',$invoice->cbte_tipo)->first();
-            $pdf = PDF::loadView('print.invoice',compact('invoice','array_productos','alicuotas_array','voucherType','qr_url','paginas','total_lineas'));
+            $pdf = PDF::loadView('print.invoice',compact('titulo','invoice','array_productos','alicuotas_array','voucherType','qr_url','paginas','total_lineas'));
             return $pdf->stream('invoice.pdf');
         }
     }
@@ -136,8 +139,11 @@ class InvoiceController extends Controller
             $invoice = $this->invoiceRepository->getByMovement($movement_id);
             if($result['status']){
                 if(isset($invoice)){
+                    $count = Invoice::whereNotNull('cae')->count();
+                    $orden = ($count)?$count+1:1;
                     $this->invoiceRepository->fill($invoice->id,[
                         'error' => null,
+                        'orden' => $orden,
                         'cae' => $result['response_afip']['CAE'],
                         'expiration' => $result['response_afip']['CAEFchVto']
                     ]);
@@ -170,7 +176,7 @@ class InvoiceController extends Controller
           default:
             return "0%";
         }
-      }
+    }
 
     private function createVoucher($movement){
         $data_invoice = $this->dataInvoice($movement);
@@ -188,6 +194,7 @@ class InvoiceController extends Controller
               $more_data->client_iva_type =  $this->get_iva_type($data_invoice['client']->iva_type);              ;
               $more_data->voucher_number =  str_pad($this->pto_vta, 5, "0", STR_PAD_LEFT) .'-'.str_pad($data_invoice['numero_de_factura'], 8, "0", STR_PAD_LEFT);
               $more_data->iibb =  $data_invoice['iibb'];
+              $more_data->costo_fenovo_total =  $data_invoice['costo_fenovo_total'];
 
               $final_data = array_merge($snake_case_data,(array) $more_data);
 
@@ -228,10 +235,11 @@ class InvoiceController extends Controller
 
                 $importe = $this->importes($movement);
                 $importe_gravado = $importe['gravado'];
+                $importe_total_iibb = $importe['total_iibb'];
                 $importe_exento_iva = 0;
                 $importe_iva = $importe['iva'];
 
-                $importe_no_gravado = ($iibb>0)?($importe_gravado * $iibb /100):0;
+                $importe_no_gravado = ($iibb>0)?($importe_total_iibb * $iibb /100):0;
 
                 $dataAfip =[
                     'CantReg' 	=>  1, // Cantidad de facturas a registrar
@@ -277,7 +285,8 @@ class InvoiceController extends Controller
                     'data' => $dataAfip ,
                     'client' => $this->client,
                     'numero_de_factura' => $numero_de_factura,
-                    'iibb' => $iibb
+                    'iibb' => $iibb,
+                    'costo_fenovo_total' => $importe['costo_fenovo_total']
                 ];
             }
             return ['status' => false, 'error' => "Cliente o store no encontrado en el movimiento ". $movement->id];
@@ -289,8 +298,11 @@ class InvoiceController extends Controller
     private function importes($movement){
         $products = $movement->movement_salida_products;
         $gravado = 0;
+        $costo_fenovo_total = 0;
         $iva = 0;
+        $total_iibb = 0;
         $ivas = [];
+
         foreach ($products as $product) {
             if($product->invoice && $product->egress > 0){
                 $obj_iva = new stdClass;
@@ -298,8 +310,10 @@ class InvoiceController extends Controller
                 $subtotal = $product->bultos * $product->unit_price * $product->unit_package; // cantidad de salida por el precio del producto
                 $iva_price = ($subtotal * $tasiva)/100; // iva del subtotal del precio
 
+                if($product->iibb) $total_iibb += $subtotal;
                 $gravado += $subtotal;
                 $iva += $iva_price;
+                $costo_fenovo_total += $product->cost_fenovo;
 
                 $id_alicuota = $this->get_alicuota_id($tasiva);
 
@@ -327,10 +341,11 @@ class InvoiceController extends Controller
             }
         }
         //dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
-        if(!is_null($movement->flete ) && $movement->flete > 0){
+        if(!is_null($movement->flete) && $movement->flete > 0 && $movement->flete_invoice){
             $insert_new = true;
-            $iva += ($movement->flete * 0.21);
-            $gravado += $movement->flete;
+            $iva        += ($movement->flete * 0.21);
+            $gravado    += $movement->flete;
+            $total_iibb += $movement->flete;
 
             for ($cont=0; $cont <count($ivas) ; $cont++) {
                 $alicuota = $ivas[$cont];
@@ -348,8 +363,14 @@ class InvoiceController extends Controller
                 array_push($ivas,$obj_iva);
             }
         }
-       // dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
-        return ['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas];
+        //dd(['gravado' => round($gravado,2), 'iva' => round($iva,2), 'ivas' => $ivas]);
+        return [
+            'gravado' => round($gravado,2),
+            'iva' => round($iva,2),
+            'ivas' => $ivas,
+            'total_iibb' => $total_iibb,
+            'costo_fenovo_total' => $costo_fenovo_total
+        ];
     }
 
     private function get_alicuota_id($iva){

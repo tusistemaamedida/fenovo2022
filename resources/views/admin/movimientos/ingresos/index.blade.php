@@ -10,15 +10,11 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">
+                                    <h4 class="card-label mb-0 font-weight-bold text-body">
                                         Compras
-                                    </h3>
+                                    </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{ route('movement.menu.print') }}" class="mr-3">
-                                        <i class=" fa fa-print"></i>
-                                        Impresion | Exportación <i class="fas fa-file-csv"></i>
-                                    </a>
                                     <a href="{{ route('ingresos.add') }}">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
@@ -46,6 +42,7 @@
                                                     <th>Items</th>
                                                     <th>Kgrs</th>
                                                     <th>Nro compra</th>
+                                                    <th>Edicion</th>
                                                     <th>Detalle</th>
                                                 </tr>
                                             </thead>
@@ -63,6 +60,8 @@
     </div>
 </div>
 
+@include('admin.movimientos.ingresos.modalIngreso')
+
 @endsection
 
 @section('js')
@@ -77,8 +76,9 @@
             {data: 'origen'},
             {data: 'items', 'class':'text-center', searchable: false},
             {data: 'kgrs', 'class':'text-center', searchable: false},
-            {data: 'voucher_number',  'class':'text-center'},
+            {data: 'voucher',  'class':'text-center'},
             {data: 'edit', 'class':'text-center', searchable: false},
+            {data: 'show', 'class':'text-center', searchable: false},
         ],
         });
 </script>

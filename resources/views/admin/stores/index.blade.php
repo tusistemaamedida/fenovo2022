@@ -11,11 +11,16 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">
+                                    <h4 class="card-label mb-0 font-weight-bold text-body">
                                         Tiendas
-                                    </h3>
+                                    </h4>
                                 </div>
                                 <div class="icons d-flex">
+
+                                    <a href="{{url('fletes')}}" class="mt-1 mr-3">
+                                        Parámetros de fletes
+                                    </a>
+                                    
                                     <a href="{{ route('stores.add') }}" class="ml-2">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>

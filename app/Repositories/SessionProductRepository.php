@@ -79,8 +79,14 @@ class SessionProductRepository extends BaseRepository
         $cadena = explode('_', $list_id);
         if (isset($cadena[0]) && ($cadena[0] == 'VENTA')) {
             $store = Store::find($cadena[1]);
-            return $store->delivery_percentage;
+            $km = $store->delivery_km;
+            return $km;
         }
         return '0';
+    }
+
+    public function deleteDevoluciones()
+    {
+        return $this->newQuery()->where('list_id','like', "%DEVOLUCION_%")->delete();
     }
 }

@@ -6,11 +6,12 @@
                     <th>Codigo</th>
                     <th>Producto</th>
                     <th>Stock</th>
-                    <th>Tipo senasa</th>
+                    <th>Costo</th>
                     <th>Proveedor</th>
                     @can('products.create')
-                    <th></th>
-                    <th></th>
+                    <th>Ajust Stock</th>
+                    <th>Editar</th>
+                    <th>Borrar</th>
                     @endcan
                 </tr>
             </thead>

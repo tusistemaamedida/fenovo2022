@@ -20,9 +20,23 @@ abstract class BaseRepository {
     }
 
     public function update($id,$data){
-        return $this->newQuery()->where('id',$id)->update($data);
+        $p = $this->newQuery()->where('id',$id)->first();
+        return $p->update($data);
     }
 
+    public function updateWhere($column,$value,$data){
+        $p = $this->newQuery()->where($column,$value)->first();
+        $p->update($data);
+        return $p->getChanges();
+    }
+
+    public function delete($id){
+        return $this->newQuery()->where('id',$id)->delete();
+    }
+
+    public function deleteWhere($column,$value){
+        return $this->newQuery()->where($column,$value)->delete();
+    }
 
     public function get($orderBy = 'id', $order = 'ASC'){
         return $this->newQuery()->orderBy($orderBy ,$order)->get();

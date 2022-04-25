@@ -27,7 +27,7 @@
         <div class="col-12 mt-3 mb-3">&nbsp;</div>
     </div>
 
-    <form name="unidades_a_enviar" id="unidades_a_enviar">
+    <form name="unidades_a_enviar" id="unidades_a_enviar" onsubmit=" return false;">
         <table class="table">
             <thead>
                 <tr>
@@ -39,9 +39,9 @@
                 @for ($i = 0; $i < count($stock_presentaciones); $i++) <tr>
                     <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
                     <td class=" text-center ">
-                        <input type="number"
-                               name="unidades_{{(float)$stock_presentaciones[$i]['presentacion']}}"
-                               id="{{(float)$stock_presentaciones[$i]['presentacion']}}"
+                        <input type="text"
+                               name="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
+                               id="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
                                class="form-control calculate text-center"
                                @if($stock_total==0) disabled @endif
                                max="{{$stock_presentaciones[$i]['bultos']}}"

@@ -40,14 +40,14 @@
             <option value="">No hay roles</option>
             @endforelse
         </select>
-    </fieldset>      
+    </fieldset>
 </div>
 
 
 <div class="form-group mb-3">
     <label class="text-dark">Tienda asociada</label>
     <fieldset class="form-group">
-        <select class="rounded form-control bg-transparent" name="store_active">
+        <select class="rounded form-control bg-transparent" name="store_active" required>
             <option value="">Seleccione ...</option>
             @foreach ($stores as $store)
             <option value="{{$store->id}}" @if(isset($user) && ($user->store_active == $store->id)) selected @endif>
@@ -55,7 +55,7 @@
             </option>
             @endforeach
         </select>
-    </fieldset>        
+    </fieldset>
 </div>
 
 
@@ -66,7 +66,7 @@
             <input type="checkbox" class="custom-control-input" @if (isset($user) && $user->active) checked="" @endif name="active" id="active" value='1'>
             <label class="custom-control-label" for="active">Activo</label>
         </div>
-    </fieldset>        
+    </fieldset>
     <input type="hidden" name="user_id" value="{{$user->id}}" />
     @endif
 </div>

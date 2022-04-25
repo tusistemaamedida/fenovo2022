@@ -9,31 +9,22 @@
 
         {!! Form::hidden('id', $user->id) !!}
 
-        <div class="row">
-            <div class="col-6">
-                <label>Nombre y apellido</label>
-                <input type="text" id="name" name="name" @if (isset($user)) value="{{$user->name}}" @else value="" @endif class="form-control" autocomplete="off">
-            </div>
-            <div class="col-6">
-                <label>Username</label>
-                <input type="text" name="username" @if (isset($user)) value="{{$user->username}}" @else value="" @endif class="form-control" autocomplete="off">
+        <div class="row mb-4">
+            <div class="col-xs-12 col-12">
+                <h5>Tiendas para asociar al usuario</h5>
             </div>
         </div>
 
-        <div class="row text-center mt-4">
-            <div class="col-9">
-
+        <div class="row">
+            <div class="col-6">
+                Nombre y apellido <span class=" font-weight-bolder"> {{$user->name}} </span> :: 
+                Username <span class=" font-weight-bolder"> {{$user->username}} </span> :: Rol <span class=" font-weight-bolder">{{ $user->rol() }}</span>
             </div>
-            <div class="col-3">
+            <div class="col-6 text-right">
                 {!! Form::submit('actualizar', ['class' => 'btn btn-dark']) !!}
             </div>
         </div>
 
-        <div class="row mb-4">
-            <div class="col-xs-12 col-12">
-                <h5>Tiendas disponibles para asociar </h5>
-            </div>
-        </div>
 
         <div class="row mb-5 mt-3">
             <div class="col-3">
@@ -46,17 +37,8 @@
 
                 @if ($loop->iteration % 8 == 0)
             </div>
-            <div class="col-4"> @endif
+            <div class="col-3"> @endif
                 @endforeach
-            </div>
-        </div>
-
-        <div class="row text-center mt-4">
-            <div class="col-9">
-
-            </div>
-            <div class="col-3">
-                {!! Form::submit('actualizar', ['class' => 'btn btn-dark']) !!}
             </div>
         </div>
 

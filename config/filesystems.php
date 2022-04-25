@@ -35,6 +35,10 @@ return [
             'bucket' => env('DO_BUCKET'),
             'endpoint' => env('DO_ENDPOINT'),
         ],
+        'snapshots' => [
+            'driver' => 'local',
+            'root' => database_path('snapshots'),
+        ],
 
     ],
 

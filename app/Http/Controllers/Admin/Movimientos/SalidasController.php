@@ -3,22 +3,27 @@
 namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
-use stdClass;
+use App\Models\FleteSetting;
 use App\Models\Movement;
 use App\Models\MovementProduct;
+use App\Models\OfertaStore;
+use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\SessionProductRepository;
-use App\Repositories\StoreRepository;
 
+use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
+
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
 class SalidasController extends Controller
@@ -49,9 +54,9 @@ class SalidasController extends Controller
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('created_at');
+                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('date');
             } else {
-                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('created_at', 'DESC')->get();
+                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->get();
             }
             return DataTables::of($movement)
                 ->addIndexColumn()
@@ -87,8 +92,11 @@ class SalidasController extends Controller
                             $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Generar factura"  href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
                         }
                     }
-                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito('.$movement->id.')"> <i class="fas fa-print"></i> </a>';
-
+                    $routeCreatePanama = route('print.panama', ['id' => $movement->id]);
+                    $routeFletePanama = route('print.panama.felete', ['id' => $movement->id]);
+                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
+                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Paper"  href="' . $routeCreatePanama . '" target="_blank"> <i class="fas fa-file"></i> </a>';
+                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Flete"  href="' . $routeFletePanama . '" target="_blank"> <i class="fas fa-car"></i> </a>';
                     return $links;
                 })
                 ->rawColumns(['origen', 'date', 'type', 'kgrs', 'acciones', 'factura_nro'])
@@ -115,9 +123,10 @@ class SalidasController extends Controller
                     return '<span class="badge badge-primary">' . $count . '</span>';
                 })
                 ->addColumn('destroy', function ($pendiente) {
-                    $ruta = 'eliminarPendiente(' . $pendiente->id . ",'" . route('salidas.pendiente.destroy') . "')";
+                    $ruta = "borrarPendiente('" . $pendiente->list_id . "','" . route('salidas.pendiente.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
+
                 ->addColumn('edit', function ($pendiente) {
                     return '<a href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
                 })
@@ -134,8 +143,8 @@ class SalidasController extends Controller
     {
         $explode     = explode('_', $request->input('list_id'));
         $tipo        = $explode[0];
-        $destino     = $this::origenData($tipo, $explode[1], true);
-        $destinoName = $this::origenData($tipo, $explode[1]);
+        $destino     = $this->origenData($tipo, $explode[1], true);
+        $destinoName = $this->origenData($tipo, $explode[1]);
         return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
     }
 
@@ -145,64 +154,120 @@ class SalidasController extends Controller
         $explode          = explode('_', $request->input('list_id'));
         $tipo             = $explode[0];
         $destino          = $this->origenData($tipo, $explode[1], true);
-        $pdf              = PDF::loadView('admin.movimientos.print.pendientes', compact('session_products', 'destino'));
+        $pdf              = PDF::loadView('admin.print.pendientes', compact('session_products', 'destino'));
         return $pdf->stream('salidas.pdf');
     }
 
-    public function getTotalMovement(Request $request){
-        $total = 0;
+    public function getTotalMovement(Request $request)
+    {
+        $total    = 0;
         $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
         $products = $movement->movement_salida_products;
         foreach ($products as $product) {
-            if($product->invoice){
+            if ($product->invoice) {
                 $subtotal = $product->bultos * $product->unit_price * $product->unit_package;
                 $total += $subtotal;
             }
         }
 
-        return new JsonResponse(['type' => 'success','total'=>number_format($total, 2, ',', '.')]);
+        return new JsonResponse(['type' => 'success', 'total' => number_format($total, 2, ',', '.')]);
     }
 
-    public function printRemito(Request $request){
+    public function printRemito(Request $request)
+    {
         $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
-        if($movement){
-            $destino  = $this->origenData($movement->type, $movement->to, true);
-            $neto = $request->input('neto');
-            $array_productos =  [];
-            $productos = $movement->movement_salida_products;
+
+        if ($movement) {
+            $id_remito = 'R'.str_pad($movement->id, 8, "0", STR_PAD_LEFT);
+            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $neto            = $request->input('neto');
+            $array_productos = [];
+            $productos       = $movement->movement_salida_products;
             foreach ($productos as $producto) {
-                $objProduct = new stdClass;
-                $objProduct->cant = $producto->bultos;
-                $objProduct->codigo = $producto->product->cod_fenovo;
-                $objProduct->name = $producto->product->name;
-                $objProduct->unity = '( '.$producto->unit_package . ' '.$producto->product->unit_type .' )';
-                $objProduct->total_unit = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
-                $objProduct->class = '';
-                array_push($array_productos,$objProduct);
+                if($producto->invoice){
+                    $objProduct             = new stdClass();
+                    $objProduct->cant       = $producto->bultos;
+                    $objProduct->codigo     = $producto->product->cod_fenovo;
+                    $objProduct->name       = $producto->product->name;
+                    $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
+                    $objProduct->total_unit = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                    $objProduct->class      = '';
+                    array_push($array_productos, $objProduct);
+                }
             }
 
-            $total_lineas = 27;
-            $paginas = (int) ((count($array_productos)/$total_lineas) + 1);
+            $total_lineas             = 27;
+            $paginas                  = (int)((count($array_productos) / $total_lineas) + 1);
             $faltantes_para_completar = ($total_lineas * $paginas) - count($array_productos);
 
             for ($aux = 0; $aux < $faltantes_para_completar; $aux++) {
-                $objProduct = new stdClass;
-                $objProduct->cant = 0;
-                $objProduct->codigo = 'none';
-                $objProduct->name = 'none';
+                $objProduct             = new stdClass();
+                $objProduct->cant       = 0;
+                $objProduct->codigo     = 'none';
+                $objProduct->name       = 'none';
                 $objProduct->total_unit = 'none';
-                $objProduct->unity = 'none';
-                $objProduct->class = 'no-visible';
-                array_push($array_productos,$objProduct);
+                $objProduct->unity      = 'none';
+                $objProduct->class      = 'no-visible';
+                array_push($array_productos, $objProduct);
             }
 
-            $pdf = PDF::loadView('print.remito',compact('destino','array_productos','neto','paginas','total_lineas'));
-            return $pdf->download('remito.pdf');
-
+            $pdf = PDF::loadView('print.remito', compact('destino', 'array_productos', 'neto', 'paginas', 'total_lineas'));
+            return $pdf->download($id_remito.'.pdf');
         }
     }
+
+    public function printPanama(Request $request)
+    {
+        $movement = Movement::query()->where('id', $request->id)->with('panamas')->first();
+        if ($movement) {
+            $id_panama = '8888-'.str_pad($movement->orden, 8, "0", STR_PAD_LEFT);
+            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $neto            = 0;
+            $array_productos = [];
+            $productos       = $movement->panamas;
+            foreach ($productos as $producto) {
+                $subtotal               = $producto->bultos * $producto->unit_price * $producto->unit_package;
+                $objProduct             = new stdClass();
+                $objProduct->cant       = $producto->bultos;
+                $objProduct->codigo     = $producto->product->cod_fenovo;
+                $objProduct->name       = $producto->product->name;
+                $objProduct->unit_price = number_format($producto->unit_price, 2, ',', '.');
+                $objProduct->subtotal   = number_format($subtotal, 2, ',', '.');
+                $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
+                $objProduct->total_unit = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                $objProduct->class      = '';
+                $neto += $subtotal;
+                array_push($array_productos, $objProduct);
+            }
+
+            $pdf = PDF::loadView('print.panama', compact('destino', 'array_productos', 'neto','id_panama'));
+            return $pdf->download($id_panama.'.pdf');
+        }
+    }
+
+    public function printPanamaFlete(Request $request)
+    {
+        $movement = Movement::query()->where('id', $request->id)->where('flete_invoice',false)->first();
+        if ($movement) {
+            $id_flete = 'FL'.str_pad($movement->id, 8, "0", STR_PAD_LEFT);
+            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $neto            = 0;
+            $array_productos = [];
+            $objProduct             = new stdClass();
+            $objProduct->cant       = 1;
+            $objProduct->name       = 'FLETE';
+            $objProduct->unit_price = number_format($movement->flete, 2, ',', '.');
+            $objProduct->subtotal =$neto  = number_format($movement->flete, 2, ',', '.');
+            $objProduct->class      = '';
+            array_push($array_productos, $objProduct);
+            $pdf = PDF::loadView('print.panamaFelete', compact('destino', 'array_productos', 'neto','id_flete'));
+            return $pdf->download($id_flete.'.pdf');
+        }
+    }
+
     public function add()
     {
+        $this->sessionProductRepository->deleteDevoluciones();
         return view('admin.movimientos.salidas.add');
     }
 
@@ -217,6 +282,8 @@ class SalidasController extends Controller
     {
         $term        = $request->term ?: '';
         $valid_names = [];
+
+        $this->sessionProductRepository->deleteDevoluciones();
 
         if ($request->to_type == 'VENTACLIENTE' || $request->to_type == 'DEVOLUCIONCLIENTE') {
             $customers = $this->customerRepository->search($term);
@@ -236,16 +303,20 @@ class SalidasController extends Controller
     public function searchProducts(Request $request)
     {
         $term        = $request->term ?: '';
+        $show_stock  = $request->has('show_stock') ? (bool)$request->show_stock : true;
         $valid_names = [];
         $products    = $this->productRepository->search($term);
 
         foreach ($products as $product) {
             $disabled      = '';
             $text_no_stock = '';
-            $stock         = $product->stock(null, Auth::user()->store_active);
-            if (!$stock) {
-                $disabled      = 'disabled';
-                $text_no_stock = ' -- SIN STOCK --';
+
+            if ($show_stock) {
+                $stock = $product->stock(null, Auth::user()->store_active);
+                if (!$stock) {
+                    $disabled      = 'disabled';
+                    $text_no_stock = ' -- SIN STOCK --';
+                }
             }
 
             $valid_names[] = [
@@ -274,8 +345,19 @@ class SalidasController extends Controller
     public function getFleteSessionProducts(Request $request)
     {
         try {
+            $total = $request->input('total_from_session');
+            $km    = $this->sessionProductRepository->getFlete($request->input('list_id'));
+            if ($km) {
+                $fleteSetting = FleteSetting::where('hasta', '>=', $km)->orderBy('hasta', 'ASC')->first();
+                $porcentaje   = $fleteSetting->porcentaje;
+                $flete        = round((($porcentaje * $total) / 100), 2);
+            } else {
+                $flete      = 0;
+                $porcentaje = 0;
+            }
             return new JsonResponse([
-                'flete' => $this->sessionProductRepository->getFlete($request->input('list_id')),
+                'flete'      => $flete,
+                'porcentaje' => $porcentaje,
             ]);
         } catch (\Exception $e) {
             return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -296,9 +378,9 @@ class SalidasController extends Controller
     {
         try {
             if ($request->has('id') && $request->input('id') != '') {
-                $product          = $this->productRepository->getById($request->input('id'));
-                $list_id          = $request->input('list_id');
-                $mostrar_detalles = !(str_contains($list_id, 'DEVOLUCION_'));
+                $product    = $this->productRepository->getById($request->input('id'));
+                $list_id    = $request->input('list_id');
+                $devolucion = str_contains($list_id, 'DEVOLUCION_');
 
                 if ($product) {
                     $stock_presentaciones = [];
@@ -324,11 +406,13 @@ class SalidasController extends Controller
                         }
                         $stock_presentaciones[$i]['bultos'] = (int)$bultos;
                     }
+
+                    $view = ($devolucion) ? 'admin.movimientos.notas-credito.partials.inserByAjax' : 'admin.movimientos.salidas.partials.inserByAjax';
                     return new JsonResponse([
                         'type' => 'success',
                         'html' => view(
-                            'admin.movimientos.salidas.partials.inserByAjax',
-                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total', 'mostrar_detalles')
+                            $view,
+                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total')
                         )->render(),
                     ]);
                 }
@@ -366,31 +450,61 @@ class SalidasController extends Controller
             }
             $insert_data = [];
             $product     = $this->productRepository->getByIdWith($product_id);
+
+            $excepcion = false;
+            // busco el producto en session oferta ordenados asc para tomar el primero
+            $session_oferta = SessionOferta::where('fecha_desde', '<=', Carbon::parse(now())->format('Y-m-d'))
+                                            ->where('product_id', $product_id)
+                                            ->orderBy('fecha_hasta', 'ASC')
+                                            ->first();
+
+            if ($session_oferta) {
+                // si existe una oferta busco si esa oferta es una excepcion
+                $ofertaStore = OfertaStore::where('session_id', $session_oferta->id)->first();
+
+                if ($ofertaStore) {
+                    // si la oferta esta en oferta_store es porque es una excepcion y solo se aplica a la store vinculada
+                    $excepcion = true;
+                    if ($ofertaStore->store_id == $to) {
+                        // si la store a la que envio esta en la oferta_store aplica la oferta
+                        $prices = $session_oferta;
+                    } else {
+                        // si la store a la que envio NO esta en la oferta_store NO s aplica la oferta
+                        $prices = $product->product_price;
+                    }
+                } else {
+                    // como existe la oferta y no esta en oferta_store (excepcion) los precios son de la oferta
+                    $prices = $session_oferta;
+                }
+            } else {
+                $prices = $product->product_price;
+            }
+
             switch ($to_type) {
                 case 'DEVOLUCION':
                 case 'VENTA':
-                    $insert_data['unit_price'] = $product->product_price->plist0neto;
-                    $insert_data['tasiva']     = $product->product_price->tasiva;
-                    break;
                 case 'TRASLADO':
-                    $insert_data['unit_price'] = 0;
-                    $insert_data['tasiva']     = 0;
+                    //$ofertaStore = OfertaStore::where('store_id',$to)
+                    $insert_data['unit_price'] = $prices->plist0neto;
+                    $insert_data['tasiva']     = $prices->tasiva;
                     break;
+                case 'DEVOLUCIONCLIENTE':
                 case 'VENTACLIENTE':
                     $customer       = $this->customerRepository->getById($to);
                     $listAssociates = [
-                        'L0' => $product->product_price->plist0,
-                        'L1' => $product->product_price->plist1,
-                        'L2' => $product->product_price->plist2,
+                        'L0' => $prices->plist0,
+                        'L1' => $prices->plist1,
+                        'L2' => $prices->plist2,
                     ];
                     $insert_data['unit_price'] = $listAssociates[$customer->listprice_associate];
-                    $insert_data['tasiva']     = $product->product_price->tasiva;
+                    $insert_data['tasiva']     = $prices->tasiva;
                     break;
             }
-
+            $insert_data['costo_fenovo'] = $prices->costfenovo;
             $insert_data['list_id']    = $to_type . '_' . $to;
             $insert_data['store_id']   = Auth::user()->store_active;
             $insert_data['invoice']    = true;
+            $insert_data['iibb']       = $product->iibb;
             $insert_data['product_id'] = $product_id;
             for ($i = 0; $i < count($unidades); $i++) {
                 $unidad   = $unidades[$i];
@@ -419,18 +533,30 @@ class SalidasController extends Controller
         }
     }
 
-    public function storeSalida(Request $request){
+    public function storeSalida(Request $request)
+    {
         $from = Auth::user()->store_active;
         try {
             $list_id                       = $request->input('session_list_id');
             $explode                       = explode('_', $list_id);
+
+            if($explode[0] != 'TRASLADO'){
+                $count = Movement::where('from',$from)->whereIn('type', ['VENTA', 'VENTACLIENTE'])->count();
+            }else{
+                $count = Movement::where('from',$from)->where('type','TRASLADO')->count();
+            }
+
+            $orden = ($count)?$count+1:1;
+
             $insert_data['type']           = $explode[0];
             $insert_data['to']             = $explode[1];
             $insert_data['date']           = now();
             $insert_data['from']           = $from;
+            $insert_data['orden']          = $orden;
             $insert_data['status']         = 'FINISHED';
             $insert_data['voucher_number'] = $request->input('voucher_number');
-            $insert_data['flete']          = (float)$request->input('flete');
+            $insert_data['flete']          = $request->flete;
+            $insert_data['flete_invoice']  = (isset($request->factura_flete)) ? 1 : 0;
 
             $movement         = Movement::create($insert_data);
             $session_products = $this->sessionProductRepository->getByListId($list_id);
@@ -454,15 +580,17 @@ class SalidasController extends Controller
                     'product_id'     => $product->product_id,
                     'unit_package'   => $product->unit_package, ], [
                         'invoice'    => $product->invoice,
+                        'iibb'       => $product->iibb,
                         'unit_price' => $product->unit_price,
+                        'cost_fenovo' => $product->costo_fenovo,
                         'tasiva'     => $product->tasiva,
                         'entry'      => 0,
                         'bultos'     => $product->quantity,
                         'egress'     => $kgrs,
                         'balance'    => $balance,
-                ]);
+                    ]);
 
-                if($insert_data['type'] != 'VENTACLIENTE'){
+                if ($insert_data['type'] != 'VENTACLIENTE') {
                     // Suma al balance de la store to
                     $latest = MovementProduct::all()
                         ->where('entidad_id', $insert_data['to'])
@@ -484,8 +612,8 @@ class SalidasController extends Controller
                             'tasiva'     => $product->tasiva,
                             'egress'     => 0,
                             'balance'    => $balance,
-                    ]);
-                }else{
+                        ]);
+                } else {
                     MovementProduct::firstOrCreate([
                         'entidad_id'     => $insert_data['to'],
                         'entidad_tipo'   => $enitidad_tipo,
@@ -499,13 +627,13 @@ class SalidasController extends Controller
                             'tasiva'     => $product->tasiva,
                             'egress'     => 0,
                             'balance'    => $balance,
-                    ]);
+                        ]);
                 }
             }
             $this->sessionProductRepository->deleteList($list_id);
             return redirect()->route('salidas.add');
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            //($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
@@ -524,7 +652,7 @@ class SalidasController extends Controller
 
     public function pendienteDestroy(Request $request)
     {
-        SessionProduct::find($request->id)->delete();
+        SessionProduct::where('list_id', $request->list_id)->delete();
         return new JsonResponse(
             [
                 'msj'  => 'Eliminado ... ',

@@ -6,7 +6,7 @@
 
                     <div class="table-datapos">
                         <div class="table-responsive">
-                            <table class="table table-striped  text-body">
+                            <table class="table table-striped  text-body yajra-datatable">
                                 <thead>
                                     <tr class="">
                                         <th class="border-0  header-heading" scope="col">#</th>
@@ -100,6 +100,8 @@
                                     </tr>
                                 </tfoot>
                             </table>
+
+                            <input type="hidden" name="total_from_session" id="total_from_session" value="{{$subtotal}}">
                         </div>
                     </div>
 
@@ -154,3 +156,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    jQuery(".yajra-datatable").DataTable({
+        ordering: false,
+    });
+</script>

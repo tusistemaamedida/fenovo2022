@@ -24,7 +24,7 @@ class UpdateProduct extends FormRequest
             'proveedor_id'=> 'required',
             'unit_type'=> 'required',
             'unit_weight'=> 'required|numeric',
-            'plistproveedor'=> 'required|numeric',
+            //'plistproveedor'=> 'required|numeric',
         ];
     }
 
@@ -41,8 +41,8 @@ class UpdateProduct extends FormRequest
             'type_package.required'   => 'La fragilidad del producto es requerida!',
             'net_weight.required'   => 'El Peso bulto neto del producto es requerido!',
             'net_weight.numeric'   => 'El Peso bulto neto del producto debe ser numérico!',
-            'plistproveedor.required'   => 'El precio del proveedor es requerido!',
-            'plistproveedor.numeric'   => 'El precio del proveedor debe ser numérico!',
+            //'plistproveedor.required'   => 'El precio del proveedor es requerido!',
+           // 'plistproveedor.numeric'   => 'El precio del proveedor debe ser numérico!',
         ];
     }
 }

@@ -92,8 +92,6 @@ const update = (route) => {
         },
         success: function (data) {
             if (data['type'] == 'success') {
-                //closeModal();
-                toastr.info('Actualizado', 'Registro');
                 table.ajax.reload();
             } else {
                 toastr.error(data['html'], 'Verifique');
@@ -132,7 +130,7 @@ const destroy = (id, route) => {
                 success: function (data) {
                     table.ajax.reload();
                     toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                    toastr.success("Eliminado ... ");
+                    toastr.info("Eliminado ... ");
                 }
             });
         }

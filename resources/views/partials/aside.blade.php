@@ -22,7 +22,7 @@
                     @can('products.index')
                     <li class="nav-item" title="Lista de Productos">
                         <a href="{{url('productos')}}" class="nav-link">
-                            <span class="svg-icon nav-icon"> <i class="fas fa-boxes"></i> </span>
+                            <span class="svg-icon nav-icon"> <i class="fas fa-barcode"></i> </span>
                             <span class="nav-text"> Productos </span>
                         </a>
                     </li>
@@ -34,7 +34,6 @@
                             <span class="nav-text">Compras</span>
                         </a>
                     </li>
-
                     <li class="dropdown dropright">
                         <button type="button" class="btn dropdown-toggle text-black-50" data-toggle="dropdown" title="Salida de mercadería">
                             <i class="fas fa-dolly-flatbed"></i>
@@ -46,24 +45,13 @@
                             <a class="dropdown-item text-black-50" href="{{route('salidas.index')}}">
                                 Salidas finalizadas
                             </a>
-
                             <a class="dropdown-item text-black-50" href="{{route('senasa.index')}}">
                                 Senasa
                             </a>
-
-                            <a class="dropdown-item text-black-50" href="{{route('nc.index')}}">
+                            <a class="dropdown-item text-warning" href="{{route('nc.index')}}">
                                 Notas de crédito
                             </a>
                         </div>
-                    </li>
-
-                    <li class="nav-item" title="Proveedores">
-                        <a href="{{url('proveedores')}}" class="nav-link">
-                            <span class="svg-icon nav-icon">
-                                <i class="fas fa-industry"></i>
-                            </span>
-                            <span class="nav-text"> Proveedores </span>
-                        </a>
                     </li>
                     <li class="nav-item" title="Lista de Friotekas">
                         <a href="{{ url('tiendas') }}" class="nav-link">
@@ -81,6 +69,14 @@
                             <span class="nav-text">Clientes</span>
                         </a>
                     </li>
+                    <li class="nav-item" title="Impresión / Exportación">
+                        <a href="{{ route('menu.print') }}" class="nav-link">
+                            <span class="svg-icon nav-icon">
+                                <i class="fas fa-print"></i>
+                            </span>
+                            <span class="nav-text"> Impresión </span>
+                        </a>
+                    </li>
                     <li class="dropdown dropright">
                         <button type="button" class="btn dropdown-toggle text-black-50" data-toggle="dropdown">
                             <i class="fas fa-cogs text-black-50"></i>
@@ -89,7 +85,6 @@
                             <a class="dropdown-item" href="{{ url('users') }}">
                                 <span class="text-black-50"> Usuarios </span>
                             </a>
-
                             @role('superadmin')
                             <a class="dropdown-item" href="{{ route('roles.index') }}">
                                 <span class="text-black-50"> Roles </span>
@@ -99,6 +94,14 @@
                             </a>
                             @endrole
                         </div>
+                    </li>
+                    <li class="nav-item" title="Proveedores">
+                        <a href="{{url('proveedores')}}" class="nav-link">
+                            <span class="svg-icon nav-icon">
+                                <i class="fas fa-industry"></i>
+                            </span>
+                            <span class="nav-text"> Proveedores </span>
+                        </a>
                     </li>
                     <li class="dropdown dropright">
                         <button type="button" class="btn dropdown-toggle text-black-50" data-toggle="dropdown">
@@ -115,7 +118,7 @@
                                 <span class="text-black-50">Vehículos</span>
                             </a>
                         </div>
-                    </li>                   
+                    </li>
 
                 </ul>
 

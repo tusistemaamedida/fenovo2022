@@ -1,106 +1,199 @@
 <script>
 
-    jQuery("#plistproveedor").keyup(function(){
-        calculatePrices()
+    jQuery("#fecha_actualizacion").change(function(){
+        validateBtn()
+    })
+
+    jQuery("#fecha_desde").change(function(){
+        validateBtn()
+    })
+
+    jQuery("#fecha_hasta").change(function(){
+        validateBtn()
+    })
+
+    function validateBtn(){
+        var fecha       = jQuery("#fecha_actualizacion").val();
+        var fecha_desde = jQuery("#fecha_desde").val();
+        var fecha_hasta = jQuery("#fecha_hasta").val();
+        if(fecha != '' || (fecha_desde != '' && fecha_hasta != '')){
+            jQuery("#btn_product").attr('disabled',false);
+        }else{
+            jQuery("#btn_product").attr('disabled',true);
+        }
+    }
+
+    jQuery("#plistproveedor").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#mupfenovo").select();
+            calculatePrices(validate)
+        }
     });
 
-    jQuery("#descproveedor").keyup(function(){
-        calculatePrices()
+    jQuery("#mupfenovo").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#p1tienda").select();
+            calculatePrices(validate)
+        }
     });
 
-    jQuery("#mupfenovo").keyup(function(){
-        calculatePrices()
+    jQuery("#descproveedor").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
     });
 
-    jQuery("#contribution_fund").keyup(function(){
-        calculatePrices()
+    jQuery("#p1tienda").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#descp1").select();
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#descp1").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#p2tienda").select();
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#p2tienda").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#descp2").select();
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#descp2").keydown(function(event){
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            let validate = 0;
+            jQuery("#plistproveedor").select();
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#contribution_fund").keypress(function(event){
+        if (event.which == 9 || event.keyCode == 9) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
+    });
+
+    jQuery("#muplist1").keypress(function(event){
+        if (event.which == 9 || event.keyCode == 9) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
+    });
+    jQuery("#muplist2").keypress(function(event){
+        if (event.which == 9 || event.keyCode == 9) {
+            let validate = 0;
+            calculatePrices(validate)
+        }
     });
 
     jQuery("#descproveedor").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#mupfenovo").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#contribution_fund").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#tasiva").change(function(){
-        calculatePrices()
-    });
-
-    jQuery("#muplist1").keyup(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#muplist1").change(function(){
-        calculatePrices()
-    });
-
-    jQuery("#muplist2").keyup(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#muplist2").change(function(){
-        calculatePrices()
-    });
-
-    jQuery("#p1tienda").keyup(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#p1tienda").change(function(){
-        calculatePrices()
-    });
-
-    jQuery("#descp1").keyup(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#descp1").change(function(){
-        calculatePrices()
-    });
-
-    jQuery("#p2tienda").keyup(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#p2tienda").change(function(){
-        calculatePrices()
-    });
-
-    jQuery("#descp2").keyup(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
     jQuery("#descp2").change(function(){
-        calculatePrices()
+        let validate = 0;
+        calculatePrices(validate)
     });
 
-    function calculatePrices(){
+    jQuery("#cod_descuento").change(function(){
+        getDescuento();
+    });
+
+    function getDescuento(){
+        var cod_descuento = jQuery("#cod_descuento").val();
+        jQuery.ajax({
+            url:"{{ route('get.descuento.aplicado') }}",
+            type:'GET',
+            data:{cod_descuento},
+            beforeSend: function() {},
+            success:function(data){
+                if(data['type'] == 'success'){
+                    jQuery("#descp1").val(data['descp1']);
+                }
+            },
+            error: function (data) {},
+            complete: function () {}
+        });
+    }
+
+    function calculatePrices(validate = 1){
         var text = "Aguarde por favor, se están claculando los precios..."
         var spanId = "#info-calculate";
         var elements = document.querySelectorAll('.is-invalid');
         var plistproveedor = jQuery("#plistproveedor").val();
-        var descproveedor = jQuery("#descproveedor").val();
+        var descproveedor  = jQuery("#descproveedor").val();
         var contribution_fund = jQuery("#contribution_fund").val();
         var mupfenovo = jQuery("#mupfenovo").val();
-        var tasiva = jQuery("#tasiva").val();
-        var muplist1 = jQuery("#muplist1").val();
-        var muplist2 = jQuery("#muplist2").val();
-        var p1tienda = jQuery("#p1tienda").val();
-        var descp1 = jQuery("#descp1").val();
+        var tasiva    = jQuery("#tasiva").val();
+        var muplist1  = jQuery("#muplist1").val();
+        var muplist2  = jQuery("#muplist2").val();
+        var p1tienda  = jQuery("#p1tienda").val();
+        var descp1    = jQuery("#descp1").val();
 
-        var p2tienda = jQuery("#p2tienda").val();
-        var descp2 = jQuery("#descp2").val();
+        var p2tienda      = jQuery("#p2tienda").val();
+        var descp2        = jQuery("#descp2").val();
+        var cod_descuento = jQuery("#cod_descuento").val();
+
+        var product_id = jQuery("#product_id").val();
 
         jQuery.ajax({
             url:"{{ route('calculate.product.prices') }}",
             type:'GET',
             data:{
+                validate,
                 plistproveedor,
                 descproveedor,
                 mupfenovo,
@@ -111,7 +204,9 @@
                 p1tienda,
                 descp1,
                 descp2,
-                p2tienda
+                p2tienda,
+                cod_descuento,
+                product_id
             },
             beforeSend: function() {
                 jQuery(spanId).html(text)
@@ -136,6 +231,7 @@
                     jQuery("#mupp2may").val(data['mupp2may']);
                     jQuery("#descp2").val(data['descp2']);
                 }else{
+                    //if(data['descp1']) jQuery("#descp1").val(data['descp1']);
                     toastr.error(data['msj'],'ERROR!');
                 }
                 jQuery(spanId).html('')

@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\MovementsExport;
+use App\Exports\MovementsViewExport;
 
 use App\Http\Controllers\Controller;
-use App\Models\Movement;
-use App\Models\Store;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -46,35 +44,80 @@ class PrintController extends Controller
     public function menuPrint(Request $request)
     {
         $tiposalidas = $this->enumRepository->getType('movimientos');
-        return view('admin.movimientos.print.print', compact('tiposalidas'));
+        $stores      = $this->storeRepository->getActives();
+        return view('admin.print.print', compact('tiposalidas', 'stores'));
     }
 
-    public function printEntreFechas(Request $request)
+    public function printMovimientosPDF(Request $request)
     {
-        $desde    = $request->desde;
-        $hasta    = $request->hasta;
-        $arrTypes = ($request->tipo) ? [$request->tipo] : ['COMPRA', 'VENTA', 'VENTACLIENTE', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $desde = $request->desde;
+        $hasta = $request->hasta;
 
-        $salidas = Movement::query()
-            ->whereIn('type', $arrTypes)
-            ->orderBy('created_at', 'ASC')
-            ->whereBetween(DB::raw('DATE(created_at)'), [$request->desde, $request->hasta])
-            ->get()
-            ->unique('voucher_number');
+        $arrTipos   = ['VENTA', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $arrEntrada = ['VENTA', 'TRASLADO'];
 
-        $pdf = PDF::loadView('admin.movimientos.print.entreFechas', compact('salidas', 'desde', 'hasta'));
+        $movimientos = DB::table('movements as t1')
+            ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
+            ->join('products as t3', 't2.product_id', '=', 't3.id')
+            ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
+            ->select('t1.id', 't1.type', 't1.date', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad')
+            ->whereIn('t1.type', $arrTipos)
+            ->whereBetween(DB::raw('DATE(date)'), [$desde, $hasta])
+            ->where('t2.entidad_tipo', '!=', 'C')
+            ->get();
+
+        $arrMovements = [];
+
+        foreach ($movimientos as $movement) {
+            $store_type = DB::table('stores')->where('id', $movement->from)->select('store_type')->pluck('store_type')->first();
+
+            $creado = false;
+
+            if (in_array($movement->type, $arrEntrada)) {
+
+                // Venta o traslado
+
+                if ($movement->entry > 0) {
+                    $objMovement              = new stdClass();
+                    $creado                   = true;
+                    $objMovement->origen      = ($store_type == 'N') ? 'DEP_CEN' : 'DEP_PAN';
+                    $objMovement->id          = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+                    $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
+                    $objMovement->tipo        = 'E';
+                    $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
+                    $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
+                    $objMovement->cantidad    = $movement->entry;
+                    $objMovement->unidad      = $movement->unidad;
+                }
+            } else {
+
+                // Analizar las devoluciones
+
+                $tipo = ($movement->entry > 0) ? 'E' : 'S';
+
+                $objMovement              = new stdClass();
+                $creado                   = true;
+                $objMovement->origen      = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
+                $objMovement->id          = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+                $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
+                $objMovement->tipo        = $tipo;
+                $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
+                $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
+                $objMovement->cantidad    = ($movement->entry > 0) ? $movement->entry : $movement->egress;
+                $objMovement->unidad      = $movement->unidad;
+            }
+
+            if ($creado) {
+                array_push($arrMovements, $objMovement);
+            }
+        }
+
+        $pdf = PDF::loadView('admin.print.movimientos.entreFechas', compact('arrMovements', 'desde', 'hasta'));
         return $pdf->stream('salidas_fechas.pdf');
     }
 
-    public function exportEntreFechas(Request $request)
+    public function exportMovimientosCsv(Request $request)
     {
-        $desde   = explode('-', $request->desde);
-        $hasta   = explode('-', $request->hasta);
-        $type    = ($request->tipo) ? $request->tipo : 'TODOS';
-        $archivo = 'MOV_' . $type . '_' . $desde[2] . $desde[1] . '_' . $hasta[2] . $hasta[1] . '.csv';
-
-        // Segmento de pruebas //
-
-        return Excel::download(new MovementsExport($request), $archivo);
+        return Excel::download(new MovementsViewExport($request), 'movi.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 }

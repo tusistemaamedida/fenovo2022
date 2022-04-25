@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Invoice
- * 
+ *
  * @property int $id
  * @property int|null $cant_reg
  * @property int|null $movement_id
@@ -110,6 +110,8 @@ class Invoice extends Model
 		'cae',
 		'expiration',
 		'key',
-		'error'
+		'error',
+        'costo_fenovo_total',
+        'orden'
 	];
 }

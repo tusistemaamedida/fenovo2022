@@ -11,9 +11,9 @@
                         <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
-                                    <h3 class="card-label mb-0 font-weight-bold text-body">
+                                    <h4 class="card-label mb-0 font-weight-bold text-body">
                                         Vehiculos
-                                    </h3>
+                                    </h4>
                                 </div>
                                 <div class="icons d-flex">
                                     <a href="javascript:void(0)" onclick="add('{{ route('vehiculos.add') }}')" class="ml-2">
@@ -34,10 +34,10 @@
                                         <table class="display table-hover yajra-datatable">
                                             <thead>
                                                 <tr class="bg-dark text-white">
-                                                    <th>No</th>
                                                     <th>Tipo vehículo</th>
                                                     <th>Marca</th>
                                                     <th>Capacidad</th>
+                                                    <th>Senasa</th>
                                                     <th>Patente</th>
                                                     <th>Transportista</th>
                                                     <th></th>
@@ -71,10 +71,10 @@
         @include('partials.table.setting'),
         ajax: "{{ route('vehiculos.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center col-1', orderable: false, searchable: false},
             {data: 'tipo'},
             {data: 'marca'},
             {data: 'capacidad'},
+            {data: 'senasa'},
             {data: 'patente'},
             {data: 'transportista'},
             {data: 'edit', name: 'Editar', 'class':'text-center', orderable: false, searchable: false},

@@ -25,14 +25,14 @@
                     </fieldset>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="text-body">Seleccionar producto</label>
                     <fieldset class="form-group mb-3 d-flex">
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="product_search" id="product_search"> </select>
                     </fieldset>
                 </div>
 
-                <div class="col-md-2 text-center">
+                <div class="col-md-1 text-center">
                     <button type="button" class="btn btn-primary" id="btnPrintCerrarSalida" disabled style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
                         <i class="fa fa-print"></i>
                     </button>
