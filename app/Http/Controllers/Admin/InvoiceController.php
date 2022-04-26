@@ -24,24 +24,36 @@ class InvoiceController extends Controller
     private $cuit_afip;
     private $cert_folder;
     private $pto_vta;
+    private $production_afip;
     private $concepto_afip;
     private $document_type;
     private $afip;
 
     public function __construct( InvoicesRepository $invoiceRepository) {
         $this->client = null;
-        $this->cuit_afip =20287937149;
-        $this->cuit_afip_folder = 'dev/';
-        $this->pto_vta = 17;
+        $this->cuit_afip = env('CUIT_FENOVO');
+        $this->production_afip = env('PRODUCTION_AFIP');
+        $this->cuit_afip_folder = env('CERT_FOLDER');
+        $this->pto_vta = env('PTO_VTA_FENOVO');
         $this->concepto_afip = 1; // (1)Productos, (2)Servicios, (3)Productos y Servicios
         $this->document_type =  80; // (80) CUIT
         $this->invoiceRepository = $invoiceRepository;
 
-        $this->afip =  new Afip([
-            'CUIT'=> $this->cuit_afip,
-            'res_folder'=>  __DIR__.'/../../../certs/'.$this->cuit_afip_folder,
-            'ta_folder'=>  __DIR__.'/../../../certs/'.$this->cuit_afip_folder
-        ]);
+        if($this->production_afip == 'TRUE'){
+            $this->afip =  new Afip([
+                'CUIT'=> $this->cuit_afip,
+                'production' => TRUE,
+                'res_folder'=>  __DIR__.'/../../../certs/'.$this->cuit_afip_folder,
+                'ta_folder'=>  __DIR__.'/../../../certs/'.$this->cuit_afip_folder
+            ]);
+        }else{
+            $this->afip =  new Afip([
+                'CUIT'=> $this->cuit_afip,
+                'res_folder'=>  __DIR__.'/../../../certs/'.$this->cuit_afip_folder,
+                'ta_folder'=>  __DIR__.'/../../../certs/'.$this->cuit_afip_folder
+            ]);
+        }
+
     }
 
     public function index(Request $request){
