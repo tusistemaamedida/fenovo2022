@@ -175,7 +175,17 @@ class SalidasController extends Controller
     {
         $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
         if ($movement) {
-            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $destino = $this->origenData($movement->type, $movement->to, true);
+
+            // Ver si es un traslado a base
+            $mercaderia_en_transito = null;
+            if ($movement->type == 'TRASLADO') {
+                $store = Store::find($movement->to);
+                if(isset($store) && ($store->store_type == 'B')){
+                    $mercaderia_en_transito = 'MERCADERIA EN TRANSITO';
+                };
+            }
+
             $neto            = $request->input('neto');
             $array_productos = [];
             $productos       = $movement->movement_salida_products;
@@ -205,7 +215,7 @@ class SalidasController extends Controller
                 array_push($array_productos, $objProduct);
             }
 
-            $pdf = PDF::loadView('print.remito', compact('destino', 'array_productos', 'neto', 'paginas', 'total_lineas'));
+            $pdf = PDF::loadView('print.remito', compact('destino', 'array_productos', 'neto', 'paginas', 'total_lineas', 'mercaderia_en_transito'));
             return $pdf->download('remito.pdf');
         }
     }
