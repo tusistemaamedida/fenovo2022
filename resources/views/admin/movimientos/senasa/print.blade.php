@@ -8,6 +8,8 @@
 
 @section('content')
 
+@include('admin.movimientos.senasa.header-salida')
+
 <div class="body-senasa">
     <table style="width:100%; font-size: 9px ">
         <tr>
@@ -28,16 +30,16 @@
         </tr>
     </table>
 
-    <div style="height: 7cm">
+    <div style="height: 5cm">
         &nbsp;
     </div>
 
     <table style="width:100%; font-size: 8px ">
         <tr>
-            <th class="text-center" style="width: 5%; ">&nbsp;</th>
+            <th class="text-center" style="width: 10%; ">&nbsp;</th>
             <th class="text-center" style="width: 50%;">&nbsp;</th>
             <th class="text-center" style="width: 10%;">&nbsp;</th>
-            <th class="text-center" style="width: 10%;">&nbsp;</th>
+            <th class="text-center" style="width: 5%;">&nbsp;</th>
             <th class="text-center" style="width: 5%;">&nbsp;</th>
         </tr>
         @foreach($movimientos as $movimiento)
