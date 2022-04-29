@@ -1,5 +1,5 @@
 <header>
-    <div style="height: 2.5cm">
+    <div style="height: 2cm">
         &nbsp;
     </div>
 </header>
