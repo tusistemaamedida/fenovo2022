@@ -14,7 +14,7 @@
         </tr>
         <tr class="text-center">
             <td colspan="2">
-                <strong style="margin-left: 11cm; margin-top:1cm"> {{ $senasa->dias_validez }} </strong>
+                <strong style="margin-left: 8.5cm; margin-top:1cm"> {{ $senasa->dias_validez }} </strong>
             </td>
         </tr>
     </table>
