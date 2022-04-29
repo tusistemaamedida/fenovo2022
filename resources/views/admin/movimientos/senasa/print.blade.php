@@ -25,13 +25,13 @@
                 <strong style="margin-left: 8.7cm">
                     {{ date('d', strtotime($senasa->fecha_salida)) }}
                 </strong>
-                <strong style="margin-left: 10cm">
+                <strong style="margin-left: 1.3cm">
                     {{ date('m', strtotime($senasa->fecha_salida)) }}
                 </strong>
-                <strong style="margin-left: 11cm">
+                <strong style="margin-left: 1cm">
                     {{ date('Y', strtotime($senasa->fecha_salida)) }}
                 </strong>
-                <strong style="margin-left: 13cm">
+                <strong style="margin-left: 2cm">
                     {{ $senasa->hora_salida }}
                 </strong>
                 <strong style="margin-left: 15.5cm">
