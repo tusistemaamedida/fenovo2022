@@ -2,7 +2,7 @@
     <table style="width:100%; font-size: 9px ">
         <tr>
             <td colspan="2">
-                <strong style="margin-left: 4cm">{{ $senasa->patente_nro }}</strong> <strong style="margin-left: 4cm">{{ $senasa->habilitacion_nro }}</strong> <strong style="margin-left: 4cm">{{ $senasa->patente_nro }}</strong> <strong style="margin-left: 2cm">{{ $senasa->precintos }}</strong>
+                <strong style="margin-left: 4cm">{{ $senasa->patente_nro }}</strong> <strong style="margin-left: 4cm">{{ $senasa->habilitacion_nro }}</strong> <strong style="margin-left: 2cm">{{ $senasa->precintos }}</strong>
             </td>
         </tr>
         <tr>
