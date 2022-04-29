@@ -22,16 +22,16 @@
         </tr>
         <tr>
             <td colspan="6">
-                <strong style="margin-left: 8.7cm">
+                <strong style="margin-left: 9.7cm">
                     {{ date('d', strtotime($senasa->fecha_salida)) }}
                 </strong>
-                <strong style="margin-left: 1.3cm">
+                <strong style="margin-left: 1cm">
                     {{ date('m', strtotime($senasa->fecha_salida)) }}
                 </strong>
                 <strong style="margin-left: 1cm">
                     {{ date('Y', strtotime($senasa->fecha_salida)) }}
                 </strong>
-                <strong style="margin-left: 2cm">
+                <strong style="margin-left: 1.5cm">
                     {{ date('H:i', strtotime($senasa->hora_salida)) }}
                 </strong>
                 <strong style="margin-left: 1cm">
@@ -41,7 +41,7 @@
         </tr>
     </table>
 
-    <div style="height: 6cm">
+    <div style="height: 7cm">
         &nbsp;
     </div>
 
