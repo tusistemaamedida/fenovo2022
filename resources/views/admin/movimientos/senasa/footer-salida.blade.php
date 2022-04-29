@@ -1,5 +1,5 @@
 <footer-5>
-    <table style="width:100%; margin-top:0.5cm; font-size: 9px ">
+    <table style="width:100%; margin-top:2cm; font-size: 9px ">
         <tr>
             <td colspan="2">
                 <strong style="margin-left: 4.2cm">{{ $senasa->patente_nro }}</strong> 
