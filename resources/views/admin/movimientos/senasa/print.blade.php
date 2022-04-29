@@ -8,8 +8,6 @@
 
 @section('content')
 
-@include('admin.movimientos.senasa.header-salida')
-
 <div class="body-senasa">
     <table style="width:100%; font-size: 9px ">
         <tr>
@@ -30,7 +28,7 @@
         </tr>
     </table>
 
-    <div style="height: 5cm">
+    <div style="height: 7cm">
         &nbsp;
     </div>
 
