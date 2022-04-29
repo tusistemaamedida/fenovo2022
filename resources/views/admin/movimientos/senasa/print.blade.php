@@ -8,7 +8,7 @@
 
 @section('content')
 
-<table style="width:100%; margin-top:2cm; font-size: 9px ">
+<table style="width:100%; margin-top:1.5cm; font-size: 9px ">
     <tr>
         <td colspan="6">
             <strong style="margin-left: 9cm">
@@ -17,7 +17,7 @@
             <strong style="margin-left: 1cm">
                 {{ date('m', strtotime($senasa->fecha_salida)) }}
             </strong>
-            <strong style="margin-left: 1cm">
+            <strong style="margin-left: 0.5cm">
                 {{ date('Y', strtotime($senasa->fecha_salida)) }}
             </strong>
             <strong style="margin-left: 2cm">
