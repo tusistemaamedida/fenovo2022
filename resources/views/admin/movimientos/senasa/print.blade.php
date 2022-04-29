@@ -13,7 +13,7 @@
 <div class="body-senasa">
     <table style="width:100%; font-size: 9px ">
         <tr>
-            <td style="width: 50%">&nbsp;</td>
+            <td style="width: 45%">&nbsp;</td>
             <td class=" text-center" style="width: 5%">&nbsp;</td>
             <td class=" text-center" style="width: 5%">&nbsp;</td>
             <td class=" text-center" style="width: 5%">&nbsp;</td>
@@ -30,7 +30,7 @@
         </tr>
     </table>
 
-    <div style="height: 5cm">
+    <div style="height: 6cm">
         &nbsp;
     </div>
 
