@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\ActualizMatrif1ViewExport;
 use App\Exports\ActualizMatrif2ViewExport;
 use App\Exports\ActualizViewExport;
+use App\Exports\CabeExport;
+use App\Exports\CabeEleExport;
+
 use App\Http\Controllers\Controller;
 use App\Models\HistorialActualizacion;
 use App\Models\SessionPrices;
@@ -130,4 +133,15 @@ class ActualizacionController extends Controller
     {
         return Excel::download(new ActualizMatrif2ViewExport($request), 'actualp2.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
+
+    public function exportCabePed(Request $request){
+        $invoice = false;
+        return Excel::download(new CabeExport($request,$invoice), 'CABE_PED.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+    }
+
+    public function exportCabeEle(Request $request){
+        $invoice = true;
+        return Excel::download(new CabeEleExport($request,$invoice), 'CABE_ELE.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+    }
+
 }

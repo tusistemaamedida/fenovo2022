@@ -118,10 +118,16 @@ class NotasCreditoController extends Controller
             if ($request->input('voucher_number') != '' || !is_null($request->input('voucher_number'))) {
                 $list_id                       = $request->input('session_list_id');
                 $explode                       = explode('_', $list_id);
+
+                $from = \Auth::user()->store_active;
+                $count = Movement::where('from',$from)->whereIn('type', ['DEVOLUCION', 'DEVOLUCIONCLIENTE'])->count();
+                $orden = ($count)?$count+1:1;
+
                 $insert_data['type']           = $explode[0];
                 $insert_data['to']             = $explode[1];
                 $insert_data['date']           = now();
-                $insert_data['from']           = \Auth::user()->store_active;
+                $insert_data['from']           = $from;
+                $insert_data['orden']          = $orden;
                 $insert_data['status']         = 'FINISHED';
                 $insert_data['voucher_number'] = $request->input('voucher_number');
 

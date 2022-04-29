@@ -6,7 +6,7 @@
                     <th>Codigo</th>
                     <th>Producto</th>
                     <th>Stock</th>
-                    <th>Tipo senasa</th>
+                    <th>Costo</th>
                     <th>Proveedor</th>
                     @can('products.create')
                     <th>Ajust Stock</th>

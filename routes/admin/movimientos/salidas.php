@@ -28,4 +28,5 @@ Route::post('salidas-pendiente/destroy', [SalidasController::class, 'pendienteDe
 Route::get('salidas-pendiente/print', [SalidasController::class, 'pendientePrint'])->name('salidas.pendiente.print');
 Route::post('imprimir-remito', [SalidasController::class, 'printRemito'])->name('print.remito');
 Route::get('imprimir-papers/', [SalidasController::class, 'printPanama'])->name('print.panama');
+Route::get('imprimir-flete/', [SalidasController::class, 'printPanamaFlete'])->name('print.panama.felete');
 Route::get('total-del-movimiento', [SalidasController::class, 'getTotalMovement'])->name('get.total.movement');

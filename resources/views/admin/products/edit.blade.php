@@ -8,6 +8,9 @@
     input[type="file"] {
         display: block;
     }
+    .form-control:focus{
+        border-color: #ae69f5 !important;
+    }
 </style>
 @endsection
 

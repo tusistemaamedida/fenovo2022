@@ -54,7 +54,7 @@
                         </div>
 
                         <div class="col-2">
-                
+
                         </div>
 
                     </div>
@@ -107,6 +107,26 @@
                         <div class="col-2">
                             <a href="{{ route('actualizacion.exportCSVM2') }}" class="ml-2 mr-2">
                                 <i class=" fa fa-file-csv"></i> Actualiz. precio lista 2
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-body gutter-b bg-white border-0">
+                    <div class="row mt-3 ml-3 mb-4 font-weight-bolder">
+                        <div class="col-12">
+                            Exportación CABE
+                        </div>
+                    </div>
+                    <div class="row mb-5 ml-2 border-bottom-dark">
+                        <div class="col-2">
+                            <a href="{{route('export.cabePed')}}" title="Exportar archivo CABE_PED" class="mt-1 mr-3">
+                                <i class=" fa fa-file-csv"></i> PED
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            <a href="{{route('export.cabeEle')}}" title="Exportar archivo CABE-ELE" class="mt-1 mr-3">
+                                <i class=" fa fa-file-csv"></i> ELE
                             </a>
                         </div>
                     </div>
