@@ -34,7 +34,7 @@
                 <strong style="margin-left: 2cm">
                     {{ $senasa->hora_salida }}
                 </strong>
-                <strong style="margin-left: 15.5cm">
+                <strong style="margin-left: 2.5cm">
                     -18 C
                 </strong>
             </td>
