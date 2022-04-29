@@ -21,12 +21,23 @@
             <td class=" text-center" style="width: 5%">&nbsp;</td>
         </tr>
         <tr>
-            <td>&nbsp;</td>
-            <th class=" text-center">{{ date('d', strtotime($senasa->fecha_salida)) }}</th>
-            <th class=" text-center">{{ date('m', strtotime($senasa->fecha_salida)) }}</th>
-            <th class=" text-center">{{ date('Y', strtotime($senasa->fecha_salida)) }}</th>
-            <th class=" text-center">{{ $senasa->hora_salida }}</th>
-            <th class=" text-center">-18 ºC</th>
+            <td colspan="6">
+                <strong style="margin-left: 8.7cm">
+                    {{ date('d', strtotime($senasa->fecha_salida)) }}
+                </strong>
+                <strong style="margin-left: 10cm">
+                    {{ date('m', strtotime($senasa->fecha_salida)) }}
+                </strong>
+                <strong style="margin-left: 11cm">
+                    {{ date('Y', strtotime($senasa->fecha_salida)) }}
+                </strong>
+                <strong style="margin-left: 13cm">
+                    {{ $senasa->hora_salida }}
+                </strong>
+                <strong style="margin-left: 15.5cm">
+                    -18 C
+                </strong>
+            </td>
         </tr>
     </table>
 
@@ -34,7 +45,7 @@
         &nbsp;
     </div>
 
-    <table style="width:100%; font-size: 8px ">
+    <table style="width:100%; font-size: 9px ">
         <tr>
             <th class="text-center" style="width: 10%; ">&nbsp;</th>
             <th class="text-center" style="width: 50%;">&nbsp;</th>
