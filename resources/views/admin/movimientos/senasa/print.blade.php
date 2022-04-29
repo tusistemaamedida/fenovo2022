@@ -32,10 +32,10 @@
                     {{ date('Y', strtotime($senasa->fecha_salida)) }}
                 </strong>
                 <strong style="margin-left: 2cm">
-                    {{ $senasa->hora_salida }}
+                    {{ date('H:i', strtotime($senasa->hora_salida) }}
                 </strong>
                 <strong style="margin-left: 1cm">
-                    -18 C
+                    -18
                 </strong>
             </td>
         </tr>
