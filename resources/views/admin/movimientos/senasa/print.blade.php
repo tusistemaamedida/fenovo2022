@@ -23,7 +23,7 @@
             <strong style="margin-left: 2cm">
                 {{ date('H:i', strtotime($senasa->hora_salida)) }}
             </strong>
-            <strong style="margin-left: 2cm">
+            <strong style="margin-left: 1cm">
                 -18
             </strong>
         </td>
@@ -60,5 +60,7 @@
         <td class="text-center"> </td>
     </tr>
 </table>
+
+@include('admin.movimientos.senasa.footer-salida')
 
 @endsection
