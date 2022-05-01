@@ -610,7 +610,9 @@ class ProductController extends Controller
                 'status'         => 'CREATED',
                 'voucher_number' => '00001',
             ]);
+
             $code_not_found = [];
+
             foreach ($importData_arr2 as $importData) {
                 $cod_fenovo = $importData[0];
                 $balance    = $importData[1];
@@ -633,7 +635,7 @@ class ProductController extends Controller
                     array_push($code_not_found, $cod_fenovo);
                 }
             }
-            //dd($code_not_found);
+            dd($code_not_found);
 
             return redirect()->route('products.list');
         } catch (\Exception $e) {
