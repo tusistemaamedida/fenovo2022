@@ -28,10 +28,10 @@
         <table class="table table-condensed table-sm">
             <tr class="">
                 <th class="text-center">#</th>
-                <th class="text-center">Nombre</th>
+                <th style=" width: 35%; " class="text-center">Nombre</th>
                 <th class="text-center">Presentación</th>
                 <th class="text-center">Bultos</th>
-                <th class="text-center">Kgrs.</th>
+                <th class="text-center">CodProveedor</th>
                 <th class="text-center">Cantidad</th>
             </tr>
 
@@ -50,7 +50,7 @@
                 <td>{{$session_product->producto->cod_fenovo}} {{$session_product->producto->name}}</td>
                 <td class="text-center">{{number_format($session_product->unit_package,2)}}</td>
                 <td class="text-center">{{$session_product->quantity}}</td>
-                <td class="text-center">{{number_format($session_product->producto->unit_weight * $session_product->unit_package * $session_product->quantity,2) }}</td>
+                <td class="text-center">{{$session_product->producto->cod_proveedor }}</td>
                 <td class="text-center"> .............. </td>
             </tr>
             @endforeach
