@@ -93,8 +93,10 @@ class SalidasController extends Controller
                         }
                     }
                     $routeCreatePanama = route('print.panama', ['id' => $movement->id]);
+                    $routeFletePanama = route('print.panama.felete', ['id' => $movement->id]);
                     $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
                     $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Paper"  href="' . $routeCreatePanama . '" target="_blank"> <i class="fas fa-file"></i> </a>';
+                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Flete"  href="' . $routeFletePanama . '" target="_blank"> <i class="fas fa-car"></i> </a>';
                     return $links;
                 })
                 ->rawColumns(['origen', 'date', 'type', 'kgrs', 'acciones', 'factura_nro'])
@@ -174,8 +176,8 @@ class SalidasController extends Controller
     public function printRemito(Request $request)
     {
         $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
+
         if ($movement) {
-            $destino = $this->origenData($movement->type, $movement->to, true);
 
             // Ver si es un traslado a base
             $mercaderia_en_transito = null;
@@ -185,19 +187,22 @@ class SalidasController extends Controller
                     $mercaderia_en_transito = 'MERCADERIA EN TRANSITO';
                 };
             }
-
+            $id_remito = 'R'.str_pad($movement->id, 8, "0", STR_PAD_LEFT);
+            $destino         = $this->origenData($movement->type, $movement->to, true);
             $neto            = $request->input('neto');
             $array_productos = [];
             $productos       = $movement->movement_salida_products;
             foreach ($productos as $producto) {
-                $objProduct             = new stdClass();
-                $objProduct->cant       = $producto->bultos;
-                $objProduct->codigo     = $producto->product->cod_fenovo;
-                $objProduct->name       = $producto->product->name;
-                $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
-                $objProduct->total_unit = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
-                $objProduct->class      = '';
-                array_push($array_productos, $objProduct);
+                if($producto->invoice){
+                    $objProduct             = new stdClass();
+                    $objProduct->cant       = $producto->bultos;
+                    $objProduct->codigo     = $producto->product->cod_fenovo;
+                    $objProduct->name       = $producto->product->name;
+                    $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
+                    $objProduct->total_unit = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                    $objProduct->class      = '';
+                    array_push($array_productos, $objProduct);
+                }
             }
 
             $total_lineas             = 27;
@@ -224,6 +229,7 @@ class SalidasController extends Controller
     {
         $movement = Movement::query()->where('id', $request->id)->with('panamas')->first();
         if ($movement) {
+            $id_panama = '8888-'.str_pad($movement->orden, 8, "0", STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $neto            = 0;
             $array_productos = [];
@@ -243,8 +249,28 @@ class SalidasController extends Controller
                 array_push($array_productos, $objProduct);
             }
 
-            $pdf = PDF::loadView('print.panama', compact('destino', 'array_productos', 'neto'));
-            return $pdf->download('paper.pdf');
+            $pdf = PDF::loadView('print.panama', compact('destino', 'array_productos', 'neto','id_panama'));
+            return $pdf->download($id_panama.'.pdf');
+        }
+    }
+
+    public function printPanamaFlete(Request $request)
+    {
+        $movement = Movement::query()->where('id', $request->id)->where('flete_invoice',false)->first();
+        if ($movement) {
+            $id_flete = 'FL'.str_pad($movement->id, 8, "0", STR_PAD_LEFT);
+            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $neto            = 0;
+            $array_productos = [];
+            $objProduct             = new stdClass();
+            $objProduct->cant       = 1;
+            $objProduct->name       = 'FLETE';
+            $objProduct->unit_price = number_format($movement->flete, 2, ',', '.');
+            $objProduct->subtotal =$neto  = number_format($movement->flete, 2, ',', '.');
+            $objProduct->class      = '';
+            array_push($array_productos, $objProduct);
+            $pdf = PDF::loadView('print.panamaFelete', compact('destino', 'array_productos', 'neto','id_flete'));
+            return $pdf->download($id_flete.'.pdf');
         }
     }
 
@@ -483,7 +509,7 @@ class SalidasController extends Controller
                     $insert_data['tasiva']     = $prices->tasiva;
                     break;
             }
-
+            $insert_data['costo_fenovo'] = $prices->costfenovo;
             $insert_data['list_id']    = $to_type . '_' . $to;
             $insert_data['store_id']   = Auth::user()->store_active;
             $insert_data['invoice']    = true;
@@ -522,10 +548,20 @@ class SalidasController extends Controller
         try {
             $list_id                       = $request->input('session_list_id');
             $explode                       = explode('_', $list_id);
+
+            if($explode[0] != 'TRASLADO'){
+                $count = Movement::where('from',$from)->whereIn('type', ['VENTA', 'VENTACLIENTE'])->count();
+            }else{
+                $count = Movement::where('from',$from)->where('type','TRASLADO')->count();
+            }
+
+            $orden = ($count)?$count+1:1;
+
             $insert_data['type']           = $explode[0];
             $insert_data['to']             = $explode[1];
             $insert_data['date']           = now();
             $insert_data['from']           = $from;
+            $insert_data['orden']          = $orden;
             $insert_data['status']         = 'FINISHED';
             $insert_data['voucher_number'] = $request->input('voucher_number');
             $insert_data['flete']          = $request->flete;
@@ -555,6 +591,7 @@ class SalidasController extends Controller
                         'invoice'    => $product->invoice,
                         'iibb'       => $product->iibb,
                         'unit_price' => $product->unit_price,
+                        'cost_fenovo' => $product->costo_fenovo,
                         'tasiva'     => $product->tasiva,
                         'entry'      => 0,
                         'bultos'     => $product->quantity,
@@ -605,7 +642,7 @@ class SalidasController extends Controller
             $this->sessionProductRepository->deleteList($list_id);
             return redirect()->route('salidas.add');
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            //($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }

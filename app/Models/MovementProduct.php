@@ -34,6 +34,7 @@ class MovementProduct extends Model
         'egress',
         'balance',
         'unit_price',
+        'cost_fenovo',
         'tasiva',
     ];
 

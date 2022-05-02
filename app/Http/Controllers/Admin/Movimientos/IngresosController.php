@@ -79,7 +79,12 @@ class IngresosController extends Controller
 
     public function store(Request $request)
     {
-        $movement = Movement::create($request->all());
+        $to = Auth::user()->store_active;
+        $count = Movement::where('to',$to)->where('type','COMPRA')->count();
+        $orden = ($count)?$count+1:1;
+        $data = $request->all();
+        $data['orden'] = $orden;
+        $movement = Movement::create($data);
         return redirect()->route('ingresos.edit', ['id' => $movement->id]);
     }
 

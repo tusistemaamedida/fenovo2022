@@ -80,6 +80,9 @@ class ProductController extends Controller
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();
                 })
+                ->addColumn('costo', function ($product) {
+                    return '$'.$product->product_price->costfenovo;
+                })
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
                 })
@@ -94,7 +97,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'senasa', 'borrar', 'editar', 'ajuste'])
+                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste','costo'])
                 ->make(true);
         }
 
@@ -149,12 +152,17 @@ class ProductController extends Controller
     public function ajustarStock(Request $request)
     {
         try {
+            $from = \Auth::user()->store_active;
+            $count = Movement::where('from',$from)->where('type', 'AJUSTE')->count();
+            $orden = ($count)?$count+1:1;
+
             $insert_data                   = [];
             $insert_data['type']           = 'AJUSTE';
             $insert_data['to']             = Auth::user()->store_active;
             $insert_data['date']           = now();
             $insert_data['from']           = Auth::user()->store_active;
             $insert_data['status']         = 'FINISHED';
+            $insert_data['orden']          = $orden;
             $insert_data['voucher_number'] = time();
             $insert_data['flete']          = 0;
 

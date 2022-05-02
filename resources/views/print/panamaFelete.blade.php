@@ -9,7 +9,7 @@
         <tr>
             <td>
                 <span style="font-size: 14px;">
-                    # {{$id_panama}}
+                    # {{$id_flete}}
                 </span>
             </td>
         </tr>
@@ -38,7 +38,7 @@
             @endphp
 
             <tr>
-                <th style="font-size:12px;font-weight:0; width: 10%;text-align:left"><span class="{{$p->class}}">&nbsp;&nbsp;{{$p->total_unit}}</span></th>
+                <th style="font-size:12px;font-weight:0; width: 10%;text-align:left"><span class="{{$p->class}}">&nbsp;&nbsp;{{$p->cant}}</span></th>
                 <th style="font-size:12px;font-weight:0; width: 40%;text-align:left"><span class="{{$p->class}}">&nbsp;&nbsp;{{$p->name}}</span></th>
                 <th style="font-size:12px;font-weight:0; width: 10%;text-align:left"><span class="{{$p->class}}">&nbsp;&nbsp;{{$p->unit_price}}</span></th>
                 <th style="font-size:12px;font-weight:0; width: 10%;text-align:left"><span class="{{$p->class}}">&nbsp;&nbsp;{{$p->subtotal}}</span></th>
@@ -56,7 +56,7 @@
                 <th style="font-size:12px;font-weight:0;width: 15%;text-align:right"><span >&nbsp;</span></th>
                 <th style="font-size:12px;font-weight:500;width: 15%;text-align:left"><span >&nbsp;</span></th>
                 <th style="font-size:12px;font-weight:0;width: 15%;text-align:right"><span >Total: </span></th>
-                <th style="font-size:12px;font-weight:0; width: 40%;text-align:left"><span >${{number_format($neto, 2, ',', '.')}}</span></th>
+                <th style="font-size:12px;font-weight:0; width: 40%;text-align:left"><span >$ {{$neto}}</span></th>
             </tr>
 
 

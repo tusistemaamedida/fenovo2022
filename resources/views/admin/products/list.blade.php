@@ -63,7 +63,7 @@
             {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},
             {data: 'stock', orderable: false, searchable: false},
-            {data: 'senasa', orderable: false, searchable: false},
+            {data: 'costo', orderable: false, searchable: false},
             {data: 'proveedor', orderable: false},
             @can('products.create')
             {data: 'ajuste', class:'text-center', orderable: false, searchable: false},
