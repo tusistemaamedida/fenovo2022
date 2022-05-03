@@ -11,7 +11,7 @@
 
         <div class="row mb-3">
             <div class="col-12">
-                <h3>Vincular habilitación con salidas</h3>
+                <h3> <span class=" text-danger"> Desvincular </span> salidas</h3>
             </div>
         </div>
 
@@ -67,7 +67,7 @@
                                         Comprobante nro
                                     </td>
                                     <td class="col-1">
-                                        Vincular
+                                        Desvincular
                                     </td>
                                 </tr>
                             </thead>
@@ -106,7 +106,7 @@
 
             </div>
             <div class="col-3">
-                {!! Form::submit('Vincular', ['class' => 'btn btn-dark']) !!}
+                {!! Form::submit('Desvincular', ['class' => 'btn btn-dark']) !!}
             </div>
         </div>
 

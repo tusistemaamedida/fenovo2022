@@ -12,4 +12,5 @@ Route::post('senasa/destroy', [SenasaController::class, 'destroy'])->name('senas
 
 Route::get('senasa/print', [SenasaController::class, 'print'])->name('senasa.print');
 Route::get('senasa/vincular', [SenasaController::class, 'vincular'])->name('senasa.vincular');
+Route::get('senasa/desvincular', [SenasaController::class, 'desvincular'])->name('senasa.desvincular');
 Route::post('senasa/vincular-store', [SenasaController::class, 'vincularStore'])->name('senasa.vincularStore');

@@ -23,7 +23,7 @@ trait OriginDataTrait
                 if ($returnObject) {
                     return $store;
                 }
-                return $store->description . ' [' . $store->cuit . '] ';
+                return $store->razon_social . ' [' . $store->cuit . '] ';
             case 'VENTACLIENTE':
                 $customer = Customer::find($id);
                 if ($returnObject) {
