@@ -25,6 +25,21 @@
     <div class="container-fluid">
         <div class="row">
             @include('admin.movimientos.salidas.partials.form-select-cliente')
+            @if (Session()->has('error'))
+                <div class="col-md-12">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert">
+                            <i class="ace-icon fa fa-times"></i>
+                        </button>
+
+                        <strong>
+                            <i class="ace-icon fa fa-check"></i>
+                            ERROR!<br>
+                        </strong>
+                        {{ Session::get('error') }}
+                    </div>
+                </div>
+            @endif
             <b style="width: 100%" id="session_products_table"></b>
         </div>
     </div>
@@ -269,7 +284,11 @@
             total = total.toFixed(2);
         }
 
-        const max = parseInt(jQuery("#tope").val());
+        jQuery("#envio_total").html('');
+        jQuery("#envio_total").html(total);
+        jQuery("#kg_totales").val(total);
+
+        /* const max = parseInt(jQuery("#tope").val());
 
         if(total > max){
             toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
@@ -278,7 +297,7 @@
             jQuery("#envio_total").html('');
             jQuery("#envio_total").html(total);
             jQuery("#kg_totales").val(total);
-        }
+        } */
     }
 
     jQuery("#sessionProductstore").click(function(e){

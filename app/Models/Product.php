@@ -159,6 +159,25 @@ class Product extends Model
         return $stock;
     }
 
+    public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S'){
+        $stock = 0.0;
+        // Buscar el ultimo movimiento
+        $movement_product = MovementProduct::where('product_id', $this->id)
+            ->where('entidad_id', $entidad_id)
+            ->where('entidad_tipo', $entidad_tipo)
+            ->when($unit_package, function ($q, $unit_package) {
+                $q->where('unit_package', $unit_package);
+            })
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        if ($movement_product) {
+            $stock = (float)$movement_product->balance;
+        }
+
+        return $stock;
+    }
+
     public function scopeName($query, $name)
     {
         if ($name) {

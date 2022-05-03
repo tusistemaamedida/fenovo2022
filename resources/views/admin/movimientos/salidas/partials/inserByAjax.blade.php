@@ -43,10 +43,10 @@
                                name="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
                                id="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
                                class="form-control calculate text-center"
-                               @if($stock_total==0) disabled @endif
+                               {{-- @if($stock_total==0) disabled @endif --}}
                                max="{{$stock_presentaciones[$i]['bultos']}}"
                                value="0"
-                               onkeyup="sumar(this)" >
+                                onkeyup="sumar(this)" >
                     </td>
                     </tr>
                     @endfor
