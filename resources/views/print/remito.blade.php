@@ -7,14 +7,14 @@
     <style>
         .no-visible {
             visibility: hidden;
-        }        
+        }
     </style>
 
     <body>
         <table style="width:100%;">
             <tr>
                 <td colspan="2" style=" text-align: center;">
-                    {{ $mercaderia_en_transito }}
+
                 </td>
             </tr>
             <tr>
@@ -25,6 +25,11 @@
                     </span>
                 </td>
             </tr>
+            <tr>
+                <td colspan="2" style=" text-align: center;">
+                    {{ $mercaderia_en_transito }}
+                </td>
+            </tr>
         </table>
 
         <table style="width:100%;margin-bottom:30px">
@@ -32,7 +37,7 @@
                 <td style="width: 15%; text-align:left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td style="width: 20%; text-align:left">
                     <span style="font-size:14px;line-height: 18px;">
-                        {{$destino->description}} <br>
+                        {{$destino->razon_social}} <br>
                         {{$destino->address}}
                     </span>
                 </td>

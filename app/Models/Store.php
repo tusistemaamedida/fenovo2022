@@ -48,6 +48,7 @@ class Store extends Model
         'delivery_km',
         'stock_capacity',
         'online_sale',
+        'listprice_associate',
         'active',
     ];
 
