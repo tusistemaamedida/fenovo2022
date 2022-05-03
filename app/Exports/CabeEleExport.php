@@ -23,7 +23,7 @@ class CabeEleExport implements FromView {
 
     public function view(): View{
         $arr_elementos = [];
-        $invoices = Invoice::whereNotNull('cae')->orderBy('orden','ASC')->get();
+        $invoices = Invoice::whereNotNull('cae')->with('tipoFactura')->orderBy('orden','ASC')->get();
 
         foreach ($invoices as $invoice) {
             $cliente = null;
@@ -33,15 +33,9 @@ class CabeEleExport implements FromView {
             if($mov->type == "VENTA"){
                 $cliente = Store::where('id',$mov->to)->with('region')->first();
                 $element->ID_CLI = 'PVTA_'.str_pad($cliente->cod_fenovo,3,'0',STR_PAD_LEFT);
-                $element->NOMCLI = $cliente->razon_social;
-                $element->CUICLI = $cliente->cuit;
-                $element->IVACLI = $cliente->iva_type;
             }elseif($mov->type == "VENTACLIENTE"){
                 $cliente = Customer::where('id',$mov->to)->with('store')->first();
                 $element->ID_CLI = 'CLI_'.str_pad($cliente->id,'0',3,STR_PAD_LEFT);
-                $element->NOMCLI = $cliente->razon_social;
-                $element->CUICLI = $cliente->cuit;
-                $element->IVACLI = $cliente->iva_type;
             }else{
                 $element->ID_CLI = null;
                 $element->NOMCLI = null;
@@ -49,11 +43,28 @@ class CabeEleExport implements FromView {
                 $element->IVACLI = null;
             }
 
+            if(is_null($cliente)){
+                $cuit1 = substr($cliente->cuit,0,2);
+                $cuit2 = substr($cliente->cuit,2,8);
+                $cuit3 = substr($cliente->cuit,10,1);
+                $cuit  = $cuit1.'-'.$cuit2.'-'.$cuit3;
+                $element->NOMCLI = $cliente->razon_social;
+                $element->CUICLI = $cuit;
+                $element->IVACLI = ($cliente->iva_type == 'RI')?'I':$cliente->iva_type;
+            }
+
             $element->IDCAJA = null;
             $element->NROCOM = $invoice->orden;
             $element->FECHA  = Carbon::parse($invoice->created_at)->format('d/m/Y');
             $element->HORA   = Carbon::parse($invoice->created_at)->format('H:i');
-            $element->FISCAL = $invoice->voucher_number;
+
+            if($invoice->tipoFactura->afip_id == 3){
+                $tipo_factura = 'NCA';
+            }elseif($invoice->tipoFactura->afip_id == 1){
+                $tipo_factura = 'FCA';
+            }
+
+            $element->FISCAL = $tipo_factura ;
             $element->NETO_1 = $this->getBaseImporteIva($invoice->ivas,4); //4 es el 10.5
             $element->IVAA_1 = $this->getImporteIva($invoice->ivas,4); //4 es el 10.5
             $element->NETO_2 = $this->getBaseImporteIva($invoice->ivas,5); //5 es el 21
