@@ -43,7 +43,7 @@ class CabeEleExport implements FromView {
                 $element->IVACLI = null;
             }
 
-            if(is_null($cliente)){
+            if(isset($cliente ) && !is_null($cliente)){
                 $cuit1 = substr($cliente->cuit,0,2);
                 $cuit2 = substr($cliente->cuit,2,8);
                 $cuit3 = substr($cliente->cuit,10,1);
