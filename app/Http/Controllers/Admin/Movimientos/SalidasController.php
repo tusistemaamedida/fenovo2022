@@ -549,7 +549,17 @@ class SalidasController extends Controller
             $list_id                       = $request->input('session_list_id');
             $explode                       = explode('_', $list_id);
 
-            if($explode[0] != 'TRASLADO'){
+            $session_products = $this->sessionProductRepository->getByListId($list_id);
+            foreach ($session_products as $product) {
+                $kgrs = ($product->producto->unit_weight * $product->unit_package * $product->quantity);
+                $balance = $product->producto->stockReal($product->unit_package);
+                if($balance<$kgrs){
+                    $request->session()->flash('error', 'STOCK INSUFICIENTE - COD FENOVO '. $product->producto->cod_fenovo .' stock actual '. $balance .'Kgrs');
+                    return redirect()->back()->withInput();
+                }
+            }
+
+           if($explode[0] != 'TRASLADO'){
                 $count = Movement::where('from',$from)->whereIn('type', ['VENTA', 'VENTACLIENTE'])->count();
             }else{
                 $count = Movement::where('from',$from)->where('type','TRASLADO')->count();
@@ -568,7 +578,6 @@ class SalidasController extends Controller
             $insert_data['flete_invoice']  = (isset($request->factura_flete)) ? 1 : 0;
 
             $movement         = Movement::create($insert_data);
-            $session_products = $this->sessionProductRepository->getByListId($list_id);
 
             $enitidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
