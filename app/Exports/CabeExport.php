@@ -24,7 +24,7 @@ class CabeExport implements FromView {
 
     public function view(): View{
         $arr_elementos = [];
-        $movimientos = Movement::where('type','VENTA')->orWhere('type','VENTACLIENTE')->orderBy('created_at','DESC')->limit(150)->get();
+        $movimientos = Movement::where('type','VENTA')->orWhere('type','VENTACLIENTE')->orderBy('created_at','ASC')->limit(250)->get();
 
         foreach ($movimientos as $mov) {
             $cliente = null;
@@ -33,20 +33,24 @@ class CabeExport implements FromView {
             if($mov->type == "VENTA"){
                 $cliente = Store::where('id',$mov->to)->with('region')->first();
                 $element->ID_CLI = 'PVTA_'.str_pad($cliente->cod_fenovo,3,'0',STR_PAD_LEFT);
-                $element->NOMCLI = $cliente->razon_social;
-                $element->CUICLI = $cliente->cuit;
-                $element->IVACLI = $cliente->iva_type;
             }elseif($mov->type == "VENTACLIENTE"){
                 $cliente = Customer::where('id',$mov->to)->with('store')->first();
                 $element->ID_CLI = 'CLI_'.str_pad($cliente->id,'0',3,STR_PAD_LEFT);
-                $element->NOMCLI = $cliente->razon_social;
-                $element->CUICLI = $cliente->cuit;
-                $element->IVACLI = $cliente->iva_type;
             }else{
                 $element->ID_CLI = null;
                 $element->NOMCLI = null;
                 $element->CUICLI = null;
                 $element->IVACLI = null;
+            }
+
+            if(isset($cliente ) && !is_null($cliente)){
+                $cuit1 = substr($cliente->cuit,0,2);
+                $cuit2 = substr($cliente->cuit,2,8);
+                $cuit3 = substr($cliente->cuit,10,1);
+                $cuit  = $cuit1.'-'.$cuit2.'-'.$cuit3;
+                $element->NOMCLI = $cliente->razon_social;
+                $element->CUICLI = $cuit;
+                $element->IVACLI = ($cliente->iva_type == 'RI')?'I':$cliente->iva_type;
             }
 
             $element->IDCAJA = null;

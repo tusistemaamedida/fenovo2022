@@ -207,8 +207,6 @@ class Movement extends Model
             ->where('mp.invoice',$invoice)
             ->where('m.id', $this->id)
             ->whereIn('m.type', $arrEgreso)->first();
-
-
         return $neto;
     }
 
