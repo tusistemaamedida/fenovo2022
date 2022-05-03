@@ -40,6 +40,9 @@ class SenasaController extends Controller
                 ->addColumn('vincular', function ($senasa) {
                     return '<a href="' . route('senasa.vincular', ['id' => $senasa->id]) . '"> <i class="fa fa-link"></i> </a>';
                 })
+                ->addColumn('desvincular', function ($senasa) {
+                    return '<a href="' . route('senasa.desvincular', ['id' => $senasa->id]) . '"> <i class="fa fa-unlink"></i> </a>';
+                })
                 ->addColumn('print', function ($senasa) {
                     return '<a href="' . route('senasa.print', ['id' => $senasa->id]) . '"> <i class="fa fa-print"></i> </a>';
                 })
@@ -51,7 +54,7 @@ class SenasaController extends Controller
                     $ruta = 'destroy(' . $senasa->id . ",'" . route('senasa.destroy') . "')";
                     return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['print', 'vincular', 'edit', 'destroy'])
+                ->rawColumns(['print', 'desvincular', 'vincular', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.movimientos.senasa.index');
@@ -60,8 +63,8 @@ class SenasaController extends Controller
     public function add()
     {
         try {
-            $senasa      = null;
-            $vehiculos   = $this->vehiculoRepository->getAll();
+            $senasa    = null;
+            $vehiculos = $this->vehiculoRepository->getAll();
             return new JsonResponse([
                 'type' => 'success',
                 'html' => view('admin.movimientos.senasa.insertByAjax', compact('senasa', 'vehiculos'))->render(),
@@ -88,8 +91,8 @@ class SenasaController extends Controller
     public function edit(Request $request)
     {
         try {
-            $senasa      = Senasa::find($request->id);
-            $vehiculos   = $this->vehiculoRepository->getAll();
+            $senasa    = Senasa::find($request->id);
+            $vehiculos = $this->vehiculoRepository->getAll();
             return new JsonResponse([
                 'type' => 'success',
                 'html' => view('admin.movimientos.senasa.insertByAjax', compact('senasa', 'vehiculos'))->render(),
@@ -123,8 +126,18 @@ class SenasaController extends Controller
     {
         $senasa     = Senasa::find($request->id);
         $arrayTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-        $movements  = Movement::whereIn('type', $arrayTypes)->orderBy('id', 'desc')->limit(100)->get();
+        $movements  = Movement::doesntHave('senasa')->whereIn('type', $arrayTypes)->orderBy('id', 'desc')->limit(100)->get();
+
         return view('admin.movimientos.senasa.vincular', compact('senasa', 'movements'));
+    }
+
+    public function desvincular(Request $request)
+    {
+        $senasa     = Senasa::find($request->id);
+        $arrayTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+        $movements  = Movement::with('senasa')->whereRelation('senasa', 'senasa.id', '=', $request->id)->get();
+
+        return view('admin.movimientos.senasa.desvincular', compact('senasa', 'movements'));
     }
 
     public function vincularStore(Request $request)

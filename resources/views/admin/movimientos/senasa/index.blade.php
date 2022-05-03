@@ -42,7 +42,8 @@
                                                     <th>Habilitacion</th>
                                                     <th>Precintos</th>
                                                     <th>Destino</th>
-                                                    <th>Vincular c/salidas</th>
+                                                    <th>Vincular</th>
+                                                    <th>Desvincular</th>
                                                     <th>Imprimir</th>
                                                     <th></th>
                                                     <th></th>
@@ -80,6 +81,7 @@
             {data: 'precintos'},
             {data: 'destino'},
             {data: 'vincular', 'class':'text-center', searchable: false},
+            {data: 'desvincular', 'class':'text-center', searchable: false},
             {data: 'print', 'class':'text-center', searchable: false},
             {data: 'edit', 'class':'text-center', searchable: false},
             {data: 'destroy', 'class':'text-center', searchable: false},
