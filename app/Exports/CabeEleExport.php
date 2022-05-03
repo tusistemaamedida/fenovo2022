@@ -30,7 +30,7 @@ class CabeEleExport implements FromView {
             $element         = new stdClass();
             $mov = Movement::where('id',$invoice->movement_id)->first();
 
-            if($mov->type == "VENTA"){
+            if($mov->type == "VENTA" || $mov->type == "DEVOLUCION"){
                 $cliente = Store::where('id',$mov->to)->with('region')->first();
                 $element->ID_CLI = 'PVTA_'.str_pad($cliente->cod_fenovo,3,'0',STR_PAD_LEFT);
             }elseif($mov->type == "VENTACLIENTE"){
