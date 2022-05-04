@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Exportaciones;
+use App\Models\Movement;
 use App\Traits\OriginDataTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -26,11 +26,10 @@ class MovementsViewExport implements FromView
         $desde = $this->request->desde;
         $hasta = $this->request->hasta;
 
-        $nombre_archivo = 'movi.csv';
-        $exportacion    = Exportaciones::whereArchivo($nombre_archivo)->first();
+        $exportacion = Movement::whereExported(0);
 
         // inicializo los contadores
-        $numeracion = ($exportacion) ? $exportacion->numero + 1 : 1;
+        $numeracion = ($exportacion) ? $exportacion->exported + 1 : 1;
         $registros  = 0;
         //
 
@@ -94,7 +93,6 @@ class MovementsViewExport implements FromView
         $exportacion->numero    = $exportacion->numero + $registros;
         $exportacion->registros = $registros;
         $exportacion->save();
-
 
         $anio      = date('Y', time());
         $mes       = date('m', time());
