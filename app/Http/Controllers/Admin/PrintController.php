@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\MovementsViewExport;
 
 use App\Http\Controllers\Controller;
+use App\Models\Exportaciones;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
