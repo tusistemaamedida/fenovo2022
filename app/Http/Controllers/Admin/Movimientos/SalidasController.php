@@ -229,7 +229,7 @@ class SalidasController extends Controller
     {
         $movement = Movement::query()->where('id', $request->id)->with('panamas')->first();
         if ($movement) {
-            $id_panama = '8888-'.str_pad($movement->orden, 8, "0", STR_PAD_LEFT);
+            $id_panama = '8889-'.str_pad($movement->orden, 8, "0", STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $neto            = 0;
             $array_productos = [];
@@ -323,7 +323,7 @@ class SalidasController extends Controller
             if ($show_stock) {
                 $stock = $product->stock(null, Auth::user()->store_active);
                 if (!$stock) {
-                    $disabled      = 'disabled';
+                   // $disabled      = 'disabled';
                     $text_no_stock = ' -- SIN STOCK --';
                 }
             }
@@ -606,7 +606,7 @@ class SalidasController extends Controller
                         'bultos'     => $product->quantity,
                         'egress'     => $kgrs,
                         'balance'    => $balance,
-                    ]);
+                ]);
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
                     // Suma al balance de la store to

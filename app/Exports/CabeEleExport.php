@@ -23,8 +23,8 @@ class CabeEleExport implements FromView {
 
     public function view(): View{
         $arr_elementos = [];
-        $invoices = Invoice::whereNotNull('cae')->with('tipoFactura')->orderBy('orden','ASC')->get();
-
+        $invoices = Invoice::whereNotNull('cae')->with('tipoFactura')->orderBy('created_at','ASC')->orderBy('voucher_number','ASC')->get();
+        $i=1;
         foreach ($invoices as $invoice) {
             $cliente = null;
             $element         = new stdClass();
@@ -54,7 +54,7 @@ class CabeEleExport implements FromView {
             }
 
             $element->IDCAJA = null;
-            $element->NROCOM = $invoice->orden;
+            $element->NROCOM = $i;
             $element->FECHA  = Carbon::parse($invoice->created_at)->format('d/m/Y');
             $element->HORA   = Carbon::parse($invoice->created_at)->format('H:i');
 
@@ -64,7 +64,7 @@ class CabeEleExport implements FromView {
                 $tipo_factura = 'FCA';
             }
 
-            $element->FISCAL = $tipo_factura ;
+            $element->FISCAL = $tipo_factura.$invoice->voucher_number ;
             $element->NETO_1 = $this->getBaseImporteIva($invoice->ivas,4); //4 es el 10.5
             $element->IVAA_1 = $this->getImporteIva($invoice->ivas,4); //4 es el 10.5
             $element->NETO_2 = $this->getBaseImporteIva($invoice->ivas,5); //5 es el 21
@@ -80,7 +80,9 @@ class CabeEleExport implements FromView {
             $element->RECARG = 0;
             $element->TOTFIS = 0;
 
-
+            $invoice->orden = $i;
+            $invoice->save();
+            $i++;
             array_push($arr_elementos, $element);
         }
 
@@ -101,7 +103,7 @@ class CabeEleExport implements FromView {
         foreach ($ivas as $iva) {
             if($type_iva == $iva->Id) return $iva->Importe;
         }
-        return '0';
+        return '0.0';
     }
 
     private function getBaseImporteIva($ivas,$type_iva){
@@ -109,6 +111,6 @@ class CabeEleExport implements FromView {
         foreach ($ivas as $iva) {
             if($type_iva == $iva->Id) return $iva->BaseImp;
         }
-        return '0';
+        return '0.0';
     }
 }
