@@ -101,7 +101,7 @@ class CabeEleExport implements FromView {
         foreach ($ivas as $iva) {
             if($type_iva == $iva->Id) return $iva->Importe;
         }
-        return '0';
+        return '0.0';
     }
 
     private function getBaseImporteIva($ivas,$type_iva){
@@ -109,6 +109,6 @@ class CabeEleExport implements FromView {
         foreach ($ivas as $iva) {
             if($type_iva == $iva->Id) return $iva->BaseImp;
         }
-        return '0';
+        return '0.0';
     }
 }
