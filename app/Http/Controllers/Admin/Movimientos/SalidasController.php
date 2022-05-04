@@ -510,7 +510,7 @@ class SalidasController extends Controller
                 case 'VENTACLIENTE':
                     $customer       = $this->customerRepository->getById($to);
                     $listAssociates = [
-                        'L0' => $prices->plist0,
+                        'L0' => $prices->plist0neto,
                         'L1' => $prices->plist1,
                         'L2' => $prices->plist2,
                     ];
