@@ -161,4 +161,5 @@
     jQuery(".yajra-datatable").DataTable({
         ordering: false,
     });
+    jQuery('#product_search').select2('open');
 </script>
