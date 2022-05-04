@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Movement;
+use App\Models\MovementProduct;
 use App\Traits\OriginDataTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -23,27 +24,55 @@ class MovementsViewExport implements FromView
 
     public function view(): View
     {
-        $desde = $this->request->desde;
-        $hasta = $this->request->hasta;
-
-        $exportacion = Movement::whereExported(0);
-
-        // inicializo los contadores
-        $numeracion = ($exportacion) ? $exportacion->exported + 1 : 1;
-        $registros  = 0;
-        //
-
+        $max        = DB::table('movement_products')->where('exported_number', '>', 0)->max('exported_number');
+        $numeracion = ($max) ? $max + 1 : 1;
         $arrTipos   = ['VENTA', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
-        $arrEntrada = ['VENTA', 'TRASLADO'];
+        $arrEntrada = ['VENTA', 'TRASLADO'];       
 
+        // Actualizo los Detalles de Movimientos como exportados
         $movimientos = DB::table('movements as t1')
             ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
             ->join('products as t3', 't2.product_id', '=', 't3.id')
             ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
-            ->select('t1.id', 't1.type', 't1.date', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad')
+            ->select('t1.id', 't2.id as movement_products_id', 't1.type', 't1.date', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad')
             ->whereIn('t1.type', $arrTipos)
-            ->whereBetween(DB::raw('DATE(date)'), [$desde, $hasta])
             ->where('t2.entidad_tipo', '!=', 'C')
+            ->where('t2.exported_number', '=', 0)
+            ->orderBy('t1.date')
+            ->get();
+
+        foreach ($movimientos as $movement) {
+            $creado = false;
+            if (in_array($movement->type, $arrEntrada)) {
+                // Venta o traslado
+                if ($movement->entry > 0) {
+                    $creado   = true;
+                }
+            } else {
+                // Analizar las devoluciones                
+                $creado   = true;
+            }
+
+            if ($creado) {
+                MovementProduct::find($movement->movement_products_id)->update(['exported_number' => $numeracion]);
+                $numeracion++;
+            }
+        }
+
+        // Actualizo los movimientos como exportados
+        Movement::whereExported(0)->whereIn('type', $arrTipos)->update(['exported' => 1]);
+
+
+        // Obtener los Movimientos exportables
+        $movimientos = DB::table('movements as t1')
+            ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
+            ->join('products as t3', 't2.product_id', '=', 't3.id')
+            ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
+            ->select('t1.id', 't2.id as movement_products_id', 't2.exported_number', 't1.type', 't1.date', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad')
+            ->whereIn('t1.type', $arrTipos)
+            ->where('t2.entidad_tipo', '!=', 'C')
+            ->where('t2.exported_number', '>', 0)
+            ->orderBy('t2.exported_number', 'desc')
             ->get();
 
         $arrMovements = [];
@@ -59,7 +88,7 @@ class MovementsViewExport implements FromView
                     $objMovement              = new stdClass();
                     $creado                   = true;
                     $objMovement->origen      = ($store_type == 'N') ? 'DEP_CEN' : 'DEP_PAN';
-                    $objMovement->id          = 'R' . str_pad($numeracion, 8, '0', STR_PAD_LEFT);
+                    $objMovement->id          = 'R' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
                     $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
                     $objMovement->tipo        = 'E';
                     $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
@@ -73,7 +102,7 @@ class MovementsViewExport implements FromView
                 $objMovement              = new stdClass();
                 $creado                   = true;
                 $objMovement->origen      = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
-                $objMovement->id          = 'R' . str_pad($numeracion, 8, '0', STR_PAD_LEFT);
+                $objMovement->id          = 'R' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
                 $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
                 $objMovement->tipo        = $tipo;
                 $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
@@ -84,15 +113,8 @@ class MovementsViewExport implements FromView
 
             if ($creado) {
                 array_push($arrMovements, $objMovement);
-                $numeracion++;
-                $registros++;
             }
-        }
-
-        // Guardo la exportacion
-        $exportacion->numero    = $exportacion->numero + $registros;
-        $exportacion->registros = $registros;
-        $exportacion->save();
+        } 
 
         $anio      = date('Y', time());
         $mes       = date('m', time());

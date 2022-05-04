@@ -152,8 +152,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property string|null $archivo
- * @property int|null $inicio
- * @property int|null $fin
+ * @property int|null $numero
  * @property int|null $registros
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -162,9 +161,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Exportaciones query()
  * @method static \Illuminate\Database\Eloquent\Builder|Exportaciones whereArchivo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Exportaciones whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Exportaciones whereFin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Exportaciones whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Exportaciones whereInicio($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Exportaciones whereNumero($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Exportaciones whereRegistros($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Exportaciones whereUpdatedAt($value)
  */
@@ -459,6 +457,7 @@ namespace App\Models{
  * @package App\Models
  * @property int|null $flete_invoice
  * @property int|null $orden
+ * @property int|null $exported
  * @property-read \App\Models\Invoice|null $invoice
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $movement_ingreso_products
  * @property-read int|null $movement_ingreso_products_count
@@ -474,6 +473,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Movement query()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereExported($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereFlete($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereFleteInvoice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereFrom($value)
@@ -497,6 +497,7 @@ namespace App\Models{
  * @property int|null $entidad_id
  * @property string|null $entidad_tipo
  * @property int|null $product_id
+ * @property int|null $exported_number
  * @property string|null $tasiva
  * @property string|null $unit_price
  * @property string|null $cost_fenovo
@@ -523,6 +524,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereEntidadId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereEntidadTipo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereEntry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereExportedNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereIibb($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereInvoice($value)
