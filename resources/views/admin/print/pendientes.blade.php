@@ -42,14 +42,14 @@
             @foreach ($session_products as $session_product)
 
             @php
-            $total_kgrs += $session_product->producto->unit_weight * $session_product->unit_package * $session_product->quantity;
+            $total_kgrs += (float)$session_product->unit_weight * (float)$session_product->unit_package * (float)$session_product->quantity;
             @endphp
 
             <tr>
                 <td class="text-center"> {{ $loop->iteration }}</td>
-                <td>{{$session_product->producto->cod_fenovo}} {{$session_product->producto->name}}</td>
-                <td class="text-center">{{$session_product->producto->cod_proveedor }}</td>
-                <td class="text-center">{{number_format($session_product->unit_package,2)}}</td>
+                <td>{{$session_product->cod_fenovo}} {{$session_product->name}}</td>
+                <td class="text-center">{{$session_product->cod_proveedor }}</td>
+                <td class="text-center">{{$session_product->unit_package}}</td>
                 <td class="text-center">{{$session_product->quantity}}</td>
                 <td class="text-center"> .............. </td>
             </tr>
@@ -62,9 +62,9 @@
                 <th></th>
                 <th></th>
                 <th></th>
-                <th> {{ number_format($session_products->sum('quantity'),2) }} </th>
-                <th> {{ number_format($total_kgrs,2, ',', '.') }} </th>
                 <th></th>
+                <th> {{ number_format($session_products->sum('quantity'),2) }} </th>
+                <th> </th>
             </tr>
         </table>
 

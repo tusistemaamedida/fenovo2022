@@ -14,7 +14,7 @@ class SessionProductRepository extends BaseRepository
 
     public function getByListId($list_id)
     {
-        return $this->newQuery()->where('list_id', $list_id)->with('producto')->get();
+        return $this->newQuery()->where('list_id', $list_id)->with('producto')->orderBy('product_id')->get();
     }
 
     public function getByListIdAndProduct($list_id, $product_id)
@@ -67,11 +67,10 @@ class SessionProductRepository extends BaseRepository
 
     public function groupBy($group)
     {
-        if(\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin'){
-            return SessionProduct::select()->where('list_id','not like', "%DEVOLUCION_%")->orderBy('updated_at', 'DESC')->get()->unique($group);
-        }else{
-            return SessionProduct::select()->where('list_id','not like', "%DEVOLUCION_%")->where('store_id', \Auth::user()->store_active)->orderBy('updated_at', 'DESC')->get()->unique($group);
+        if (\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin') {
+            return SessionProduct::select()->where('list_id', 'not like', '%DEVOLUCION_%')->orderBy('updated_at', 'DESC')->get()->unique($group);
         }
+        return SessionProduct::select()->where('list_id', 'not like', '%DEVOLUCION_%')->where('store_id', \Auth::user()->store_active)->orderBy('updated_at', 'DESC')->get()->unique($group);
     }
 
     public function getFlete($list_id)
@@ -79,7 +78,7 @@ class SessionProductRepository extends BaseRepository
         $cadena = explode('_', $list_id);
         if (isset($cadena[0]) && ($cadena[0] == 'VENTA')) {
             $store = Store::find($cadena[1]);
-            $km = $store->delivery_km;
+            $km    = $store->delivery_km;
             return $km;
         }
         return '0';
@@ -87,6 +86,6 @@ class SessionProductRepository extends BaseRepository
 
     public function deleteDevoluciones()
     {
-        return $this->newQuery()->where('list_id','like', "%DEVOLUCION_%")->delete();
+        return $this->newQuery()->where('list_id', 'like', '%DEVOLUCION_%')->delete();
     }
 }

@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -150,8 +151,14 @@ class SalidasController extends Controller
 
     public function pendientePrint(Request $request)
     {
-        $session_products = SessionProduct::query()->where('list_id', $request->input('list_id'))->get();
+        $session_products = DB::table('session_products as t1')
+            ->join('products as t2', 't1.product_id', '=', 't2.id')
+            ->where('t1.list_id', '=', $request->list_id)
+            ->orderBy('t2.cod_fenovo')
+            ->get();
+
         $explode          = explode('_', $request->input('list_id'));
+
         $tipo             = $explode[0];
         $destino          = $this->origenData($tipo, $explode[1], true);
         $pdf              = PDF::loadView('admin.print.pendientes', compact('session_products', 'destino'));
