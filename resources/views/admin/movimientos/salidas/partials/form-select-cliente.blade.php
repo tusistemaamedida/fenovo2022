@@ -28,7 +28,7 @@
                 <div class="col-md-4">
                     <label class="text-body">Seleccionar producto</label>
                     <fieldset class="form-group mb-3 d-flex">
-                        <select class="js-example-basic-single js-states form-control bg-transparent" name="product_search" id="product_search"> </select>
+                        <select class="js-example-basic-single js-states form-control bg-transparent" name="product_search" id="product_search" autofocus> </select>
                     </fieldset>
                 </div>
 

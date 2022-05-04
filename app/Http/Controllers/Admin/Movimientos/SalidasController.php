@@ -9,7 +9,9 @@ use App\Models\MovementProduct;
 use App\Models\OfertaStore;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
+use App\Models\Panamas;
 use App\Models\Store;
+use App\Models\Customer;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -646,6 +648,13 @@ class SalidasController extends Controller
                             'egress'     => 0,
                             'balance'    => $balance,
                         ]);
+                }
+
+                if(!$product->invoice){
+                    $data_panama=[];
+                    $count = Panamas::count();
+                    $data_panama['orden'] = ($count)?$count+1:1;
+                    $data_panama['movement_id'] = $movement->id;
                 }
             }
             $this->sessionProductRepository->deleteList($list_id);

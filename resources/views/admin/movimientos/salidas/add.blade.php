@@ -123,6 +123,8 @@
         }
     });
 
+    jQuery('#product_search').select2('open');
+
     jQuery('#product_search').select2({
         placeholder: 'Seleccione por nombre, código fenovo, código de barras...',
         minimumInputLength: 2,
@@ -263,41 +265,59 @@
         });
     }
 
-    function sumar(obj){
-        const unit_weight = parseFloat(document.getElementById("unit_weight").value);
-        let total = 0;
-        let valido = true;
+    function sumar(obj,event){
+        const  focusableElements = 'input,button';
+        const selector = document.querySelector('#editpopup');
+        const firstFocusableElement = selector.querySelectorAll(focusableElements)[0];
+        const focusableContent = selector.querySelectorAll(focusableElements);
+        const lastFocusableElement = focusableContent[focusableContent.length - 1];
 
-        jQuery('.calculate').each(function() {
-            if(isNaN(parseFloat(jQuery(this).val()))){
-                valido = false;
-            }
-        });
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+            console.log('presiono enter')
 
-        if(valido){
-            jQuery('.calculate').each(function() {
-                let valor = parseFloat(jQuery(this).val());
-                let presentacion_input = jQuery(this).attr("id").split('_');
-                let presentacion = presentacion_input[1];
-                total = total + (valor*presentacion*unit_weight);
-            });
-            total = total.toFixed(2);
-        }
+            console.log(document.activeElement)
+            console.log(lastFocusableElement)
+                if (document.activeElement === lastFocusableElement) {
+                    firstFocusableElement.focus();
+                    event.preventDefault();
+                }
 
-        jQuery("#envio_total").html('');
-        jQuery("#envio_total").html(total);
-        jQuery("#kg_totales").val(total);
-
-        /* const max = parseInt(jQuery("#tope").val());
-
-        if(total > max){
-            toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
-            jQuery(obj).val(0).select();
         }else{
+            const unit_weight = parseFloat(document.getElementById("unit_weight").value);
+            let total = 0;
+            let valido = true;
+
+            jQuery('.calculate').each(function() {
+                if(isNaN(parseFloat(jQuery(this).val()))){
+                    valido = false;
+                }
+            });
+
+            if(valido){
+                jQuery('.calculate').each(function() {
+                    let valor = parseFloat(jQuery(this).val());
+                    let presentacion_input = jQuery(this).attr("id").split('_');
+                    let presentacion = presentacion_input[1];
+                    total = total + (valor*presentacion*unit_weight);
+                });
+                total = total.toFixed(2);
+            }
+
             jQuery("#envio_total").html('');
             jQuery("#envio_total").html(total);
             jQuery("#kg_totales").val(total);
-        } */
+
+            /* const max = parseInt(jQuery("#tope").val());
+
+            if(total > max){
+                toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
+                jQuery(obj).val(0).select();
+            }else{
+                jQuery("#envio_total").html('');
+                jQuery("#envio_total").html(total);
+                jQuery("#kg_totales").val(total);
+            } */
+        }
     }
 
     jQuery("#sessionProductstore").click(function(e){
