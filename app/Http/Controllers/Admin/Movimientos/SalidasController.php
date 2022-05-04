@@ -9,7 +9,9 @@ use App\Models\MovementProduct;
 use App\Models\OfertaStore;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
+use App\Models\Panamas;
 use App\Models\Store;
+use App\Models\Customer;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -236,7 +238,7 @@ class SalidasController extends Controller
     {
         $movement = Movement::query()->where('id', $request->id)->with('panamas')->first();
         if ($movement) {
-            $id_panama = '8888-'.str_pad($movement->orden, 8, "0", STR_PAD_LEFT);
+            $id_panama = '8889-'.str_pad($movement->orden, 8, "0", STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $neto            = 0;
             $array_productos = [];
@@ -330,7 +332,7 @@ class SalidasController extends Controller
             if ($show_stock) {
                 $stock = $product->stock(null, Auth::user()->store_active);
                 if (!$stock) {
-                    $disabled      = 'disabled';
+                   // $disabled      = 'disabled';
                     $text_no_stock = ' -- SIN STOCK --';
                 }
             }
@@ -508,7 +510,7 @@ class SalidasController extends Controller
                 case 'VENTACLIENTE':
                     $customer       = $this->customerRepository->getById($to);
                     $listAssociates = [
-                        'L0' => $prices->plist0,
+                        'L0' => $prices->plist0neto,
                         'L1' => $prices->plist1,
                         'L2' => $prices->plist2,
                     ];
@@ -556,7 +558,17 @@ class SalidasController extends Controller
             $list_id                       = $request->input('session_list_id');
             $explode                       = explode('_', $list_id);
 
-            if($explode[0] != 'TRASLADO'){
+            $session_products = $this->sessionProductRepository->getByListId($list_id);
+            foreach ($session_products as $product) {
+                $kgrs = ($product->producto->unit_weight * $product->unit_package * $product->quantity);
+                $balance = $product->producto->stockReal($product->unit_package);
+                if($balance<$kgrs){
+                    $request->session()->flash('error', 'STOCK INSUFICIENTE - COD FENOVO '. $product->producto->cod_fenovo .' stock actual '. $balance .'Kgrs');
+                    return redirect()->back()->withInput();
+                }
+            }
+
+           if($explode[0] != 'TRASLADO'){
                 $count = Movement::where('from',$from)->whereIn('type', ['VENTA', 'VENTACLIENTE'])->count();
             }else{
                 $count = Movement::where('from',$from)->where('type','TRASLADO')->count();
@@ -575,7 +587,6 @@ class SalidasController extends Controller
             $insert_data['flete_invoice']  = (isset($request->factura_flete)) ? 1 : 0;
 
             $movement         = Movement::create($insert_data);
-            $session_products = $this->sessionProductRepository->getByListId($list_id);
 
             $enitidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
@@ -604,7 +615,7 @@ class SalidasController extends Controller
                         'bultos'     => $product->quantity,
                         'egress'     => $kgrs,
                         'balance'    => $balance,
-                    ]);
+                ]);
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
                     // Suma al balance de la store to
@@ -644,6 +655,13 @@ class SalidasController extends Controller
                             'egress'     => 0,
                             'balance'    => $balance,
                         ]);
+                }
+
+                if(!$product->invoice){
+                    $data_panama=[];
+                    $count = Panamas::count();
+                    $data_panama['orden'] = ($count)?$count+1:1;
+                    $data_panama['movement_id'] = $movement->id;
                 }
             }
             $this->sessionProductRepository->deleteList($list_id);

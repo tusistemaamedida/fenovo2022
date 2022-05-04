@@ -291,7 +291,7 @@ class ProductController extends Controller
                 $oferta = SessionOferta::where('product_id', $product_id)->first();
             }
 
-            if ($desc && $desc->descuento > $descp1 && !$oferta) {
+            if ($desc && $desc->descuento > $descp1 && !$oferta && !isset($data['fecha_desde'], $data['fecha_hasta'])) {
                 return new JsonResponse([
                     'type'   => 'error',
                     'descp1' => (int)$desc->descuento,

@@ -35,18 +35,22 @@
                     <th class="border-0  header-heading" scope="col">Enviar</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="in-box">
                 @for ($i = 0; $i < count($stock_presentaciones); $i++) <tr>
+
+                    @if($i == 0) <input type="hidden" id="input_focus" value="unidades_{{$stock_presentaciones[$i]['presentacion']}}"> @endif
+
                     <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
-                    <td class=" text-center ">
+                    <td class="text-center">
                         <input type="text"
-                               name="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
-                               id="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
-                               class="form-control calculate text-center"
-                               @if($stock_total==0) disabled @endif
-                               max="{{$stock_presentaciones[$i]['bultos']}}"
-                               value="0"
-                               onkeyup="sumar(this)" >
+                                name="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
+                                id="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
+                                class="form-control calculate text-center"
+                               {{-- @if($stock_total==0) disabled @endif --}}
+                                max="{{$stock_presentaciones[$i]['bultos']}}"
+                                value="0"
+                                onclick="this.select()"
+                                onkeyup="sumar(this,event)" >
                     </td>
                     </tr>
                     @endfor
@@ -55,3 +59,9 @@
     </form>
     <br>
 </div>
+
+<script>
+    var input = jQuery("#input_focus").val();
+    document.getElementById(input).focus();
+    document.getElementById(input).select();
+</script>

@@ -25,6 +25,21 @@
     <div class="container-fluid">
         <div class="row">
             @include('admin.movimientos.salidas.partials.form-select-cliente')
+            @if (Session()->has('error'))
+                <div class="col-md-12">
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert">
+                            <i class="ace-icon fa fa-times"></i>
+                        </button>
+
+                        <strong>
+                            <i class="ace-icon fa fa-check"></i>
+                            ERROR!<br>
+                        </strong>
+                        {{ Session::get('error') }}
+                    </div>
+                </div>
+            @endif
             <b style="width: 100%" id="session_products_table"></b>
         </div>
     </div>
@@ -107,6 +122,8 @@
             },
         }
     });
+
+    jQuery('#product_search').select2('open');
 
     jQuery('#product_search').select2({
         placeholder: 'Seleccione por nombre, código fenovo, código de barras...',
@@ -248,36 +265,70 @@
         });
     }
 
-    function sumar(obj){
-        const unit_weight = parseFloat(document.getElementById("unit_weight").value);
-        let total = 0;
-        let valido = true;
+    function sumar(obj,event){
+        const  focusableElements = 'input[type="text"]';
+        const  focusableButton   = 'button';
+        const selector = document.querySelector('#editpopup');
+        const firstFocusableElement = selector.querySelectorAll(focusableElements)[0];
+        const focusableContent = selector.querySelectorAll(focusableElements);
+        const focusableEnterContent = selector.querySelectorAll(focusableButton);
+        var nextFocusableElement;
+        var enter = false;
 
-        jQuery('.calculate').each(function() {
-            if(isNaN(parseFloat(jQuery(this).val()))){
-                valido = false;
-            }
-        });
+        if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
+           for (let index = 0; index < focusableContent.length; index++) {
+                if (document.activeElement === focusableContent[index] && (focusableContent.length != 1)) {
+                    nextFocusableElement = focusableContent[index+1]
+                    break;
+                }else if(focusableContent.length == 1){
+                    enter = true;
+                    break;
+                }
+                enter = true;
+           }
+           if(enter){
+                nextFocusableElement = focusableEnterContent[focusableEnterContent.length - 1];
+                nextFocusableElement.focus();
+           }else{
+                nextFocusableElement.focus()
+                nextFocusableElement.select()
+           }
 
-        if(valido){
-            jQuery('.calculate').each(function() {
-                let valor = parseFloat(jQuery(this).val());
-                let presentacion_input = jQuery(this).attr("id").split('_');
-                let presentacion = presentacion_input[1];
-                total = total + (valor*presentacion*unit_weight);
-            });
-            total = total.toFixed(2);
-        }
-
-        const max = parseInt(jQuery("#tope").val());
-
-        if(total > max){
-            toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
-            jQuery(obj).val(0).select();
         }else{
+            const unit_weight = parseFloat(document.getElementById("unit_weight").value);
+            let total = 0;
+            let valido = true;
+
+            jQuery('.calculate').each(function() {
+                if(isNaN(parseFloat(jQuery(this).val()))){
+                    valido = false;
+                }
+            });
+
+            if(valido){
+                jQuery('.calculate').each(function() {
+                    let valor = parseFloat(jQuery(this).val());
+                    let presentacion_input = jQuery(this).attr("id").split('_');
+                    let presentacion = presentacion_input[1];
+                    total = total + (valor*presentacion*unit_weight);
+                });
+                total = total.toFixed(2);
+            }
+
             jQuery("#envio_total").html('');
             jQuery("#envio_total").html(total);
             jQuery("#kg_totales").val(total);
+
+            /* const max = parseInt(jQuery("#tope").val());
+
+            if(total > max){
+                toastr.error('Supero la cantidad de bultos que puede enviar!', 'Verifique');
+                jQuery(obj).val(0).select();
+            }else{
+                jQuery("#envio_total").html('');
+                jQuery("#envio_total").html(total);
+                jQuery("#kg_totales").val(total);
+            } */
         }
     }
 

@@ -114,4 +114,8 @@ class Invoice extends Model
         'costo_fenovo_total',
         'orden'
 	];
+
+    public function tipoFactura(){
+        return $this->belongsTo(VoucherType::class, 'cbte_tipo', 'id');
+    }
 }
