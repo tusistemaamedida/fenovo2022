@@ -266,21 +266,30 @@
     }
 
     function sumar(obj,event){
-        const  focusableElements = 'input,button';
+        const  focusableElements = 'input[type="text"]';
+        const  focusableButton   = 'button';
         const selector = document.querySelector('#editpopup');
         const firstFocusableElement = selector.querySelectorAll(focusableElements)[0];
         const focusableContent = selector.querySelectorAll(focusableElements);
-        const lastFocusableElement = focusableContent[focusableContent.length - 1];
+        const focusableEnterContent = selector.querySelectorAll(focusableButton);
+        var nextFocusableElement;
+        var enter = false;
 
         if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
-            console.log('presiono enter')
-
-            console.log(document.activeElement)
-            console.log(lastFocusableElement)
-                if (document.activeElement === lastFocusableElement) {
-                    firstFocusableElement.focus();
-                    event.preventDefault();
+           for (let index = 0; index < focusableContent.length; index++) {
+                if (document.activeElement === focusableContent[index]) {
+                    nextFocusableElement = focusableContent[index+1]
+                    break;
                 }
+                enter = true;
+           }
+           if(enter){
+                nextFocusableElement = focusableEnterContent[focusableEnterContent.length - 1];
+                nextFocusableElement.focus();
+           }else{
+                nextFocusableElement.focus()
+                nextFocusableElement.select()
+           }
 
         }else{
             const unit_weight = parseFloat(document.getElementById("unit_weight").value);
