@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Exportaciones;
 use App\Traits\OriginDataTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -24,6 +25,14 @@ class MovementsViewExport implements FromView
     {
         $desde = $this->request->desde;
         $hasta = $this->request->hasta;
+
+        $nombre_archivo = 'movi.csv';
+        $exportacion    = Exportaciones::whereArchivo($nombre_archivo)->first();
+
+        // inicializo los contadores
+        $numeracion = ($exportacion) ? $exportacion->numero + 1 : 1;
+        $registros  = 0;
+        //
 
         $arrTipos   = ['VENTA', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
         $arrEntrada = ['VENTA', 'TRASLADO'];
@@ -51,7 +60,7 @@ class MovementsViewExport implements FromView
                     $objMovement              = new stdClass();
                     $creado                   = true;
                     $objMovement->origen      = ($store_type == 'N') ? 'DEP_CEN' : 'DEP_PAN';
-                    $objMovement->id          = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+                    $objMovement->id          = 'R' . str_pad($numeracion, 8, '0', STR_PAD_LEFT);
                     $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
                     $objMovement->tipo        = 'E';
                     $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
@@ -65,7 +74,7 @@ class MovementsViewExport implements FromView
                 $objMovement              = new stdClass();
                 $creado                   = true;
                 $objMovement->origen      = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
-                $objMovement->id          = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+                $objMovement->id          = 'R' . str_pad($numeracion, 8, '0', STR_PAD_LEFT);
                 $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
                 $objMovement->tipo        = $tipo;
                 $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
@@ -76,8 +85,16 @@ class MovementsViewExport implements FromView
 
             if ($creado) {
                 array_push($arrMovements, $objMovement);
+                $numeracion++;
+                $registros++;
             }
         }
+
+        // Guardo la exportacion
+        $exportacion->numero    = $exportacion->numero + $registros;
+        $exportacion->registros = $registros;
+        $exportacion->save();
+
 
         $anio      = date('Y', time());
         $mes       = date('m', time());
