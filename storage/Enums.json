@@ -42,7 +42,7 @@
     {
       "type": "E",
       "name": "EXPRESS"
-    },    
+    },
     {
       "type": "N",
       "name": "NAVE"
@@ -75,6 +75,9 @@
     }
   ],
   "price": [
+    {
+      "type": "L0"
+    },
     {
       "type": "L1"
     },
