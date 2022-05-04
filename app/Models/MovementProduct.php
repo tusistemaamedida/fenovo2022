@@ -26,6 +26,7 @@ class MovementProduct extends Model
         'entidad_id',
         'entidad_tipo',
         'product_id',
+        'exported_number',
         'unit_package',
         'invoice',
         'iibb',
