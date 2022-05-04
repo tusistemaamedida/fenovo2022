@@ -1,11 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
-use App\Exports\MovementsViewExport;
-
 use App\Http\Controllers\Controller;
-use App\Models\Exportaciones;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -42,10 +38,8 @@ class SettingController extends Controller
         $this->enumRepository           = $enumRepository;
     }
 
-    public function menuSetting(Request $request)
+    public function index(Request $request)
     {
-        $tiposalidas = $this->enumRepository->getType('movimientos');
-        $stores      = $this->storeRepository->getActives();
-        return view('admin.setting.menu', compact('tiposalidas', 'stores'));
+        return view('admin.setting.menu');
     }
 }
