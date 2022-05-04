@@ -2,4 +2,4 @@
 use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('setting/index', [SettingController::class, 'index'])->name('seeting.index');
+Route::get('setting', [SettingController::class, 'index'])->name('setting.index');
