@@ -323,7 +323,7 @@ class SalidasController extends Controller
             if ($show_stock) {
                 $stock = $product->stock(null, Auth::user()->store_active);
                 if (!$stock) {
-                    $disabled      = 'disabled';
+                   // $disabled      = 'disabled';
                     $text_no_stock = ' -- SIN STOCK --';
                 }
             }
@@ -606,7 +606,7 @@ class SalidasController extends Controller
                         'bultos'     => $product->quantity,
                         'egress'     => $kgrs,
                         'balance'    => $balance,
-                    ]);
+                ]);
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
                     // Suma al balance de la store to

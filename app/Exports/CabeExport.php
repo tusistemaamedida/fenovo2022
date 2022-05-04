@@ -24,7 +24,7 @@ class CabeExport implements FromView {
 
     public function view(): View{
         $arr_elementos = [];
-        $movimientos = Movement::where('type','VENTA')->orWhere('type','VENTACLIENTE')->orderBy('created_at','ASC')->limit(250)->get();
+        $movimientos = Movement::where('type','VENTA')->orWhere('type','VENTACLIENTE')->orderBy('created_at','ASC')->get();
 
         foreach ($movimientos as $mov) {
             if(count($mov->panamas)){
