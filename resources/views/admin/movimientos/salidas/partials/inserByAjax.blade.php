@@ -49,6 +49,7 @@
                                {{-- @if($stock_total==0) disabled @endif --}}
                                 max="{{$stock_presentaciones[$i]['bultos']}}"
                                 value="0"
+                                onclick="this.select()"
                                 onkeyup="sumar(this,event)" >
                     </td>
                     </tr>
