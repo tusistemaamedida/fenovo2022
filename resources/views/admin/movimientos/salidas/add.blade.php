@@ -277,8 +277,11 @@
 
         if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
            for (let index = 0; index < focusableContent.length; index++) {
-                if (document.activeElement === focusableContent[index]) {
+                if (document.activeElement === focusableContent[index] && (focusableContent.length != 1)) {
                     nextFocusableElement = focusableContent[index+1]
+                    break;
+                }else if(focusableContent.length == 1){
+                    enter = true;
                     break;
                 }
                 enter = true;
