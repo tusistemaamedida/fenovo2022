@@ -23,7 +23,7 @@ class CabeEleExport implements FromView {
 
     public function view(): View{
         $arr_elementos = [];
-        $invoices = Invoice::whereNotNull('cae')->with('tipoFactura')->orderBy('created_at','ASC')->get();
+        $invoices = Invoice::whereNotNull('cae')->with('tipoFactura')->orderBy('created_at','ASC')->orderBy('voucher_number','ASC')->get();
         $i=1;
         foreach ($invoices as $invoice) {
             $cliente = null;
