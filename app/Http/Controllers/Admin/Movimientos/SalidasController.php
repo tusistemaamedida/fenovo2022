@@ -611,10 +611,10 @@ class SalidasController extends Controller
 
             $session_products = $this->sessionProductRepository->getByListId($list_id);
             foreach ($session_products as $product) {
-                $kgrs    = ($product->producto->unit_weight * $product->unit_package * $product->quantity);
-                $balance = $product->producto->stockReal($product->unit_package);
-                if ($balance < $kgrs) {
-                    $request->session()->flash('error', 'STOCK INSUFICIENTE - COD FENOVO ' . $product->producto->cod_fenovo . ' stock actual ' . $balance . 'Kgrs');
+                $kgrs = ($product->producto->unit_weight * $product->unit_package * $product->quantity);
+                $balance = $product->producto->stockReal(null, \Auth::user()->store_active);
+                if($balance<$kgrs){
+                    $request->session()->flash('error', 'STOCK INSUFICIENTE - COD FENOVO '. $product->producto->cod_fenovo .' stock actual '. $balance .'Kgrs');
                     return redirect()->back()->withInput();
                 }
             }
