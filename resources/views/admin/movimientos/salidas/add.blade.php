@@ -276,7 +276,8 @@
         var enter = false;
 
         if (event.which == 9 || event.keyCode == 9 || event.which == 13 || event.keyCode == 13) {
-           for (let index = 0; index < focusableContent.length; index++) {
+            event.preventDefault()
+            for (let index = 0; index < focusableContent.length; index++) {
                 if (document.activeElement === focusableContent[index] && (focusableContent.length != 1)) {
                     nextFocusableElement = focusableContent[index+1]
                     break;
@@ -334,7 +335,8 @@
 
     jQuery("#sessionProductstore").click(function(e){
         e.preventDefault();
-        guardarProductoEnSession()
+        jQuery("#sessionProductstore").attr('disabled',true);
+        guardarProductoEnSession(e)
     })
 
     function guardarProductoEnSession(){
@@ -367,11 +369,13 @@
                     jQuery('#'+  data['index']).next().find('.select2-selection').addClass('is-invalid');
                     toastr.error(data['msj'], 'Verifique');
                 }
+                jQuery("#sessionProductstore").attr('disabled',false);
                 jQuery('#loader').addClass('hidden');
             },
             error: function (data) {
             },
             complete: function () {
+                jQuery("#sessionProductstore").attr('disabled',false);
                 jQuery('#loader').addClass('hidden');
             }
         });
