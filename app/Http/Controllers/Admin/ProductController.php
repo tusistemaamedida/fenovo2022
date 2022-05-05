@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\DescuentosViewExport;
 use App\Exports\PresentacionesViewExport;
 use App\Exports\ProductsViewExport;
+use App\Exports\ProductsViewExportStock;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\AddProduct;
 
@@ -646,6 +647,11 @@ class ProductController extends Controller
     public function exportProductsToCsv(Request $request)
     {
         return Excel::download(new ProductsViewExport($request), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+    }
+
+    public function exportStockProductsToCsv(Request $request)
+    {	
+        return Excel::download(new ProductsViewExportStock($request), 'stocks.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function exportDescuentosToCsv(Request $request)

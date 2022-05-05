@@ -67,6 +67,7 @@
                         </div>
                     </div>
                     <div class="row mb-5 ml-2 border-bottom-dark">
+
                         <div class="col-2">
                             <a href="{{route('products.exportCSV')}}" title="Exportar todos los productos" class="mt-1 mr-3">
                                 <i class=" fa fa-file-csv"></i> Productos
@@ -93,6 +94,12 @@
                         <div class="col-2">
                             <a href="{{ route('oferta.excepciones.exportCSV') }}">
                                 <i class=" fa fa-file-csv"></i> Excepciones
+                            </a>
+                        </div>
+
+                        <div class="col-2">
+                            <a href="{{ route('products.exportStockCSV') }}">
+                                <i class=" fa fa-file-csv"></i> Stock Productos
                             </a>
                         </div>
 

@@ -7,11 +7,10 @@ use App\Models\FleteSetting;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\OfertaStore;
+use App\Models\Panamas;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
-use App\Models\Panamas;
 use App\Models\Store;
-use App\Models\Customer;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -69,6 +68,10 @@ class SalidasController extends Controller
                 ->editColumn('date', function ($movement) {
                     return date('Y-m-d', strtotime($movement->date));
                 })
+                ->addColumn('items', function ($movement) {
+                    $count = count(MovementProduct::whereMovementId($movement->id)->where('egress', '>', 0)->get());
+                    return '<span class="badge badge-primary">' . $count . '</span>';
+                })
                 ->editColumn('type', function ($movement) {
                     return $movement->type;
                 })
@@ -96,13 +99,15 @@ class SalidasController extends Controller
                         }
                     }
                     $routeCreatePanama = route('print.panama', ['id' => $movement->id]);
-                    $routeFletePanama = route('print.panama.felete', ['id' => $movement->id]);
+                    $routeFletePanama  = route('print.panama.felete', ['id' => $movement->id]);
+                    $routeOrden        = route('print.orden', ['id' => $movement->id]);
                     $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
                     $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Paper"  href="' . $routeCreatePanama . '" target="_blank"> <i class="fas fa-file"></i> </a>';
                     $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Flete"  href="' . $routeFletePanama . '" target="_blank"> <i class="fas fa-car"></i> </a>';
+                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Orden"  href="' . $routeOrden . '" target="_blank"> <i class="fas fa-list"></i> </a>';
                     return $links;
                 })
-                ->rawColumns(['origen', 'date', 'type', 'kgrs', 'acciones', 'factura_nro'])
+                ->rawColumns(['origen', 'items', 'date', 'type', 'kgrs', 'acciones', 'factura_nro'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.index');
@@ -151,22 +156,6 @@ class SalidasController extends Controller
         return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
     }
 
-    public function pendientePrint(Request $request)
-    {
-        $session_products = DB::table('session_products as t1')
-            ->join('products as t2', 't1.product_id', '=', 't2.id')
-            ->where('t1.list_id', '=', $request->list_id)
-            ->orderBy('t2.cod_fenovo')
-            ->get();
-
-        $explode          = explode('_', $request->input('list_id'));
-
-        $tipo             = $explode[0];
-        $destino          = $this->origenData($tipo, $explode[1], true);
-        $pdf              = PDF::loadView('admin.print.pendientes', compact('session_products', 'destino'));
-        return $pdf->stream('salidas.pdf');
-    }
-
     public function getTotalMovement(Request $request)
     {
         $total    = 0;
@@ -182,6 +171,57 @@ class SalidasController extends Controller
         return new JsonResponse(['type' => 'success', 'total' => number_format($total, 2, ',', '.')]);
     }
 
+    public function pendientePrint(Request $request)
+    {
+        $session_products = DB::table('session_products as t1')
+            ->join('products as t2', 't1.product_id', '=', 't2.id')
+            ->where('t1.list_id', '=', $request->list_id)
+            ->orderBy('t2.cod_fenovo')
+            ->get();
+
+        $explode = explode('_', $request->input('list_id'));
+
+        $tipo    = $explode[0];
+        $destino = $this->origenData($tipo, $explode[1], true);
+        $pdf     = PDF::loadView('admin.print.pendientes', compact('session_products', 'destino'));
+        return $pdf->stream('salidas.pdf');
+    }
+
+    public function printOrden(Request $request)
+    {
+        $orden  = $request->id;
+        $movement = Movement::whereId($orden)->with('movement_salida_products')->first();
+
+        if ($movement) {
+            if ($movement->type == 'TRASLADO') {
+                $store = Store::find($movement->to);
+                if (isset($store) && ($store->store_type == 'B')) {
+                    $mercaderia_en_transito = 'MERCADERIA EN TRANSITO';
+                }
+            }
+            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $array_productos = [];
+            $productos       = $movement->movement_salida_products;
+            foreach ($productos as $producto) {
+                if ($producto->invoice) {
+                    $objProduct               = new stdClass();
+                    $objProduct->cod_fenovo   = $producto->product->cod_fenovo;
+                    $objProduct->name         = $producto->product->name;
+                    $objProduct->unit_weight  = $producto->product->unit_weight;
+                    $objProduct->unit_package = $producto->unit_package;
+                    $objProduct->quantity     = $producto->bultos;
+                    $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
+                    $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                    $objProduct->class        = '';
+                    array_push($array_productos, $objProduct);
+                }
+            }
+
+            $pdf = PDF::loadView('print.orden', compact('orden', 'destino', 'array_productos'));
+            return $pdf->stream('orden-' . $request->id . '.pdf');
+        }
+    }
+
     public function printRemito(Request $request)
     {
         $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
@@ -192,17 +232,17 @@ class SalidasController extends Controller
             $mercaderia_en_transito = null;
             if ($movement->type == 'TRASLADO') {
                 $store = Store::find($movement->to);
-                if(isset($store) && ($store->store_type == 'B')){
+                if (isset($store) && ($store->store_type == 'B')) {
                     $mercaderia_en_transito = 'MERCADERIA EN TRANSITO';
-                };
+                }
             }
-            $id_remito = 'R'.str_pad($movement->id, 8, "0", STR_PAD_LEFT);
+            $id_remito       = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $neto            = $request->input('neto');
             $array_productos = [];
             $productos       = $movement->movement_salida_products;
             foreach ($productos as $producto) {
-                if($producto->invoice){
+                if ($producto->invoice) {
                     $objProduct             = new stdClass();
                     $objProduct->cant       = $producto->bultos;
                     $objProduct->codigo     = $producto->product->cod_fenovo;
@@ -238,7 +278,7 @@ class SalidasController extends Controller
     {
         $movement = Movement::query()->where('id', $request->id)->with('panamas')->first();
         if ($movement) {
-            $id_panama = '8889-'.str_pad($movement->orden, 8, "0", STR_PAD_LEFT);
+            $id_panama       = '8889-' . str_pad($movement->orden, 8, '0', STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $neto            = 0;
             $array_productos = [];
@@ -258,28 +298,28 @@ class SalidasController extends Controller
                 array_push($array_productos, $objProduct);
             }
 
-            $pdf = PDF::loadView('print.panama', compact('destino', 'array_productos', 'neto','id_panama'));
-            return $pdf->download($id_panama.'.pdf');
+            $pdf = PDF::loadView('print.panama', compact('destino', 'array_productos', 'neto', 'id_panama'));
+            return $pdf->download($id_panama . '.pdf');
         }
     }
 
     public function printPanamaFlete(Request $request)
     {
-        $movement = Movement::query()->where('id', $request->id)->where('flete_invoice',false)->first();
+        $movement = Movement::query()->where('id', $request->id)->where('flete_invoice', false)->first();
         if ($movement) {
-            $id_flete = 'FL'.str_pad($movement->id, 8, "0", STR_PAD_LEFT);
-            $destino         = $this->origenData($movement->type, $movement->to, true);
-            $neto            = 0;
-            $array_productos = [];
+            $id_flete               = 'FL' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+            $destino                = $this->origenData($movement->type, $movement->to, true);
+            $neto                   = 0;
+            $array_productos        = [];
             $objProduct             = new stdClass();
             $objProduct->cant       = 1;
             $objProduct->name       = 'FLETE';
             $objProduct->unit_price = number_format($movement->flete, 2, ',', '.');
-            $objProduct->subtotal =$neto  = number_format($movement->flete, 2, ',', '.');
+            $objProduct->subtotal   = $neto   = number_format($movement->flete, 2, ',', '.');
             $objProduct->class      = '';
             array_push($array_productos, $objProduct);
-            $pdf = PDF::loadView('print.panamaFelete', compact('destino', 'array_productos', 'neto','id_flete'));
-            return $pdf->download($id_flete.'.pdf');
+            $pdf = PDF::loadView('print.panamaFelete', compact('destino', 'array_productos', 'neto', 'id_flete'));
+            return $pdf->download($id_flete . '.pdf');
         }
     }
 
@@ -332,7 +372,7 @@ class SalidasController extends Controller
             if ($show_stock) {
                 $stock = $product->stock(null, Auth::user()->store_active);
                 if (!$stock) {
-                   // $disabled      = 'disabled';
+                    // $disabled      = 'disabled';
                     $text_no_stock = ' -- SIN STOCK --';
                 }
             }
@@ -519,11 +559,11 @@ class SalidasController extends Controller
                     break;
             }
             $insert_data['costo_fenovo'] = $prices->costfenovo;
-            $insert_data['list_id']    = $to_type . '_' . $to;
-            $insert_data['store_id']   = Auth::user()->store_active;
-            $insert_data['invoice']    = true;
-            $insert_data['iibb']       = $product->iibb;
-            $insert_data['product_id'] = $product_id;
+            $insert_data['list_id']      = $to_type . '_' . $to;
+            $insert_data['store_id']     = Auth::user()->store_active;
+            $insert_data['invoice']      = true;
+            $insert_data['iibb']         = $product->iibb;
+            $insert_data['product_id']   = $product_id;
             for ($i = 0; $i < count($unidades); $i++) {
                 $unidad   = $unidades[$i];
                 $quantity = (float)$unidad['value'];
@@ -555,26 +595,26 @@ class SalidasController extends Controller
     {
         $from = Auth::user()->store_active;
         try {
-            $list_id                       = $request->input('session_list_id');
-            $explode                       = explode('_', $list_id);
+            $list_id = $request->input('session_list_id');
+            $explode = explode('_', $list_id);
 
             $session_products = $this->sessionProductRepository->getByListId($list_id);
             foreach ($session_products as $product) {
-                $kgrs = ($product->producto->unit_weight * $product->unit_package * $product->quantity);
+                $kgrs    = ($product->producto->unit_weight * $product->unit_package * $product->quantity);
                 $balance = $product->producto->stockReal($product->unit_package);
-                if($balance<$kgrs){
-                    $request->session()->flash('error', 'STOCK INSUFICIENTE - COD FENOVO '. $product->producto->cod_fenovo .' stock actual '. $balance .'Kgrs');
+                if ($balance < $kgrs) {
+                    $request->session()->flash('error', 'STOCK INSUFICIENTE - COD FENOVO ' . $product->producto->cod_fenovo . ' stock actual ' . $balance . 'Kgrs');
                     return redirect()->back()->withInput();
                 }
             }
 
-           if($explode[0] != 'TRASLADO'){
-                $count = Movement::where('from',$from)->whereIn('type', ['VENTA', 'VENTACLIENTE'])->count();
-            }else{
-                $count = Movement::where('from',$from)->where('type','TRASLADO')->count();
+            if ($explode[0] != 'TRASLADO') {
+                $count = Movement::where('from', $from)->whereIn('type', ['VENTA', 'VENTACLIENTE'])->count();
+            } else {
+                $count = Movement::where('from', $from)->where('type', 'TRASLADO')->count();
             }
 
-            $orden = ($count)?$count+1:1;
+            $orden = ($count) ? $count + 1 : 1;
 
             $insert_data['type']           = $explode[0];
             $insert_data['to']             = $explode[1];
@@ -586,7 +626,7 @@ class SalidasController extends Controller
             $insert_data['flete']          = $request->flete;
             $insert_data['flete_invoice']  = (isset($request->factura_flete)) ? 1 : 0;
 
-            $movement         = Movement::create($insert_data);
+            $movement = Movement::create($insert_data);
 
             $enitidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
@@ -601,21 +641,21 @@ class SalidasController extends Controller
 
                 $balance = ($latest) ? $latest->balance - $kgrs : 0;
                 MovementProduct::firstOrCreate([
-                    'entidad_id'     => $from,
-                    'entidad_tipo'   => 'S',
-                    'movement_id'    => $movement->id,
-                    'product_id'     => $product->product_id,
-                    'unit_package'   => $product->unit_package, ], [
-                        'invoice'    => $product->invoice,
-                        'iibb'       => $product->iibb,
-                        'unit_price' => $product->unit_price,
+                    'entidad_id'      => $from,
+                    'entidad_tipo'    => 'S',
+                    'movement_id'     => $movement->id,
+                    'product_id'      => $product->product_id,
+                    'unit_package'    => $product->unit_package, ], [
+                        'invoice'     => $product->invoice,
+                        'iibb'        => $product->iibb,
+                        'unit_price'  => $product->unit_price,
                         'cost_fenovo' => $product->costo_fenovo,
-                        'tasiva'     => $product->tasiva,
-                        'entry'      => 0,
-                        'bultos'     => $product->quantity,
-                        'egress'     => $kgrs,
-                        'balance'    => $balance,
-                ]);
+                        'tasiva'      => $product->tasiva,
+                        'entry'       => 0,
+                        'bultos'      => $product->quantity,
+                        'egress'      => $kgrs,
+                        'balance'     => $balance,
+                    ]);
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
                     // Suma al balance de la store to
@@ -657,10 +697,10 @@ class SalidasController extends Controller
                         ]);
                 }
 
-                if(!$product->invoice){
-                    $data_panama=[];
-                    $count = Panamas::count();
-                    $data_panama['orden'] = ($count)?$count+1:1;
+                if (!$product->invoice) {
+                    $data_panama                = [];
+                    $count                      = Panamas::count();
+                    $data_panama['orden']       = ($count) ? $count + 1 : 1;
                     $data_panama['movement_id'] = $movement->id;
                 }
             }
