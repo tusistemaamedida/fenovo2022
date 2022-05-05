@@ -1,11 +1,12 @@
 <table>
     <tr>
-        <td colspan="8">{{ $data }}</td>
+        <td colspan="9">{{ $data }}</td>
     </tr>
     @foreach($arrMovements as $arrMovement)
     <tr>
         <td>{{ $arrMovement->origen       }}</td>
         <td>{{ $arrMovement->id         }}</td>
+        <td>{{ $arrMovement->orden         }}</td>
         <td>{{ $arrMovement->fecha      }}</td>
         <td>{{ $arrMovement->tipo       }}</td>
         <td>{{ $arrMovement->codtienda  }}</td>
