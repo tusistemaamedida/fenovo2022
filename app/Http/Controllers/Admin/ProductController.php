@@ -178,29 +178,30 @@ class ProductController extends Controller
 
             if ($producto) {
                 $stock_real = $producto->stockReal(null, Auth::user()->store_active);
-
                 $entry   = $egress   = 0;
-                if ($stock_real < $nuevo_stock) {
+
+                if ($stock_real < 0) {
                     $entry = $nuevo_stock + abs($stock_real);
+                }elseif(($stock_real < $nuevo_stock) && $stock_real > 0){
+                    $entry = $nuevo_stock - $stock_real;
                 } elseif ($stock_real > $nuevo_stock) {
                     $egress = $stock_real - $nuevo_stock;
                 }
-            } else {
-                $entry  = $nuevo_stock;
-                $egress = 0;
+
+                $movement               = Movement::create($insert_data);
+                $latest['balance']      = $nuevo_stock;
+                $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
+                $latest['entidad_tipo'] = 'S';
+                $latest['product_id']   = $request->product_id;
+                $latest['entry']        = $entry;
+                $latest['egress']       = $egress;
+                $latest['movement_id']  = $movement->id;
+                MovementProduct::create($latest);
+
+                return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
             }
 
-            $movement               = Movement::create($insert_data);
-            $latest['balance']      = $nuevo_stock;
-            $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
-            $latest['entidad_tipo'] = 'S';
-            $latest['product_id']   = $request->product_id;
-            $latest['entry']        = $entry;
-            $latest['egress']       = $egress;
-            $latest['movement_id']  = $movement->id;
-            MovementProduct::create($latest);
-
-            return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
+            return new JsonResponse(['msj' => 'Error en el ajuste', 'type' => 'error']);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
