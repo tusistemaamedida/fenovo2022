@@ -302,8 +302,9 @@ class SalidasController extends Controller
         $valid_names = [];
 
         $this->sessionProductRepository->deleteDevoluciones();
+        $this->sessionProductRepository->deleteDebitos();
 
-        if ($request->to_type == 'VENTACLIENTE' || $request->to_type == 'DEVOLUCIONCLIENTE') {
+        if ($request->to_type == 'VENTACLIENTE' || $request->to_type == 'DEVOLUCIONCLIENTE' || $request->to_type == 'DEBITOCLIENTE') {
             $customers = $this->customerRepository->search($term);
             foreach ($customers as $customer) {
                 $valid_names[] = ['id' => $customer->id, 'text' => $customer->displayName()];
@@ -350,7 +351,7 @@ class SalidasController extends Controller
     {
         try {
             $session_products      = $this->sessionProductRepository->getByListId($request->input('list_id'));
-            $mostrar_check_invoice = !(str_contains($request->input('list_id'), 'DEVOLUCION_'));
+            $mostrar_check_invoice = !(str_contains($request->input('list_id'), 'DEVOLUCION_') || str_contains($request->input('list_id'), 'DEBITO_'));
             return new JsonResponse([
                 'type' => 'success',
                 'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products', 'mostrar_check_invoice'))->render(),
@@ -399,6 +400,7 @@ class SalidasController extends Controller
                 $product    = $this->productRepository->getById($request->input('id'));
                 $list_id    = $request->input('list_id');
                 $devolucion = str_contains($list_id, 'DEVOLUCION_');
+                $debito     = str_contains($list_id, 'DEBITO_');
 
                 if ($product) {
                     $stock_presentaciones = [];
@@ -425,7 +427,14 @@ class SalidasController extends Controller
                         $stock_presentaciones[$i]['bultos'] = (int)$bultos;
                     }
 
-                    $view = ($devolucion) ? 'admin.movimientos.notas-credito.partials.inserByAjax' : 'admin.movimientos.salidas.partials.inserByAjax';
+                    if($devolucion){
+                        $view = 'admin.movimientos.notas-credito.partials.inserByAjax';
+                    }elseif($debito){
+                        $view = 'admin.movimientos.notas-debito.partials.inserByAjax';
+                    }else{
+                        $view = 'admin.movimientos.salidas.partials.inserByAjax';
+                    }
+
                     return new JsonResponse([
                         'type' => 'success',
                         'html' => view(
@@ -500,6 +509,7 @@ class SalidasController extends Controller
 
             switch ($to_type) {
                 case 'DEVOLUCION':
+                case 'DEBITO':
                 case 'VENTA':
                 case 'TRASLADO':
                     //$ofertaStore = OfertaStore::where('store_id',$to)
@@ -508,6 +518,7 @@ class SalidasController extends Controller
                     break;
                 case 'DEVOLUCIONCLIENTE':
                 case 'VENTACLIENTE':
+                case 'DEBITOCLIENTE':
                     $customer       = $this->customerRepository->getById($to);
                     $listAssociates = [
                         'L0' => $prices->plist0neto,

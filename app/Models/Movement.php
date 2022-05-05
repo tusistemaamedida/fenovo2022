@@ -142,9 +142,11 @@ class Movement extends Model
             case 'VENTA':
             case 'TRASLADO':
             case 'DEVOLUCION':
+            case 'DEBITO':
                 $store = Store::find($typeTo);
                 return $store->description;
             case 'VENTACLIENTE':
+            case 'DEBITOCLIENTE':
             case 'DEVOLUCIONCLIENTE':
                 $customer = Customer::find($typeTo);
                 return $customer->razon_social;
