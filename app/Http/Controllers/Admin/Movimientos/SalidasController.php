@@ -119,7 +119,7 @@ class SalidasController extends Controller
                 })
                 ->addColumn('destino', function ($pendiente) {
                     $explode = explode('_', $pendiente->list_id);
-                    return $pendiente::origenData($explode[0], $explode[1]);
+                    return $this->origenData($explode[0], $explode[1]);
                 })
                 ->addColumn('items', function ($pendiente) {
                     $count = count(SessionProduct::query()->where('list_id', $pendiente->list_id)->get());

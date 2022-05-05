@@ -50,7 +50,7 @@
                 <td>{{$session_product->cod_fenovo}} {{$session_product->name}}</td>
                 <td class="text-center">{{$session_product->cod_proveedor }}</td>
                 <td class="text-center">{{$session_product->unit_package}}</td>
-                <td class="text-center">{{$session_product->quantity}}</td>
+                <td class="text-center">{{ (int)$session_product->quantity}}</td>
                 <td class="text-center"> .............. </td>
             </tr>
             @endforeach
