@@ -35,6 +35,7 @@
                                                     <th>#</th>
                                                     <th>Fecha</th>
                                                     <th>Destino</th>
+                                                    <th>Items</th>
                                                     <th>Tipo</th>
                                                     <th>Kgrs</th>
                                                     <th>Factura Nro</th>
@@ -76,6 +77,7 @@
             {data: 'id', 'class':'text-center', orderable:false,searchable: false},
             {data: 'date'},
             {data: 'destino'},
+            {data: 'items'},
             {data: 'type', orderable:false},
             {data: 'kgrs', orderable:false},
             {data: 'factura_nro', 'class' : 'text-center'},
