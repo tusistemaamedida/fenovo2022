@@ -134,7 +134,7 @@ class SalidasController extends Controller
                     return '<a href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
                 })
                 ->addColumn('print', function ($pendiente) {
-                    return '<a href="' . route('salidas.pendiente.print', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-print"></i> </a>';
+                    return '<a target="_blank" href="' . route('salidas.pendiente.print', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-print"></i> </a>';
                 })
                 ->rawColumns(['actualizacion', 'items', 'destino', 'edit', 'destroy', 'print'])
                 ->make(true);
