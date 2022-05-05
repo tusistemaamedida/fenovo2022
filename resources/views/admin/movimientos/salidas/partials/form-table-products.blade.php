@@ -160,6 +160,7 @@
 <script>
     jQuery(".yajra-datatable").DataTable({
         ordering: false,
+        iDisplayLength: -1,
     });
     jQuery('#product_search').select2('open');
 </script>

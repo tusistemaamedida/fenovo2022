@@ -82,6 +82,7 @@ class InvoiceController extends Controller
         if(!is_null($invoice->cae)){
             $movement = Movement::where('id',$movement_id)->firstOrFail();
             if($movement->type == 'DEVOLUCION' || $movement->type == 'DEVOLUCIONCLIENTE') $titulo = 'NOTA CRÉDITO';
+            if($movement->type == 'DEBITO' || $movement->type == 'DEBITOCLIENTE') $titulo = 'NOTA DÉBITO';
             $productos = MovementProduct::where('movement_id',$movement_id)->where('invoice',1)->where('egress', '>', 0)->with('product')->get();
             foreach ($productos as $producto) {
                 $objProduct = new stdClass;
@@ -278,7 +279,8 @@ class InvoiceController extends Controller
 
                 if($importe_gravado > 0 || $importe_iva > 0) $dataAfip['Iva'] = $importe['ivas'];
 
-                if($tipo_movimiento == 'DEVOLUCION' || $tipo_movimiento == 'DEVOLUCIONCLIENTE'){
+                if($tipo_movimiento == 'DEVOLUCION' || $tipo_movimiento == 'DEVOLUCIONCLIENTE' ||
+                   $tipo_movimiento == 'DEBITO' || $tipo_movimiento == 'DEBITOCLIENTE'){
                     $invoice = $this->invoiceRepository->getByVoucherNumber($movement->voucher_number);
                     if($invoice){
                         $explode = explode('-',$movement->voucher_number);
@@ -409,9 +411,11 @@ class InvoiceController extends Controller
           case 'VENTA':
           case 'TRASLADO':
           case 'DEVOLUCION':
+          case 'DEBITO':
             $this->client = Store::where('id',$id)->where('active', 1)->with('region')->first();
             return true;
           case 'VENTACLIENTE':
+          case 'DEBITOCLIENTE':
           case 'DEVOLUCIONCLIENTE':
             $this->client = Customer::where('id',$id)->where('active', 1)->with('store')->first();
             return true;
@@ -426,6 +430,8 @@ class InvoiceController extends Controller
         if(($type != 'RI' && $tipo_movimiento == 'VENTA') || $type != 'RI' && $tipo_movimiento == 'VENTACLIENTE') $factura = 6; //FACTURA B
         if(($type == 'RI' && $tipo_movimiento == 'DEVOLUCION') || $type == 'RI' && $tipo_movimiento == 'DEVOLUCIONCLIENTE') $factura = 3; //NOTA CREDITO A
         if(($type != 'RI' && $tipo_movimiento == 'DEVOLUCION') || $type != 'RI' && $tipo_movimiento == 'DEVOLUCIONCLIENTE') $factura = 8; //NOTA CREDITO B
+        if(($type == 'RI' && $tipo_movimiento == 'DEBITO') || $type == 'RI' && $tipo_movimiento == 'DEBITOCLIENTE') $factura = 2; //NOTA DEBITO A
+        if(($type != 'RI' && $tipo_movimiento == 'DEBITO') || $type != 'RI' && $tipo_movimiento == 'DEBITOCLIENTE') $factura = 7; //NOTA DEBITO B
 
         return $factura;
     }
@@ -475,6 +481,8 @@ class InvoiceController extends Controller
             case 'VENTACLIENTE':
             case 'DEVOLUCION':
             case 'DEVOLUCIONCLIENTE':
+            case 'DEBITO':
+            case 'DEBITOCLIENTE':
               return true;
           default:
             return false;

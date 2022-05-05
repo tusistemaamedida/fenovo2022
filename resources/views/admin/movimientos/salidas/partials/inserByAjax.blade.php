@@ -38,7 +38,12 @@
             <tbody id="in-box">
                 @for ($i = 0; $i < count($stock_presentaciones); $i++) <tr>
 
-                    @if($i == 0) <input type="hidden" id="input_focus" value="unidades_{{$stock_presentaciones[$i]['presentacion']}}"> @endif
+                    @if($i == 0)
+                        <input type="hidden" id="input_focus" value="unidades_{{$stock_presentaciones[$i]['presentacion']}}">
+                        <script>
+                             focused()
+                        </script>
+                    @endif
 
                     <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
                     <td class="text-center">
@@ -49,6 +54,7 @@
                                {{-- @if($stock_total==0) disabled @endif --}}
                                 max="{{$stock_presentaciones[$i]['bultos']}}"
                                 value="0"
+                                autocomplete="off"
                                 onclick="this.select()"
                                 onkeyup="sumar(this,event)" >
                     </td>
@@ -61,7 +67,12 @@
 </div>
 
 <script>
-    var input = jQuery("#input_focus").val();
-    document.getElementById(input).focus();
-    document.getElementById(input).select();
+    function focused(input){
+        var input = jQuery("#input_focus").val();
+        document.getElementById(input).focus();
+        document.getElementById(input).select();
+    }
+
+    focused()
+
 </script>

@@ -10,11 +10,11 @@
                     <div class="card-header align-items-center  border-bottom-dark px-0">
                         <div class="card-title mb-0">
                             <h4 class="card-label mb-0 font-weight-bold text-body">
-                                Listado Notas de Crédito
+                                Listado Notas de Débito
                             </h4>
                         </div>
                         <div class="icons d-flex">
-                            <a href="{{ route('nc.add') }}" class="ml-2">
+                            <a href="{{ route('nd.add') }}" class="ml-2">
                                 <i class="fa fa-2x fa-plus-circle text-primary"></i>
                             </a>
                         </div>
@@ -37,7 +37,7 @@
                                             <th>Destino</th>
                                             <th>Tipo</th>
                                             <th>Factura Relacionada</th>
-                                            <th>Comprobante NC</th>
+                                            <th>Comprobante ND</th>
                                             <th>Registro</th>
                                             <th>Detalle</th>
                                         </tr>
@@ -62,14 +62,14 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
-        ajax: "{{ route('nc.index') }}",
+        ajax: "{{ route('nd.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
             {data: 'date'},
             {data: 'destino'},
             {data: 'type'},
             {data: 'voucher_number',  'class':'text-center'},
-            {data: 'comprobante_nc',  'class':'text-center'},
+            {data: 'comprobante_nd',  'class':'text-center'},
             {data: 'updated_at'},
             {data: 'acciones','class':'flex'},
         ]
@@ -79,6 +79,10 @@
         jQuery('#loader').removeClass('hidden');
         window.location.href = ruta
     }
+
+    jQuery('.yajra-datatable').on('draw.dt', function() {
+        jQuery('[data-toggle="tooltip"]').tooltip();
+    })
 </script>
 
 @endsection

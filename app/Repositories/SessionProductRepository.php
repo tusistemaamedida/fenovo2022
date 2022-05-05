@@ -88,4 +88,9 @@ class SessionProductRepository extends BaseRepository
     {
         return $this->newQuery()->where('list_id', 'like', '%DEVOLUCION_%')->delete();
     }
+
+    public function deleteDebitos()
+    {
+        return $this->newQuery()->where('list_id', 'like', '%DEBITO%')->delete();
+    }
 }

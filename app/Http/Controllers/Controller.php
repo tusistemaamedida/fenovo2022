@@ -33,10 +33,12 @@ class Controller extends BaseController
             case 'TRASLADO':
             case 'DEVOLUCION':
             case 'VENTA':
+            case 'DEBITO':
                 return 'S';
                 break;
             case 'DEVOLUCIONCLIENTE':
             case 'VENTACLIENTE':
+            case 'DEBITOCLIENTE':
                 return 'C';
                 break;
             default:

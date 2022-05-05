@@ -51,6 +51,9 @@
                             <a class="dropdown-item text-warning" href="{{route('nc.index')}}">
                                 Notas de crédito
                             </a>
+                            <a class="dropdown-item text-info" href="{{route('nd.index')}}">
+                                Notas de débito
+                            </a>
                         </div>
                     </li>
                     <li class="nav-item" title="Lista de Friotekas">
