@@ -6,10 +6,10 @@
 <div class="row mb-5">
     <div class="col-12">
         <h4>
-            Stock actual :: {{$product->stock(null, Auth::user()->store_active)}} {{$product->unit_type}}
+            Stock actual :: {{$product->stockReal(null, Auth::user()->store_active)}} {{$product->unit_type}}
         </h4>
     </div>
-</div>    
+</div>
 
 <div class="row">
     <div class="col-12 mt-3">

@@ -35,6 +35,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/movimientos/ingresos.php';
         require __DIR__ . '/admin/movimientos/salidas.php';
         require __DIR__ . '/admin/movimientos/notas_credito.php';
+        require __DIR__ . '/admin/movimientos/notas_debito.php';
         require __DIR__ . '/admin/movimientos/senasa.php';
         // Logistica
         require __DIR__ . '/admin/transportistas.php';

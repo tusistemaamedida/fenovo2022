@@ -19,6 +19,7 @@
 
 @section('content')
 
+
 <div id="header">
     <table style="width: 100%">
         <tr>
