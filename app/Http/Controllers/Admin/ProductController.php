@@ -75,7 +75,7 @@ class ProductController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('stock', function ($product) {
-                    return $product->stock(null, Auth::user()->store_active);
+                    return $product->stockReal(null, Auth::user()->store_active);
                 })
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();
@@ -166,22 +166,24 @@ class ProductController extends Controller
             $insert_data['voucher_number'] = time();
             $insert_data['flete']          = 0;
 
-            $latest = MovementProduct::where('entidad_id', Auth::user()->store_active)
+            $producto = Product::where('id',$request->product_id)->first();
+
+           /*  $latest = MovementProduct::where('entidad_id', Auth::user()->store_active)
                 ->where('entidad_tipo', 'S')
                 ->where('product_id', $request->product_id)
                 ->orderBy('id', 'desc')
-                ->first();
+                ->first(); */
 
             $nuevo_stock = (float)$request->nuevo_stock;
 
-            if ($latest) {
-                $latest  = $latest->toArray();
-                $balance = $latest['balance'];
+            if ($producto) {
+                $stock_real = $producto->stockReal(null, Auth::user()->store_active);
+
                 $entry   = $egress   = 0;
-                if ($balance < $nuevo_stock) {
-                    $entry = $nuevo_stock - $balance;
-                } elseif ($balance > $nuevo_stock) {
-                    $egress = $balance - $nuevo_stock;
+                if ($stock_real < $nuevo_stock) {
+                    $entry = $nuevo_stock + abs($stock_real);
+                } elseif ($stock_real > $nuevo_stock) {
+                    $egress = $stock_real - $nuevo_stock;
                 }
             } else {
                 $entry  = $nuevo_stock;
