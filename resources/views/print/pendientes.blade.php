@@ -86,7 +86,7 @@
     </tr>
     <tr class=" bg-info text-white">
         <th>{{ number_format($session_products->sum('quantity'),2) }} </th>
-        <th></th>
+        <th>{{ $total_kgrs }} Kgrs</th>
         <th></th>
         <th> </th>
         <th> </th>
