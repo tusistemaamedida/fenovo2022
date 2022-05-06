@@ -26,7 +26,7 @@ class MovementsViewExport implements FromView
     {
         $max        = DB::table('movement_products')->where('exported_number', '>', 0)->max('exported_number');
         $numeracion = ($max) ? $max + 1 : 1;
-        $arrTipos   = ['VENTA', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $arrTipos   = ['COMPRA', 'VENTA', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
         $arrEntrada = ['VENTA', 'TRASLADO'];
 
         // Actualizo los Detalles de Movimientos como exportados
@@ -87,8 +87,8 @@ class MovementsViewExport implements FromView
                     $objMovement              = new stdClass();
                     $creado                   = true;
                     $objMovement->origen      = ($store_type == 'N') ? 'DEP_CEN' : 'DEP_PAN';
-                    $objMovement->id          = 'R' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
-                    $objMovement->orden       = 'O' .str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+                    $objMovement->id          = 'O' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
+                    $objMovement->orden       = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
                     $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
                     $objMovement->tipo        = 'E';
                     $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
@@ -97,13 +97,13 @@ class MovementsViewExport implements FromView
                     $objMovement->unidad      = $movement->unidad;
                 }
             } else {
-                // Analizar las devoluciones
+                // Analizar las compras y devoluciones
                 $tipo                     = ($movement->entry > 0) ? 'E' : 'S';
                 $objMovement              = new stdClass();
                 $creado                   = true;
-                $objMovement->origen      = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
-                $objMovement->id          = 'R' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
-                $objMovement->orden       = 'O' .str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+                $objMovement->origen      = ($movement->type == 'COMPRA')?'PROVEEDOR':str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
+                $objMovement->id          = 'O' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
+                $objMovement->orden       = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
                 $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
                 $objMovement->tipo        = $tipo;
                 $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);

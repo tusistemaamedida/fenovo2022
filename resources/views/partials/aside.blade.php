@@ -48,11 +48,11 @@
                             <a class="dropdown-item text-black-50" href="{{route('senasa.index')}}">
                                 Senasa
                             </a>
-                            <a class="dropdown-item text-warning" href="{{route('nc.index')}}">
-                                Notas de crédito
+                            <a class="dropdown-item text-black-50" href="{{route('nc.index')}}">
+                                Notas de <span class="text-primary">Crédito</span>
                             </a>
-                            <a class="dropdown-item text-info" href="{{route('nd.index')}}">
-                                Notas de débito
+                            <a class="dropdown-item text-black-50" href="{{route('nd.index')}}">
+                                Notas de <span class="text-primary">Dédito</span>
                             </a>
                         </div>
                     </li>

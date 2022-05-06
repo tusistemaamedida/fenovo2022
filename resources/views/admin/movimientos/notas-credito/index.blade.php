@@ -32,7 +32,7 @@
                                 <table class="display table-hover yajra-datatable">
                                     <thead>
                                         <tr class="bg-dark text-white">
-                                            <th>No</th>
+                                            <th>#</th>
                                             <th>Fecha</th>
                                             <th>Destino</th>
                                             <th>Tipo</th>
@@ -64,7 +64,7 @@
         @include('partials.table.setting'),
         ajax: "{{ route('nc.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center', searchable: false},
+            {data: 'id', 'class':'text-center', searchable: true},
             {data: 'date'},
             {data: 'destino'},
             {data: 'type'},
