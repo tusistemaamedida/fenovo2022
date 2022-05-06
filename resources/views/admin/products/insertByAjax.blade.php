@@ -6,18 +6,35 @@
 <div class="row mb-5">
     <div class="col-12">
         <h4>
-            Stock actual :: {{$product->stockReal(null, Auth::user()->store_active)}} {{$product->unit_type}}
+            Stock actual :: {{$stock_total}} Kgs.
         </h4>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-12 mt-3">
-        <label class="text-body">Nuevo Stock *</label>
-        <fieldset class="form-group mb-3">
-            <input type="number" id="nuevo_stock" name="nuevo_stock" value="" class="form-control text-center"  autofocus required/>
-        </fieldset>
-    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="border-0  header-heading" scope="col">Presentación</th>
+                <th class="border-0  header-heading" scope="col">Ajuste</th>
+            </tr>
+        </thead>
+        <tbody id="in-box">
+            @for ($i = 0; $i < count($stock_presentaciones); $i++) <tr>
+                <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
+                <td class="text-center">
+                    <input type="text"
+                            name="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
+                            id="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
+                            class="form-control text-center"
+                            value=""
+                            autocomplete="off"
+                            onclick="this.select()" >
+                </td>
+                </tr>
+                @endfor
+        </tbody>
+    </table>
     <input type="hidden" id="product_id" name="product_id" value="{{$product->id}}" class="form-control" />
 </div>
 
@@ -29,7 +46,7 @@
     </div>
     <div class="col-6">
         <button type="button" class="btn btn-primary" onclick="ajustarStock()">
-            <i class="fa fa-save"></i> Actualizar
+            <i class="fa fa-wrench"></i> Ajustar
         </button>
     </div>
 </div>
