@@ -8,10 +8,9 @@
     #header {
         line-height: 0.6cm;
         position: fixed;
-        top: 1.2cm;
+        top: 0.5cm;
         left: 1.5cm;
         right: 1.5cm;
-        height: 3cm;
     }
 </style>
 
@@ -28,7 +27,12 @@
         </tr>
         <tr>
             <td colspan="3">
-                <hr />
+                <hr/>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <br>
             </td>
         </tr>
     </table>
@@ -47,15 +51,12 @@
         <td colspan="3">Dirección : <strong> {{ $destino->address }} / {{ $destino->city }}</strong></td>
     </tr>
     <tr>
-        <td colspan="3"><br></td>
-    </tr>
-    <tr>
         <td colspan="3">DETALLE DE LA ORDEN Nro <strong> {{ str_pad($orden, 8, '0', STR_PAD_LEFT) }} </strong></td>
     </tr>
 </table>
 
 
-<table class="table table-condensed" style="font-size:9px">
+<table style=" width:100%; font-size:9px">
     <tr>
         <td class="text-center">#</td>
         <td class="text-center">Cod Fenovo</td>
@@ -64,7 +65,6 @@
         <td class="text-center">Bultos</td>
         <td class="text-center">Cantidad</td>
     </tr>
-
     @php
     $total_kgrs = 0;
     $total_bultos = 0;

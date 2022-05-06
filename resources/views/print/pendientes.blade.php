@@ -47,9 +47,6 @@
         <td colspan="3">Dirección : <strong> {{ $destino->address }} / {{ $destino->city }}</strong></td>
     </tr>
     <tr>
-        <td colspan="3"><br></td>
-    </tr>
-    <tr>
         <td colspan="3">DETALLE DE LA CONFECCION DE LA ORDEN</td>
     </tr>
 </table>
