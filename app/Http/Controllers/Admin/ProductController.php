@@ -32,7 +32,6 @@ use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -82,7 +81,7 @@ class ProductController extends Controller
                     return $product->senasa();
                 })
                 ->addColumn('costo', function ($product) {
-                    return '$'.$product->product_price->costfenovo;
+                    return '$' . $product->product_price->costfenovo;
                 })
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
@@ -98,7 +97,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste','costo'])
+                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste', 'costo'])
                 ->make(true);
         }
 
@@ -153,9 +152,9 @@ class ProductController extends Controller
     public function ajustarStock(Request $request)
     {
         try {
-            $from = \Auth::user()->store_active;
-            $count = Movement::where('from',$from)->where('type', 'AJUSTE')->count();
-            $orden = ($count)?$count+1:1;
+            $from  = \Auth::user()->store_active;
+            $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();
+            $orden = ($count) ? $count + 1 : 1;
 
             $insert_data                   = [];
             $insert_data['type']           = 'AJUSTE';
@@ -167,23 +166,23 @@ class ProductController extends Controller
             $insert_data['voucher_number'] = time();
             $insert_data['flete']          = 0;
 
-            $producto = Product::where('id',$request->product_id)->first();
+            $producto = Product::where('id', $request->product_id)->first();
 
-           /*  $latest = MovementProduct::where('entidad_id', Auth::user()->store_active)
-                ->where('entidad_tipo', 'S')
-                ->where('product_id', $request->product_id)
-                ->orderBy('id', 'desc')
-                ->first(); */
+            /*  $latest = MovementProduct::where('entidad_id', Auth::user()->store_active)
+                 ->where('entidad_tipo', 'S')
+                 ->where('product_id', $request->product_id)
+                 ->orderBy('id', 'desc')
+                 ->first(); */
 
             $nuevo_stock = (float)$request->nuevo_stock;
 
             if ($producto) {
                 $stock_real = $producto->stockReal(null, Auth::user()->store_active);
-                $entry   = $egress   = 0;
+                $entry      = $egress      = 0;
 
                 if ($stock_real < 0) {
                     $entry = $nuevo_stock + abs($stock_real);
-                }elseif(($stock_real < $nuevo_stock) && $stock_real > 0){
+                } elseif (($stock_real < $nuevo_stock) && $stock_real > 0) {
                     $entry = $nuevo_stock - $stock_real;
                 } elseif ($stock_real > $nuevo_stock) {
                     $egress = $stock_real - $nuevo_stock;
@@ -649,11 +648,11 @@ class ProductController extends Controller
 
     public function exportProductsToCsv(Request $request)
     {
-        return Excel::download(new ProductsViewExport($request), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        return Excel::assertDownloaded(new ProductsViewExport($request), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function exportStockProductsToCsv(Request $request)
-    {	
+    {
         return Excel::download(new ProductsViewExportStock($request), 'stocks.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 

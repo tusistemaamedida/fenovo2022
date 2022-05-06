@@ -80,7 +80,7 @@
             {data: 'type', orderable:false},
             {data: 'kgrs', orderable:false},
             {data: 'factura_nro', 'class' : 'text-center'},
-            {data: 'acciones', orderable:false, 'class' : 'text-center'},
+            {data: 'acciones', orderable:false, 'class' : 'text-left'},
         ]
     });
 
