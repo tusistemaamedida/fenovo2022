@@ -59,7 +59,6 @@
         @include('partials.table.setting'),
         ajax: "{{ route('products.list') }}",
         columns: [
-
             {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},
             {data: 'stock', orderable: false, searchable: false},
