@@ -16,7 +16,7 @@
         <thead>
             <tr>
                 <th class="border-0  header-heading" scope="col">Presentación</th>
-                <th class="border-0  header-heading" scope="col">Ajuste</th>
+                <th class="border-0  header-heading" scope="col">Ingrese Bultos</th>
             </tr>
         </thead>
         <tbody id="in-box">
