@@ -30,10 +30,4 @@
     <div class="col-3"> <input type="number" class="form-control total text-center font-weight-bolder disabled" disabled="true" value="" readonly> </div>
     <div class="col-3"> </div>
 </div>
-<div class="row">
-    <div class="col-12">
-        <br>
-    </div>
-</div>
-
 @endif
