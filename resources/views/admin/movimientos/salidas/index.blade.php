@@ -32,15 +32,14 @@
                                         <table class="display table-hover yajra-datatable">
                                             <thead>
                                                 <tr class="bg-dark text-white">
-                                                    <th>#</th>
-                                                    <th>Fecha</th>
-                                                    <th>Destino</th>
-                                                    <th>Items</th>
-                                                    <th>Tipo</th>
-                                                    <th>Kgrs</th>
-                                                    <th>Factura Nro</th>
-                                                    <th>Registro</th>
-                                                    <th>Detalle</th>
+                                                    <td>#</td>
+                                                    <td>Fecha</td>
+                                                    <td>Destino</td>
+                                                    <td>Items</td>
+                                                    <td>Tipo</td>
+                                                    <td>Kgrs</td>
+                                                    <td>FacturaNro</td>
+                                                    <td class="text-center">Detalle</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -74,15 +73,14 @@
         dom: '<lfrtip>',
         ajax: "{{ route('salidas.index') }}",
         columns: [
-            {data: 'id', 'class':'text-center', orderable:false,searchable: false},
+            {data: 'id', 'class':'text-center', orderable:false,searchable: true},
             {data: 'date'},
             {data: 'destino'},
             {data: 'items'},
             {data: 'type', orderable:false},
             {data: 'kgrs', orderable:false},
             {data: 'factura_nro', 'class' : 'text-center'},
-            {data: 'updated_at', 'class' : 'text-center', orderable:false},
-            {data: 'acciones', orderable:false},
+            {data: 'acciones', orderable:false, 'class' : 'text-center'},
         ]
     });
 
