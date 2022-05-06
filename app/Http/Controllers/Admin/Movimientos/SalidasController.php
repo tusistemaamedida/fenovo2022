@@ -183,7 +183,7 @@ class SalidasController extends Controller
 
         $tipo    = $explode[0];
         $destino = $this->origenData($tipo, $explode[1], true);
-        $pdf     = PDF::loadView('admin.print.pendientes', compact('session_products', 'destino'));
+        $pdf     = PDF::loadView('print.pendientes', compact('session_products', 'destino'));
         return $pdf->stream('salidas.pdf');
     }
 

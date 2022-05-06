@@ -51,7 +51,7 @@
                     </div>
                 </div>
 
-                <div class="row" style=" min-height: 200px ">
+                <div class="row">
                     <div class="col-4">
                         <div class="row font-weight-bold">
                             <div class="col-12"> Producto</div>
@@ -94,7 +94,7 @@
 @section('js')
 <script>
     jQuery( document ).ready(function() {
-        jQuery("#product_id").select2('open');
+        //jQuery("#product_id").select2('open');
         jQuery("#unit_package").select2({
             tags: true
         })
