@@ -48,13 +48,13 @@ trait OriginDataTrait
                 if ($returnObject) {
                     return $store;
                 }
-                return $store->city . ' / ' . ucfirst(strtolower($store->razon_social)) . ' [' . $store->cuit . '] ';
+                return ucfirst(strtolower($store->city)) . ' / ' . ucfirst(strtolower($store->razon_social)) . ' [' . $store->cuit . '] ';
             case 'VENTACLIENTE':
                 $customer = Customer::find($id);
                 if ($returnObject) {
                     return $customer;
                 }
-                return $customer->city . ' / ' . ucfirst(strtolower($customer->razon_social)) . ' [' . $customer->cuit . '] ';
+                return ucfirst(strtolower($customer->city)) . ' / ' . ucfirst(strtolower($customer->razon_social)) . ' [' . $customer->cuit . '] ';
         }
     }
 }
