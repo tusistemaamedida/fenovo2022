@@ -1,6 +1,6 @@
 @extends('layouts.app-pdf')
 
-@section('title', 'Orden ')
+@section('title', 'Orden cerrada')
 
 @section('css')
 
@@ -22,7 +22,7 @@
 <div id="header">
     <table style="width: 100%">
         <tr>
-            <td style="width: 35%"> Página :: <strong> <span class="pagenum"></span> </strong> Orden de salida </td>
+            <td style="width: 35%"> Página :: <strong> <span class="pagenum"></span> </strong> Orden cerrada </td>
             <td style="width: 35%; font-size:16px" class=" text-center">Fenovo S.A. </td>
             <td style="width: 30%" class=" text-right"> Fecha {{ date(now()) }}</td>
         </tr>
@@ -39,7 +39,7 @@
         <td colspan="3"><br></td>
     </tr>
     <tr>
-        <td>Destino : {{ $destino->razon_social}} - <strong> {{ $destino->cuit}} </strong> </td>
+        <td>Destino : (<strong> {{ str_pad($destino->cod_fenovo, 4, '0', STR_PAD_LEFT) }} </strong> ) - {{ $destino->razon_social}} - <strong> {{ $destino->cuit}} </strong> </td>
         <td>Items <strong> {{ count($array_productos) }}</strong> </td>
         <td></td>
     </tr>
@@ -111,3 +111,5 @@
     </table>
 </footer>
   
+
+@endsection
