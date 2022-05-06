@@ -27,7 +27,7 @@
         </tr>
         <tr>
             <td colspan="3">
-                <hr/>
+                <hr />
             </td>
         </tr>
         <tr>
@@ -58,12 +58,10 @@
 
 <table style=" width:100%; font-size:9px">
     <tr>
-        <td class="text-center">#</td>
-        <td class="text-center">Cod Fenovo</td>
-        <td style=" width: 35%;">Nombre del producto</td>
-        <td class="text-center">Presentación</td>
         <td class="text-center">Bultos</td>
         <td class="text-center">Cantidad</td>
+        <td class="w-25">Nombre del producto</td>
+        <td class="text-center">Presentación</td>
     </tr>
     @php
     $total_kgrs = 0;
@@ -78,26 +76,22 @@
     @endphp
 
     <tr>
-        <td class="text-center"> {{ $loop->iteration }}</td>
-        <td class="text-center">{{$session_product->cod_fenovo}}</td>
-        <td>{{$session_product->name}}</td>
-        <td class="text-center">{{$session_product->unit_package}}</td>
         <td class="text-center">{{ (int)$session_product->quantity}}</td>
         <td class="text-center">{{ (float)$session_product->unit_weight * (float)$session_product->unit_package * (float)$session_product->quantity }} </td>
+        <td>{{$session_product->name}}</td>
+        <td class="text-center">{{$session_product->unit_package}}</td>
     </tr>
 
     @endforeach
 
     <tr>
-        <th colspan="6"><br></th>
+        <th colspan="5"><br></th>
     </tr>
     <tr class=" bg-info text-white">
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
         <th> {{ number_format($total_bultos,2) }}</th>
         <th> {{ number_format($total_kgrs,2) }} </th>
+        <th></th>
+        <th></th>
     </tr>
 </table>
 
@@ -110,6 +104,6 @@
         </tr>
     </table>
 </footer>
-  
+
 
 @endsection

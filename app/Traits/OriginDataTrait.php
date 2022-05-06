@@ -32,4 +32,29 @@ trait OriginDataTrait
                 return $customer->razon_social . ' [' . $customer->cuit . '] ';
         }
     }
+
+    public function origenDataCiudad($type, $id, $returnObject = false)
+    {
+        switch ($type) {
+            case 'COMPRA':
+                $proveedor = Proveedor::find($id);
+                if ($returnObject) {
+                    return $proveedor;
+                }
+                return $proveedor->name . ' [' . $proveedor->cuit . ']';
+            case 'VENTA':
+            case 'TRASLADO':
+                $store = Store::find($id);
+                if ($returnObject) {
+                    return $store;
+                }
+                return $store->city . ' / ' . ucfirst(strtolower($store->razon_social)) . ' [' . $store->cuit . '] ';
+            case 'VENTACLIENTE':
+                $customer = Customer::find($id);
+                if ($returnObject) {
+                    return $customer;
+                }
+                return $customer->city . ' / ' . ucfirst(strtolower($customer->razon_social)) . ' [' . $customer->cuit . '] ';
+        }
+    }
 }
