@@ -52,7 +52,6 @@
                 <td class="text-center">{{$session_product->unit_package}}</td>
             </tr>
             @endforeach
-
             <tr>
                 <th colspan="5"><br></th>
             </tr>
