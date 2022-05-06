@@ -29,32 +29,10 @@
                     </div>
                     <div class="row m-2">
                         <div class="col-2">
-                            <fieldset class="input-group form-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Desde</span>
-                                </div>
-                                <input type="date" name="salidaDesde" id="salidaDesde" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark" autofocus>
-                            </fieldset>
-                        </div>
-                        <div class="col-2">
-                            <fieldset class="input-group form-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Hasta</span>
-                                </div>
-                                <input type="date" name="salidaHasta" id="salidaHasta" value="{{ date('Y-m-d', strtotime($carbon::now())) }}" class="form-control border-dark">
-                            </fieldset>
-                        </div>
-
-                        <div class="col-2">
-                            <a href="javascript:void(0)" onclick="printMovimientos()"> <i class=" fa fa-print"></i> Imprimir</a>
-                        </div>
-
-                        <div class="col-2">
                             <a href="javascript:void(0)" onclick="exportarMovimientosCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
                         </div>
 
-                        <div class="col-2">
-                            
+                        <div class="col-10">                            
                         </div>
 
                     </div>
