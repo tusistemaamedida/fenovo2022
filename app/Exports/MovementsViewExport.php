@@ -7,7 +7,7 @@ use App\Models\MovementProduct;
 use App\Traits\OriginDataTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
-
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
 use stdClass;
 
@@ -17,10 +17,7 @@ class MovementsViewExport implements FromView
 
     protected $request;
 
-    public function __construct($request)
-    {
-        $this->request = $request;
-    }
+    use Exportable;
 
     public function view(): View
     {
@@ -101,7 +98,7 @@ class MovementsViewExport implements FromView
                 $tipo                     = ($movement->entry > 0) ? 'E' : 'S';
                 $objMovement              = new stdClass();
                 $creado                   = true;
-                $objMovement->origen      = ($movement->type == 'COMPRA')?'PROVEEDOR':str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
+                $objMovement->origen      = ($movement->type == 'COMPRA') ? 'PROVEEDOR' : str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                 $objMovement->id          = 'O' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
                 $objMovement->orden       = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
                 $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));

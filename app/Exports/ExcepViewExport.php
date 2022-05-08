@@ -4,16 +4,14 @@ namespace App\Exports;
 
 use App\Models\SessionOferta;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
 
 class ExcepViewExport implements FromView
 {
     protected $request;
 
-    public function __construct($request)
-    {
-        $this->request = $request;
-    }
+    use Exportable;
 
     public function view(): View
     {
