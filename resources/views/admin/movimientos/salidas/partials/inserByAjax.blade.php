@@ -40,9 +40,6 @@
 
                     @if($i == 0)
                         <input type="hidden" id="input_focus" value="unidades_{{$stock_presentaciones[$i]['presentacion']}}">
-                        <script>
-                             focused()
-                        </script>
                     @endif
 
                     <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
@@ -72,7 +69,5 @@
         document.getElementById(input).focus();
         document.getElementById(input).select();
     }
-
-    focused()
-
+    focused();
 </script>
