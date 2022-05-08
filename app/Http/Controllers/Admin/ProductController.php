@@ -32,7 +32,6 @@ use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -82,7 +81,7 @@ class ProductController extends Controller
                     return $product->senasa();
                 })
                 ->addColumn('costo', function ($product) {
-                    return '$'.$product->product_price->costfenovo;
+                    return '$' . $product->product_price->costfenovo;
                 })
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
@@ -98,7 +97,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste','costo'])
+                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste', 'costo'])
                 ->make(true);
         }
 
@@ -175,6 +174,7 @@ class ProductController extends Controller
     public function ajustarStock(Request $request)
     {
         try {
+
             $valida = false;
             $data = $request->except('_token','product_id');
 
@@ -681,9 +681,9 @@ class ProductController extends Controller
         }
     }
 
-    public function exportProductsToCsv(Request $request)
+    public function exportProductsToCsv()
     {
-        return Excel::download(new ProductsViewExport($request), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        (new ProductsViewExport)->store('producto.csv');
     }
 
     public function exportStockProductsToCsv(Request $request)
