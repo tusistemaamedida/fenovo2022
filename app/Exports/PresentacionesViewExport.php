@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\Product;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
 use stdClass;
 
@@ -11,10 +12,7 @@ class PresentacionesViewExport implements FromView
 {
     protected $request;
 
-    public function __construct($request)
-    {
-        $this->request = $request;
-    }
+    use Exportable;
 
     public function view(): View
     {

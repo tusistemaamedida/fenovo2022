@@ -4,11 +4,12 @@ namespace App\Exports;
 
 use App\Models\SessionOferta;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
 
 class OfertaViewExport implements FromView
 {
-    protected $request;
+    use Exportable;
 
     public function __construct($request)
     {

@@ -133,6 +133,6 @@ class PrintController extends Controller
         //     ->orderBy('t1.date')->orderBy('t1.id')
         //     ->get();
 
-        return Excel::download(new MovementsViewExport($request), 'movi.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        return Excel::download(new MovementsViewExport(), 'movi.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 }

@@ -7,11 +7,14 @@ use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
 
 class ProductsViewExportStock implements FromView
 {
     protected $request;
+
+    use Exportable;
 
     public function __construct($request)
     {

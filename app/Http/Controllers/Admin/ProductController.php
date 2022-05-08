@@ -693,7 +693,7 @@ class ProductController extends Controller
 
     public function exportDescuentosToCsv(Request $request)
     {
-        return Excel::download(new DescuentosViewExport($request), 'des.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        return Excel::download(new DescuentosViewExport(), 'des.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function exportPresentacionesToCsv(Request $request)
