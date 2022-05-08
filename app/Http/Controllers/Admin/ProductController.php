@@ -140,9 +140,31 @@ class ProductController extends Controller
     {
         try {
             $product = $this->productRepository->getByIdWith($request->id);
+            if ($product) {
+                $stock_presentaciones = [];
+                $presentaciones       = explode('|', $product->unit_package);
+                $stock_total          = $product->stockReal(null, \Auth::user()->store_active);
+
+                for ($i = 0; $i < count($presentaciones); $i++) {
+                    $bultos                                   = 0;
+                    $presentacion                             = ($presentaciones[$i] == 0) ? 1 : $presentaciones[$i];
+                    $stock                                    = $product->stockReal($presentacion, \Auth::user()->store_active);
+                    $stock_presentaciones[$i]['presentacion'] = $presentacion;
+                    $stock_presentaciones[$i]['unit_weight']  = $product->unit_weight;
+                    $stock_presentaciones[$i]['stock']        = $stock;
+                    // los bultos que hay disponibles se calcula dividiendo el balance por el peso del bulto
+                    $peso_por_bulto = $product->unit_weight * $presentacion;
+
+                    if ($stock) {
+                        $bultos = $stock / $peso_por_bulto;
+                    }
+                    $stock_presentaciones[$i]['bultos'] = (int)$bultos;
+                }
+            }
+
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.products.insertByAjax', compact('product'))->render(),
+                'html' => view('admin.products.insertByAjax', compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -152,56 +174,69 @@ class ProductController extends Controller
     public function ajustarStock(Request $request)
     {
         try {
-            $from  = \Auth::user()->store_active;
-            $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();
-            $orden = ($count) ? $count + 1 : 1;
 
-            $insert_data                   = [];
-            $insert_data['type']           = 'AJUSTE';
-            $insert_data['to']             = Auth::user()->store_active;
-            $insert_data['date']           = now();
-            $insert_data['from']           = Auth::user()->store_active;
-            $insert_data['status']         = 'FINISHED';
-            $insert_data['orden']          = $orden;
-            $insert_data['voucher_number'] = time();
-            $insert_data['flete']          = 0;
+            $valida = false;
+            $data = $request->except('_token','product_id');
 
-            $producto = Product::where('id', $request->product_id)->first();
-
-            /*  $latest = MovementProduct::where('entidad_id', Auth::user()->store_active)
-                 ->where('entidad_tipo', 'S')
-                 ->where('product_id', $request->product_id)
-                 ->orderBy('id', 'desc')
-                 ->first(); */
-
-            $nuevo_stock = (float)$request->nuevo_stock;
-
-            if ($producto) {
-                $stock_real = $producto->stockReal(null, Auth::user()->store_active);
-                $entry      = $egress      = 0;
-
-                if ($stock_real < 0) {
-                    $entry = $nuevo_stock + abs($stock_real);
-                } elseif (($stock_real < $nuevo_stock) && $stock_real > 0) {
-                    $entry = $nuevo_stock - $stock_real;
-                } elseif ($stock_real > $nuevo_stock) {
-                    $egress = $stock_real - $nuevo_stock;
-                }
-
-                $movement               = Movement::create($insert_data);
-                $latest['balance']      = $nuevo_stock;
-                $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
-                $latest['entidad_tipo'] = 'S';
-                $latest['product_id']   = $request->product_id;
-                $latest['entry']        = $entry;
-                $latest['egress']       = $egress;
-                $latest['movement_id']  = $movement->id;
-                MovementProduct::create($latest);
-
-                return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
+            foreach ($data as $item => $val) {
+                if(!is_null($val)) $valida = true;
             }
 
-            return new JsonResponse(['msj' => 'Error en el ajuste', 'type' => 'error']);
+            if(!$valida) return new JsonResponse(['msj' => 'Ingrese algún valor en el ajuste.', 'type' => 'error']);
+
+            if($valida){
+                $from = \Auth::user()->store_active;
+                $count = Movement::where('from',$from)->where('type', 'AJUSTE')->count();
+                $orden = ($count)?$count+1:1;
+
+                $insert_data                   = [];
+                $insert_data['type']           = 'AJUSTE';
+                $insert_data['to']             = Auth::user()->store_active;
+                $insert_data['date']           = now();
+                $insert_data['from']           = Auth::user()->store_active;
+                $insert_data['status']         = 'FINISHED';
+                $insert_data['orden']          = $orden;
+                $insert_data['voucher_number'] = time();
+                $insert_data['flete']          = 0;
+                $suma_balances = 0;
+                $suma_stock = 0;
+
+                foreach ($data as $item => $bultos) {
+                    if(is_numeric($bultos)){
+                        $presentacion = (float) str_replace('_',',',str_replace('unidades_','',$item));
+
+                        $producto = Product::where('id',$request->product_id)->first();
+                        if ($producto) {
+                            $balance_producto = $producto->stockReal(null, Auth::user()->store_active);
+                            $entry   = $egress   = 0;
+                            $new_balance = $bultos * $presentacion * $producto->unit_weight;
+                            $suma_balances += $new_balance;
+
+                            if($balance_producto < $new_balance){
+                                $entry = $new_balance;
+                            }elseif($balance_producto > $new_balance){
+                                $egress = $new_balance;
+                            }
+
+                            $movement               = Movement::create($insert_data);
+                            $latest['balance']      = $suma_balances;
+                            $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
+                            $latest['entidad_tipo'] = 'S';
+                            $latest['unit_package'] = $presentacion;
+                            $latest['product_id']   = $request->product_id;
+                            $latest['entry']        = $entry;
+                            $latest['egress']       = $egress;
+                            $latest['bultos']       = $bultos;
+                            $latest['movement_id']  = $movement->id;
+                            MovementProduct::create($latest);
+
+                        }
+                    }
+                }
+                return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
+            }else{
+                return new JsonResponse(['msj' => 'Error en el ajuste', 'type' => 'error']);
+            }
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
