@@ -6,16 +6,14 @@ use App\Models\OfertaStore;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
 
 class ProductsViewExport implements FromView
 {
     protected $request;
 
-    public function __construct($request)
-    {
-        $this->request = $request;
-    }
+    use Exportable;
 
     public function view(): View
     {

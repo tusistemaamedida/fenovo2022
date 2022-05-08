@@ -646,9 +646,9 @@ class ProductController extends Controller
         }
     }
 
-    public function exportProductsToCsv(Request $request)
+    public function exportProductsToCsv()
     {
-        return Excel::assertDownloaded(new ProductsViewExport($request), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        (new ProductsViewExport)->store('producto.csv');
     }
 
     public function exportStockProductsToCsv(Request $request)
