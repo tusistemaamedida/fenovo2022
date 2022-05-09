@@ -33,11 +33,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('snapshot:cleanup --keep=6')->dailyAt('03:27')->runInBackground();
         $schedule->command('snapshot:create')->dailyAt('03:27')->runInBackground();
 
-        //Exportacion Fenovo ejecutada cada minuto
-        $schedule->command('sincroniza:diaria')->everyMinute()->runInBackground();
+        //Exportacion Fenovo ejecutada cada hora
+        $schedule->command('sincroniza:diaria')->hourly()->runInBackground();
         
-        // Exportacion de movimientos diarios ejecutada a las 12 y 22 Hs
-        $schedule->command('sincroniza:movimientos')->twiceDailyAt(12, 22)->runInBackground();
+        // Exportacion de movimientos diarios ejecutada a las 9 y 14 Hs
+        $schedule->command('sincroniza:movimientos')->twiceDailyAt(8, 14)->runInBackground();
     }
 
     /**
