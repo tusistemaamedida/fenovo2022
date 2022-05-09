@@ -185,7 +185,6 @@ class Movement extends Model
             ->where($fieldCondition, '>', 0)
             ->whereIn('t1.type', $arrTypes)->first();
         }
-
         return ($movimiento) ? $movimiento->total : 0;
     }
 
