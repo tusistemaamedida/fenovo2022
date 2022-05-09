@@ -31,7 +31,7 @@ class MovementsViewExport implements FromView
             ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
             ->join('products as t3', 't2.product_id', '=', 't3.id')
             ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
-            ->select('t1.id', 't2.id as movement_products_id', 't1.type', 't1.date', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad')
+            ->select('t1.id', 't2.id as movement_products_id', 't2.exported_number', 't1.type', 't1.date', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad', 't2.unit_package')
             ->whereIn('t1.type', $arrTipos)
             ->where('t2.entidad_tipo', '!=', 'C')
             ->where('t2.exported_number', '=', 0)
@@ -64,7 +64,7 @@ class MovementsViewExport implements FromView
             ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
             ->join('products as t3', 't2.product_id', '=', 't3.id')
             ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
-            ->select('t1.id', 't2.id as movement_products_id', 't2.exported_number', 't1.type', 't1.date', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad')
+            ->select('t1.id', 't2.id as movement_products_id', 't2.exported_number', 't1.type', 't1.date', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad', 't2.unit_package')
             ->whereIn('t1.type', $arrTipos)
             ->where('t2.entidad_tipo', '!=', 'C')
             ->where('t2.exported_number', '>', 0)
@@ -90,14 +90,30 @@ class MovementsViewExport implements FromView
                     $objMovement->tipo        = 'E';
                     $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                     $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
-                    $objMovement->cantidad    = $movement->entry;
+                    $objMovement->cantidad    = ($movement->unidad == 'K')?$movement->entry:$movement->bultos*$movement->unit_package;
                     $objMovement->unidad      = $movement->unidad;
                 }
             } else {
-                // Analizar las compras y devoluciones
+                // Analizar las devoluciones
                 $tipo                     = ($movement->entry > 0) ? 'E' : 'S';
                 $objMovement              = new stdClass();
                 $creado                   = true;
+
+                if($movement->entry > 0){
+                    if($movement->unidad == 'K'){
+                        $cant = $movement->entry;
+                    }else{
+                        $cant = $movement->bultos * $movement->unit_package;
+                    }
+                }else{
+                    if($movement->unidad == 'K'){
+                        $cant = $movement->egress;
+                    }else{
+                        $cant = $movement->bultos * $movement->unit_package;
+                    }
+                }
+
+
                 $objMovement->origen      = ($movement->type == 'COMPRA') ? 'PROVEEDOR' : str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                 $objMovement->id          = 'O' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
                 $objMovement->orden       = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
@@ -105,7 +121,7 @@ class MovementsViewExport implements FromView
                 $objMovement->tipo        = $tipo;
                 $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                 $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
-                $objMovement->cantidad    = ($movement->entry > 0) ? $movement->entry : $movement->egress;
+                $objMovement->cantidad    = $cant;
                 $objMovement->unidad      = $movement->unidad;
             }
 
