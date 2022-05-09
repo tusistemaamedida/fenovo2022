@@ -57,7 +57,7 @@ class CabeEleExport implements FromView {
             }
 
             $element->IDCAJA = null;
-            $element->NROCOM = $i;
+            $element->NROCOM = $invoice->orden;
             $element->FECHA  = Carbon::parse($invoice->created_at)->format('d/m/Y');
             $element->HORA   = Carbon::parse($invoice->created_at)->format('H:i');
 
@@ -85,9 +85,9 @@ class CabeEleExport implements FromView {
             $element->RECARG = 0;
             $element->TOTFIS = 0;
 
-            $invoice->orden = $i;
-            $invoice->save();
-            $i++;
+            //$invoice->orden = $i;
+           // $invoice->save();
+            //$i++;
             array_push($arr_elementos, $element);
         }
 
