@@ -31,7 +31,7 @@ Route::get('importar', [ProductController::class, 'importFromCsv'])->name('impor
 Route::get('productos/imprimir', [PrintController::class, 'printProductsPDF'])->name('products.printPDF');
 
 Route::get('productos/exportar', [ProductController::class, 'exportProductsToCsv'])->name('products.exportCSV');
-Route::get('productos/exportar/stock', [ProductController::class, 'exportStockProductsToCsv'])->name('products.exportStockCSV');
+Route::get('productos/comparar/stock', [ProductController::class, 'compararStock'])->name('products.compararStock');
 Route::get('productos-presentaciones/exportar', [ProductController::class, 'exportPresentacionesToCsv'])->name('products.exportPresentacionesCSV');
 Route::get('productos-descuentos/exportar', [ProductController::class, 'exportDescuentosToCsv'])->name('products.exportDescuentosCSV');
 

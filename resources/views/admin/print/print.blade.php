@@ -22,29 +22,18 @@
                 </div>
 
                 <div class="card card-body gutter-b bg-white border-0">
-                    <div class="row mt-3 ml-3 mb-4 font-weight-bolder">
-                        <div class="col-12">
-                            Movimientos
-                        </div>
-                    </div>
-                    <div class="row m-2">
-                        <div class="col-2">
-                            <a href="javascript:void(0)" onclick="exportarMovimientosCSV()"> <i class=" fa fa-file-csv"></i> Exportar</a>
-                        </div>
-
-                        <div class="col-10">                            
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="card card-body gutter-b bg-white border-0">
-                    <div class="row mt-3 ml-3 mb-4 font-weight-bolder">
+                    <div class="row mt-3 mb-5 font-weight-bolder">
                         <div class="col-12">
                             Exportación Diaria Fenovo
                         </div>
                     </div>
                     <div class="row mb-5 ml-2 border-bottom-dark">
+
+                        <div class="col-2">
+                            <a href="{{ route('movement.exportCSV') }}" title="Exportar movimientos "  class="mt-1 mr-3">
+                                <i class=" fa fa-file-csv"></i> Movimientos
+                            </a>
+                        </div>
 
                         <div class="col-2">
                             <a href="{{route('products.exportCSV')}}" title="Exportar todos los productos" class="mt-1 mr-3">
@@ -63,11 +52,6 @@
                             </a>
                         </div>
 
-                        <div class="col-2">
-                            <a href="{{ route('oferta.exportCSV') }}">
-                                <i class=" fa fa-file-csv"></i> Ofertas
-                            </a>
-                        </div>
 
                         <div class="col-2">
                             <a href="{{ route('oferta.excepciones.exportCSV') }}">
@@ -76,9 +60,7 @@
                         </div>
 
                         <div class="col-2">
-                            <a href="{{ route('products.exportStockCSV') }}">
-                                <i class=" fa fa-file-csv"></i> Stock Productos
-                            </a>
+                            
                         </div>
 
                     </div>
@@ -98,7 +80,7 @@
                 </div>
 
                 <div class="card card-body gutter-b bg-white border-0">
-                    <div class="row mt-3 ml-3 mb-4 font-weight-bolder">
+                    <div class="row mt-3 mb-4 font-weight-bolder">
                         <div class="col-12">
                             Exportación CABE
                         </div>

@@ -11,9 +11,13 @@ use App\Models\MovementProduct;
 use App\Models\Customer;
 use App\Models\Store;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Concerns\Exportable;
 use stdClass;
 
 class CabeExport implements FromView {
+
+    use Exportable; 
+
     protected $request;
     protected $invoice;
 
