@@ -28,7 +28,7 @@
                     <div class="col-12 ">
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
-                                <table class="display table-hover yajra-datatable">
+                                <table class="table table-condensed table-hover yajra-datatable">
                                     <thead>
                                         <tr class="bg-dark text-white">
                                             <th>CodFenovo</th>

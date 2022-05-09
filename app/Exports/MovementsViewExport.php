@@ -23,7 +23,7 @@ class MovementsViewExport implements FromView
     {
         $max        = DB::table('movement_products')->where('exported_number', '>', 0)->max('exported_number');
         $numeracion = ($max) ? $max + 1 : 1;
-        $arrTipos   = ['COMPRA', 'VENTA', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $arrTipos   = ['VENTA', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
         $arrEntrada = ['VENTA', 'TRASLADO'];
 
         // Actualizo los Detalles de Movimientos como exportados
