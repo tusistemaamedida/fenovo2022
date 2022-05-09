@@ -85,6 +85,10 @@ class ProductController extends Controller
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
                 })
+                ->addColumn('historial', function ($producto) {
+                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
+                    return '<a href="' . route('product.historial', ['id' => $producto->id]) . '"> <i class="fa fa-list" aria-hidden="true"></i> </a>';
+                })
                 ->addColumn('ajuste', function ($producto) {
                     $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
@@ -96,11 +100,27 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste', 'costo'])
+                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste', 'costo','historial'])
                 ->make(true);
         }
 
         return view('admin.products.list');
+    }
+
+    public function historial(Request $request){
+        try {
+            $product_id = $request->id;
+            $producto   = $this->productRepository->getByIdWith($product_id);
+
+            $movimientos = MovementProduct::where('product_id', $product_id)
+                                          ->where('entidad_id',\Auth::user()->store_active)
+                                          ->where('entidad_tipo','S')
+                                          ->with('movement')->orderBy('created_at','DESC')->get();
+
+            return view('admin.products.historial',compact('producto','movimientos'));
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
     }
 
     public function add()
