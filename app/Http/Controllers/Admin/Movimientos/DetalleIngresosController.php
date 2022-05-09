@@ -15,13 +15,20 @@ class DetalleIngresosController extends Controller
     public function store(Request $request)
     {
         try {
-           // dd($request->datos);
             foreach ($request->datos as $movimiento) {
                 $product               = Product::find($movimiento['product_id']);
                 $latest                = $product->stock(null, Auth::user()->store_active);
                 $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
                 $movimiento['balance'] = $balance;
-                MovementProduct::firstOrCreate(['entidad_id' => Auth::user()->store_active, 'movement_id' => $movimiento['movement_id'], 'product_id' => $movimiento['product_id'], 'unit_package' => $movimiento['unit_package']], $movimiento);
+                MovementProduct::firstOrCreate(
+                    ['entidad_id'      => Auth::user()->store_active,
+                        'movement_id'  => $movimiento['movement_id'],
+                        'product_id'   => $movimiento['product_id'],
+                        'tasiva'       => $product->product_price->tasiva,
+                        'cost_fenovo'  => $product->product_price->costfenovo,
+                        'unit_package' => $movimiento['unit_package'], ],
+                    $movimiento
+                );
             }
             return new JsonResponse(['msj' => 'Guardado', 'type' => 'success']);
         } catch (\Exception $e) {
