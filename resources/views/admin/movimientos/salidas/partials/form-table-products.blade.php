@@ -45,7 +45,7 @@
                                     $subtotal += $subtotal_product;
                                     @endphp
 
-                                    <tr class="">
+                                    <tr class="" @if($i == 1) id="rowFocus" @endif>
                                         <td class="">{{ $i }}</td>
                                         <td class="">{{$session_product->producto->cod_fenovo}} {{$session_product->producto->name}}</td>
                                         <td class="">{{number_format($session_product->unit_package,2)}}</td>
@@ -162,4 +162,6 @@
         ordering: false,
         iDisplayLength: -1,
     });
+    jQuery('#product_search').select2('open');
+    document.getElementById("rowFocus").scrollIntoView();
 </script>
