@@ -91,21 +91,23 @@ class SalidasController extends Controller
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
                 })
                 ->addColumn('acciones', function ($movement) {
-                    $links = '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Detalles de salida" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                    $links = '<a class=" mr-2" title="Detalles de salida" href="' . route('salidas.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
                     if ($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE') {
                         if ($movement->invoice && !is_null($movement->invoice->cae)) {
-                            $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
+                            $links .= '<a class=" mr-2" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
                         } else {
-                            $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Generar factura"  href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
+                            $links .= '<a class=" mr-2" title="Generar factura"  href="' . route('create.invoice', ['movment_id' => $movement->id]) . '"> <i class="fas fa-file-invoice"></i> </a>';
                         }
                     }
                     $routeCreatePanama = route('print.panama', ['id' => $movement->id]);
                     $routeFletePanama  = route('print.panama.felete', ['id' => $movement->id]);
                     $routeOrden        = route('print.orden', ['id' => $movement->id]);
-                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
-                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Paper"  href="' . $routeCreatePanama . '" target="_blank"> <i class="fas fa-file"></i> </a>';
-                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Flete"  href="' . $routeFletePanama . '" target="_blank"> <i class="fas fa-car"></i> </a>';
-                    $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Imprimir Orden"  href="' . $routeOrden . '" target="_blank"> <i class="fas fa-list"></i> </a>';
+                    $routeOrdenPanama  = route('print.ordenPanama', ['id' => $movement->id]);
+                    $links .= '<a class=" mr-2" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
+                    $links .= '<a class=" mr-2" title="Imprimir Paper"  href="' . $routeCreatePanama . '" target="_blank"> <i class="fas fa-file"></i> </a>';
+                    $links .= '<a class=" mr-2" title="Imprimir Flete"  href="' . $routeFletePanama . '" target="_blank"> <i class="fas fa-car"></i> </a>';
+                    $links .= '<a class=" mr-2" title="Imprimir Orden"  href="' . $routeOrden . '" target="_blank"> <i class="fas fa-list"></i> </a>';
+                    $links .= '<a class=" mr-2" title="Imprimir Orden panama"  href="' . $routeOrdenPanama . '" target="_blank"> <i class="fas fa-list text-danger"></i> </a>';
                     return $links;
                 })
                 ->rawColumns(['origen', 'items', 'date', 'type', 'kgrs', 'acciones', 'factura_nro'])
@@ -223,8 +225,42 @@ class SalidasController extends Controller
         }
     }
 
-    public function printRemito(Request $request)
+    public function printOrdenPanama(Request $request)
     {
+        $orden  = $request->id;
+        $movement = Movement::with(['panamas'])->whereId($orden)->first();
+
+        if ($movement) {
+            if ($movement->type == 'TRASLADO') {
+                $store = Store::find($movement->to);
+                if (isset($store) && ($store->store_type == 'B')) {
+                    $mercaderia_en_transito = 'MERCADERIA EN TRANSITO';
+                }
+            }
+            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $array_productos = [];
+            $productos       = $movement->panamas;
+            foreach ($productos as $producto) {
+                $objProduct               = new stdClass();
+                $objProduct->cod_fenovo   = $producto->product->cod_fenovo;
+                $objProduct->name         = $producto->product->name;
+                $objProduct->unit_weight  = $producto->product->unit_weight;
+                $objProduct->unit_package = $producto->unit_package;
+                $objProduct->quantity     = $producto->bultos;
+                $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
+                $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                $objProduct->class        = '';
+                array_push($array_productos, $objProduct);
+                
+            }
+
+            $pdf = PDF::loadView('print.ordenPanama', compact('orden', 'destino', 'array_productos'));
+            return $pdf->stream('orden-' . $request->id . '.pdf');
+        }
+    }
+
+    public function printRemito(Request $request)
+    {     
         $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
 
         if ($movement) {

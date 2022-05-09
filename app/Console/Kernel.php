@@ -7,20 +7,37 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+
+    /**
+     * Get the timezone that should be used by default for scheduled events.
+     *
+     * @return \DateTimeZone|string|null
+     */
+    protected function scheduleTimezone()
+    {
+        return 'America/Argentina/Buenos_Aires';
+    }
+
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @param  \Illuminate\Console\Scheduling\Schedule $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('stock:daily')->dailyAt('23:57')->runInBackground();
         $schedule->command('update:prices')->dailyAt('03:27')->runInBackground();
+
         // Copias DB / mantiene últimas 7 copias
         $schedule->command('snapshot:cleanup --keep=6')->dailyAt('03:27')->runInBackground();
         $schedule->command('snapshot:create')->dailyAt('03:27')->runInBackground();
 
+        //Exportacion Fenovo ejecutada cada hora
+        $schedule->command('sincroniza:diaria')->hourly()->runInBackground();
+        
+        // Exportacion de movimientos diarios ejecutada a las 9 y 14 Hs
+        $schedule->command('sincroniza:movimientos')->twiceDailyAt(8, 14)->runInBackground();
     }
 
     /**
@@ -30,7 +47,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

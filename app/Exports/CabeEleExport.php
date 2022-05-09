@@ -12,10 +12,13 @@ use App\Models\MovementProduct;
 use App\Models\Customer;
 use App\Models\Store;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Concerns\Exportable;
 use stdClass;
 
 class CabeEleExport implements FromView {
     protected $request;
+
+    use Exportable;
 
     public function __construct($request){
         $this->request = $request;
