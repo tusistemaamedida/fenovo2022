@@ -16,15 +16,10 @@ use stdClass;
 
 class CabeExport implements FromView {
 
-    use Exportable; 
+    use Exportable;
 
-    protected $request;
-    protected $invoice;
 
-    public function __construct($request,$invoice){
-        $this->request = $request;
-        $this->invoice = $invoice;
-    }
+    public function __construct(){}
 
     public function view(): View{
         $arr_elementos = [];
