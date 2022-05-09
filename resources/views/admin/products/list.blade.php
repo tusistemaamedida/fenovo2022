@@ -16,6 +16,10 @@
                         <div class="icons d-flex">
                             @can('products.create')
 
+                            <a href="{{ route('products.compararStock') }}" class="mt-1 mr-3">
+                                Comparar stocks
+                            </a>
+
                             <a href="{{url('oferta')}}" title="Oferta de precios" class="mt-1 mr-3">
                                 Ofertas
                             </a>

@@ -60,9 +60,7 @@
                         </div>
 
                         <div class="col-2">
-                            <a href="{{ route('products.exportStockCSV') }}">
-                                <i class=" fa fa-file-csv"></i> Stock Productos
-                            </a>
+                            
                         </div>
 
                     </div>
