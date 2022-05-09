@@ -11,6 +11,7 @@ use App\Models\Panamas;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
+use App\Models\Customer;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -677,6 +678,26 @@ class SalidasController extends Controller
 
             $enitidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
+            $pto_vta = $cuit = $iva_type ='';
+            $cliente = null;
+            $insert_panama = false;
+
+            if($explode[0] == "VENTA" || $explode[0] == "TRASLADO"){
+                $cliente = Store::where('id',$explode[1])->with('region')->first();
+                $pto_vta = 'PVTA_'.str_pad($cliente->cod_fenovo,3,'0.0',STR_PAD_LEFT);
+            }elseif($explode[0] == "VENTACLIENTE"){
+                $cliente = Customer::where('id',$explode[1])->with('store')->first();
+                $pto_vta = 'CLI_'.str_pad($cliente->id,'0.0',3,STR_PAD_LEFT);
+            }
+
+            if($cliente){
+                $cuit1 = substr($cliente->cuit,0,2);
+                $cuit2 = substr($cliente->cuit,2,8);
+                $cuit3 = substr($cliente->cuit,10,1);
+                $cuit  = $cuit1.'-'.$cuit2.'-'.$cuit3;
+                $iva_type = ($cliente->iva_type == 'RI')?'I':$destino->iva_type;
+            }
+
             foreach ($session_products as $product) {
                 $kgrs = ($product->producto->unit_weight * $product->unit_package * $product->quantity);
                 // resta del balance de la store fenovo porque es salida
@@ -744,17 +765,48 @@ class SalidasController extends Controller
                         ]);
                 }
 
-                if (!$product->invoice) {
-                    $data_panama                = [];
-                    $count                      = Panamas::count();
-                    $data_panama['orden']       = ($count) ? $count + 1 : 1;
-                    $data_panama['movement_id'] = $movement->id;
-                }
+                if (!$product->invoice) $insert_panama = true;
+            }
+            $count = Panamas::orderBy('orden','DESC')->first();
+            $orden = (isset($count)) ? $count->orden : 1;
+            if($insert_panama){
+                $orden += 1;
+                $data_panama                    = [];
+                $data_panama['tipo']            = 'PAN';
+                $data_panama['orden']           = $orden;
+                $data_panama['movement_id']     = $movement->id;
+                $data_panama['client_name']     = ($cliente)?$cliente->razon_social:'';
+                $data_panama['client_address']  = ($cliente)?$cliente->address:'';
+                $data_panama['client_cuit']     = $cuit ;
+                $data_panama['client_iva_type'] = $iva_type;
+                $data_panama['pto_vta']         = $pto_vta;
+                $data_panama['neto105']         = (is_null($movement->neto105(false)) || is_null($movement->neto105(false)->neto105))?'0.0':$movement->neto105(false)->neto105;
+                $data_panama['iva_neto105']     = (is_null($movement->neto105(false)) || is_null($movement->neto105(false)->neto_iva105))?'0.0':$movement->neto105(false)->neto_iva105;
+                $data_panama['neto21']          = (is_null($movement->neto21(false)) ||is_null($movement->neto21(false)->neto21))?'0.0':$movement->neto21(false)->neto21;
+                $data_panama['iva_neto21']      = (is_null($movement->neto21(false)) ||is_null($movement->neto21(false)->neto_iva21))?'0.0':$movement->neto21(false)->neto_iva21;
+                $data_panama['totalIibb']       = (is_null($movement->totalIibb(false)) ||is_null($movement->totalIibb(false)->total_no_gravado))?'0.0':$movement->totalIibb(false)->total_no_gravado;
+                $data_panama['totalConIva']     = (is_null($movement->totalConIva(false)) ||is_null($movement->totalConIva(false)->totalConIva))?'0.0':$movement->totalConIva(false)->totalConIva;
+                $data_panama['costo_fenovo_total'] = (is_null($movement->cosventa(false)) ||is_null($movement->cosventa(false)->cost_venta))?'0.0':$movement->cosventa(false)->cost_venta;
+
+                Panamas::create($data_panama);
+            }
+            if(!isset($request->factura_flete) && $request->flete > 0){
+                $data_panama['tipo']            = 'FLE';
+                $data_panama['orden']           = $orden + 1;
+                $data_panama['neto105']         = 0.0;
+                $data_panama['iva_neto105']     = 0.0;
+                $data_panama['neto21']          = $request->flete * 0.21;
+                $data_panama['iva_neto21']      = $request->flete;
+                $data_panama['totalIibb']       = 0.0;
+                $data_panama['totalConIva']     = $request->flete;
+                $data_panama['costo_fenovo_total'] = 0.0;
+
+                Panamas::create($data_panama);
             }
             $this->sessionProductRepository->deleteList($list_id);
             return redirect()->route('salidas.add');
         } catch (\Exception $e) {
-            //($e->getMessage());
+            dd($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
@@ -780,5 +832,68 @@ class SalidasController extends Controller
                 'type' => 'success',
             ]
         );
+    }
+
+    public function createPanamas(){
+        $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+        $movements = Movement::whereIn('type', $arrTypes)->where('status','FINISHED')->with('panamas')->orderBy('created_at','ASC')->get();
+        $orden= 0;
+
+        foreach ($movements as $m) {
+            if(count($m->panamas)){
+                $orden += 1;
+
+                if($m->type == "VENTA" || $m->type == "TRASLADO"){
+                    $cliente = Store::where('id',$m->to)->with('region')->first();
+                    $pto_vta = 'PVTA_'.str_pad($cliente->cod_fenovo,3,'0.0',STR_PAD_LEFT);
+                }elseif($m->type == "VENTACLIENTE"){
+                    $cliente = Customer::where('id',$m->to)->with('store')->first();
+                    $pto_vta = 'CLI_'.str_pad($cliente->id,'0.0',3,STR_PAD_LEFT);
+                }
+
+                if($cliente){
+                    $cuit1 = substr($cliente->cuit,0,2);
+                    $cuit2 = substr($cliente->cuit,2,8);
+                    $cuit3 = substr($cliente->cuit,10,1);
+                    $cuit  = $cuit1.'-'.$cuit2.'-'.$cuit3;
+                    $iva_type = ($cliente->iva_type == 'RI')?'I':$destino->iva_type;
+                }
+
+                $data_panama                    = [];
+                $data_panama['tipo']            = 'PAN';
+                $data_panama['orden']           = $orden;
+                $data_panama['movement_id']     = $m->id;
+                $data_panama['client_name']     = ($cliente)?$cliente->razon_social:'';
+                $data_panama['client_address']  = ($cliente)?$cliente->address:'';
+                $data_panama['client_cuit']     = $cuit ;
+                $data_panama['client_iva_type'] = $iva_type;
+                $data_panama['pto_vta']         = $pto_vta;
+                $data_panama['neto105']         = (is_null($m->neto105(false)) || is_null($m->neto105(false)->neto105))?'0.0':$m->neto105(false)->neto105;
+                $data_panama['iva_neto105']     = (is_null($m->neto105(false)) || is_null($m->neto105(false)->neto_iva105))?'0.0':$m->neto105(false)->neto_iva105;
+                $data_panama['neto21']          = (is_null($m->neto21(false)) ||is_null($m->neto21(false)->neto21))?'0.0':$m->neto21(false)->neto21;
+                $data_panama['iva_neto21']      = (is_null($m->neto21(false)) ||is_null($m->neto21(false)->neto_iva21))?'0.0':$m->neto21(false)->neto_iva21;
+                $data_panama['totalIibb']       = (is_null($m->totalIibb(false)) ||is_null($m->totalIibb(false)->total_no_gravado))?'0.0':$m->totalIibb(false)->total_no_gravado;
+                $data_panama['totalConIva']     = (is_null($m->totalConIva(false)) ||is_null($m->totalConIva(false)->totalConIva))?'0.0':$m->totalConIva(false)->totalConIva;
+                $data_panama['costo_fenovo_total'] = (is_null($m->cosventa(false)) ||is_null($m->cosventa(false)->cost_venta))?'0.0':$m->cosventa(false)->cost_venta;
+                $data_panama['created_at']         = $m->created_at;
+
+                Panamas::create($data_panama);
+
+                if(!$m->flete_invoice && $m->flete > 0){
+                    $orden += 1;
+                    $data_panama['tipo']            = 'FLE';
+                    $data_panama['orden']           = $orden;
+                    $data_panama['neto105']         = 0.0;
+                    $data_panama['iva_neto105']     = 0.0;
+                    $data_panama['neto21']          = $m->flete * 0.21;
+                    $data_panama['iva_neto21']      = $m->flete;
+                    $data_panama['totalIibb']       = 0.0;
+                    $data_panama['totalConIva']     = $m->flete;
+                    $data_panama['costo_fenovo_total'] = 0.0;
+
+                    Panamas::create($data_panama);
+                }
+            }
+        }
     }
 }

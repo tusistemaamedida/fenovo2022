@@ -33,3 +33,6 @@ Route::get('imprimir-orden-panama', [SalidasController::class, 'printOrdenPanama
 Route::get('imprimir-papers/', [SalidasController::class, 'printPanama'])->name('print.panama');
 Route::get('imprimir-flete/', [SalidasController::class, 'printPanamaFlete'])->name('print.panama.felete');
 Route::get('total-del-movimiento', [SalidasController::class, 'getTotalMovement'])->name('get.total.movement');
+
+
+Route::get('crear-panamas', [SalidasController::class, 'createPanamas'])->name('create.panamas');
