@@ -15,7 +15,10 @@
                                         Salidas cerrradas
                                     </h4>
                                 </div>
-                                <div class="icons d-flex">
+                                <div class="icons d-flex">        
+                                    <a href="{{ route('print.ordenConsolidada') }}" class="mt-1 mr-3">
+                                        Salidas consolidadas
+                                    </a>
 
                                 </div>
                             </div>
@@ -27,25 +30,29 @@
                         <div class="card card-custom gutter-b bg-white border-0">
                             <div class="card-body">
 
-                                <div class="table-datapos">
-                                    <div class="table-responsive">
-                                        <table class="display table-hover yajra-datatable">
-                                            <thead>
-                                                <tr class="bg-dark text-white">
-                                                    <td>#</td>
-                                                    <td>Fecha</td>
-                                                    <td>Destino</td>
-                                                    <td>Items</td>
-                                                    <td>Tipo</td>
-                                                    <td>Kgrs</td>
-                                                    <td>FacturaNro</td>
-                                                    <td class="text-center">Detalle</td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                <div class="table-responsive">
+                                    <table class="table table-condensed table-hover yajra-datatable text-center">
+                                        <thead>
+                                            <tr class="bg-dark text-white">
+                                                <td>#</td>
+                                                <td>Fecha</td>
+                                                <td>Destino</td>
+                                                <td>Item</td>
+                                                <td>Tipo</td>
+                                                <td>Kgrs</td>
+                                                <td>Fac</td>
+                                                <td>Det</td>
+                                                <td>Des</td>
+                                                <td>Rto</td>
+                                                <td>Paper</td>
+                                                <td>Flete</td>
+                                                <td>Orden</td>
+                                                <td>OPma</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
                                 </div>
 
                             </div>
@@ -73,14 +80,20 @@
         dom: '<lfrtip>',
         ajax: "{{ route('salidas.index') }}",
         columns: [
-            {data: 'id', 'class':'text-center', orderable:false,searchable: true},
+            {data: 'id', orderable:false,searchable: true},
             {data: 'date'},
-            {data: 'destino'},
+            {data: 'destino', 'class':'text-left'},
             {data: 'items'},
-            {data: 'type', orderable:false},
-            {data: 'kgrs', orderable:false},
-            {data: 'factura_nro', 'class' : 'text-center'},
-            {data: 'acciones', orderable:false, 'class' : 'text-left'},
+            {data: 'type', orderable:false,searchable: true},
+            {data: 'kgrs', orderable:false,searchable: false},
+            {data: 'factura_nro', orderable:false,searchable: false},
+            {data: 'detalle', orderable:false,searchable: false},
+            {data: 'factura', orderable:false,searchable: false},
+            {data: 'remito', orderable:false,searchable: false},
+            {data: 'paper', orderable:false,searchable: false},
+            {data: 'flete', orderable:false,searchable: false},
+            {data: 'orden', orderable:false,searchable: false},
+            {data: 'ordenpanama', orderable:false,searchable: false},
         ]
     });
 
