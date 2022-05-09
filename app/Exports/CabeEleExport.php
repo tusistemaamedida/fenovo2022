@@ -62,6 +62,8 @@ class CabeEleExport implements FromView {
                 $tipo_factura = 'NCA';
             }elseif($invoice->tipoFactura->afip_id == 1){
                 $tipo_factura = 'FCA';
+            }elseif($invoice->tipoFactura->afip_id == 2){
+                $tipo_factura = 'NDA';
             }
 
             $element->FISCAL = $tipo_factura.$invoice->voucher_number ;
