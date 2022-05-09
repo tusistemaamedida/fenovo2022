@@ -32,7 +32,7 @@
                 <td> {{ $movimiento->product->name }}</td>
                 <td class="text-center"> {{ $movimiento->product->unit_type }}</td>
                 <td class="text-center"> {{ number_format($movimiento->unit_package,2) }} </td>
-                <td class="text-center"> {{ $movimiento->product->product_price->costfenovo }}</td>
+                <td class="text-center"> {{ $movimiento->cost_fenovo }}</td>
                 <td class="text-center"> {{ $movimiento->bultos }}</td>
                 <td class="text-center"> {{ number_format($movimiento->product->product_price->costfenovo*$movimiento->unit_package*$movimiento->bultos,2, ',', '.') }}</td>
                 <td class="text-center"> {{ $movimiento->entry }} </td>
