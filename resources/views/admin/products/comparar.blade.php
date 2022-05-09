@@ -60,12 +60,12 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        lengthMenu : [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+        lengthMenu : [[10, 25, 50, -1], [10, 25, 50, "All"]],
         stateSave:true,
         processing: true,
         serverSide: true,
         ordering:false,
-        dom: 'Bfrtip',
+        dom: 'lfrBtip',
         buttons: ['excel'],
         ajax: "{{ route('products.compararStock') }}",
         columns: [
