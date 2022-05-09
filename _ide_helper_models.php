@@ -330,6 +330,7 @@ namespace App\Models{
  * @package App\Models
  * @property int|null $orden
  * @property string|null $costo_fenovo_total
+ * @property-read \App\Models\VoucherType|null $tipoFactura
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice query()
@@ -555,6 +556,51 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|OfertaStore whereStoreId($value)
  */
 	class OfertaStore extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Panamas
+ *
+ * @property int $id
+ * @property int|null $orden
+ * @property int|null $movement_id
+ * @property string|null $client_name
+ * @property string|null $client_address
+ * @property string|null $client_cuit
+ * @property string|null $client_iva_type
+ * @property int|null $pto_vta
+ * @property string|null $neto105
+ * @property string|null $iva_neto105
+ * @property string|null $neto21
+ * @property string|null $iva_neto21
+ * @property string|null $totalIibb
+ * @property string|null $totalConIva
+ * @property string|null $costo_fenovo_total
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereClientAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereClientCuit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereClientIvaType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereClientName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereCostoFenovoTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereIvaNeto105($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereIvaNeto21($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereMovementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereNeto105($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereNeto21($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereOrden($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas wherePtoVta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereTotalConIva($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereTotalIibb($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereUpdatedAt($value)
+ */
+	class Panamas extends \Eloquent {}
 }
 
 namespace App\Models{

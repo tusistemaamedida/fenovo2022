@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use DB;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -159,7 +161,8 @@ class Product extends Model
         return $stock;
     }
 
-    public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S'){
+    public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
+    {
         $stock = 0.0;
         // Buscar el ultimo movimiento
         $movement_product = MovementProduct::where('product_id', $this->id)
@@ -178,10 +181,69 @@ class Product extends Model
         return $stock;
     }
 
+    public function stockInicioSemana()
+    {
+        $date = Carbon::now()->subDays(7);
+
+        $stock = DB::table('products as t1')
+            ->join('movement_products as t2', 't2.product_id', '=', 't1.id')
+            ->select('t2.balance')
+            ->where('t2.entidad_id', '=', 1)
+            ->where('t2.product_id', '=', $this->id)
+            ->where('t2.created_at', '>=', $date)
+            ->orderBy('t2.updated_at')
+            ->pluck('balance')->first();
+        return ($stock) ? $stock : 0;
+    }
+
+    public function ingresoSemana()
+    {
+        $date = Carbon::now()->subDays(7);
+        $stock  = 0;
+
+        $registros = DB::table('products as t1')
+            ->join('movement_products as t2', 't2.product_id', '=', 't1.id')
+            ->select('t2.entry')
+            ->where('t2.entidad_id', '=', 1)
+            ->where('t2.product_id', '=', $this->id)
+            ->where('t2.created_at', '>=', $date)
+            ->orderBy('t2.updated_at')
+            ->get()
+            ->skip(1);
+
+        foreach ($registros as $registro) {
+            $stock += $registro->entry;
+        }    
+
+        return $stock;
+    }
+
+    public function salidaSemana()
+    {
+        $date = Carbon::now()->subDays(7);
+        $stock  = 0;
+
+        $registros = DB::table('products as t1')
+            ->join('movement_products as t2', 't2.product_id', '=', 't1.id')
+            ->select('t2.egress')
+            ->where('t2.entidad_id', '=', 1)
+            ->where('t2.product_id', '=', $this->id)
+            ->where('t2.created_at', '>=', $date)
+            ->orderBy('t2.updated_at')
+            ->get()
+            ->skip(1);
+
+        foreach ($registros as $registro) {
+            $stock += $registro->egress;
+        }    
+
+        return $stock;
+    }
+
     public function scopeName($query, $name)
     {
         if ($name) {
-            return $query->orWhere('name', 'like', $name.'%');
+            return $query->orWhere('name', 'like', $name . '%');
         }
     }
 

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\DescuentosViewExport;
 use App\Exports\PresentacionesViewExport;
 use App\Exports\ProductsViewExport;
-use App\Exports\ProductsViewExportStock;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\AddProduct;
 
@@ -174,20 +173,23 @@ class ProductController extends Controller
     public function ajustarStock(Request $request)
     {
         try {
-
             $valida = false;
-            $data = $request->except('_token','product_id');
+            $data   = $request->except('_token', 'product_id');
 
             foreach ($data as $item => $val) {
-                if(!is_null($val)) $valida = true;
+                if (!is_null($val)) {
+                    $valida = true;
+                }
             }
 
-            if(!$valida) return new JsonResponse(['msj' => 'Ingrese algún valor en el ajuste.', 'type' => 'error']);
+            if (!$valida) {
+                return new JsonResponse(['msj' => 'Ingrese algún valor en el ajuste.', 'type' => 'error']);
+            }
 
-            if($valida){
-                $from = \Auth::user()->store_active;
-                $count = Movement::where('from',$from)->where('type', 'AJUSTE')->count();
-                $orden = ($count)?$count+1:1;
+            if ($valida) {
+                $from  = \Auth::user()->store_active;
+                $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();
+                $orden = ($count) ? $count + 1 : 1;
 
                 $insert_data                   = [];
                 $insert_data['type']           = 'AJUSTE';
@@ -198,23 +200,23 @@ class ProductController extends Controller
                 $insert_data['orden']          = $orden;
                 $insert_data['voucher_number'] = time();
                 $insert_data['flete']          = 0;
-                $suma_balances = 0;
-                $suma_stock = 0;
+                $suma_balances                 = 0;
+                $suma_stock                    = 0;
 
                 foreach ($data as $item => $bultos) {
-                    if(is_numeric($bultos)){
-                        $presentacion = (float) str_replace('_',',',str_replace('unidades_','',$item));
+                    if (is_numeric($bultos)) {
+                        $presentacion = (float)str_replace('_', ',', str_replace('unidades_', '', $item));
 
-                        $producto = Product::where('id',$request->product_id)->first();
+                        $producto = Product::where('id', $request->product_id)->first();
                         if ($producto) {
                             $balance_producto = $producto->stockReal(null, Auth::user()->store_active);
-                            $entry   = $egress   = 0;
-                            $new_balance = $bultos * $presentacion * $producto->unit_weight;
+                            $entry            = $egress            = 0;
+                            $new_balance      = $bultos * $presentacion * $producto->unit_weight;
                             $suma_balances += $new_balance;
 
-                            if($balance_producto < $new_balance){
+                            if ($balance_producto < $new_balance) {
                                 $entry = $new_balance;
-                            }elseif($balance_producto > $new_balance){
+                            } elseif ($balance_producto > $new_balance) {
                                 $egress = $new_balance;
                             }
 
@@ -229,14 +231,12 @@ class ProductController extends Controller
                             $latest['bultos']       = $bultos;
                             $latest['movement_id']  = $movement->id;
                             MovementProduct::create($latest);
-
                         }
                     }
                 }
                 return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
-            }else{
-                return new JsonResponse(['msj' => 'Error en el ajuste', 'type' => 'error']);
             }
+            return new JsonResponse(['msj' => 'Error en el ajuste', 'type' => 'error']);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
@@ -683,12 +683,50 @@ class ProductController extends Controller
 
     public function exportProductsToCsv()
     {
-        (new ProductsViewExport)->store('producto.csv');
+        (new ProductsViewExport())->store('producto.csv');
     }
 
-    public function exportStockProductsToCsv(Request $request)
+    public function compararStock(Request $request)
     {
-        return Excel::download(new ProductsViewExportStock($request), 'stocks.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+
+        /* Testing methods
+        $producto = Product::whereId(1)->first();
+        return $producto->salidaSemana();
+        */
+
+
+        if ($request->ajax()) {
+            $productos = $this->productRepository->all()->where('active', '=', 1);
+
+            return Datatables::of($productos)
+                ->addIndexColumn()
+
+                ->addColumn('proveedor', function ($product) {
+                    return $product->proveedor->name;
+                })
+
+                ->addColumn('stockInicioSemana', function ($product) {
+                    return $product->stockInicioSemana();
+                })
+                ->addColumn('ingresoSemana', function ($product) {
+                    return number_format($product->ingresoSemana(),2);
+                })
+                ->addColumn('salidaSemana', function ($product) {
+                    return number_format($product->salidaSemana(),2);
+                })
+                ->addColumn('stock', function ($product) {
+                    return $product->stockReal(null, Auth::user()->store_active);
+                })
+
+                ->addColumn('costo', function ($product) {
+                    return $product->product_price->plist0neto;
+                })
+
+                ->rawColumns(['stockInicioSemana', 'ingresoSemana', 'salidaSemana', 'stock'])
+                ->make(true);
+        }
+
+        return view('admin.products.comparar');
     }
 
     public function exportDescuentosToCsv(Request $request)
