@@ -162,5 +162,4 @@
         ordering: false,
         iDisplayLength: -1,
     });
-    jQuery('#product_search').select2('open');
 </script>
