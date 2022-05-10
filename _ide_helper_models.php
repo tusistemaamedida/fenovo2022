@@ -1600,6 +1600,7 @@ namespace App\Models{
  * @property string|null $senasa
  * @property int|null $transportista_id
  * @property int|null $active
+ * @property int|null $propio
  * @property-read \App\Models\Transportista|null $transportista
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo newQuery()
@@ -1610,6 +1611,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo whereMarca($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo wherePatente($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo wherePropio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo whereSenasa($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo whereTipo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo whereTransportistaId($value)
