@@ -15,11 +15,10 @@
                                         Salidas cerrradas
                                     </h4>
                                 </div>
-                                <div class="icons d-flex">        
-                                    <a href="{{ route('print.ordenConsolidada') }}" class="mt-1 mr-3">
+                                <div class="icons d-flex">
+                                    <a href="{{ route('index.ordenConsolidada') }}" class="mt-1 mr-3">
                                         Salidas consolidadas
                                     </a>
-
                                 </div>
                             </div>
                         </div>
