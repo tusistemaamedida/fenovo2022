@@ -197,7 +197,7 @@ class Product extends Model
         if (!$registro) {
             return 0;
         }
-        return ($this->unit_type == 'K') ? $registro->balance : number_format($registro->balance / $registro->unit_weight, 0);
+        return ($this->unit_type == 'K') ? number_format($registro->balance,0,'','') : number_format($registro->balance / $registro->unit_weight, 0,'','');
     }
 
     public function stockFinSemana()
@@ -214,7 +214,7 @@ class Product extends Model
             return 0;
         }
 
-        return ($this->unit_type == 'K') ? $registro->balance : number_format($registro->balance / $registro->unit_weight, 0, ',', '.');
+        return ($this->unit_type == 'K') ? number_format($registro->balance,0,'','') : number_format($registro->balance / $registro->unit_weight, 0, '', '');
     }
 
     public function ingresoSemana()
@@ -238,7 +238,7 @@ class Product extends Model
             $stock += $cant;
         }
 
-        return $stock;
+        return number_format($stock,0,'','');
     }
 
     public function salidaSemana()
@@ -261,7 +261,7 @@ class Product extends Model
             $stock += $cant;
         }
 
-        return $stock;
+        return number_format($stock,0,'','');
     }
 
     public function scopeName($query, $name)

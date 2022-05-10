@@ -3,41 +3,28 @@
         <td>Proveedor</td>
         <td>Cod Fenovo</td>
         <td>Producto</td>
-        <td>P lista 0</td>
-        <td>Presentacion</td>
+        <td>Costo</td>
         <td>Tipo unidad</td>
-        <td>Stock Kilos</td>
-        <td>Stock Bultos</td>
+        <td>Presentacion</td>
+        <td>Stock Inicio</td>
+        <td>Entradas</td>
+        <td>Salidas</td>
+        <td>Stock fin</td>
     </tr>
-    @foreach($productos as $producto)
+    @foreach($arrProductos as $producto)
+
     <tr>
-        <td>{{ $producto->proveedor->name }} </td>
-        <td>{{ $producto->cod_fenovo}}</td>
-        <td>{{ $producto->name}}</td>
-        <td>{{ $producto->product_price->plist0neto}}</td>
-        <td>
-            @php
-            $presentacion = explode('|', $producto->unit_package);
-            @endphp
-            @if (count($presentacion)>1)
-            0
-            @else
-            {{ $producto->unit_package}}
-            @endif
-        </td>
-        <td>{{ $producto->unit_type }}</td>
-        <td>{{ $producto->StockReal() }}</td>
-        <td>
-            @if($producto->StockReal() == 0)
-            0
-            @elseif (count($presentacion)>1)
-            {{ (int) ($producto->StockReal() / $producto->unit_package[0]) }}
-            @elseif ($producto->unit_package == 0)
-            {{ (int) ($producto->StockReal() / 1) }}
-            @else
-            {{ (int) ($producto->StockReal() / $producto->unit_package) }}
-            @endif
-        </td>
+        <td>{{ $producto->proveedor     }}</td>
+        <td>{{ $producto->cod_fenovo    }}</td>
+        <td>{{ $producto->nombre        }}</td>
+        <td>{{ $producto->costo         }}</td>
+        <td>{{ $producto->unidad        }}</td>
+        <td>{{ $producto->presentacion  }}</td>
+        <td>{{ $producto->stockini      }}</td>
+        <td>{{ $producto->stockent      }}</td>
+        <td>{{ $producto->stocksal      }}</td>
+        <td>{{ $producto->stockfin      }}</td>
     </tr>
+
     @endforeach
 </table>

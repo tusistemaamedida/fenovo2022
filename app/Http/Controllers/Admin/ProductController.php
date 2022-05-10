@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\DescuentosViewExport;
 use App\Exports\PresentacionesViewExport;
 use App\Exports\ProductsViewExport;
+use App\Exports\ProductsViewExportStock;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\AddProduct;
 
 use App\Http\Requests\Products\CalculatePrices;
 use App\Imports\movementImport;
-use App\Mail\NovedadMail;
 use App\Models\Movement;
 
 use App\Models\MovementProduct;
@@ -30,9 +30,10 @@ use App\Repositories\ProveedorRepository;
 use App\Repositories\SenasaDefinitionRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -100,24 +101,25 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste', 'costo','historial'])
+                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste', 'costo', 'historial'])
                 ->make(true);
         }
 
         return view('admin.products.list');
     }
 
-    public function historial(Request $request){
+    public function historial(Request $request)
+    {
         try {
             $product_id = $request->id;
             $producto   = $this->productRepository->getByIdWith($product_id);
 
             $movimientos = MovementProduct::where('product_id', $product_id)
-                                          ->where('entidad_id',\Auth::user()->store_active)
-                                          ->where('entidad_tipo','S')
-                                          ->with('movement')->orderBy('created_at','DESC')->get();
+                                          ->where('entidad_id', \Auth::user()->store_active)
+                                          ->where('entidad_tipo', 'S')
+                                          ->with('movement')->orderBy('created_at', 'DESC')->get();
 
-            return view('admin.products.historial',compact('producto','movimientos'));
+            return view('admin.products.historial', compact('producto', 'movimientos'));
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
@@ -703,7 +705,7 @@ class ProductController extends Controller
     }
 
     public function compararStock(Request $request)
-    {        
+    {
         if ($request->ajax()) {
             $productos = $this->productRepository->all()->where('active', '=', 1);
 
@@ -728,7 +730,18 @@ class ProductController extends Controller
                 })
 
                 ->addColumn('costo', function ($product) {
-                    return $product->product_price->plist0neto;
+                    
+                    // Buscar si el producto tiene oferta del proveedor
+                    $hoy = Carbon::parse(now())->format('Y-m-d');
+                    $oferta = DB::table('products as t1')
+                    ->join('session_ofertas as t2', 't1.id', '=', 't2.product_id')
+                    ->select('t2.costfenovo')
+                    ->where('t1.id', $product->id)
+                    ->where('t2.fecha_desde', '<=', $hoy)
+                    ->where('t2.fecha_hasta', '>=', $hoy)
+                    ->first();
+
+                    return (!$oferta) ? $product->product_price->costfenovo : $oferta->costfenovo;
                 })
 
                 ->rawColumns(['stockInicioSemana', 'ingresoSemana', 'salidaSemana', 'stock'])
@@ -736,6 +749,11 @@ class ProductController extends Controller
         }
 
         return view('admin.products.comparar');
+    }
+
+    public function printCompararStock(Request $request)
+    {
+        return Excel::download(new ProductsViewExportStock(), 'stocks-'.date('d-m-Y').'.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function exportDescuentosToCsv(Request $request)
