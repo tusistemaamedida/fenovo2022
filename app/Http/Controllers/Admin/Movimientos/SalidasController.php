@@ -139,12 +139,14 @@ class SalidasController extends Controller
                 })
                 ->addColumn('paper', function ($movement) {
                     if($movement->hasPanama()){
-                        return '<a title="Imprimir Paper"  href="' . route('print.panama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-file"></i> </a>';
+                        $pan = $movement->getPanama();
+                        return '<a title="Imprimir Paper '.$pan->orden.'"  href="' . route('print.panama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-file"></i> </a>';
                     }
                 })
                 ->addColumn('flete', function ($movement) {
                     if($movement->hasFlete()){
-                        return '<a class="m-0" title="Imprimir Flete"  href="' . route('print.panama.felete', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-car"></i> </a>';
+                        $fle = $movement->getFlete();
+                        return '<a class="m-0" title="Imprimir Flete'.$fle->orden.'"  href="' . route('print.panama.felete', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-car"></i> </a>';
                     }
                  })
                 ->addColumn('orden', function ($movement) {
