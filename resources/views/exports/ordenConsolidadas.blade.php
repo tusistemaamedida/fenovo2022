@@ -1,14 +1,6 @@
 <table>
     <tr>
-        <td>Nro</td>
-        <td>Fecha Orden</td>
-        <td>Destino</td>
-        <td>Items</td>
-        <td>Tipo</td>
-        <td>Kgrs</td>
-        <td>Bultos</td>
-        <td>Flete</td>
-        <td>Neto</td>
+        <td colspan="9">{{ $data }}</td>
     </tr>
     @foreach($arrMovimientos as $movimiento)
     <tr>
