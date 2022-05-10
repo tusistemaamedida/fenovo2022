@@ -312,7 +312,7 @@ class SalidasController extends Controller
     }
 
     public function printOrdenConsolidada(Request $request)
-    {        
+    {
         return Excel::download(new OrdenConsolidadaViewExport(), 'ordenes.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
@@ -799,7 +799,7 @@ class SalidasController extends Controller
                 $cuit2    = substr($cliente->cuit, 2, 8);
                 $cuit3    = substr($cliente->cuit, 10, 1);
                 $cuit     = $cuit1 . '-' . $cuit2 . '-' . $cuit3;
-                $iva_type = ($cliente->iva_type == 'RI') ? 'I' : $destino->iva_type;
+                $iva_type = ($cliente->iva_type == 'RI') ? 'I' : $cliente->iva_type;
             }
 
             foreach ($session_products as $product) {
