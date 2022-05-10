@@ -1,4 +1,4 @@
-<table style="width:100%; margin-top:1.6cm; font-size: 9px ">
+<table style="width:100%; margin-top:1.8cm; font-size: 9px ">
     <tr>
         <td colspan="6">
             <strong style="margin-left: 9cm">
@@ -20,7 +20,7 @@
     </tr>
 </table>
 
-<table style="width:100%; margin-top: 7cm; font-size: 9px ">
+<table style="width:100%; margin-top: 6cm; font-size: 9px ">
     <tr>
         <th class="text-center" style="width: 10%; ">&nbsp;</th>
         <th class="text-center" style="width: 55%;">&nbsp;</th>

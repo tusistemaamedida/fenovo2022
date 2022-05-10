@@ -19,8 +19,8 @@
         <td class="text-center"></td>
     </tr>
 
-        <!-- Revisa si al imprimir el detalle, supera la linea 27 -->
-        @if ($loop->iteration % 26 == 0)
+        <!-- Revisa si al imprimir el detalle, supera la linea 28 -->
+        @if ($loop->iteration % 28 == 0)
 
         </table>
 
