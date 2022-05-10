@@ -4,13 +4,15 @@ namespace App\Console\Commands;
 
 use App\Exports\DescuentosViewExport;
 use App\Exports\ExcepViewExport;
+use App\Exports\MovementsViewExport;
 use App\Exports\PresentacionesViewExport;
 use App\Exports\ProductsViewExport;
+
 use Illuminate\Console\Command;
 
 class SincronizaDiaria extends Command
 {
-    protected $signature   = 'sincroniza:diaria';
+    protected $signature   = 'sincroniza:diariamente';
     protected $description = 'Sincroniza los archivos para Fenovo';
 
     public function __construct()
@@ -28,7 +30,7 @@ class SincronizaDiaria extends Command
         (new DescuentosViewExport())->store('des.csv');
         // Exportar Excepciones
         (new ExcepViewExport())->store('excepc.csv');
-
-
+        // Exportar Movimientos
+        (new MovementsViewExport())->store('movi.csv');
     }
 }
