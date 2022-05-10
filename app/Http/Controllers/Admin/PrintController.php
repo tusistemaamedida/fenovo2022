@@ -120,19 +120,6 @@ class PrintController extends Controller
 
     public function exportMovimientosCsv(Request $request)
     {
-        // $arrTipos   = ['VENTA', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
-
-        // return $movimientos = DB::table('movements as t1')
-        //     ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
-        //     ->join('products as t3', 't2.product_id', '=', 't3.id')
-        //     ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
-        //     ->select('t1.id', 't2.id as movement_products_id', 't1.type', 't1.date', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad')
-        //     ->whereIn('t1.type', $arrTipos)
-        //     ->where('t2.entidad_tipo', '!=', 'C')
-        //     ->where('t2.exported_number', '=', 0)
-        //     ->orderBy('t1.date')->orderBy('t1.id')
-        //     ->get();
-
         return Excel::download(new MovementsViewExport(), 'movi.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 }
