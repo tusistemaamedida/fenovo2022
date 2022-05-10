@@ -24,7 +24,7 @@ class CabeEleExport implements FromView {
     public function view(): View{
         $arr_elementos = [];
         $invoices = Invoice::whereNotNull('cae')->with('tipoFactura')->orderBy('created_at','ASC')->orderBy('voucher_number','ASC')->get();
-        $i=1;
+        $i=0;
         foreach ($invoices as $invoice) {
             $cliente = null;
             $element         = new stdClass();
@@ -86,7 +86,7 @@ class CabeEleExport implements FromView {
 
             //$invoice->orden = $i;
            // $invoice->save();
-            //$i++;
+            $i++;
             array_push($arr_elementos, $element);
         }
 
@@ -95,7 +95,8 @@ class CabeEleExport implements FromView {
         $dia       = date('d', time());
         $hora      = date('H', time());
         $min       = date('i', time());
-        $registros = str_pad(count($arr_elementos), 4, '0', STR_PAD_LEFT);
+
+        $registros = str_pad($i, 4, '0', STR_PAD_LEFT);
 
         $data = $anio . $mes . $dia . $hora . $min . $registros;
 
