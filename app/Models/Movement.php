@@ -76,6 +76,14 @@ class Movement extends Model
         return Panamas::where('movement_id',$this->id)->where('tipo',"!=",'PAN')->exists();
     }
 
+    public function getPanama(){
+        return Panamas::where('movement_id',$this->id)->where('tipo','PAN')->first();
+    }
+
+    public function getFlete(){
+        return Panamas::where('movement_id',$this->id)->where('tipo',"!=",'PAN')->first();
+    }
+
     public function movement_ingreso_products()
     {
         return $this->hasMany(MovementProduct::class)->where('entry', '>', 0);
