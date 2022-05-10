@@ -30,10 +30,10 @@ class CustomerController extends Controller
     {
         if ($request->ajax()) {
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $customer = Customer::all();
+                $customer = Customer::where('active',true)->get();
             } else {
                 $store_active = Auth::user()->store_active;
-                $customer = Customer::where('store_id', $store_active)->get();
+                $customer = Customer::where('store_id', $store_active)->where('active',true)->get();
             }
 
             return Datatables::of($customer)
