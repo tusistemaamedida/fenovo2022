@@ -69,6 +69,7 @@
             {data: 'costo', orderable: false, searchable: false},
             {data: 'proveedor', orderable: false},
             @can('products.create')
+            {data: 'historial', class:'text-center', orderable: false, searchable: false},
             {data: 'ajuste', class:'text-center', orderable: false, searchable: false},
             {data: 'editar', class:'text-center', orderable: false, searchable: false},
             {data: 'borrar', class:'text-center', orderable: false, searchable: false},

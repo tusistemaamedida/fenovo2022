@@ -45,7 +45,7 @@
                                     $subtotal += $subtotal_product;
                                     @endphp
 
-                                    <tr class="">
+                                    <tr class="" >
                                         <td class="">{{ $i }}</td>
                                         <td class="">{{$session_product->producto->cod_fenovo}} {{$session_product->producto->name}}</td>
                                         <td class="">{{number_format($session_product->unit_package,2)}}</td>
@@ -163,4 +163,12 @@
         iDisplayLength: -1,
     });
     jQuery('#product_search').select2('open');
+    jQuery('.select2-container').addClass('select2-container--open');
+    jQuery('.select2-container').click(function(){
+        jQuery('.select2-container').addClass('select2-container--open');
+    })
+    window.addEventListener('scroll',(event) => {
+        jQuery('.select2-container').removeClass('select2-container--open');
+    });
 </script>
+

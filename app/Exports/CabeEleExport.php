@@ -16,13 +16,10 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use stdClass;
 
 class CabeEleExport implements FromView {
-    protected $request;
 
     use Exportable;
 
-    public function __construct($request){
-        $this->request = $request;
-    }
+    public function __construct(){ }
 
     public function view(): View{
         $arr_elementos = [];
@@ -57,7 +54,7 @@ class CabeEleExport implements FromView {
             }
 
             $element->IDCAJA = null;
-            $element->NROCOM = $i;
+            $element->NROCOM = $invoice->orden;
             $element->FECHA  = Carbon::parse($invoice->created_at)->format('d/m/Y');
             $element->HORA   = Carbon::parse($invoice->created_at)->format('H:i');
 
@@ -65,6 +62,8 @@ class CabeEleExport implements FromView {
                 $tipo_factura = 'NCA';
             }elseif($invoice->tipoFactura->afip_id == 1){
                 $tipo_factura = 'FCA';
+            }elseif($invoice->tipoFactura->afip_id == 2){
+                $tipo_factura = 'NDA';
             }
 
             $element->FISCAL = $tipo_factura.$invoice->voucher_number ;
@@ -83,9 +82,9 @@ class CabeEleExport implements FromView {
             $element->RECARG = 0;
             $element->TOTFIS = 0;
 
-            $invoice->orden = $i;
-            $invoice->save();
-            $i++;
+            //$invoice->orden = $i;
+           // $invoice->save();
+            //$i++;
             array_push($arr_elementos, $element);
         }
 

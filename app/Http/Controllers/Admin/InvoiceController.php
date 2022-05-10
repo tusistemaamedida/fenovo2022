@@ -152,8 +152,8 @@ class InvoiceController extends Controller
             $invoice = $this->invoiceRepository->getByMovement($movement_id);
             if($result['status']){
                 if(isset($invoice)){
-                    $count = Invoice::whereNotNull('cae')->count();
-                    $orden = ($count)?$count+1:1;
+                    $inv = Invoice::whereNotNull('cae')->orderBy('orden','DESC')->first();
+                    $orden = (isset($inv))?$inv->orden+1:1;
                     $this->invoiceRepository->fill($invoice->id,[
                         'error' => null,
                         'orden' => $orden,

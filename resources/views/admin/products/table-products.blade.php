@@ -9,6 +9,7 @@
                     <th>Costo</th>
                     <th>Proveedor</th>
                     @can('products.create')
+                    <th>Historial</th>
                     <th>Ajust Stock</th>
                     <th>Editar</th>
                     <th>Borrar</th>
