@@ -147,8 +147,6 @@ class ProductController extends Controller
             $data['product_id']   = $producto_nuevo->id;
             $this->productPriceRepository->create($data);
 
-            Mail::to('novedades@frioteka.com')->bcc('cachoalbornoz@gmail.com')->send(new NovedadMail('producto creado'));
-
             return new JsonResponse(['type' => 'success', 'msj' => 'Producto agregado correctamente!']);
         } catch (\Exception $e) {
             return new JsonResponse(['type' => 'error', 'msj' => $e->getMessage()]);
@@ -392,8 +390,6 @@ class ProductController extends Controller
                     $tipo = ' de actualización ';
                 }
             }
-
-            Mail::to('novedades@frioteka.com')->bcc('cachoalbornoz@gmail.com')->send(new NovedadMail($tipo));
 
             return new JsonResponse(['type' => 'success', 'msj' => 'Precio ' . $tipo . ' modificado correctamente!']);
         } catch (\Exception $e) {
@@ -707,8 +703,7 @@ class ProductController extends Controller
     }
 
     public function compararStock(Request $request)
-    {
-
+    {        
         if ($request->ajax()) {
             $productos = $this->productRepository->all()->where('active', '=', 1);
 
