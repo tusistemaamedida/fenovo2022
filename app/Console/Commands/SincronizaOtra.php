@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Exports\MovementsViewExport;
 use Illuminate\Console\Command;
 
-class SincronizaMovimientos extends Command
+class SincronizaOtra extends Command
 {
     protected $signature   = 'sincroniza:movimientos';
     protected $description = 'Sincroniza los movimientos de Fenovo';
@@ -17,7 +17,6 @@ class SincronizaMovimientos extends Command
 
     public function handle()
     {
-        // Exportar Movimientos
-        (new MovementsViewExport())->store('movi.csv');
+        
     }
 }
