@@ -22,6 +22,8 @@ class Panamas extends Model
 		'totalIibb',
 		'totalConIva',
         'costo_fenovo_total',
-        'orden'
+        'orden',
+        'tipo',
+        'created_at'
 	];
 }

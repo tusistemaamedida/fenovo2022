@@ -40,7 +40,7 @@
                     </div>
                 </div>
             @endif
-            <b style="width: 100%" id="session_products_table"></b>
+            <div style="width: 100%" id="session_products_table"></div>
         </div>
     </div>
 </div>
