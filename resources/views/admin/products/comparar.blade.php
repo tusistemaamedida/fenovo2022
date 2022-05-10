@@ -65,7 +65,7 @@
         processing: true,
         serverSide: true,
         ordering:false,
-        dom: 'lfrBtip',
+        dom: 'lfrtip',
         buttons: ['excel'],
         ajax: "{{ route('products.compararStock') }}",
         columns: [

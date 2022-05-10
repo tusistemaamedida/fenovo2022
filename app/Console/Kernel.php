@@ -36,8 +36,8 @@ class Kernel extends ConsoleKernel
         //Exportacion Fenovo ejecutada cada hora
         $schedule->command('sincroniza:diaria')->hourly()->runInBackground();
         
-        // Exportacion de movimientos diarios ejecutada a las 9 y 14 Hs
-        $schedule->command('sincroniza:movimientos')->twiceDailyAt(8, 14)->runInBackground();
+        // Exportacion de movimientos diarios ejecutada a las 12 y 23 Hs
+        $schedule->command('sincroniza:movimientos')->twiceDailyAt(12, 23)->runInBackground();
     }
 
     /**

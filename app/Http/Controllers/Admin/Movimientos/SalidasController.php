@@ -260,10 +260,6 @@ class SalidasController extends Controller
 
     public function printOrdenConsolidada(Request $request)
     {
-
-        $movement = Movement::whereId(713)->first();
-        return $movement->totalKgrs();
-
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
@@ -289,15 +285,45 @@ class SalidasController extends Controller
                 ->addColumn('kgrs', function ($movement) {
                     return $movement->totalKgrs();
                 })
+                ->addColumn('bultos', function ($movement) {
+                    return  MovementProduct::whereMovementId($movement->id)->where('egress', '>', 0)->sum('bultos');
+                })
+                ->addColumn('flete', function ($movement) {
+                    return  number_format($movement->flete,2,',', '.');
+                })
+                ->addColumn('neto', function ($movement) {
+                    return  ($movement->invoice)?number_format($movement->invoice->imp_neto,2,',', '.'):0;
+                })
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
                 })
+                
+                ->rawColumns(['destino', 'date', 'items', 'type', 'kgrs', 'bultos', 'neto'])
 
-                ->rawColumns(['destino', 'date', 'items', 'type', 'kgrs'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.consolidada');
 
+    }
+
+    public function printPanamaFlete(Request $request)
+    {
+        $movement = Movement::query()->where('id', $request->id)->where('flete_invoice', false)->first();
+        if ($movement) {
+            $id_flete               = 'FL' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+            $destino                = $this->origenData($movement->type, $movement->to, true);
+            $neto                   = 0;
+            $array_productos        = [];
+            $objProduct             = new stdClass();
+            $objProduct->cant       = 1;
+            $objProduct->name       = 'FLETE';
+            $objProduct->unit_price = number_format($movement->flete, 2, ',', '.');
+            $objProduct->subtotal   = $neto   = number_format($movement->flete, 2, ',', '.');
+            $objProduct->class      = '';
+            array_push($array_productos, $objProduct);
+            $pdf = PDF::loadView('print.panamaFelete', compact('destino', 'array_productos', 'neto', 'id_flete'));
+            return $pdf->download($id_flete . '.pdf');
+        }
     }
 
     public function printOrdenPanama(Request $request)
@@ -412,26 +438,6 @@ class SalidasController extends Controller
 
             $pdf = PDF::loadView('print.panama', compact('destino', 'array_productos', 'neto', 'id_panama'));
             return $pdf->download($id_panama . '.pdf');
-        }
-    }
-
-    public function printPanamaFlete(Request $request)
-    {
-        $movement = Movement::query()->where('id', $request->id)->where('flete_invoice', false)->first();
-        if ($movement) {
-            $id_flete               = 'FL' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
-            $destino                = $this->origenData($movement->type, $movement->to, true);
-            $neto                   = 0;
-            $array_productos        = [];
-            $objProduct             = new stdClass();
-            $objProduct->cant       = 1;
-            $objProduct->name       = 'FLETE';
-            $objProduct->unit_price = number_format($movement->flete, 2, ',', '.');
-            $objProduct->subtotal   = $neto   = number_format($movement->flete, 2, ',', '.');
-            $objProduct->class      = '';
-            array_push($array_productos, $objProduct);
-            $pdf = PDF::loadView('print.panamaFelete', compact('destino', 'array_productos', 'neto', 'id_flete'));
-            return $pdf->download($id_flete . '.pdf');
         }
     }
 
