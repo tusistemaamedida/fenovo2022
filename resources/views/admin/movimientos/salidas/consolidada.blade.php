@@ -31,12 +31,15 @@
                                     <table class="table table-condensed table-hover yajra-datatable text-center">
                                         <thead>
                                             <tr class="bg-dark text-white">
+                                                <td>#Orden</td>
                                                 <td>Fecha</td>
                                                 <td>Destino</td>
-                                                <td>#Orden</td>
                                                 <td>Item</td>
-                                                <td>Kgrs</td>
                                                 <td>Tipo</td>
+                                                <td>Kgrs</td>
+                                                <td>Bultos</td>
+                                                <td>Flete</td>
+                                                <td>Neto</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -67,12 +70,15 @@
         dom: '<lfrtip>',
         ajax: "{{ route('print.ordenConsolidada') }}",
         columns: [
+            {data: 'id', orderable:false,searchable: true},
             {data: 'date'},
             {data: 'destino', 'class':'text-left'},
-            {data: 'id', orderable:false,searchable: true},
             {data: 'items'},
+            {data: 'type', 'class':'text-left', orderable:false,searchable: true},
             {data: 'kgrs', orderable:false,searchable: false},
-            {data: 'type', orderable:false,searchable: true},
+            {data: 'bultos', orderable:false,searchable: false},
+            {data: 'flete', orderable:false,searchable: false},
+            {data: 'neto', orderable:false,searchable: false},
         ]
     });
 

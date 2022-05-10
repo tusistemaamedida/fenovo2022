@@ -185,25 +185,47 @@ class Product extends Model
     {
         $date = Carbon::now()->subDays(7);
 
-        $stock = DB::table('products as t1')
+        $registro = DB::table('products as t1')
             ->join('movement_products as t2', 't2.product_id', '=', 't1.id')
-            ->select('t2.balance')
+            ->select('t1.unit_weight','t2.balance', 't2.bultos', 't2.unit_package')
             ->where('t2.entidad_id', '=', 1)
             ->where('t2.product_id', '=', $this->id)
             ->where('t2.created_at', '>=', $date)
             ->orderBy('t2.updated_at')
-            ->pluck('balance')->first();
-        return ($stock) ? $stock : 0;
+            ->first();
+
+        if (!$registro) {
+            return 0;
+        }
+        return ($this->unit_type == 'K')?$registro->balance:number_format($registro->balance / $registro->unit_weight, 0);    
+    }
+
+    public function stockFinSemana()
+    {
+        $registro = DB::table('products as t1')
+            ->join('movement_products as t2', 't2.product_id', '=', 't1.id')
+            ->select('t1.unit_weight', 't2.balance', 't2.bultos', 't2.unit_package')
+            ->where('t2.entidad_id', '=', 1)
+            ->where('t2.product_id', '=', $this->id)
+            ->orderByDesc('t2.updated_at')
+            ->first();
+
+        if (!$registro) {
+            return 0;
+        }
+
+        return ($this->unit_type == 'K')?$registro->balance:number_format($registro->balance / $registro->unit_weight, 0, ',', '.');    
     }
 
     public function ingresoSemana()
     {
         $date = Carbon::now()->subDays(7);
         $stock  = 0;
+        $cant   = 0;
 
         $registros = DB::table('products as t1')
             ->join('movement_products as t2', 't2.product_id', '=', 't1.id')
-            ->select('t2.entry')
+            ->select('t1.unit_weight', 't2.entry', 't2.bultos', 't2.unit_package')
             ->where('t2.entidad_id', '=', 1)
             ->where('t2.product_id', '=', $this->id)
             ->where('t2.created_at', '>=', $date)
@@ -212,7 +234,8 @@ class Product extends Model
             ->skip(1);
 
         foreach ($registros as $registro) {
-            $stock += $registro->entry;
+            $cant = ($this->unit_type == 'K')?$registro->entry:$registro->bultos/$registro->unit_weight;
+            $stock += $cant;
         }    
 
         return $stock;
@@ -225,7 +248,7 @@ class Product extends Model
 
         $registros = DB::table('products as t1')
             ->join('movement_products as t2', 't2.product_id', '=', 't1.id')
-            ->select('t2.egress')
+            ->select('t1.unit_weight', 't2.egress', 't2.bultos', 't2.unit_package')
             ->where('t2.entidad_id', '=', 1)
             ->where('t2.product_id', '=', $this->id)
             ->where('t2.created_at', '>=', $date)
@@ -234,7 +257,8 @@ class Product extends Model
             ->skip(1);
 
         foreach ($registros as $registro) {
-            $stock += $registro->egress;
+            $cant = ($this->unit_type == 'K')?$registro->egress:$registro->bultos/$registro->unit_weight;
+            $stock += $cant;
         }    
 
         return $stock;
