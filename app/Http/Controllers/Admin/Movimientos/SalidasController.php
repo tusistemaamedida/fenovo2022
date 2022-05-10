@@ -388,9 +388,15 @@ class SalidasController extends Controller
 
     public function printPanama(Request $request)
     {
+        $panama   = Panamas::where('movement_id',$request->id)->where('tipo','PAN')->first();
         $movement = Movement::query()->where('id', $request->id)->with('panamas')->first();
+        if(isset($panama)){
+            $orden = $panama->orden;
+        }else{
+            $orden = $movement->orden;
+        }
         if ($movement) {
-            $id_panama       = '8889-' . str_pad($movement->orden, 8, '0', STR_PAD_LEFT);
+            $id_panama       = '8889-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $neto            = 0;
             $array_productos = [];

@@ -205,7 +205,7 @@ class InvoiceController extends Controller
               $more_data->client_address =  strtoupper($data_invoice['client']->address . ' '.$data_invoice['client']->city . ' '.$data_invoice['client']->state);
               $more_data->client_cuit =  $data_invoice['client']->cuit;
               $more_data->client_iva_type =  $this->get_iva_type($data_invoice['client']->iva_type);              ;
-              $more_data->voucher_number =  str_pad($this->pto_vta, 5, "0", STR_PAD_LEFT) .'-'.str_pad($data_invoice['numero_de_factura'], 8, "0", STR_PAD_LEFT);
+              $more_data->voucher_number =  str_pad($this->pto_vta, 4, "0", STR_PAD_LEFT) .'-'.str_pad($data_invoice['numero_de_factura'], 8, "0", STR_PAD_LEFT);
               $more_data->iibb =  $data_invoice['iibb'];
               $more_data->costo_fenovo_total =  $data_invoice['costo_fenovo_total'];
 
