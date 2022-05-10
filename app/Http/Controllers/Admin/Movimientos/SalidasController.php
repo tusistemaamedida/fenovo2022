@@ -10,6 +10,7 @@ use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\OfertaStore;
 use App\Models\Panamas;
+use App\Models\Vehiculo;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
@@ -314,9 +315,17 @@ class SalidasController extends Controller
 
     public function printPanamaFlete(Request $request)
     {
+        $panama   = Panamas::where('movement_id',$request->id)->where('tipo','!=','PAN')->first();
         $movement = Movement::query()->where('id', $request->id)->where('flete_invoice', false)->first();
+
+        if(isset($panama)){
+            $orden = $panama->orden;
+        }else{
+            $orden = $movement->orden;
+        }
+
         if ($movement) {
-            $id_flete               = 'FL' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
+            $id_flete               = '8889-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
             $destino                = $this->origenData($movement->type, $movement->to, true);
             $neto                   = 0;
             $array_productos        = [];
@@ -419,9 +428,15 @@ class SalidasController extends Controller
 
     public function printPanama(Request $request)
     {
+        $panama   = Panamas::where('movement_id',$request->id)->where('tipo','PAN')->first();
         $movement = Movement::query()->where('id', $request->id)->with('panamas')->first();
+        if(isset($panama)){
+            $orden = $panama->orden;
+        }else{
+            $orden = $movement->orden;
+        }
         if ($movement) {
-            $id_panama       = '8889-' . str_pad($movement->orden, 8, '0', STR_PAD_LEFT);
+            $id_panama       = '8889-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $neto            = 0;
             $array_productos = [];
@@ -922,14 +937,23 @@ class SalidasController extends Controller
         );
     }
 
-    public function updateCostos()
-    {
-        $movements = Movement::with('movement_products')->get();
+
+    public function updateCostos(){
+        $movements = Movement::with('senasa')->get();
         foreach ($movements as $m) {
-            foreach ($m->movement_products as $mp) {
-                if (is_null($mp->cost_fenovo)) {
-                    $mp->cost_fenovo = $mp->product->product_price->costfenovo;
-                    $mp->save();
+            if(count($m->senasa)){
+                $senasa = $m->senasa[0];
+                $tipo_flete = 'FLETE T';
+                $vehiculo = Vehiculo::where('patente',$senasa->patente_nro)->first();
+
+                if($vehiculo->propio){
+                    $tipo_flete = 'FLETE P';
+                }
+
+                $panama = Panamas::where('movement_id',$m->id)->where('tipo','!=','PAN')->first();
+                if(isset($panama)){
+                    $panama->tipo = $tipo_flete;
+                    $panama->save();
                 }
             }
         }
