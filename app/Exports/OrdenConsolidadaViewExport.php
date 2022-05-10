@@ -19,7 +19,7 @@ class OrdenConsolidadaViewExport implements FromView
     {
         $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
 
-        $movimientos = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('id');
+        $movimientos = Movement::all()->whereIn('type', $arrTypes)->sortBy('id');
 
         $arrMovimientos = [];
 
@@ -28,8 +28,8 @@ class OrdenConsolidadaViewExport implements FromView
 
             $objMovimiento->id      = str_pad($movimiento->id, 8, '0', STR_PAD_LEFT);
             $objMovimiento->fecha    = date('Y-m-d', strtotime($movimiento->date));
-            $objMovimiento->destino = $movimiento->origenData($movimiento->type);
             $objMovimiento->items   = count(MovementProduct::whereMovementId($movimiento->id)->where('egress', '>', 0)->get());
+            $objMovimiento->destino = $movimiento->To($movimiento->type,true);
             $objMovimiento->tipo    = $movimiento->type;
             $objMovimiento->kgrs    = $movimiento->totalKgrs();
             $objMovimiento->bultos  = MovementProduct::whereMovementId($movimiento->id)->where('egress', '>', 0)->sum('bultos');
@@ -39,6 +39,14 @@ class OrdenConsolidadaViewExport implements FromView
             array_push($arrMovimientos, $objMovimiento);
         }
 
-        return view('exports.ordenConsolidadas', compact('arrMovimientos'));
+        $anio      = date('Y', time());
+        $mes       = date('m', time());
+        $dia       = date('d', time());
+        $hora      = date('H', time());
+        $min       = date('i', time());
+        $registros = str_pad(count($arrMovimientos), 4, '0', STR_PAD_LEFT);
+        $data = $anio . $mes . $dia . $hora . $min . $registros;
+
+        return view('exports.ordenConsolidadas', compact('arrMovimientos', 'data'));
     }
 }

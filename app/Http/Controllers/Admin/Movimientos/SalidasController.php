@@ -266,6 +266,9 @@ class SalidasController extends Controller
 
     public function indexOrdenConsolidada(Request $request)
     {
+        $movimiento = Movement::find(707)->To('VENTACLIENTE', true);
+        return $movimiento->cod_fenovo;
+
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
