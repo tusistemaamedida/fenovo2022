@@ -212,8 +212,11 @@ class SalidasController extends Controller
 
     public function pendientePrint(Request $request)
     {
+        // Cod:: salpend001
+
         $session_products = DB::table('session_products as t1')
             ->join('products as t2', 't1.product_id', '=', 't2.id')
+            ->select('t1.id', 't2.cod_fenovo', 't2.name', 't2.cod_proveedor', 't1.quantity', 't2.unit_weight', 't1.unit_package')
             ->where('t1.list_id', '=', $request->list_id)
             ->orderBy('t2.cod_fenovo')
             ->get();

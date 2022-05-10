@@ -709,6 +709,8 @@ class ProductController extends Controller
     public function compararStock(Request $request)
     {
 
+        return $product = Product::find(2)->stockInicioSemana();
+        
         if ($request->ajax()) {
             $productos = $this->productRepository->all()->where('active', '=', 1);
 
