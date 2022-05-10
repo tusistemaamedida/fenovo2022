@@ -2,23 +2,7 @@
     <tr>
         <td colspan="15">{{ $data }}</td>
     </tr>
-    <tr>
-        <td>IDCAJA</td>
-        <td>NROCOM</td>
-        <td>FECHA</td>
-        <td>HORA</td>
-        <td>FISCAL</td>
-        <td>ID_CLI</td>
-        <td>NOMCLI</td>
-        <td>CUICLI</td>
-        <td>IVACLI</td>
-        <td>NETO_1</td>
-        <td>IVAA_1</td>
-        <td>NETO_2</td>
-        <td>IVAA_2</td>
-        <td>NOGRAV</td>
-        <td>TOTVTA</td>
-    </tr>
+
     @foreach($arr_elementos as $element)
     <tr>
         <td>{{ $element->IDCAJA}}</td>

@@ -24,7 +24,7 @@ class CabeExport implements FromView {
     public function view(): View{
         $arr_elementos = [];
         $panamas = Panamas::orderBy('orden','ASC')->get();
-
+        $i = 0;
         foreach ($panamas as $panama) {
             $element         = new stdClass();
 
@@ -60,7 +60,7 @@ class CabeExport implements FromView {
             $element->RECARG = 0;
             $element->TOTFIS = 0;
             $element->TOTFIS = 0;
-
+            $i++;
             array_push($arr_elementos, $element);
         }
 
@@ -69,7 +69,7 @@ class CabeExport implements FromView {
         $dia       = date('d', time());
         $hora      = date('H', time());
         $min       = date('i', time());
-        $registros = str_pad(count($arr_elementos), 4, '0.0', STR_PAD_LEFT);
+        $registros = str_pad($i, 4, '0', STR_PAD_LEFT);
 
         $data = $anio . $mes . $dia . $hora . $min . $registros;
 
