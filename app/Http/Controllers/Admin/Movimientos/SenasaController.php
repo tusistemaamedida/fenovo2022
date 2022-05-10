@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin\Movimientos;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
 use App\Models\Senasa;
+use App\Models\Panamas;
+use App\Models\Vehiculo;
 use App\Repositories\LocalidadRepository;
 use App\Repositories\SenasaRepository;
 use App\Repositories\VehiculoRepository;
@@ -143,7 +145,23 @@ class SenasaController extends Controller
     public function vincularStore(Request $request)
     {
         $senasa = Senasa::find($request->id);
-        $senasa->movements()->sync($request->get('movements'));
+        $tipo_flete = 'FLETE T';
+        $vehiculo = Vehiculo::where('patente',$senasa->patente_nro)->first();
+
+        if($vehiculo->propio){
+            $tipo_flete = 'FLETE P';
+        }
+
+        $movements = $request->get('movements');
+        $senasa->movements()->sync($movements);
+
+        foreach ($movements as $m) {
+            $panama = Panamas::where('movement_id',$m)->where('tipo','!=','PAN')->first();
+            if(isset($panama)){
+                $panama->tipo = $tipo_flete;
+                $panama->save();
+            }
+        }
 
         return redirect()->route('senasa.index');
     }
