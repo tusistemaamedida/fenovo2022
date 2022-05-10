@@ -65,8 +65,10 @@ class CabeEleExport implements FromView {
             }elseif($invoice->tipoFactura->afip_id == 2){
                 $tipo_factura = 'NDA';
             }
-
-            $element->FISCAL = $tipo_factura.$invoice->voucher_number ;
+            $explodes = explode('-',$invoice->voucher_number);
+            $ptoVta = str_pad((int)$explodes[0], 4, "0", STR_PAD_LEFT);
+            //str_pad($this->pto_vta, 4, "0", STR_PAD_LEFT)
+            $element->FISCAL = $tipo_factura.$ptoVta.'-'.$explodes[1] ;
             $element->NETO_1 = $this->getBaseImporteIva($invoice->ivas,4); //4 es el 10.5
             $element->IVAA_1 = $this->getImporteIva($invoice->ivas,4); //4 es el 10.5
             $element->NETO_2 = $this->getBaseImporteIva($invoice->ivas,5); //5 es el 21
