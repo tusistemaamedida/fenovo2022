@@ -163,12 +163,13 @@
         iDisplayLength: -1,
     });
     jQuery('#product_search').select2('open');
+    /*
     jQuery('.select2-container').addClass('select2-container--open');
     jQuery('.select2-container').click(function(){
         jQuery('.select2-container').addClass('select2-container--open');
     })
     window.addEventListener('scroll',(event) => {
         jQuery('.select2-container').removeClass('select2-container--open');
-    });
+    }); */
 </script>
 

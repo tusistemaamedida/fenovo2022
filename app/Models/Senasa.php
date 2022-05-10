@@ -33,6 +33,7 @@ class Senasa extends Model
         'dias_validez',
         'fecha_salida',
         'hora_salida',
+        'propia'
     ];
 
     public function movements()

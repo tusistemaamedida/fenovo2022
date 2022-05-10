@@ -28,15 +28,23 @@ class CabeExport implements FromView {
         foreach ($panamas as $panama) {
             $element         = new stdClass();
 
+            if($panama->tipo == 'PAN'){
+                $id_caja = 'PANAMA';
+            }elseif($panama->tipo == 'FLE'){
+                $id_caja = 'FLETE';
+            }else{
+                $id_caja = $panama->tipo;
+            }
+
             $element->ID_CLI = $panama->pto_vta;
             $element->NOMCLI = $panama->client_name;
             $element->CUICLI = $panama->client_cuit;
             $element->IVACLI = $panama->client_iva_type;
-            $element->IDCAJA = null;
+            $element->IDCAJA = $id_caja;
             $element->NROCOM = $panama->orden;
             $element->FECHA  = Carbon::parse($panama->created_at)->format('d/m/Y');
             $element->HORA   = Carbon::parse($panama->created_at)->format('H:i');
-            $element->FISCAL = null;
+            $element->FISCAL = '8889-' . str_pad($panama->orden, 8, '0', STR_PAD_LEFT);;
             $element->NETO_1 = $panama->neto105;
             $element->IVAA_1 = $panama->iva_neto105;
             $element->NETO_2 = $panama->neto21;
