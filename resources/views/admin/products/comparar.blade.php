@@ -14,7 +14,9 @@
                             </h4>
                         </div>
                         <div class="icons d-flex">
-
+                            <a href="{{ route('products.printCompararStock') }}" target="_blank">
+                                <i class=" fa fa-print"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
