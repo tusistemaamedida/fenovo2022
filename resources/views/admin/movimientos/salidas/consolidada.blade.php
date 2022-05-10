@@ -16,7 +16,9 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-
+                                    <a href="{{ route('print.ordenConsolidada') }}" class="mt-1 mr-3">
+                                        <i class="fa fa-print"></i> Orden
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +70,7 @@
         processing: true,
         serverSide: true,
         dom: '<lfrtip>',
-        ajax: "{{ route('print.ordenConsolidada') }}",
+        ajax: "{{ route('index.ordenConsolidada') }}",
         columns: [
             {data: 'id', orderable:false,searchable: true},
             {data: 'date'},
