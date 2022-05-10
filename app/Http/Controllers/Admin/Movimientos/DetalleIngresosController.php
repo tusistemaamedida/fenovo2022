@@ -22,7 +22,7 @@ class DetalleIngresosController extends Controller
             foreach ($request->datos as $movimiento) {
 
                 $product               = Product::find($movimiento['product_id']);
-                $latest                = $product->stock(null, Auth::user()->store_active);
+                $latest                = $product->stockReal(null, Auth::user()->store_active);
                 $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
                 $movimiento['balance'] = $balance;
 
