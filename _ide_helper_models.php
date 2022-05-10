@@ -564,12 +564,13 @@ namespace App\Models{
  *
  * @property int $id
  * @property int|null $orden
+ * @property string|null $tipo
  * @property int|null $movement_id
  * @property string|null $client_name
  * @property string|null $client_address
  * @property string|null $client_cuit
  * @property string|null $client_iva_type
- * @property int|null $pto_vta
+ * @property string|null $pto_vta
  * @property string|null $neto105
  * @property string|null $iva_neto105
  * @property string|null $neto21
@@ -596,6 +597,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereNeto21($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereOrden($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas wherePtoVta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereTipo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereTotalConIva($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereTotalIibb($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereUpdatedAt($value)

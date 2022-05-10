@@ -41,13 +41,13 @@
                                                 <td>Tipo</td>
                                                 <td>Kgrs</td>
                                                 <td>Fac</td>
-                                                <td>Det</td>
-                                                <td>Des</td>
-                                                <td>Rto</td>
-                                                <td>Paper</td>
-                                                <td>Flete</td>
-                                                <td>Orden</td>
-                                                <td>OPma</td>
+                                                <td style="width: 15px">Det</td>
+                                                <td style="width: 15px">Des</td>
+                                                <td style="width: 15px">Rto</td>
+                                                <td style="width: 15px">Paper</td>
+                                                <td style="width: 15px">Flete</td>
+                                                <td style="width: 15px">Orden</td>
+                                                <td style="width: 15px">OPma</td>
                                             </tr>
                                         </thead>
                                         <tbody>

@@ -689,12 +689,6 @@ class ProductController extends Controller
     public function compararStock(Request $request)
     {
 
-        /* Testing methods
-        $producto = Product::whereId(1)->first();
-        return $producto->salidaSemana();
-        */
-
-
         if ($request->ajax()) {
             $productos = $this->productRepository->all()->where('active', '=', 1);
 
@@ -709,13 +703,13 @@ class ProductController extends Controller
                     return $product->stockInicioSemana();
                 })
                 ->addColumn('ingresoSemana', function ($product) {
-                    return number_format($product->ingresoSemana(),2);
+                    return number_format($product->ingresoSemana(), 2);
                 })
                 ->addColumn('salidaSemana', function ($product) {
-                    return number_format($product->salidaSemana(),2);
+                    return number_format($product->salidaSemana(), 2);
                 })
                 ->addColumn('stock', function ($product) {
-                    return $product->stockReal(null, Auth::user()->store_active);
+                    return $product->stockFinSemana();
                 })
 
                 ->addColumn('costo', function ($product) {
