@@ -932,7 +932,7 @@ class SalidasController extends Controller
 
     public function updateCostos()
     {
-        $sessions = SessionProduct::all();
+        /* $sessions = SessionProduct::all();
         foreach ($sessions as $s) {
             if(!str_contains($s->list_id, 'CLIENTE')){
                 $s->neto = $s->unit_price;
@@ -943,7 +943,7 @@ class SalidasController extends Controller
                 $s->neto = $s->unit_price/(1+($tasiva /100));
                 $s->save();
             }
-        }
+        } */
         /* foreach ($movements as $m) {
             $pto_vta       = $cuit       = $iva_type       = '';
             $cliente       = null;
