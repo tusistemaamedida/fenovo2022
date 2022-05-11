@@ -13,11 +13,11 @@
         <td>{{ $movimiento->kgrs }}</td>
         <td>{{ $movimiento->bultos }}</td>
         <td>{{ $movimiento->factura_nro }}</td>
-        <td>{{ number_format($movimiento->factura_neto, 2) }}</td>
-        <td>{{ number_format($movimiento->panama_nro, 0) }}</td>
-        <td>{{ number_format($movimiento->panama_neto, 2) }}</td>
-        <td>{{ number_format($movimiento->flete_nro, 0) }}</td>
-        <td>{{ number_format($movimiento->flete_neto, 2) }}</td>
+        <td>{{ $movimiento->factura_neto }}</td>
+        <td>{{ $movimiento->panama_nro }}</td>
+        <td>{{ $movimiento->panama_neto }}</td>
+        <td>{{ $movimiento->flete_nro }}</td>
+        <td>{{ $movimiento->flete_neto }}</td>
     </tr>
     @endforeach
 </table>
