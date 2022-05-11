@@ -75,7 +75,7 @@ class Movement extends Model
     }
 
     public function verifSiFactura(){
-        return MovementProduct::where('movement_id',$this->id)->where('tipo','PAN')->where('invoice', true)->count();
+        return MovementProduct::where('movement_id',$this->id)->where('invoice', true)->count();
     }
 
     public function hasPanama(){
