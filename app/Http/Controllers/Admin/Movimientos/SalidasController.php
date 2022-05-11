@@ -671,6 +671,7 @@ class SalidasController extends Controller
                     //$ofertaStore = OfertaStore::where('store_id',$to)
                     $insert_data['unit_price'] = $prices->plist0neto;
                     $insert_data['tasiva']     = $prices->tasiva;
+                    $insert_data['neto']       = $prices->plist0neto;
                     break;
                 case 'DEVOLUCIONCLIENTE':
                 case 'VENTACLIENTE':
@@ -683,8 +684,10 @@ class SalidasController extends Controller
                     ];
                     $insert_data['unit_price'] = $listAssociates[$customer->listprice_associate];
                     $insert_data['tasiva']     = $prices->tasiva;
+                    $insert_data['neto']       = $insert_data['unit_price']/(1+($prices->tasiva/100)); //Este valor se toma cuando no se factura
                     break;
             }
+
             $insert_data['costo_fenovo'] = $prices->costfenovo;
             $insert_data['list_id']      = $to_type . '_' . $to;
             $insert_data['store_id']     = Auth::user()->store_active;
@@ -797,9 +800,9 @@ class SalidasController extends Controller
                     'unit_package'    => $product->unit_package, ], [
                         'invoice'     => $product->invoice,
                         'iibb'        => $product->iibb,
-                        'unit_price'  => $product->unit_price,
+                        'unit_price'  => ($product->invoice)?$product->unit_price:$product->neto,
                         'cost_fenovo' => $product->costo_fenovo,
-                        'tasiva'      => $product->tasiva,
+                        'tasiva'      => ($product->invoice)?$product->tasiva:0,
                         'entry'       => 0,
                         'bultos'      => $product->quantity,
                         'egress'      => $kgrs,
@@ -824,8 +827,8 @@ class SalidasController extends Controller
                             'invoice'    => $product->invoice,
                             'bultos'     => $product->quantity,
                             'entry'      => $kgrs,
-                            'unit_price' => $product->unit_price,
-                            'tasiva'     => $product->tasiva,
+                            'unit_price' => ($product->invoice)?$product->unit_price:$product->neto,
+                            'tasiva'     => ($product->invoice)?$product->tasiva:0,
                             'egress'     => 0,
                             'balance'    => $balance,
                         ]);
@@ -839,8 +842,8 @@ class SalidasController extends Controller
                             'invoice'    => $product->invoice,
                             'bultos'     => $product->quantity,
                             'entry'      => $kgrs,
-                            'unit_price' => $product->unit_price,
-                            'tasiva'     => $product->tasiva,
+                            'unit_price' => ($product->invoice)?$product->unit_price:$product->neto,
+                            'tasiva'     => ($product->invoice)?$product->tasiva:0,
                             'egress'     => 0,
                             'balance'    => $balance,
                         ]);
@@ -906,7 +909,8 @@ class SalidasController extends Controller
     public function changeInvoiceProduct(Request $request)
     {
         try {
-            $session_product          = $this->sessionProductRepository->getByListIdAndProduct($request->input('list_id'), $request->input('product_id'));
+            $listId = $request->input('list_id');
+            $session_product          = $this->sessionProductRepository->getByListIdAndProduct($listId, $request->input('product_id'));
             $session_product->invoice = !$session_product->invoice;
             $session_product->save();
             return new JsonResponse(['msj' => 'Facturación cambiada', 'type' => 'success']);
@@ -928,8 +932,19 @@ class SalidasController extends Controller
 
     public function updateCostos()
     {
-        $movements = Movement::with('senasa')->get();
-        foreach ($movements as $m) {
+        $sessions = SessionProduct::all();
+        foreach ($sessions as $s) {
+            if(!str_contains($s->list_id, 'CLIENTE')){
+                $s->neto = $s->unit_price;
+                $s->save();
+            }else{
+                $product = $this->productRepository->getByIdWith($s->product_id);
+                $tasiva = $product->product_price->tasiva;
+                $s->neto = $s->unit_price/(1+($tasiva /100));
+                $s->save();
+            }
+        }
+        /* foreach ($movements as $m) {
             $pto_vta       = $cuit       = $iva_type       = '';
             $cliente       = null;
 
@@ -1005,6 +1020,6 @@ class SalidasController extends Controller
                     $panama->save();
                 }
             }
-        }
+        } */
     }
 }
