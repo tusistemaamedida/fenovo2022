@@ -109,8 +109,12 @@ class SalidasController extends Controller
                     $routeOrden        = route('print.orden', ['id' => $movement->id]);
                     $routeOrdenPanama  = route('print.ordenPanama', ['id' => $movement->id]);
                     $links .= '<a class="mr-3 ml-3" title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
-                    $links .= '<a class="mr-3 ml-3" title="Imprimir Paper"  href="' . $routeCreatePanama . '" target="_blank"> <i class="fas fa-file"></i> </a>';
-                    $links .= '<a class="mr-3 ml-3" title="Imprimir Flete"  href="' . $routeFletePanama . '" target="_blank"> <i class="fas fa-car"></i> </a>';
+                    if($movement->hasPanama()){
+                        $links .= '<a class="mr-3 ml-3" title="Imprimir Paper"  href="' . $routeCreatePanama . '" target="_blank"> <i class="fas fa-file"></i> </a>';
+                    }
+                    if($movement->hasFlete()){
+                        $links .= '<a class="mr-3 ml-3" title="Imprimir Flete"  href="' . $routeFletePanama . '" target="_blank"> <i class="fas fa-car"></i> </a>';
+                    }
                     $links .= '<a class="mr-3 ml-3" title="Imprimir Orden"  href="' . $routeOrden . '" target="_blank"> <i class="fas fa-list"></i> </a>';
                     $links .= '<a class="mr-3 ml-3" title="Imprimir Orden panama"  href="' . $routeOrdenPanama . '" target="_blank"> <i class="fas fa-list text-danger"></i> </a>';
                     return $links;
@@ -134,11 +138,17 @@ class SalidasController extends Controller
                     return '<a title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
                 })
                 ->addColumn('paper', function ($movement) {
-                    return '<a title="Imprimir Paper"  href="' . route('print.panama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-file"></i> </a>';
+                    if($movement->hasPanama()){
+                        $pan = $movement->getPanama();
+                        return '<a title="Imprimir Paper '.$pan->orden.'"  href="' . route('print.panama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-file"></i> </a>';
+                    }
                 })
                 ->addColumn('flete', function ($movement) {
-                    return '<a class="m-0" title="Imprimir Flete"  href="' . route('print.panama.felete', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-car"></i> </a>';
-                })
+                    if($movement->hasFlete()){
+                        $fle = $movement->getFlete();
+                        return '<a class="m-0" title="Imprimir Flete'.$fle->orden.'"  href="' . route('print.panama.felete', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-car"></i> </a>';
+                    }
+                 })
                 ->addColumn('orden', function ($movement) {
                     return '<a class="m-0" title="Imprimir Orden"  href="' . route('print.orden', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>';
                 })
@@ -313,8 +323,6 @@ class SalidasController extends Controller
 
     public function printOrdenConsolidada(Request $request)
     {
-        // return $movimiento = Movement::find(741);
-        
         return Excel::download(new OrdenConsolidadaViewExport(), 'ordenes.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
