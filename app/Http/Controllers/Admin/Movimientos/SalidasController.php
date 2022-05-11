@@ -10,10 +10,10 @@ use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\OfertaStore;
 use App\Models\Panamas;
-use App\Models\Vehiculo;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
+use App\Models\Vehiculo;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -60,7 +60,7 @@ class SalidasController extends Controller
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('date');
+                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('date')->sortByDesc('id');
             } else {
                 $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->get();
             }
@@ -266,9 +266,6 @@ class SalidasController extends Controller
 
     public function indexOrdenConsolidada(Request $request)
     {
-        $movimiento = Movement::find(707)->To('VENTACLIENTE', true);
-        return $movimiento->cod_fenovo;
-
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
@@ -315,18 +312,20 @@ class SalidasController extends Controller
     }
 
     public function printOrdenConsolidada(Request $request)
-    {        
+    {
+        // return $movimiento = Movement::find(741);
+        
         return Excel::download(new OrdenConsolidadaViewExport(), 'ordenes.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function printPanamaFlete(Request $request)
     {
-        $panama   = Panamas::where('movement_id',$request->id)->where('tipo','!=','PAN')->first();
+        $panama   = Panamas::where('movement_id', $request->id)->where('tipo', '!=', 'PAN')->first();
         $movement = Movement::query()->where('id', $request->id)->where('flete_invoice', false)->first();
 
-        if(isset($panama)){
+        if (isset($panama)) {
             $orden = $panama->orden;
-        }else{
+        } else {
             $orden = $movement->orden;
         }
 
@@ -434,11 +433,11 @@ class SalidasController extends Controller
 
     public function printPanama(Request $request)
     {
-        $panama   = Panamas::where('movement_id',$request->id)->where('tipo','PAN')->first();
+        $panama   = Panamas::where('movement_id', $request->id)->where('tipo', 'PAN')->first();
         $movement = Movement::query()->where('id', $request->id)->with('panamas')->first();
-        if(isset($panama)){
+        if (isset($panama)) {
             $orden = $panama->orden;
-        }else{
+        } else {
             $orden = $movement->orden;
         }
         if ($movement) {
@@ -802,7 +801,7 @@ class SalidasController extends Controller
                 $cuit2    = substr($cliente->cuit, 2, 8);
                 $cuit3    = substr($cliente->cuit, 10, 1);
                 $cuit     = $cuit1 . '-' . $cuit2 . '-' . $cuit3;
-                $iva_type = ($cliente->iva_type == 'RI') ? 'I' : $destino->iva_type;
+                $iva_type = ($cliente->iva_type == 'RI') ? 'I' : $cliente->iva_type;
             }
 
             foreach ($session_products as $product) {
@@ -943,21 +942,21 @@ class SalidasController extends Controller
         );
     }
 
-
-    public function updateCostos(){
+    public function updateCostos()
+    {
         $movements = Movement::with('senasa')->get();
         foreach ($movements as $m) {
-            if(count($m->senasa)){
-                $senasa = $m->senasa[0];
+            if (count($m->senasa)) {
+                $senasa     = $m->senasa[0];
                 $tipo_flete = 'FLETE T';
-                $vehiculo = Vehiculo::where('patente',$senasa->patente_nro)->first();
+                $vehiculo   = Vehiculo::where('patente', $senasa->patente_nro)->first();
 
-                if($vehiculo->propio){
+                if ($vehiculo->propio) {
                     $tipo_flete = 'FLETE P';
                 }
 
-                $panama = Panamas::where('movement_id',$m->id)->where('tipo','!=','PAN')->first();
-                if(isset($panama)){
+                $panama = Panamas::where('movement_id', $m->id)->where('tipo', '!=', 'PAN')->first();
+                if (isset($panama)) {
                     $panama->tipo = $tipo_flete;
                     $panama->save();
                 }
