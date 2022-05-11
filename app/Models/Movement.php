@@ -63,6 +63,11 @@ class Movement extends Model
         return $this->hasMany(MovementProduct::class)->where('egress', '>', 0);
     }
 
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
+    }
+
     public function panamas()
     {
         return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('invoice', false);
@@ -168,11 +173,6 @@ class Movement extends Model
                 $customer = Customer::find($typeTo);
                 return $customer->razon_social;
         }
-    }
-
-    public function invoice()
-    {
-        return $this->hasOne(Invoice::class);
     }
 
     public function totalKgrs()
