@@ -26,10 +26,12 @@ class IngresosController extends Controller
 
     public function index(Request $request)
     {
+
         if ($request->ajax()) {
+
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $arrTypes = ['COMPRA'];
-                $movement = Movement::whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
+                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
             } else {
                 $arrTypes = ['VENTA', 'TRASLADO'];
                 $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
@@ -71,6 +73,43 @@ class IngresosController extends Controller
         return view('admin.movimientos.ingresos.index');
     }
 
+    public function indexCerradas(Request $request)
+    {
+        if ($request->ajax()) {
+
+            if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
+                $arrTypes = ['COMPRA'];
+                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
+            } else {
+                $arrTypes = ['VENTA', 'TRASLADO'];
+                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
+            }
+            return Datatables::of($movement)
+                ->addIndexColumn()
+                ->addColumn('origen', function ($movement) {
+                    return $movement->origenData($movement->type);
+                })
+                ->editColumn('date', function ($movement) {
+                    return date('d-m-Y', strtotime($movement->date));
+                })
+                ->addColumn('items', function ($movement) {
+                    return '<span class="badge badge-primary">' . $movement->cantidad_ingresos() . '</span>';
+                })
+                ->addColumn('kgrs', function ($movement) {
+                    return '<span class="badge badge-primary">' . $movement->totalKgrs() . '</span>';
+                })
+                ->addColumn('voucher', function ($movement) {
+                    return  $movement->voucher_number;
+                })
+                ->addColumn('show', function ($movement) {
+                    return '<a href="' . route('ingresos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                })
+                ->rawColumns(['origen', 'date', 'items', 'kgrs', 'voucher', 'show'])
+                ->make(true);
+        }
+        return view('admin.movimientos.ingresos.indexCerradas');
+    }
+
     public function add()
     {
         $proveedores = Proveedor::orderBy('name')->pluck('name', 'id');
@@ -79,12 +118,12 @@ class IngresosController extends Controller
 
     public function store(Request $request)
     {
-        $to = Auth::user()->store_active;
-        $count = Movement::where('to',$to)->where('type','COMPRA')->count();
-        $orden = ($count)?$count+1:1;
-        $data = $request->all();
+        $to            = Auth::user()->store_active;
+        $count         = Movement::where('to', $to)->where('type', 'COMPRA')->count();
+        $orden         = ($count) ? $count + 1 : 1;
+        $data          = $request->all();
         $data['orden'] = $orden;
-        $movement = Movement::create($data);
+        $movement      = Movement::create($data);
         return redirect()->route('ingresos.edit', ['id' => $movement->id]);
     }
 
@@ -150,10 +189,7 @@ class IngresosController extends Controller
     public function close(Request $request)
     {
         Movement::find($request->id)->update(['status' => 'FINISHED']);
-        return new JsonResponse(
-            ['msj'     => 'Cerrado ... ',
-                'type' => 'success', ]
-        );
+        return redirect()->route('ingresos.index');
     }
 
     public function show(Request $request)

@@ -42,11 +42,7 @@ class MovementsViewExport implements FromView
             $creado = false;
             if (in_array($movement->type, $arrEntrada)) {
                 // Venta o traslado
-                if ($movement->entry > 0) {
-                    $creado = true;
-                }
-
-                if ($movement->type == 'VENTACLIENTE') {
+                if ($movement->entry > 0 || $movement->type == 'VENTACLIENTE') {
                     $creado = true;
                 }
 
@@ -82,7 +78,6 @@ class MovementsViewExport implements FromView
             $store_type = DB::table('stores')->where('id', $movement->from)->select('store_type')->pluck('store_type')->first();
 
             $creado     = false;
-            $cliente_id = str_pad(0, 3, '0', STR_PAD_LEFT);
 
             if (in_array($movement->type, $arrEntrada)) {
                 
@@ -100,7 +95,6 @@ class MovementsViewExport implements FromView
                     $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
                     $objMovement->cantidad    = ($movement->unidad == 'K') ? $movement->entry : $movement->bultos * $movement->unit_package;
                     $objMovement->unidad      = $movement->unidad;
-                    $objMovement->cliente_id  = $cliente_id;
 
                 } 
                 
@@ -109,19 +103,15 @@ class MovementsViewExport implements FromView
                     $objMovement = new stdClass();
                     $creado      = true;
 
-                    $id = DB::table('customers')->where('id', $movement->to)->select('id')->pluck('id')->first();
-                    $cliente_id = str_pad($id, 3, '0', STR_PAD_LEFT);
-
                     $objMovement->origen      = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                     $objMovement->id          = 'O' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
                     $objMovement->orden       = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
                     $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
                     $objMovement->tipo        = 'S';
-                    $objMovement->codtienda   = str_pad(0, 3, '0', STR_PAD_LEFT);
+                    $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                     $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
                     $objMovement->cantidad    = ($movement->unidad == 'K') ? $movement->egress : $movement->bultos * $movement->unit_package;
                     $objMovement->unidad      = $movement->unidad;
-                    $objMovement->cliente_id  = $cliente_id;
                 }
 
             } else {
@@ -153,7 +143,6 @@ class MovementsViewExport implements FromView
                 $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
                 $objMovement->cantidad    = $cant;
                 $objMovement->unidad      = $movement->unidad;
-                $objMovement->cliente_id  = $cliente_id;
             }
 
             if ($creado) {

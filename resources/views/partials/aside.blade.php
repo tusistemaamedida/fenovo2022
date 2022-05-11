@@ -28,11 +28,21 @@
                     </li>
                     @endcan
 
-                    <li class="nav-item" title="Compra de Mercadería">
-                        <a href="{{ route('ingresos.index') }}" class="nav-link">
-                            <span class="svg-icon nav-icon"> <i class="fas fa-cart-arrow-down"></i> </span>
-                            <span class="nav-text">Compras</span>
-                        </a>
+                    <li class="dropdown dropright">
+                        <button type="button" class="btn dropdown-toggle text-black-50" data-toggle="dropdown" title="Compras de mercadería">
+                            <i class="fas fa-cart-arrow-down"></i>
+                        </button>
+                        <div class="dropdown-menu bg-dark">
+                            <a class="dropdown-item text-black-50" href="{{ route('ingresos.index') }}">
+                                Preparar Compras
+                            </a>
+                            <a class="dropdown-item text-black-50" href="{{ route('ingresos.indexCerradas') }}">
+                                Compras cerradas
+                            </a>
+                        </div>
+
+
+
                     </li>
                     <li class="dropdown dropright">
                         <button type="button" class="btn dropdown-toggle text-black-50" data-toggle="dropdown" title="Salida de mercadería">
