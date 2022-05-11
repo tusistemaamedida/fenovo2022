@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Admin\Movimientos;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
 use App\Exports\OrdenConsolidadaViewExport;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
@@ -27,7 +30,6 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use stdClass;
 use Yajra\DataTables\Facades\DataTables;
@@ -720,6 +722,8 @@ class SalidasController extends Controller
     {
         $from = Auth::user()->store_active;
         try {
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
             $list_id = $request->input('session_list_id');
             $explode = explode('_', $list_id);
 
@@ -861,7 +865,7 @@ class SalidasController extends Controller
             if ($insert_panama) {
                 $orden += 1;
                 $data_panama['tipo']               = 'PAN';
-                $data_panama['orden']              = $orden;                $
+                $data_panama['orden']              = $orden;
                 $data_panama['neto105']            = (is_null($movement->neto105(false))     || is_null($movement->neto105(false)->neto105)) ? '0.0' : $movement->neto105(false)->neto105;
                 $data_panama['iva_neto105']        = (is_null($movement->neto105(false))     || is_null($movement->neto105(false)->neto_iva105)) ? '0.0' : $movement->neto105(false)->neto_iva105;
                 $data_panama['neto21']             = (is_null($movement->neto21(false))      || is_null($movement->neto21(false)->neto21)) ? '0.0' : $movement->neto21(false)->neto21;
@@ -888,8 +892,12 @@ class SalidasController extends Controller
             }
 
             $this->sessionProductRepository->deleteList($list_id);
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
             return redirect()->route('salidas.add');
         } catch (\Exception $e) {
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
             dd($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
