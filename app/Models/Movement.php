@@ -225,6 +225,7 @@ class Movement extends Model
             ->orderBy('m.date', 'ASC')
             ->where('m.id', $this->id)
             ->where('mp.egress','>', 0)
+            ->where('mp.invoice','=', 1)
             ->where('mp.entidad_id',\Auth::user()->store_active)
             ->where('mp.entidad_tipo','S')
             ->whereIn('m.type', $arrEgreso)
