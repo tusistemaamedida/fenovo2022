@@ -9,6 +9,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -207,6 +208,26 @@ class Movement extends Model
     public function cantidad_ingresos()
     {
         return count($this->hasMany(MovementProduct::class)->get()->groupBy('product_id'));
+    }
+
+    public function neto()
+    {
+        $arrEgreso = ['VENTA', 'VENTACLIENTE','TRASLADO'];
+
+        $netoInvoice = DB::table('movements as m')
+            ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
+            ->groupBy('mp.movement_id')
+            ->select([DB::raw('SUM(mp.bultos * mp.unit_price * mp.unit_package * mp.tasiva) as netoInvoice')])
+            ->orderBy('m.date', 'ASC')
+            ->where('m.id', $this->id)
+            ->where('mp.egress','>', 0)
+            ->where('mp.entidad_id',\Auth::user()->store_active)
+            ->where('mp.entidad_tipo','S')
+            ->whereIn('m.type', $arrEgreso)
+            ->pluck('netoInvoice')
+            ->first();
+
+        return new JsonResponse(['netoInvoice' => number_format($netoInvoice,2,',','')]);
     }
 
     public function neto21($invoice)

@@ -40,8 +40,6 @@
                                                 <td>Tipo</td>
                                                 <td>Kgrs</td>
                                                 <td>Fac</td>
-                                                <td>Det</td>
-                                                <td>Des</td>
                                                 <td>Rto</td>
                                                 <td>Paper</td>
                                                 <td>Flete</td>
@@ -84,11 +82,9 @@
             {data: 'date'},
             {data: 'destino', 'class':'text-left'},
             {data: 'items'},
-            {data: 'type', orderable:false,searchable: true},
+            {data: 'type', 'class':'text-left', orderable:false,searchable: false},
             {data: 'kgrs', orderable:false,searchable: false},
             {data: 'factura_nro', orderable:false,searchable: false},
-            {data: 'detalle', orderable:false,searchable: false},
-            {data: 'factura', orderable:false,searchable: false},
             {data: 'remito', orderable:false,searchable: false},
             {data: 'paper', orderable:false,searchable: false},
             {data: 'flete', orderable:false,searchable: false},
