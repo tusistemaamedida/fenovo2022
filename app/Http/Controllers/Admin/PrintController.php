@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\MovementsViewExport;
-
+use App\Exports\OrdenConsolidadaViewExport;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
-use App\Models\MovementProduct;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -121,5 +120,11 @@ class PrintController extends Controller
     public function exportMovimientosCsv(Request $request)
     {
         return Excel::download(new MovementsViewExport(), 'movi.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+    }
+
+    public function exportOrdenesCsv()
+    {
+        // return Movement::where('id', '>', 615)->orderBy('date')-> get();
+        return Excel::download(new  OrdenConsolidadaViewExport(), 'ordenes.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 }
