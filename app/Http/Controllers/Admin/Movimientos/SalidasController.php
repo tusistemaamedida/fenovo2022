@@ -91,7 +91,7 @@ class SalidasController extends Controller
                         if ($movement->invoice && !is_null($movement->invoice->cae)) {
                             return '<a class="text-primary" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> ' . $movement->invoice->voucher_number . ' </a>';
                         }
-                        return '<a href="' . route('create.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>';
+                        return ($movement->verifSiFactura()) ?'<a href="' . route('create.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>':'';
                     }
                 })
                 ->editColumn('updated_at', function ($movement) {
