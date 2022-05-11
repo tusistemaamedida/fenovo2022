@@ -74,6 +74,10 @@ class Movement extends Model
         return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('invoice', false);
     }
 
+    public function verifSiFactura(){
+        return MovementProduct::where('movement_id',$this->id)->where('invoice', true)->count();
+    }
+
     public function hasPanama(){
         return Panamas::where('movement_id',$this->id)->where('tipo','PAN')->exists();
     }

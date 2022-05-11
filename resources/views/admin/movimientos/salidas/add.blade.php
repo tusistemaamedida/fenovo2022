@@ -422,6 +422,7 @@
                     toastr.error(data['msj'], 'Verifique');
                 }
                 jQuery('#loader').addClass('hidden');
+                cargarTablaProductos();
             },
             error: function (data) {
             },
