@@ -886,19 +886,22 @@ class SalidasController extends Controller
                     $insert_panama = true;
                 }
             }
+
             $count = Panamas::orderBy('orden', 'DESC')->first();
             $orden = (isset($count)) ? $count->orden : 1;
+
+            $data_panama                       = [];
+            $data_panama['movement_id']        = $movement->id;
+            $data_panama['client_name']        = ($cliente) ? $cliente->razon_social : '';
+            $data_panama['client_address']     = ($cliente) ? $cliente->address : '';
+            $data_panama['client_cuit']        = $cuit;
+            $data_panama['client_iva_type']    = $iva_type;
+            $data_panama['pto_vta']            = $pto_vta;
+
             if ($insert_panama) {
                 $orden += 1;
-                $data_panama                       = [];
                 $data_panama['tipo']               = 'PAN';
-                $data_panama['orden']              = $orden;
-                $data_panama['movement_id']        = $movement->id;
-                $data_panama['client_name']        = ($cliente) ? $cliente->razon_social : '';
-                $data_panama['client_address']     = ($cliente) ? $cliente->address : '';
-                $data_panama['client_cuit']        = $cuit;
-                $data_panama['client_iva_type']    = $iva_type;
-                $data_panama['pto_vta']            = $pto_vta;
+                $data_panama['orden']              = $orden;                $
                 $data_panama['neto105']            = (is_null($movement->neto105(false))     || is_null($movement->neto105(false)->neto105)) ? '0.0' : $movement->neto105(false)->neto105;
                 $data_panama['iva_neto105']        = (is_null($movement->neto105(false))     || is_null($movement->neto105(false)->neto_iva105)) ? '0.0' : $movement->neto105(false)->neto_iva105;
                 $data_panama['neto21']             = (is_null($movement->neto21(false))      || is_null($movement->neto21(false)->neto21)) ? '0.0' : $movement->neto21(false)->neto21;
@@ -909,6 +912,7 @@ class SalidasController extends Controller
 
                 Panamas::create($data_panama);
             }
+
             if (!isset($request->factura_flete) && $request->flete > 0) {
                 $data_panama['tipo']               = 'FLE';
                 $data_panama['orden']              = $orden + 1;
@@ -922,6 +926,7 @@ class SalidasController extends Controller
 
                 Panamas::create($data_panama);
             }
+
             $this->sessionProductRepository->deleteList($list_id);
             return redirect()->route('salidas.add');
         } catch (\Exception $e) {
@@ -957,6 +962,65 @@ class SalidasController extends Controller
     public function updateCostos(){
         $movements = Movement::with('senasa')->get();
         foreach ($movements as $m) {
+            $pto_vta       = $cuit       = $iva_type       = '';
+            $cliente       = null;
+
+            if ($m->type == 'VENTA') {
+                $cliente = Store::where('id', $m->to)->with('region')->first();
+                $pto_vta = 'PVTA_' . str_pad($cliente->cod_fenovo, 3, '0.0', STR_PAD_LEFT);
+            } elseif ($m->type == 'VENTACLIENTE') {
+                $cliente = Customer::where('id', $m->to)->with('store')->first();
+                $pto_vta = 'CLI_' . str_pad($cliente->id, '0.0', 3, STR_PAD_LEFT);
+            }
+
+            if ($cliente) {
+                $cuit1    = substr($cliente->cuit, 0, 2);
+                $cuit2    = substr($cliente->cuit, 2, 8);
+                $cuit3    = substr($cliente->cuit, 10, 1);
+                $cuit     = $cuit1 . '-' . $cuit2 . '-' . $cuit3;
+                $iva_type = ($cliente->iva_type == 'RI') ? 'I' : $cliente->iva_type;
+            }
+
+            $count = Panamas::orderBy('orden', 'DESC')->first();
+            $orden = (isset($count)) ? $count->orden : 0;
+
+            $data_panama                       = [];
+            $data_panama['movement_id']        = $m->id;
+            $data_panama['client_name']        = ($cliente) ? $cliente->razon_social : '';
+            $data_panama['client_address']     = ($cliente) ? $cliente->address : '';
+            $data_panama['client_cuit']        = $cuit;
+            $data_panama['client_iva_type']    = $iva_type;
+            $data_panama['pto_vta']            = $pto_vta;
+
+            if (!is_null($cliente) && count($m->panamas)) {
+                $orden += 1;
+                $data_panama['tipo']               = 'PAN';
+                $data_panama['orden']              = $orden;
+                $data_panama['neto105']            = (is_null($m->neto105(false))     || is_null($m->neto105(false)->neto105)) ? '0.0' : $m->neto105(false)->neto105;
+                $data_panama['iva_neto105']        = (is_null($m->neto105(false))     || is_null($m->neto105(false)->neto_iva105)) ? '0.0' : $m->neto105(false)->neto_iva105;
+                $data_panama['neto21']             = (is_null($m->neto21(false))      || is_null($m->neto21(false)->neto21)) ? '0.0' : $m->neto21(false)->neto21;
+                $data_panama['iva_neto21']         = (is_null($m->neto21(false))      || is_null($m->neto21(false)->neto_iva21)) ? '0.0' : $m->neto21(false)->neto_iva21;
+                $data_panama['totalIibb']          = (is_null($m->totalIibb(false))   || is_null($m->totalIibb(false)->total_no_gravado)) ? '0.0' : $m->totalIibb(false)->total_no_gravado;
+                $data_panama['totalConIva']        = (is_null($m->totalConIva(false)) || is_null($m->totalConIva(false)->totalConIva)) ? '0.0' : $m->totalConIva(false)->totalConIva;
+                $data_panama['costo_fenovo_total'] = (is_null($m->cosventa(false))    || is_null($m->cosventa(false)->cost_venta)) ? '0.0' : $m->cosventa(false)->cost_venta;
+
+                Panamas::create($data_panama);
+            }
+
+            if (!$m->factura_flete && $m->flete > 0) {
+                $data_panama['tipo']               = 'FLE';
+                $data_panama['orden']              = $orden + 1;
+                $data_panama['neto105']            = 0.0;
+                $data_panama['iva_neto105']        = 0.0;
+                $data_panama['neto21']             = $m->flete * 0.21;
+                $data_panama['iva_neto21']         = $m->flete;
+                $data_panama['totalIibb']          = 0.0;
+                $data_panama['totalConIva']        = $m->flete;
+                $data_panama['costo_fenovo_total'] = 0.0;
+
+                Panamas::create($data_panama);
+            }
+
             if(count($m->senasa)){
                 $senasa = $m->senasa[0];
                 $tipo_flete = 'FLETE T';
