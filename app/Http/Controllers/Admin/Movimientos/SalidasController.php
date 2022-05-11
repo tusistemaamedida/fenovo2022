@@ -305,6 +305,7 @@ class SalidasController extends Controller
         if ($movement) {
             $id_flete               = '8889-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
             $destino                = $this->origenData($movement->type, $movement->to, true);
+            $fecha                  = \Carbon\Carbon::parse($panama->created_at)->format('d/m/Y');
             $neto                   = 0;
             $array_productos        = [];
             $objProduct             = new stdClass();
@@ -314,7 +315,7 @@ class SalidasController extends Controller
             $objProduct->subtotal   = $neto   = number_format($movement->flete, 2, ',', '.');
             $objProduct->class      = '';
             array_push($array_productos, $objProduct);
-            $pdf = PDF::loadView('print.panamaFelete', compact('destino', 'array_productos', 'neto', 'id_flete'));
+            $pdf = PDF::loadView('print.panamaFelete', compact('destino', 'array_productos', 'neto', 'id_flete','fecha'));
             return $pdf->download($id_flete . '.pdf');
         }
     }
@@ -368,6 +369,7 @@ class SalidasController extends Controller
             }
             $id_remito       = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, true);
+            $fecha           = \Carbon\Carbon::parse($movement->created_at)->format('d/m/Y');
             $neto            = $request->input('neto');
             $array_productos = [];
             $productos       = $movement->movement_salida_products;
@@ -399,7 +401,7 @@ class SalidasController extends Controller
                 array_push($array_productos, $objProduct);
             }
 
-            $pdf = PDF::loadView('print.remito', compact('destino', 'array_productos', 'neto', 'paginas', 'total_lineas', 'mercaderia_en_transito'));
+            $pdf = PDF::loadView('print.remito', compact('destino','fecha','array_productos', 'neto', 'paginas', 'total_lineas', 'mercaderia_en_transito'));
             return $pdf->download('remito.pdf');
         }
     }
@@ -416,6 +418,7 @@ class SalidasController extends Controller
         if ($movement) {
             $id_panama       = '8889-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, true);
+            $fecha           = \Carbon\Carbon::parse($panama->created_at)->format('d/m/Y');
             $neto            = 0;
             $array_productos = [];
             $productos       = $movement->panamas;
@@ -434,7 +437,7 @@ class SalidasController extends Controller
                 array_push($array_productos, $objProduct);
             }
 
-            $pdf = PDF::loadView('print.panama', compact('destino', 'array_productos', 'neto', 'id_panama'));
+            $pdf = PDF::loadView('print.panama', compact('destino', 'array_productos', 'neto', 'id_panama','fecha'));
             return $pdf->download($id_panama . '.pdf');
         }
     }
