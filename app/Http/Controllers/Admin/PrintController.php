@@ -124,7 +124,7 @@ class PrintController extends Controller
 
     public function exportOrdenesCsv()
     {
-        // return Movement::where('id', '>', 615)->orderBy('date')-> get();
+        //$movimiento = Movement::find(616);
         return Excel::download(new  OrdenConsolidadaViewExport(), 'ordenes.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 }
