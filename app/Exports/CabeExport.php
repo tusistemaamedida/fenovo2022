@@ -46,9 +46,9 @@ class CabeExport implements FromView {
             $element->HORA   = Carbon::parse($panama->created_at)->format('H:i');
             $element->FISCAL = '8889-' . str_pad($panama->orden, 8, '0', STR_PAD_LEFT);;
             $element->NETO_1 = $panama->neto105;
-            $element->IVAA_1 = $panama->iva_neto105;
+            $element->IVAA_1 = 0;//$panama->iva_neto105;
             $element->NETO_2 = $panama->neto21;
-            $element->IVAA_2 = $panama->iva_neto21;
+            $element->IVAA_2 = 0;//$panama->iva_neto21;
             $element->NOGRAV = $panama->totalIibb;
             $element->TOTVTA = $panama->neto21 + $panama->neto105;//$panama->totalConIva;
             $element->PAGEFV = 0;

@@ -988,6 +988,7 @@ class SalidasController extends Controller
             $data_panama['client_cuit']        = $cuit;
             $data_panama['client_iva_type']    = $iva_type;
             $data_panama['pto_vta']            = $pto_vta;
+            $data_panama['created_at']         = $m->created_at;
 
             if (!is_null($cliente) && count($m->panamas)) {
                 $orden += 1;
