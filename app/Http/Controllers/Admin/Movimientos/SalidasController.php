@@ -286,7 +286,7 @@ class SalidasController extends Controller
 
     public function printOrdenConsolidada(Request $request)
     {
-        return $movement = Movement::find(739)->neto();
+        return $movement = Movement::find(715)->neto();
 
         return Excel::download(new OrdenConsolidadaViewExport(), 'ordenes.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }

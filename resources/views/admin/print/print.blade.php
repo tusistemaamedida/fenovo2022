@@ -30,7 +30,7 @@
                     <div class="row mb-5 ml-2 border-bottom-dark">
 
                         <div class="col-2">
-                            <a href="{{ route('movement.exportCSV') }}" title="Exportar movimientos "  class="mt-1 mr-3">
+                            <a href="{{ route('movement.exportCSV') }}" title="Exportar movimientos " target="_blank" class="mt-1 mr-3">
                                 <i class=" fa fa-file-csv"></i> Movimientos
                             </a>
                         </div>
@@ -67,12 +67,12 @@
 
                     <div class="row mb-5 ml-2 border-bottom-dark">
                         <div class="col-2">
-                            <a href="{{ route('actualizacion.exportCSVM1') }}" class="ml-2 mr-2">
+                            <a href="{{ route('actualizacion.exportCSVM1') }}" class="mt-1 mr-3">
                                 <i class=" fa fa-file-csv"></i> Actualiz. precio lista 1
                             </a>
                         </div>
                         <div class="col-2">
-                            <a href="{{ route('actualizacion.exportCSVM2') }}" class="ml-2 mr-2">
+                            <a href="{{ route('actualizacion.exportCSVM2') }}" class="mt-1 mr-3">
                                 <i class=" fa fa-file-csv"></i> Actualiz. precio lista 2
                             </a>
                         </div>
