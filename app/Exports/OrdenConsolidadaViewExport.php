@@ -36,12 +36,12 @@ class OrdenConsolidadaViewExport implements FromView
             $objMovimiento->tipo         = ($movimiento->type == 'VENTACLIENTE') ? 'VENTA' : $movimiento->type;
             $objMovimiento->kgrs         = $movimiento->totalKgrs();
             $objMovimiento->bultos       = MovementProduct::whereMovementId($movimiento->id)->where('egress', '>', 0)->sum('bultos');
-            $objMovimiento->factura_nro  = ($movimiento->invoice) ? $movimiento->invoice->voucher_number : '0';
-            $objMovimiento->factura_neto = ($movimiento->invoice) ? $movimiento->invoice->imp_neto : '0';
-            $objMovimiento->panama_nro   = ($movimiento->hasPanama()) ? $movimiento->getPanama()->orden : '0';
-            $objMovimiento->panama_neto  = ($movimiento->hasPanama()) ? $movimiento->getPanama()->neto105 + $movimiento->getPanama()->neto21 : '0';
-            $objMovimiento->flete_nro    = ($movimiento->hasFlete()) ? $movimiento->getFlete()->orden : '0';
-            $objMovimiento->flete_neto   = ($movimiento->hasFlete()) ? $movimiento->getFlete()->neto105 + $movimiento->getFlete()->neto21 : '0';
+            $objMovimiento->factura_nro  = ($movimiento->invoice) ? $movimiento->invoice->voucher_number : '0.0';
+            $objMovimiento->factura_neto = ($movimiento->invoice) ? $movimiento->invoice->imp_neto : '0.0';
+            $objMovimiento->panama_nro   = ($movimiento->hasPanama()) ? $movimiento->getPanama()->orden : '0.0';
+            $objMovimiento->panama_neto  = ($movimiento->hasPanama()) ? $movimiento->getPanama()->neto105 + $movimiento->getPanama()->neto21 : '0.0';
+            $objMovimiento->flete_nro    = ($movimiento->hasFlete()) ? $movimiento->getFlete()->orden : '0.0';
+            $objMovimiento->flete_neto   = ($movimiento->hasFlete()) ? $movimiento->getFlete()->neto105 + $movimiento->getFlete()->neto21 : '0.0';
 
             array_push($arrMovimientos, $objMovimiento);
         }
