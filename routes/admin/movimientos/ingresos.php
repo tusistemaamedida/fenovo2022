@@ -6,13 +6,14 @@ use Illuminate\Support\Facades\Route;
 
 // Ingresos
 Route::get('ingresos', [IngresosController::class, 'index'])->name('ingresos.index');
+Route::get('ingresos/cerras', [IngresosController::class, 'indexCerradas'])->name('ingresos.indexCerradas');
+
 Route::get('ingresos/add', [IngresosController::class, 'add'])->name('ingresos.add');
 Route::post('ingresos/store', [IngresosController::class, 'store'])->name('ingresos.store');
-Route::post('ingresos/close', [IngresosController::class, 'close'])->name('ingresos.close');
+Route::get('ingresos/close', [IngresosController::class, 'close'])->name('ingresos.close');
 Route::get('ingresos/edit', [IngresosController::class, 'edit'])->name('ingresos.edit');
 Route::get('ingresos/edit-ingreso', [IngresosController::class, 'editIngreso'])->name('ingresos.editIngreso');
 Route::post('ingresos/update-ingreso', [IngresosController::class, 'updateIngreso'])->name('ingresos.updateIngreso');
-
 
 Route::get('ingresos/edit-producto', [IngresosController::class, 'editProduct'])->name('ingresos.editProduct');
 Route::post('ingresos/update-producto', [IngresosController::class, 'updateProduct'])->name('ingresos.updateProduct');

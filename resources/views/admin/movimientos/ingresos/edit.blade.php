@@ -36,7 +36,7 @@
                     <div class="col-md-1 text-center">
                         <label class="text-dark font-size-bold">Cerrar</label>
                         <fieldset class="form-group">
-                            <a href="javascript:void(0)" onclick="close_compra('{{ $movement->id}}', '{{ route('ingresos.close') }}')" class="btn btn-link btn-cerrar-ingreso">
+                            <a href="javascript:void(0)" onclick="close_compra('{{ $movement->id}}')" class="btn btn-link btn-cerrar-ingreso">
                                 <i class="fa fa-lock text-primary"></i>
                             </a>
                         </fieldset>
@@ -312,7 +312,8 @@
         });
     };
 
-    const close_compra = (id, route) => {
+    const close_compra = (id) => {
+
         ymz.jq_confirm({
             title: 'Compra ',
             text: "Confirma el cierre de la  compra ?",
@@ -322,18 +323,8 @@
                 return false;
             },
             yes_fn: function () {
-                jQuery.ajax({
-                    url: route,
-                    type: 'POST',
-                    dataType: 'json',
-                    data: { id: id },
-                    success: function (data) {
-                        if (data['type'] == 'success') {
-                            let ruta = "{{ route('ingresos.index') }}";
-                            window.location = ruta;
-                        }
-                    }
-                });
+                let ruta = '{{ route('ingresos.close', ['id' => $movement->id]) }}';
+                window.location = ruta;
             }
         });
     };
