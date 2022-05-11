@@ -798,10 +798,10 @@ class SalidasController extends Controller
 
             if ($explode[0] == 'VENTA' || $explode[0] == 'TRASLADO') {
                 $cliente = Store::where('id', $explode[1])->with('region')->first();
-                $pto_vta = 'PVTA_' . str_pad($cliente->cod_fenovo, 3, '0.0', STR_PAD_LEFT);
+                $pto_vta = 'PVTA_' . str_pad($cliente->cod_fenovo, 3, '0', STR_PAD_LEFT);
             } elseif ($explode[0] == 'VENTACLIENTE') {
                 $cliente = Customer::where('id', $explode[1])->with('store')->first();
-                $pto_vta = 'CLI_' . str_pad($cliente->id, '0.0', 3, STR_PAD_LEFT);
+                $pto_vta = 'CLI_' . str_pad($cliente->id, '0', 3, STR_PAD_LEFT);
             }
 
             if ($cliente) {
@@ -915,8 +915,8 @@ class SalidasController extends Controller
                 $data_panama['orden']              = $orden + 1;
                 $data_panama['neto105']            = 0.0;
                 $data_panama['iva_neto105']        = 0.0;
-                $data_panama['neto21']             = $request->flete * 0.21;
-                $data_panama['iva_neto21']         = $request->flete;
+                $data_panama['neto21']             = $request->flete;
+                $data_panama['iva_neto21']         = $request->flete  * 0.21 ;
                 $data_panama['totalIibb']          = 0.0;
                 $data_panama['totalConIva']        = $request->flete;
                 $data_panama['costo_fenovo_total'] = 0.0;
@@ -964,10 +964,10 @@ class SalidasController extends Controller
 
             if ($m->type == 'VENTA') {
                 $cliente = Store::where('id', $m->to)->with('region')->first();
-                $pto_vta = 'PVTA_' . str_pad($cliente->cod_fenovo, 3, '0.0', STR_PAD_LEFT);
+                $pto_vta = 'PVTA_' . str_pad($cliente->cod_fenovo, 3, '0', STR_PAD_LEFT);
             } elseif ($m->type == 'VENTACLIENTE') {
                 $cliente = Customer::where('id', $m->to)->with('store')->first();
-                $pto_vta = 'CLI_' . str_pad($cliente->id, '0.0', 3, STR_PAD_LEFT);
+                $pto_vta = 'CLI_' . str_pad($cliente->id, '0', 3, STR_PAD_LEFT);
             }
 
             if ($cliente) {
@@ -1010,8 +1010,8 @@ class SalidasController extends Controller
                 $data_panama['orden']              = $orden + 1;
                 $data_panama['neto105']            = 0.0;
                 $data_panama['iva_neto105']        = 0.0;
-                $data_panama['neto21']             = $m->flete * 0.21;
-                $data_panama['iva_neto21']         = $m->flete;
+                $data_panama['neto21']             = $m->flete ;
+                $data_panama['iva_neto21']         = $m->flete * 0.21;
                 $data_panama['totalIibb']          = 0.0;
                 $data_panama['totalConIva']        = $m->flete;
                 $data_panama['costo_fenovo_total'] = 0.0;
