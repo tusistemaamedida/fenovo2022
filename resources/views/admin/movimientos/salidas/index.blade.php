@@ -34,19 +34,19 @@
                                         <thead>
                                             <tr class="bg-dark text-white">
                                                 <td>#</td>
-                                                <td>Fecha</td>
+                                                <td style="width: 70px" ">Fecha</td>
                                                 <td>Destino</td>
                                                 <td>Item</td>
                                                 <td>Tipo</td>
                                                 <td>Kgrs</td>
                                                 <td>Fac</td>
-                                                <td style="width: 15px">Det</td>
-                                                <td style="width: 15px">Des</td>
-                                                <td style="width: 15px">Rto</td>
-                                                <td style="width: 15px">Paper</td>
-                                                <td style="width: 15px">Flete</td>
-                                                <td style="width: 15px">Orden</td>
-                                                <td style="width: 15px">OPma</td>
+                                                <td>Det</td>
+                                                <td>Des</td>
+                                                <td>Rto</td>
+                                                <td>Paper</td>
+                                                <td>Flete</td>
+                                                <td>Orden</td>
+                                                <td>OPma</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -76,6 +76,7 @@
         stateSave:true,
         processing: true,
         serverSide: true,
+        autoWidth: false,
         dom: '<lfrtip>',
         ajax: "{{ route('salidas.index') }}",
         columns: [
