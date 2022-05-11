@@ -48,7 +48,7 @@ class CabeExport implements FromView {
             $element->NETO_1 = $panama->neto105;
             $element->IVAA_1 = '0.0';//$panama->iva_neto105;
             $element->NETO_2 = $panama->neto21;
-            $element->IVAA_2 = 0;//$panama->iva_neto21;
+            $element->IVAA_2 = '0.0';//$panama->iva_neto21;
             $element->NOGRAV = $panama->totalIibb;
             $element->TOTVTA = $panama->neto21 + $panama->neto105;//$panama->totalConIva;
             $element->PAGEFV = '0.0';
