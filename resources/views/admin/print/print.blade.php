@@ -36,6 +36,12 @@
                         </div>
 
                         <div class="col-2">
+                            <a href="{{ route('movement.exportOrdenesCSV') }}" title="Exportar ordenes " target="_blank" class="mt-1 mr-3">
+                                <i class=" fa fa-file-csv"></i> Ordenes
+                            </a>
+                        </div>
+
+                        <div class="col-2">
                             <a href="{{route('products.exportCSV')}}" title="Exportar todos los productos" class="mt-1 mr-3">
                                 <i class=" fa fa-file-csv"></i> Productos
                             </a>
@@ -57,10 +63,6 @@
                             <a href="{{ route('oferta.excepciones.exportCSV') }}">
                                 <i class=" fa fa-file-csv"></i> Excepciones
                             </a>
-                        </div>
-
-                        <div class="col-2">
-                            
                         </div>
 
                     </div>
