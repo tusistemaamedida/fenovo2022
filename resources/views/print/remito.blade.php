@@ -21,7 +21,7 @@
                 <td style="width:50%"></td>
                 <td style="width:50%;height:280px">
                     <span style="font-size: 14px;">
-                        Fecha: {{\Carbon\Carbon::parse(now())->format('d/m/y')}}
+                        Fecha: {{$fecha}}
                     </span>
                 </td>
             </tr>
