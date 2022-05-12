@@ -37,8 +37,8 @@ class SincronizaDiaria extends Command
         // Exportar movimientos
         (new MovementsViewExport() )->store('movi.csv');
         // Exportar FACTURACION ELECTONICA
-        (new CabeEleExport())->store('cabe_ele.csv');
+        (new CabeEleExport())->store('CABE_ELE.csv');
         // Exportar PANAMAS Y FLETES
-        (new CabeExport())->store('cabe_ped.csv');
+        (new CabeExport())->store('CABE_PED.csv');
     }
 }
