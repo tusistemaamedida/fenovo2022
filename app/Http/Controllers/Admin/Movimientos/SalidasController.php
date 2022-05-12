@@ -805,7 +805,7 @@ class SalidasController extends Controller
                         'iibb'        => $product->iibb,
                         'unit_price'  => ($product->invoice)?$product->unit_price:$product->neto,
                         'cost_fenovo' => $product->costo_fenovo,
-                        'tasiva'      => ($product->invoice)?$product->tasiva:0,
+                        'tasiva'      => $product->tasiva,
                         'entry'       => 0,
                         'bultos'      => $product->quantity,
                         'egress'      => $kgrs,
@@ -831,7 +831,7 @@ class SalidasController extends Controller
                             'bultos'     => $product->quantity,
                             'entry'      => $kgrs,
                             'unit_price' => ($product->invoice)?$product->unit_price:$product->neto,
-                            'tasiva'     => ($product->invoice)?$product->tasiva:0,
+                            'tasiva'     => $product->tasiva,
                             'egress'     => 0,
                             'balance'    => $balance,
                         ]);
@@ -846,7 +846,7 @@ class SalidasController extends Controller
                             'bultos'     => $product->quantity,
                             'entry'      => $kgrs,
                             'unit_price' => ($product->invoice)?$product->unit_price:$product->neto,
-                            'tasiva'     => ($product->invoice)?$product->tasiva:0,
+                            'tasiva'     => $product->tasiva,
                             'egress'     => 0,
                             'balance'    => $balance,
                         ]);
@@ -933,8 +933,7 @@ class SalidasController extends Controller
         );
     }
 
-    public function updateCostos()
-    {
+    public function updateCostos(){
         /* $sessions = SessionProduct::all();
         foreach ($sessions as $s) {
             if(!str_contains($s->list_id, 'CLIENTE')){
@@ -947,7 +946,8 @@ class SalidasController extends Controller
                 $s->save();
             }
         } */
-        /* foreach ($movements as $m) {
+       /*  $movements = Movement::all();
+        foreach ($movements as $m) {
             $pto_vta       = $cuit       = $iva_type       = '';
             $cliente       = null;
 
