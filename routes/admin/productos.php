@@ -41,4 +41,4 @@ Route::get('productos/importar/movimientos', [ProductController::class, 'importP
 Route::get('producto/ajuste-stock', [ProductController::class, 'getDataStock'])->name('getData.stock');
 Route::post('producto/ajustar-stock', [ProductController::class, 'ajustarStock'])->name('ajustar.stock');
 Route::get('producto/historial', [ProductController::class, 'historial'])->middleware('can:products.edit')->name('product.historial');
-
+Route::get('producto/print-historial', [ProductController::class, 'printHistorial'])->middleware('can:products.edit')->name('product.printHistorial');
