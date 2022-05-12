@@ -1325,6 +1325,7 @@ namespace App\Models{
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @package App\Models
+ * @property string|null $neto
  * @property string|null $costo_fenovo
  * @property int|null $iibb
  * @property-read \App\Models\Product|null $producto
@@ -1337,6 +1338,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereIibb($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereInvoice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereListId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereNeto($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereStoreId($value)

@@ -13,6 +13,12 @@
                                 Historial del producto {{$producto->cod_fenovo}} :: {{$producto->name}}
                             </h4>
                         </div>
+                        <div class="icons d-flex">
+                            <a href="{{ route('product.printHistorial',['id'=>$producto->id]) }}" class="mt-1 mr-3">
+                                <i class=" fa fa-print"></i> Imprimir
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -39,17 +45,17 @@
                                     </thead>
                                     <tbody class="kt-table-tbody text-dark">
                                         @foreach ($movimientos as $m)
-                                            <tr>
-                                                <td>{{\Carbon\Carbon::parse($m->movement->created_at)->format('d/m/Y')}}</td>
-                                                <td>{{$m->movement->type}}</td>
-                                                <td>{{$m->movement->From($m->movement->type)}}</td>
-                                                <td>{{$m->movement->To($m->movement->type)}}</td>
-                                                <td>{{$m->entry}}</td>
-                                                <td>{{$m->egress}}</td>
-                                                <td>{{$m->balance}}</td>
-                                                <td>{{(int)($m->balance*$producto->unit_weight)}}</td>
-                                                <td>{{(int)(($m->balance*$producto->unit_weight)/$m->unit_package)}}</td>
-                                            </tr>
+                                        <tr>
+                                            <td>{{\Carbon\Carbon::parse($m->movement->created_at)->format('d/m/Y')}}</td>
+                                            <td>{{$m->movement->type}}</td>
+                                            <td>{{$m->movement->From($m->movement->type)}}</td>
+                                            <td>{{$m->movement->To($m->movement->type)}}</td>
+                                            <td>{{$m->entry}}</td>
+                                            <td>{{$m->egress}}</td>
+                                            <td>{{$m->balance}}</td>
+                                            <td>{{(int)($m->balance*$producto->unit_weight)}}</td>
+                                            <td>{{(int)(($m->balance*$producto->unit_weight)/$m->unit_package)}}</td>
+                                        </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
