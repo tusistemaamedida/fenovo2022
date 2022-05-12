@@ -29,7 +29,8 @@ trait OriginDataTrait
                 if ($returnObject) {
                     return $customer;
                 }
-                return $customer->razon_social . ' [' . $customer->cuit . '] ';
+                $cuit = (is_null($customer->cuit))?'':' [' . $customer->cuit . '] ';
+                return $customer->razon_social . $cuit;
         }
     }
 
