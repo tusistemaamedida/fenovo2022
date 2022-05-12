@@ -35,6 +35,7 @@
                                             <tr class="bg-dark text-white">
                                                 <td>#Orden</td>
                                                 <td>Fecha</td>
+                                                <td>Id</td>
                                                 <td>Destino</td>
                                                 <td>Item</td>
                                                 <td>Tipo</td>
@@ -42,6 +43,8 @@
                                                 <td>Bultos</td>
                                                 <td>Flete</td>
                                                 <td>Neto</td>
+                                                <td>Panama1</td>
+                                                <td>Panama2</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -74,6 +77,7 @@
         columns: [
             {data: 'id', orderable:false,searchable: true},
             {data: 'date'},
+            {data: 'destino_id'},
             {data: 'destino', 'class':'text-left'},
             {data: 'items'},
             {data: 'type', 'class':'text-left', orderable:false,searchable: true},
@@ -81,6 +85,8 @@
             {data: 'bultos', orderable:false,searchable: false},
             {data: 'flete', orderable:false,searchable: false},
             {data: 'neto', orderable:false,searchable: false},
+            {data: 'panama1', orderable:false,searchable: false},
+            {data: 'panama2', orderable:false,searchable: false},
         ]
     });
 

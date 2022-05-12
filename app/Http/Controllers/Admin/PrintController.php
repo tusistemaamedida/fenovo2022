@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use stdClass;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class PrintController extends Controller
 {
@@ -124,7 +125,12 @@ class PrintController extends Controller
 
     public function exportOrdenesCsv()
     {
-        //$movimiento = Movement::find(616);
+        // Ejemplos para controlar los importes de las ordenes
+        // $movimiento = Movement::find(754);
+        // $flete = ($movimiento->hasFlete()) ? $movimiento->getFlete()->neto105 + $movimiento->getFlete()->neto21 : '0.0';
+        // $neto  = ($movimiento->invoice) ? $movimiento->invoice->imp_total : '0.0';
+        // return new JsonResponse(['flete' => $flete, 'neto' => $neto]);
+
         return Excel::download(new  OrdenConsolidadaViewExport(), 'ordenes.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 }

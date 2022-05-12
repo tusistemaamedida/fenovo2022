@@ -6,6 +6,7 @@ use App\Exports\DescuentosViewExport;
 use App\Exports\PresentacionesViewExport;
 use App\Exports\ProductsViewExport;
 use App\Exports\ProductsViewExportStock;
+use App\Exports\ProductsViewHistorial;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\AddProduct;
 
@@ -123,6 +124,12 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
+    }
+
+    public function printHistorial(Request $request)
+    {
+        $cod_fenovo = Product::find($request->id)->first()->cod_fenovo;
+        return Excel::download(new ProductsViewHistorial($request->id), $cod_fenovo . '_' . date('d-m-Y') . '.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function add()
@@ -730,9 +737,9 @@ class ProductController extends Controller
                 })
 
                 ->addColumn('costo', function ($product) {
-                    
+
                     // Buscar si el producto tiene oferta del proveedor
-                    $hoy = Carbon::parse(now())->format('Y-m-d');
+                    $hoy    = Carbon::parse(now())->format('Y-m-d');
                     $oferta = DB::table('products as t1')
                     ->join('session_ofertas as t2', 't1.id', '=', 't2.product_id')
                     ->select('t2.costfenovo')
@@ -753,7 +760,10 @@ class ProductController extends Controller
 
     public function printCompararStock(Request $request)
     {
-        return Excel::download(new ProductsViewExportStock(), 'stocks-'.date('d-m-Y').'.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        // $producto = Product::find(6)->stockInicioSemana();
+        // return $producto;
+
+        return Excel::download(new ProductsViewExportStock(), 'stocks-' . date('d-m-Y') . '.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function exportDescuentosToCsv(Request $request)
