@@ -417,7 +417,7 @@ class SalidasController extends Controller
         }
         if ($movement) {
             $id_panama       = '8889-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
-            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $destino         = $this->origenData($movement->type, $movement->to, false);
             $fecha           = \Carbon\Carbon::parse($panama->created_at)->format('d/m/Y');
             $neto            = 0;
             $array_productos = [];

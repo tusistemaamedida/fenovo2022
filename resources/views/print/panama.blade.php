@@ -23,7 +23,7 @@
         <tr>
             <td>
                 <span style="font-size:14px;line-height: 18px;">
-                    {{$destino->description}}  {{$destino->address}}
+                    {{$destino}}
                 </span>
             </td>
         </tr>
