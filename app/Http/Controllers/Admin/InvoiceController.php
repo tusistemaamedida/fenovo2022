@@ -284,9 +284,9 @@ class InvoiceController extends Controller
                                                // 1->Impuestos nacionales, 2->Impuestos provinciales,
                                                // 3->Impuestos municipales, 4->Impuestos internos, 99-> Otros
                             'Desc' 		=> 'Ingresos Brutos', // (Opcional) Descripcion
-                            'BaseImp' 	=> round($importe_total_iibb,1), // Base imponible para el tributo
+                            'BaseImp' 	=> round($importe_total_iibb,2), // Base imponible para el tributo
                             'Alic' 		=> $iibb,    // Alícuota
-                            'Importe' 	=> round($tributos,1) // Importe del tributo
+                            'Importe' 	=> round($tributos,2) // Importe del tributo
                         )
                     );
                 }
