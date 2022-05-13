@@ -268,7 +268,7 @@ class InvoiceController extends Controller
                     'FchServDesde'=>  $fecha_servicio_desde,
                     'FchServHasta'=>  $fecha_servicio_hasta,
                     'FchVtoPago'  =>  $fecha_vencimiento_pago,
-                    'ImpTotal' 	  =>  round(($importe_gravado + $importe_iva + $importe_exento_iva + $importe_no_gravado),2),
+                    'ImpTotal' 	  =>  round(($importe_gravado + $importe_iva + $importe_exento_iva + $importe_no_gravado + $tributos),2),
                     'ImpTotConc'  =>  $importe_no_gravado, //0 //round($importe_no_gravado,2),  Importe neto no gravado
                     'ImpNeto' 	  =>  $importe_gravado,
                     'ImpOpEx' 	  =>  $importe_exento_iva, //0
