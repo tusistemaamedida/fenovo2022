@@ -313,7 +313,7 @@
                                 @foreach ($alicuotas_array as $item)
                                     <span style="font-size:13px;line-height: 22px;text-align:right">${{$item->value}} </span><br>
                                 @endforeach
-                                <span style="font-size:13px;line-height: 22px;text-align:right">${{number_format($invoice->imp_tot_conc, 2, ',', '.')}} </span><br>
+                                <span style="font-size:13px;line-height: 22px;text-align:right">${{number_format($invoice->imp_trib, 2, ',', '.')}} </span><br>
                                 <span style="font-size:13px;line-height: 22px;text-align:right">${{number_format($invoice->imp_total, 2, ',', '.')}}</span>
                             @else
                             <span style="font-size:13px;line-height: 22px;text-align:right">${{number_format($subtotal_pagina, 2, ',', '.')}}</span>
