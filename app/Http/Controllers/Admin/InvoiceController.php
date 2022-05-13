@@ -273,7 +273,7 @@ class InvoiceController extends Controller
                     'ImpNeto' 	  =>  $importe_gravado,
                     'ImpOpEx' 	  =>  $importe_exento_iva, //0
                     'ImpIVA' 	  =>  $importe_iva,
-                    'ImpTrib' 	  =>  $tributos, //Importe total de tributos
+                    'ImpTrib' 	  =>  round($tributos,2), //Importe total de tributos
                     'MonId' 	  =>  'PES', //Tipo de moneda usada en la factura ('PES' = pesos argentinos)
                     'MonCotiz' 	  =>  1, // Cotización de la moneda usada (1 para pesos argentinos)
                 ];
@@ -284,9 +284,9 @@ class InvoiceController extends Controller
                                                // 1->Impuestos nacionales, 2->Impuestos provinciales,
                                                // 3->Impuestos municipales, 4->Impuestos internos, 99-> Otros
                             'Desc' 		=> 'Ingresos Brutos', // (Opcional) Descripcion
-                            'BaseImp' 	=> $importe_total_iibb, // Base imponible para el tributo
+                            'BaseImp' 	=> round($importe_total_iibb,1), // Base imponible para el tributo
                             'Alic' 		=> $iibb,    // Alícuota
-                            'Importe' 	=> $tributos // Importe del tributo
+                            'Importe' 	=> round($tributos,1) // Importe del tributo
                         )
                     );
                 }
