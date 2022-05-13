@@ -183,8 +183,7 @@ class Product extends Model
 
     public function stockInicioSemana()
     {
-        $date = Carbon::now()->subDays(7);
-
+        $date     = Carbon::now()->subDays(7);
         $registro = DB::table('products as t1')
             ->join('movement_products as t2', 't2.product_id', '=', 't1.id')
             ->select('t1.unit_weight', 't2.id', 't2.unit_package', 't2.bultos', 't2.entry', 't2.egress', 't2.balance')
@@ -197,7 +196,7 @@ class Product extends Model
         if (!$registro) {
             return 0;
         }
-        return ($this->unit_type == 'K') ? number_format($registro->balance,0,'','') : number_format($registro->balance / $registro->unit_weight, 0,'','');
+        return ($this->unit_type == 'K') ? number_format($registro->balance, 0, '', '') : number_format($registro->balance / ($registro->unit_weight * $registro->unit_package), 0, '', '');
     }
 
     public function stockFinSemana()
@@ -214,7 +213,7 @@ class Product extends Model
             return 0;
         }
 
-        return ($this->unit_type == 'K') ? number_format($registro->balance,0,'','') : number_format($registro->balance / $registro->unit_weight, 0, '', '');
+        return ($this->unit_type == 'K') ? number_format($registro->balance, 0, '', '') : number_format($registro->balance / $registro->unit_weight, 0, '', '');
     }
 
     public function ingresoSemana()
@@ -238,7 +237,7 @@ class Product extends Model
             $stock += $cant;
         }
 
-        return number_format($stock,0,'','');
+        return number_format($stock, 0, '', '');
     }
 
     public function salidaSemana()
@@ -261,7 +260,7 @@ class Product extends Model
             $stock += $cant;
         }
 
-        return number_format($stock,0,'','');
+        return number_format($stock, 0, '', '');
     }
 
     public function scopeName($query, $name)

@@ -69,7 +69,7 @@ class SalidasController extends Controller
             }
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
-                    return '<a title="Detalles de salida" href="' . route('salidas.show', ['id' => $movement->id]) . '">'.str_pad($movement->id, 6, '0', STR_PAD_LEFT).'</a>';
+                    return '<a title="Detalles de salida" href="' . route('salidas.show', ['id' => $movement->id]) . '">' . str_pad($movement->id, 6, '0', STR_PAD_LEFT) . '</a>';
                 })
                 ->addColumn('destino', function ($movement) {
                     return $movement->origenData($movement->type);
@@ -102,17 +102,17 @@ class SalidasController extends Controller
                     return '<a title="Imprimir remito"  href="javascript:void(0)" onclick="createRemito(' . $movement->id . ')"> <i class="fas fa-print"></i> </a>';
                 })
                 ->addColumn('paper', function ($movement) {
-                    if($movement->hasPanama()){
+                    if ($movement->hasPanama()) {
                         $pan = $movement->getPanama();
-                        return '<a title="Imprimir Paper '.$pan->orden.'"  href="' . route('print.panama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-file"></i> </a>';
+                        return '<a title="Imprimir Paper ' . $pan->orden . '"  href="' . route('print.panama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-file"></i> </a>';
                     }
                 })
                 ->addColumn('flete', function ($movement) {
-                    if($movement->hasFlete()){
+                    if ($movement->hasFlete()) {
                         $fle = $movement->getFlete();
-                        return '<a class="m-0" title="Imprimir Flete'.$fle->orden.'"  href="' . route('print.panama.felete', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-car"></i> </a>';
+                        return '<a class="m-0" title="Imprimir Flete' . $fle->orden . '"  href="' . route('print.panama.felete', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-car"></i> </a>';
                     }
-                 })
+                })
                 ->addColumn('orden', function ($movement) {
                     return '<a class="m-0" title="Imprimir Orden"  href="' . route('print.orden', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>';
                 })
@@ -243,12 +243,16 @@ class SalidasController extends Controller
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('date')->sortByDesc('id');
+                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('id');
             } else {
                 $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
             }
             return DataTables::of($movement)
                 ->addIndexColumn()
+                ->addColumn('destino_id', function ($movement) {
+                    $destino = Movement::find($movement->id)->To($movement->type, true);
+                    return ($destino->cod_fenovo) ? $destino->cod_fenovo : $destino->id;
+                })
                 ->addColumn('destino', function ($movement) {
                     return $movement->origenData($movement->type);
                 })
@@ -269,16 +273,19 @@ class SalidasController extends Controller
                     return  MovementProduct::whereMovementId($movement->id)->where('egress', '>', 0)->sum('bultos');
                 })
                 ->addColumn('flete', function ($movement) {
-                    return  number_format($movement->flete, 2, ',', '.');
+                    return  ($movement->hasFlete()) ? $movement->getFlete()->neto105 + $movement->getFlete()->neto21 : '0.0';
                 })
                 ->addColumn('neto', function ($movement) {
-                    return  ($movement->invoice) ? number_format($movement->invoice->imp_neto, 2, ',', '.') : 0;
+                    return  ($movement->invoice) ? $movement->invoice->imp_neto : '0.0';
                 })
-                ->editColumn('updated_at', function ($movement) {
-                    return date('Y-m-d H:i:s', strtotime($movement->updated_at));
+                ->addColumn('panama1', function ($movement) {
+                    return  ($movement->hasFlete()) ? $movement->getFlete()->id : '0.0';
+                })
+                ->addColumn('panama2', function ($movement) {
+                    return  '0.0';
                 })
 
-                ->rawColumns(['destino', 'date', 'items', 'type', 'kgrs', 'bultos', 'neto'])
+                ->rawColumns(['destino_id', 'destino', 'date', 'items', 'type', 'kgrs', 'bultos', 'flete', 'neto', 'panama1', 'panama2'])
 
                 ->make(true);
         }
@@ -287,8 +294,6 @@ class SalidasController extends Controller
 
     public function printOrdenConsolidada(Request $request)
     {
-        return $movement = Movement::find(715)->neto();
-
         return Excel::download(new OrdenConsolidadaViewExport(), 'ordenes.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
