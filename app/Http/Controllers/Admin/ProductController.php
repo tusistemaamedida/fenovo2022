@@ -76,7 +76,9 @@ class ProductController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('stock', function ($product) {
-                    return $product->stockReal(null, Auth::user()->store_active);
+                    return ($product->unit_type == 'K')
+                        ? $product->stockReal(null, Auth::user()->store_active)
+                        : (int)($product->stockReal(null, Auth::user()->store_active) / $product->unit_weight);
                 })
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();
@@ -96,11 +98,11 @@ class ProductController extends Controller
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
                 ->addColumn('editar', function ($producto) {
-                    return '<a class="btn-link" title="Editar" href="' . route('product.edit', ['id' => $producto->id]) . '"><i class="fa fa-edit"></i></a>';
+                    return '<a title="Editar" href="' . route('product.edit', ['id' => $producto->id]) . '"><i class="fa fa-edit"></i></a>';
                 })
                 ->addColumn('borrar', function ($producto) {
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
-                    return '<a class="btn-link confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
+                    return '<a class="confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
                 ->rawColumns(['stock',  'borrar', 'editar', 'ajuste', 'costo', 'historial'])
                 ->make(true);
