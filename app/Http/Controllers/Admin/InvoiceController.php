@@ -246,36 +246,50 @@ class InvoiceController extends Controller
                 $iibb = Iibb::where('state',$this->client->state)->first();
                 $iibb = ($iibb)?$iibb->value:0;
 
-                $importe = $this->importes($movement);
-                $importe_gravado = $importe['gravado'];
+                $importe            = $this->importes($movement);
+                $importe_gravado    = $importe['gravado'];
                 $importe_total_iibb = $importe['total_iibb'];
                 $importe_exento_iva = 0;
-                $importe_iva = $importe['iva'];
+                $importe_no_gravado = 0;
+                $importe_iva        = $importe['iva'];
 
-                $importe_no_gravado = ($iibb>0)?($importe_total_iibb * $iibb /100):0;
+                $tributos = ($iibb>0)?($importe_total_iibb * $iibb /100):0;
 
-                $dataAfip =[
-                    'CantReg' 	=>  1, // Cantidad de facturas a registrar
-                    'PtoVta' 	    =>  $punto_de_venta,
-                    'CbteTipo' 	=>  $tipo_de_factura,
-                    'Concepto' 	=>  $concepto,
-                    'DocTipo' 	=>  $tipo_de_documento,
-                    'DocNro' 	    =>  $numero_de_documento,
+                $dataAfip = [
+                    'CantReg' 	  =>  1, // Cantidad de facturas a registrar
+                    'PtoVta' 	  =>  $punto_de_venta,
+                    'CbteTipo' 	  =>  $tipo_de_factura,
+                    'Concepto' 	  =>  $concepto,
+                    'DocTipo' 	  =>  $tipo_de_documento,
+                    'DocNro' 	  =>  $numero_de_documento,
                     'CbteDesde'   =>  $numero_de_factura,
                     'CbteHasta'   =>  $numero_de_factura,
-                    'CbteFch' 	=>  intval(str_replace('-', '', $fecha)),
+                    'CbteFch' 	  =>  intval(str_replace('-', '', $fecha)),
                     'FchServDesde'=>  $fecha_servicio_desde,
                     'FchServHasta'=>  $fecha_servicio_hasta,
                     'FchVtoPago'  =>  $fecha_vencimiento_pago,
-                    'ImpTotal' 	=>  round(($importe_gravado + $importe_iva + $importe_exento_iva + $importe_no_gravado),2),
-                    'ImpTotConc'  =>  round($importe_no_gravado,2), // Importe neto no gravado
-                    'ImpNeto' 	=>  $importe_gravado,
-                    'ImpOpEx' 	=>  $importe_exento_iva,
-                    'ImpIVA' 	    =>  $importe_iva,
-                    'ImpTrib' 	=>  0, //Importe total de tributos
-                    'MonId' 	    =>  'PES', //Tipo de moneda usada en la factura ('PES' = pesos argentinos)
-                    'MonCotiz' 	=>  1, // Cotización de la moneda usada (1 para pesos argentinos)
+                    'ImpTotal' 	  =>  round(($importe_gravado + $importe_iva + $importe_exento_iva + $importe_no_gravado),2),
+                    'ImpTotConc'  =>  $importe_no_gravado, //0 //round($importe_no_gravado,2),  Importe neto no gravado
+                    'ImpNeto' 	  =>  $importe_gravado,
+                    'ImpOpEx' 	  =>  $importe_exento_iva, //0
+                    'ImpIVA' 	  =>  $importe_iva,
+                    'ImpTrib' 	  =>  $tributos, //Importe total de tributos
+                    'MonId' 	  =>  'PES', //Tipo de moneda usada en la factura ('PES' = pesos argentinos)
+                    'MonCotiz' 	  =>  1, // Cotización de la moneda usada (1 para pesos argentinos)
                 ];
+                if($tributos>0){
+                    $dataAfip['Tributos'] = array( //Factura asociada
+                        array(
+                            'Id' 		=>  2, // Id del tipo de tributo (ver tipos disponibles)
+                                               // 1->Impuestos nacionales, 2->Impuestos provinciales,
+                                               // 3->Impuestos municipales, 4->Impuestos internos, 99-> Otros
+                            'Desc' 		=> 'Ingresos Brutos', // (Opcional) Descripcion
+                            'BaseImp' 	=> $importe_total_iibb, // Base imponible para el tributo
+                            'Alic' 		=> $iibb,    // Alícuota
+                            'Importe' 	=> $tributos // Importe del tributo
+                        )
+                    );
+                }
 
                 if($importe_gravado > 0 || $importe_iva > 0) $dataAfip['Iva'] = $importe['ivas'];
 
@@ -359,7 +373,7 @@ class InvoiceController extends Controller
             $insert_new = true;
             $iva        += ($movement->flete * 0.21);
             $gravado    += $movement->flete;
-            $total_iibb += $movement->flete;
+            //$total_iibb += $movement->flete;
 
             for ($cont=0; $cont <count($ivas) ; $cont++) {
                 $alicuota = $ivas[$cont];
@@ -458,7 +472,8 @@ class InvoiceController extends Controller
           'imp_trib'=>$data['ImpTrib'],
           'mon_id'=>$data['MonId'],
           'mon_cotiz'=>$data['MonCotiz'],
-          'ivas'=>json_encode($data['Iva'])
+          'ivas'=>json_encode($data['Iva']),
+          'tributos'=>json_encode($data['Tributos']),
         ];
     }
 
