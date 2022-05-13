@@ -6,7 +6,7 @@
 <div class="row mb-5">
     <div class="col-12">
         <h4>
-            Stock actual :: {{$stock_total}} Kgs.
+            Stock actual :: {{$stock_total}} {{ $product->unit_type }}
         </h4>
     </div>
 </div>
@@ -23,13 +23,7 @@
             @for ($i = 0; $i < count($stock_presentaciones); $i++) <tr>
                 <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
                 <td class="text-center">
-                    <input type="text"
-                            name="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
-                            id="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
-                            class="form-control text-center"
-                            value=""
-                            autocomplete="off"
-                            onclick="this.select()" >
+                    <input type="text" name="unidades_{{$stock_presentaciones[$i]['presentacion']}}" id="unidades_{{$stock_presentaciones[$i]['presentacion']}}" class="form-control text-center" value="" autocomplete="off" onclick="this.select()">
                 </td>
                 </tr>
                 @endfor

@@ -44,6 +44,7 @@ class SessionProduct extends Model
         'store_id'     => 'int',
         'product_id'   => 'int',
         'unit_price'   => 'float',
+        'unit_type'    => 'string',
         'unit_package' => 'float',
         'tasiva'       => 'float',
         'senasa_id'    => 'int',
@@ -60,11 +61,12 @@ class SessionProduct extends Model
         'unit_price',
         'tasiva',
         'unit_package',
+        'unit_type',
         'quantity',
         'invoice',
         'iibb',
         'costo_fenovo',
-        'neto'
+        'neto',
     ];
 
     public function producto()

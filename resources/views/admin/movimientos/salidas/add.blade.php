@@ -257,8 +257,6 @@
             type:'GET',
             data:formData,
             success:function(data){
-
-                console.log(data);
                 
                 jQuery("#porcentajeFlete").html(data['porcentaje']);
                 jQuery("#flete").val(parseFloat(data['flete']).toFixed(2));
@@ -313,8 +311,9 @@
                 jQuery('.calculate').each(function() {
                     let valor = parseFloat(jQuery(this).val());
                     let presentacion_input = jQuery(this).attr("id").split('_');
+                    let unit_type = jQuery("#unit_type").val();
                     let presentacion = presentacion_input[1];
-                    total = total + (valor*presentacion*unit_weight);
+                    total = (unit_type=='K')?total + (valor*presentacion*unit_weight):total + (valor*presentacion);
                 });
                 total = total.toFixed(2);
             }
@@ -343,12 +342,13 @@
     })
 
     function guardarProductoEnSession(){
+        var unit_type = jQuery("#unit_type").val();
         var to_type = jQuery("#to_type").val();
         var product_id = jQuery("#product_search").val();
         var to = jQuery("#to").val();
         var list_id = to_type+'_'+to;
         var unidades = jQuery("#unidades_a_enviar").serializeArray();
-        var formData =  {list_id, product_id, unidades, to,to_type};
+        var formData =  {list_id, product_id, unidades, to,to_type, unit_type};
         var url ="{{ route('store.session.product') }}";
         var elements = document.querySelectorAll('.is-invalid');
         jQuery.ajax({

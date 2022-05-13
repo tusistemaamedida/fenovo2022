@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Movimientos;
 use App\Http\Controllers\Controller;
 use App\Models\MovementProduct;
 use App\Models\Product;
-use App\Models\SessionOferta;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,7 +19,6 @@ class DetalleIngresosController extends Controller
             $hoy = Carbon::parse(now())->format('Y-m-d');
 
             foreach ($request->datos as $movimiento) {
-
                 $product               = Product::find($movimiento['product_id']);
                 $latest                = $product->stockReal(null, Auth::user()->store_active);
                 $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
@@ -37,12 +35,15 @@ class DetalleIngresosController extends Controller
                 $costo_fenovo = (!$oferta) ? $product->product_price->costfenovo : $oferta->costfenovo;
 
                 MovementProduct::firstOrCreate(
-                    ['entidad_id'      => Auth::user()->store_active,
+                    [
+                        'entidad_id'   => Auth::user()->store_active,
                         'movement_id'  => $movimiento['movement_id'],
                         'product_id'   => $movimiento['product_id'],
                         'tasiva'       => $product->product_price->tasiva,
                         'cost_fenovo'  => $costo_fenovo,
-                        'unit_package' => $movimiento['unit_package'], ],
+                        'unit_package' => $movimiento['unit_package'],
+                        'unit_type'    => $movimiento['unit_type'],
+                    ],
                     $movimiento
                 );
             }

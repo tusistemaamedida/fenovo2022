@@ -9,28 +9,28 @@
                 <th class="text-center">Unidad</th>
                 <th class="text-center">Presentación</th>
                 <th class="text-center">$_Costo</th>
-                <th class="text-center">Cantidad</th>
+                <th class="text-center">Bultos</th>
                 <th class="text-center">$_Total</th>
-                <th class="text-center">Kilos</th>
+                <th class="text-center">Cantidad</th>
                 <th></th>
                 <th></th>
             </tr>
 
             @php
-                $total = 0;
+            $total = 0;
             @endphp
 
             @foreach ($movimientos as $movimiento)
 
             @php
-                $total = $total+($movimiento->cost_fenovo*$movimiento->unit_package*$movimiento->bultos);
+            $total = $total+($movimiento->cost_fenovo*$movimiento->unit_package*$movimiento->bultos);
             @endphp
 
             <tr>
                 <td> {{ $loop->iteration }}</td>
                 <td class="text-center font-italic"> {{ $movimiento->product->cod_fenovo }} </td>
                 <td> {{ $movimiento->product->name }}</td>
-                <td class="text-center"> {{ $movimiento->product->unit_type }}</td>
+                <td class="text-center"> {{ $movimiento->unit_type }}</td>
                 <td class="text-center"> {{ number_format($movimiento->unit_package,2) }} </td>
                 <td class="text-center"> {{ $movimiento->cost_fenovo }}</td>
                 <td class="text-center"> {{ $movimiento->bultos }}</td>

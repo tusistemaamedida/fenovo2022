@@ -11,11 +11,11 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Compras Cerradas
+                                        Compras cerradas
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    
+
                                 </div>
                             </div>
                         </div>
