@@ -17,6 +17,7 @@ use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
 use App\Models\Vehiculo;
+use App\Models\Product;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -934,6 +935,55 @@ class SalidasController extends Controller
     }
 
     public function updateCostos(){
+        $movement_orig = Movement::where('id',612)->with('movement_products')->get();
+
+        foreach ($movement_orig as $m) {
+
+            foreach ($m->movement_products as $mp) {
+
+                if($mp->entidad_id == 1){
+
+                    if($mp->product->unit_type == 'U'){
+                        $total_kgs = $mp->balance * $mp->product->unit_weight;
+                        $balance = $mp->balance;
+                        //dd($balance,$mp->product->unit_weight,$total_kgs);
+                        MovementProduct::where('id',$mp->id)->update([
+                            'balance' => $total_kgs,
+                            'entry'   => $total_kgs
+                        ]);
+                    }
+                }
+            }
+        }
+
+        $productos = Product::where('unit_type','U')->get();
+
+        foreach ($productos as $p) {
+            $movements = MovementProduct::where('movement_id','>',611)
+                                        ->where('product_id',$p->id)
+                                        ->where('entidad_id',1)
+                                        ->orderBy('id','ASC')
+                                        ->get();
+            for ($i=0; $i < count($movements) ; $i++) {
+                $m = $movements[$i];
+
+                if($i == 0){
+                    $balance_orig =$new_balance = $m->balance;
+                }
+
+                if($i > 0){
+                    $new_balance = $balance_orig + $m->entry - $m->egress;
+                }
+                $balance_orig = $new_balance;
+                if($i > 0){
+                    MovementProduct::where('id',$m->id)->update([
+                        'balance' => $new_balance
+                    ]);
+                }
+            }
+        }
+
+
         /* $sessions = SessionProduct::all();
         foreach ($sessions as $s) {
             if(!str_contains($s->list_id, 'CLIENTE')){
