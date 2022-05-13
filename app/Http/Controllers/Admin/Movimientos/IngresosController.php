@@ -26,15 +26,13 @@ class IngresosController extends Controller
 
     public function index(Request $request)
     {
-
         if ($request->ajax()) {
-
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $arrTypes = ['COMPRA'];
-                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
+                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('id', 'DESC')->orderBy('date', 'DESC')->get();
             } else {
                 $arrTypes = ['VENTA', 'TRASLADO'];
-                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
+                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('id', 'DESC')->orderBy('date', 'DESC')->get();
             }
             return Datatables::of($movement)
                 ->addIndexColumn()
@@ -76,13 +74,12 @@ class IngresosController extends Controller
     public function indexCerradas(Request $request)
     {
         if ($request->ajax()) {
-
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $arrTypes = ['COMPRA'];
-                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
+                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('id', 'DESC')->orderBy('date', 'DESC')->get();
             } else {
                 $arrTypes = ['VENTA', 'TRASLADO'];
-                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
+                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('id', 'DESC')->orderBy('date', 'DESC')->get();
             }
             return Datatables::of($movement)
                 ->addIndexColumn()

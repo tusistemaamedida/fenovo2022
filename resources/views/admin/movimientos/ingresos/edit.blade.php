@@ -189,8 +189,9 @@
 
         jQuery('#loader').removeClass('hidden');
 
-        const movement_id = jQuery("#movement_id").val();
-        const store_id = 1;
+        const movement_id   = jQuery("#movement_id").val();
+        const unit_type     = jQuery("#unit_type").val();
+        const store_id      = 1;
         let arrMovimientos = [];
 
         jQuery('.calculate').each(function() {
@@ -201,7 +202,7 @@
                 let presentacion        = presentacion_input[1];
                 let unit_package        = presentacion;
                 let valor               = parseFloat(jQuery(this).val());
-                let entry               = (valor*presentacion)*peso_unitario;
+                let entry               = (unit_type == 'K')?(valor*presentacion)*peso_unitario:(valor*presentacion);
                 let egress              = 0;
                 let balance             = 0;
                 let entidad_tipo        = 'S';
@@ -215,6 +216,7 @@
                     Movi.entidad_tipo   = entidad_tipo;
                     Movi.product_id     = product_id;
                     Movi.unit_package   = unit_package;
+                    Movi.unit_type      = unit_type;
                     Movi.bultos         = valor;
                     Movi.entry          = entry;
                     Movi.balance        = 0;
@@ -224,7 +226,6 @@
                 }
             }
         });
-       
         jQuery.ajax({
             url: '{{ route('detalle-ingresos.store') }}',
             type: 'POST',

@@ -187,7 +187,7 @@ class Product extends Model
             ->whereProductId($this->id)
             ->orderBy('created_at')
             ->first();
-        return ($this->unit_type == 'K') ? number_format($registro->balance, 0, '', '') : number_format($registro->balance / $this->unit_weight, 0, '', '');
+        return number_format($registro->balance, 0, '', '');
     }
 
     public function ingresoSemana()
@@ -198,7 +198,7 @@ class Product extends Model
             ->orderBy('created_at')
             ->get()->skip(1)->sum('entry');
 
-        return ($this->unit_type == 'K') ? number_format($suma, 0, '', '') : number_format($suma / $this->unit_weight, 0, '', '');
+        return number_format($suma, 0, '', '');
     }
 
     public function salidaSemana()
@@ -209,13 +209,13 @@ class Product extends Model
             ->orderBy('created_at')
             ->get()->skip(1)->sum('egress');
 
-        return ($this->unit_type == 'K') ? number_format($suma, 0, '', '') : number_format($suma / $this->unit_weight, 0, '', '');
+        return number_format($suma, 0, '', '');
     }
 
     public function stockFinSemana()
     {
         $registro = MovementProduct::whereEntidadId(1)->whereProductId($this->id)->orderByDesc('id')->first();
-        return ($this->unit_type == 'K') ? number_format($registro->balance, 0, '', '') : number_format($registro->balance / $this->unit_weight, 0, '', '');
+        return number_format($registro->balance, 0, '', '');
     }
 
     public function scopeName($query, $name)
