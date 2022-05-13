@@ -472,8 +472,8 @@ class InvoiceController extends Controller
           'imp_trib'=>$data['ImpTrib'],
           'mon_id'=>$data['MonId'],
           'mon_cotiz'=>$data['MonCotiz'],
-          'ivas'=>json_encode($data['Iva']),
-          'tributos'=>json_encode($data['Tributos']),
+          'ivas'    => json_encode($data['Iva']),
+          'tributos'=> (isset($data['Tributos']))?json_encode($data['Tributos']):null,
         ];
     }
 
