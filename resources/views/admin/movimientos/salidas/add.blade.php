@@ -26,19 +26,19 @@
         <div class="row">
             @include('admin.movimientos.salidas.partials.form-select-cliente')
             @if (Session()->has('error'))
-                <div class="col-md-12">
-                    <div class="alert alert-danger">
-                        <button type="button" class="close" data-dismiss="alert">
-                            <i class="ace-icon fa fa-times"></i>
-                        </button>
+            <div class="col-md-12">
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">
+                        <i class="ace-icon fa fa-times"></i>
+                    </button>
 
-                        <strong>
-                            <i class="ace-icon fa fa-check"></i>
-                            ERROR!<br>
-                        </strong>
-                        {{ Session::get('error') }}
-                    </div>
+                    <strong>
+                        <i class="ace-icon fa fa-check"></i>
+                        ERROR!<br>
+                    </strong>
+                    {{ Session::get('error') }}
                 </div>
+            </div>
             @endif
             <div style="width: 100%" id="session_products_table"></div>
         </div>
@@ -248,7 +248,7 @@
         var to_type = jQuery("#to_type").val();
         var to = jQuery("#to").val();
         var list_id = to_type+'_'+to;
-        var total_from_session = jQuery("#total_from_session").val();
+        var total_from_session = jQuery("#total_from_session").val();        
         var formData =  {list_id,total_from_session};
         var url ="{{ route('get.flete.session.products') }}";
 
@@ -257,6 +257,9 @@
             type:'GET',
             data:formData,
             success:function(data){
+
+                console.log(data);
+                
                 jQuery("#porcentajeFlete").html(data['porcentaje']);
                 jQuery("#flete").val(parseFloat(data['flete']).toFixed(2));
             },
