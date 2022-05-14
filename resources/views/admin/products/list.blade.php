@@ -49,7 +49,7 @@
                             <div class="table-responsive">
                                 <table id="productTable" class=" table table-hover display dataTable no-footer yajra-datatable" role="grid">
                                     <thead class="text-body">
-                                        <tr class="bg-dark text-white">
+                                        <tr class="bg-light">
                                             <th>Codigo</th>
                                             <th>Producto</th>
                                             <th>Stock</th>
@@ -88,7 +88,7 @@
         columns: [
             {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},
-            {data: 'stock', orderable: false, searchable: false},
+            {data: 'stock', class:'text-center font-weight-bold text-danger', orderable: false, searchable: false},
             {data: 'unit_type',class:'text-center', orderable: false, searchable: false},
             {data: 'costo', orderable: false, searchable: false},
             {data: 'proveedor', orderable: false},

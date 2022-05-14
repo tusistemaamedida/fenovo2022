@@ -16,10 +16,6 @@ class ProductsViewExportStock implements FromView
 
     use Exportable;
 
-    public function __construct()
-    {
-    }
-
     public function view(): View
     {
         $productos    = Product::whereActive(1)->get();
