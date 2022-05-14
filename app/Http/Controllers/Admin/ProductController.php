@@ -116,9 +116,10 @@ class ProductController extends Controller
             $producto   = $this->productRepository->getByIdWith($product_id);
 
             $movimientos = MovementProduct::where('product_id', $product_id)
-                                          ->where('entidad_id', \Auth::user()->store_active)
-                                          ->where('entidad_tipo', 'S')
-                                          ->with('movement')->orderBy('created_at', 'DESC')->get();
+                ->where('entidad_id', \Auth::user()->store_active)
+                ->where('entidad_tipo', 'S')
+                ->with('movement')
+                ->orderBy('created_at', 'DESC')->get();
 
             return view('admin.products.historial', compact('producto', 'movimientos'));
         } catch (\Exception $e) {
@@ -713,8 +714,6 @@ class ProductController extends Controller
 
     public function compararStock(Request $request)
     {
-        return $product = Product::find(201)->stockInicioSemana();
-
         if ($request->ajax()) {
             $productos = $this->productRepository->all()->where('active', '=', 1);
 

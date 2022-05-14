@@ -174,7 +174,7 @@ class Product extends Model
             ->first();
 
         if ($movement_product) {
-            $stock = (float)$movement_product->balance;
+            $stock = ($this->unit_type == 'K') ? (float)$movement_product->balance : (int)$movement_product->balance;
         }
 
         return $stock;
@@ -187,7 +187,8 @@ class Product extends Model
             ->whereProductId($this->id)
             ->orderBy('created_at')
             ->first();
-        return number_format($registro->balance, 0, '', '');
+
+        return ($registro) ? number_format($registro->balance, 0, '', '') : 0;
     }
 
     public function ingresoSemana()

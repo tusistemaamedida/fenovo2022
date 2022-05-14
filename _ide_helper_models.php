@@ -503,7 +503,6 @@ namespace App\Models{
  * @property string|null $unit_price
  * @property string|null $cost_fenovo
  * @property float|null $unit_package
- * @property string|null $unit_type
  * @property int|null $bultos
  * @property bool|null $invoice
  * @property int|null $iibb
@@ -535,7 +534,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereTasiva($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereUnitPackage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereUnitPrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereUnitType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereUpdatedAt($value)
  */
 	class MovementProduct extends \Eloquent {}
