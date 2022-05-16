@@ -228,8 +228,13 @@ class ProductController extends Controller
                 $insert_data['orden']          = $orden;
                 $insert_data['voucher_number'] = time();
                 $insert_data['flete']          = 0;
-                $suma_balances                 = 0;
-                $suma_stock                    = 0;
+                $insert_data['user_id']        = $data['user_id'];
+                $insert_data['observacion']    = $data['observacion'];
+                // Inserta movimiento de Ajuste
+                $movement = Movement::create($insert_data);
+
+                $suma_balances = 0;
+                $suma_stock    = 0;
 
                 foreach ($data as $item => $bultos) {
                     if (is_numeric($bultos)) {
@@ -248,7 +253,6 @@ class ProductController extends Controller
                                 $egress = $new_balance;
                             }
 
-                            $movement               = Movement::create($insert_data);
                             $latest['balance']      = $suma_balances;
                             $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
                             $latest['entidad_tipo'] = 'S';
@@ -262,6 +266,7 @@ class ProductController extends Controller
                         }
                     }
                 }
+
                 return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
             }
             return new JsonResponse(['msj' => 'Error en el ajuste', 'type' => 'error']);
