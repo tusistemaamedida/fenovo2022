@@ -202,7 +202,7 @@ class ProductController extends Controller
     {
         try {
             $valida = false;
-            $data   = $request->except('_token', 'product_id');
+            $data   = $request->except('_token', 'product_id', 'user_id', 'observacion');
 
             foreach ($data as $item => $val) {
                 if (!is_null($val)) {
@@ -228,8 +228,8 @@ class ProductController extends Controller
                 $insert_data['orden']          = $orden;
                 $insert_data['voucher_number'] = time();
                 $insert_data['flete']          = 0;
-                $insert_data['user_id']        = $data['user_id'];
-                $insert_data['observacion']    = $data['observacion'];
+                $insert_data['user_id']        = $request->user_id;
+                $insert_data['observacion']    = $request->observacion;
                 // Inserta movimiento de Ajuste
                 $movement = Movement::create($insert_data);
 
