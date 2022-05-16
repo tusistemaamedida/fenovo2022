@@ -52,8 +52,8 @@
                                             <td>{{ $m->movement->To($m->movement->type)}}</td>
                                             <td>{{ $m->unit_package}}</td>
                                             <td>{{ $m->bultos}}</td>
-                                            <td>{{ $m->entry}}</td>
-                                            <td>{{ $m->egress}}</td>
+                                            <td>{{ ($m->unit_type == 'K')?$m->entry:(int)$m->entry}}</td>
+                                            <td>{{ ($m->unit_type == 'K')?$m->egress:(int)$m->egress}}</td>
                                             <th>{{ ($m->unit_type == 'K')?$m->balance:(int)$m->balance}}</th>
                                         </tr>
                                         @endforeach
