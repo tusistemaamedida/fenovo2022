@@ -322,7 +322,7 @@ class SalidasController extends Controller
             $objProduct->class      = '';
             array_push($array_productos, $objProduct);
             $pdf = PDF::loadView('print.panamaFelete', compact('destino', 'array_productos', 'neto', 'id_flete', 'fecha'));
-            return $pdf->download($id_flete . '.pdf');
+            return $pdf->stream($id_flete . '.pdf');
         }
     }
 
@@ -408,7 +408,7 @@ class SalidasController extends Controller
             }
 
             $pdf = PDF::loadView('print.remito', compact('destino', 'fecha', 'array_productos', 'neto', 'paginas', 'total_lineas', 'mercaderia_en_transito'));
-            return $pdf->download('remito.pdf');
+            return $pdf->stream('remito.pdf');
         }
     }
 
