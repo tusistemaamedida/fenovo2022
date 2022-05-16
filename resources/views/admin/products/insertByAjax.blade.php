@@ -35,7 +35,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="2">Observaciones (obligatorio)</td>
+                <td colspan="2">Observaciones</td>
             </tr>
             <tr>
                 <td colspan="2">
