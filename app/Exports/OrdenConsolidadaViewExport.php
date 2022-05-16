@@ -39,8 +39,8 @@ class OrdenConsolidadaViewExport implements FromView
             /* 9  */ $objMovimiento->flete      = ($movimiento->hasFlete()) ? $movimiento->getFlete()->neto105 + $movimiento->getFlete()->neto21 : '0.0';
             /* 10 */ $objMovimiento->neto       = ($movimiento->invoice) ? $movimiento->invoice->imp_neto : '0.0';
             /* 11 */ $objMovimiento->factura    = ($movimiento->invoice) ? $movimiento->invoice->voucher_number : '0.0';
-            /* 12 */ $objMovimiento->panama1    = ($movimiento->hasFlete()) ? $movimiento->getFlete()->id : '0.0';
-            /* 13 */ $objMovimiento->panama2    = '0.0';
+            /* 12 */ $objMovimiento->panama1    = ($movimiento->hasPanama()) ? $movimiento->getPanama()->id : '0.0';
+            /* 13 */ $objMovimiento->panama2    = ($movimiento->hasFlete()) ? $movimiento->getFlete()->id : '0.0';
 
             array_push($arrMovimientos, $objMovimiento);
         }
