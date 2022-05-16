@@ -951,14 +951,12 @@ class SalidasController extends Controller
     public function updateCostos()
     {
         $movement_orig = Movement::where('id', 612)->with('movement_products')->get();
-
         foreach ($movement_orig as $m) {
             foreach ($m->movement_products as $mp) {
                 if ($mp->entidad_id == 1) {
                     if ($mp->product->unit_type == 'U') {
                         $total_kgs = $mp->balance * $mp->product->unit_weight;
                         $balance   = $mp->balance;
-                        //dd($balance,$mp->product->unit_weight,$total_kgs);
                         MovementProduct::where('id', $mp->id)->update([
                             'balance' => $total_kgs,
                             'entry'   => $total_kgs,
