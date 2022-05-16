@@ -76,9 +76,7 @@ class ProductController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('stock', function ($product) {
-                    return ($product->unit_type == 'K')
-                        ? $product->stockReal(null, Auth::user()->store_active)
-                        : (int)($product->stockReal(null, Auth::user()->store_active) / $product->unit_weight);
+                    return $product->stockReal(null, Auth::user()->store_active);
                 })
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();
@@ -118,9 +116,10 @@ class ProductController extends Controller
             $producto   = $this->productRepository->getByIdWith($product_id);
 
             $movimientos = MovementProduct::where('product_id', $product_id)
-                                          ->where('entidad_id', \Auth::user()->store_active)
-                                          ->where('entidad_tipo', 'S')
-                                          ->with('movement')->orderBy('created_at', 'DESC')->get();
+                ->where('entidad_id', \Auth::user()->store_active)
+                ->where('entidad_tipo', 'S')
+                ->with('movement')
+                ->orderBy('created_at', 'DESC')->get();
 
             return view('admin.products.historial', compact('producto', 'movimientos'));
         } catch (\Exception $e) {
@@ -240,7 +239,7 @@ class ProductController extends Controller
                         if ($producto) {
                             $balance_producto = $producto->stockReal(null, Auth::user()->store_active);
                             $entry            = $egress            = 0;
-                            $new_balance      = $bultos * $presentacion * $producto->unit_weight;
+                            $new_balance      = ($producto->unit_type == 'K') ? $bultos * $presentacion * $producto->unit_weight : $bultos * $presentacion;
                             $suma_balances += $new_balance;
 
                             if ($balance_producto < $new_balance) {
@@ -710,7 +709,7 @@ class ProductController extends Controller
 
     public function exportProductsToCsv()
     {
-        (new ProductsViewExport())->store('producto.csv');
+        return Excel::download(new ProductsViewExport(), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function compararStock(Request $request)
@@ -724,15 +723,14 @@ class ProductController extends Controller
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
                 })
-
                 ->addColumn('stockInicioSemana', function ($product) {
                     return $product->stockInicioSemana();
                 })
                 ->addColumn('ingresoSemana', function ($product) {
-                    return number_format($product->ingresoSemana(), 2);
+                    return $product->ingresoSemana();
                 })
                 ->addColumn('salidaSemana', function ($product) {
-                    return number_format($product->salidaSemana(), 2);
+                    return $product->salidaSemana();
                 })
                 ->addColumn('stock', function ($product) {
                     return $product->stockFinSemana();

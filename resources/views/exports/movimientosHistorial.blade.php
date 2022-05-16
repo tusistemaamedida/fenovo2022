@@ -4,10 +4,9 @@
         <th>Tipo</th>
         <th>Desde</th>
         <th>Hacia</th>
-        <th>Entrada (Kgrs)</th>
-        <th>Salida (Kgrs)</th>
-        <th>Stock(Kgrs)</th>
-        <th>Stock(U)</th>
+        <th>Entrada</th>
+        <th>Salida</th>
+        <th>Stock</th>
         <th>Bultos</th>
     </tr>
     @foreach ($movimientos as $m)
@@ -19,8 +18,7 @@
         <td>{{$m->entry}}</td>
         <td>{{$m->egress}}</td>
         <td>{{$m->balance}}</td>
-        <td>{{(int)($m->balance*$producto->unit_weight)}}</td>
-        <td>{{(int)(($m->balance*$producto->unit_weight)/$m->unit_package)}}</td>
+        <td>{{$m->bultos}}</td>
     </tr>
     @endforeach
 </table>

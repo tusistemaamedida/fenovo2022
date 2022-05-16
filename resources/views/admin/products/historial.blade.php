@@ -31,30 +31,30 @@
                             <div class="table-responsive">
                                 <table id="productTable" class=" table table-hover display dataTable no-footer yajra-datatable" role="grid">
                                     <thead class="text-body">
-                                        <tr class="bg-dark text-white">
+                                        <tr class="bg-light">
                                             <th>Fecha</th>
                                             <th>Tipo</th>
                                             <th>Desde</th>
                                             <th>Hacia</th>
-                                            <th>Entrada (Kgrs)</th>
-                                            <th>Salida (Kgrs)</th>
-                                            <th>Stock(Kgrs)</th>
-                                            <th>Stock(U)</th>
+                                            <th>Presentacion</th>
                                             <th>Bultos</th>
+                                            <th>Entrada</th>
+                                            <th>Salida </th>
+                                            <th>Stock</th>
                                         </tr>
                                     </thead>
                                     <tbody class="kt-table-tbody text-dark">
                                         @foreach ($movimientos as $m)
                                         <tr>
-                                            <td>{{\Carbon\Carbon::parse($m->movement->created_at)->format('d/m/Y')}}</td>
-                                            <td>{{$m->movement->type}}</td>
-                                            <td>{{$m->movement->From($m->movement->type)}}</td>
-                                            <td>{{$m->movement->To($m->movement->type)}}</td>
-                                            <td>{{$m->entry}}</td>
-                                            <td>{{$m->egress}}</td>
-                                            <td>{{$m->balance}}</td>
-                                            <td>{{(int)($m->balance*$producto->unit_weight)}}</td>
-                                            <td>{{(int)(($m->balance*$producto->unit_weight)/$m->unit_package)}}</td>
+                                            <td>{{ \Carbon\Carbon::parse($m->movement->created_at)->format('d/m/Y')}}</td>
+                                            <td>{{ $m->movement->type}}</td>
+                                            <td>{{ $m->movement->From($m->movement->type)}}</td>
+                                            <td>{{ $m->movement->To($m->movement->type)}}</td>
+                                            <td>{{ $m->unit_package}}</td>
+                                            <td>{{ $m->bultos}}</td>
+                                            <td>{{ $m->entry}}</td>
+                                            <td>{{ $m->egress}}</td>
+                                            <th>{{ ($m->unit_type == 'K')?$m->balance:(int)$m->balance}}</th>
                                         </tr>
                                         @endforeach
                                     </tbody>

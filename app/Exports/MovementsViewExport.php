@@ -74,8 +74,7 @@ class MovementsViewExport implements FromView
         $arrMovements = [];
 
         foreach ($movimientos as $movement) {
-
-            $store_type  = DB::table('stores')->where('id', $movement->from)->select('store_type')->pluck('store_type')->first();
+            $store_type = DB::table('stores')->where('id', $movement->from)->select('store_type')->pluck('store_type')->first();
 
             $creado = false;
 
@@ -92,7 +91,7 @@ class MovementsViewExport implements FromView
                     $objMovement->tipo        = 'E';
                     $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                     $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
-                    $objMovement->cantidad    = ($movement->unidad == 'K') ? $movement->entry : $movement->bultos * $movement->unit_package;
+                    $objMovement->cantidad    = $movement->entry;
                     $objMovement->unidad      = $movement->unidad;
                 }
 
@@ -107,24 +106,17 @@ class MovementsViewExport implements FromView
                     $objMovement->tipo        = 'S';
                     $objMovement->codtienda   = str_pad(0, 3, '0', STR_PAD_LEFT);
                     $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
-                    $objMovement->cantidad    = ($movement->unidad == 'K') ? $movement->egress : $movement->bultos * $movement->unit_package;
+                    $objMovement->cantidad    = $movement->egress;
                     $objMovement->unidad      = $movement->unidad;
                 }
             } else {
                 // Analizar las devoluciones
 
                 if ($movement->entry > 0) {
-
-                    $cod_fenovo  = DB::table('stores')->where('id', $movement->to)->select('cod_fenovo')->pluck('cod_fenovo')->first();
+                    $cod_fenovo = DB::table('stores')->where('id', $movement->to)->select('cod_fenovo')->pluck('cod_fenovo')->first();
 
                     $objMovement = new stdClass();
                     $creado      = true;
-
-                    if ($movement->unidad == 'K') {
-                        $cant = $movement->entry;
-                    } else {
-                        $cant = $movement->bultos * $movement->unit_package;
-                    }
 
                     $objMovement->origen      = str_pad($cod_fenovo, 3, '0', STR_PAD_LEFT);
                     $objMovement->id          = 'O' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
@@ -133,7 +125,7 @@ class MovementsViewExport implements FromView
                     $objMovement->tipo        = 'E';
                     $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                     $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
-                    $objMovement->cantidad    = $cant;
+                    $objMovement->cantidad    = $movement->entry;
                     $objMovement->unidad      = $movement->unidad;
                 }
             }

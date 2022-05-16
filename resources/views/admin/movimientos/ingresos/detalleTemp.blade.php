@@ -16,7 +16,10 @@
 
     </div>
     <div class="col-2"> {{ $presentacion }} </div>
-    <div class="col-3"> <input type="number" id="unidades_{{ $presentacion }}" name="{{ $presentacion }}" class="form-control text-center calculate" onkeyup="sumar()" value="0" /> </div>
+    <div class="col-3">
+        <input type="number" id="unidades_{{ $presentacion }}" name="{{ $presentacion }}" class="form-control text-center calculate" onkeyup="sumar()" value="0" />
+        <input type="hidden" id="unit_type" name="unit_type" value="{{ $producto->unit_type }}">
+    </div>
     <div class="col-3">
         @if($loop->last)
         <button id="btn-guardar-producto" onclick="guardarItem('{{ $producto->id }}', '{{ $producto->unit_weight }}')" class="btn-outline-primary rounded-pill"> Guardar </button>
@@ -28,6 +31,6 @@
     <div class="col-1"> </div>
     <div class="col-2"> <span class=" text-danger">Total </span></div>
     <div class="col-3"> <input type="number" class="form-control total text-center font-weight-bolder disabled" disabled="true" value="" readonly> </div>
-    <div class="col-3"> </div>
+    <div class="col-3 text-left">{{ $producto->unit_type }} </div>
 </div>
 @endif
