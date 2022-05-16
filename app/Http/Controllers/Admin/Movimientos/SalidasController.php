@@ -770,6 +770,8 @@ class SalidasController extends Controller
             $insert_data['status']         = 'FINISHED';
             $insert_data['voucher_number'] = $request->input('voucher_number');
             $insert_data['flete']          = $request->flete;
+            $insert_data['observacion']    = $request->observacion;
+            $insert_data['user_id']        = \Auth::user()->id;
             $insert_data['flete_invoice']  = (isset($request->factura_flete)) ? 1 : 0;
 
             $movement = Movement::create($insert_data);
