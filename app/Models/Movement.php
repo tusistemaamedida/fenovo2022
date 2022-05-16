@@ -47,11 +47,13 @@ class Movement extends Model
         'from',
         'to',
         'status',
-        'orden',
-        'exported',
         'voucher_number',
         'flete',
         'flete_invoice',
+        'orden',
+        'exported',
+        'user_id',
+        'observacion',
     ];
 
     public function movement_products()
@@ -74,24 +76,29 @@ class Movement extends Model
         return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('invoice', false);
     }
 
-    public function verifSiFactura(){
-        return MovementProduct::where('movement_id',$this->id)->where('invoice', true)->count();
+    public function verifSiFactura()
+    {
+        return MovementProduct::where('movement_id', $this->id)->where('invoice', true)->count();
     }
 
-    public function hasPanama(){
-        return Panamas::where('movement_id',$this->id)->where('tipo','PAN')->exists();
+    public function hasPanama()
+    {
+        return Panamas::where('movement_id', $this->id)->where('tipo', 'PAN')->exists();
     }
 
-    public function hasFlete(){
-        return Panamas::where('movement_id',$this->id)->where('tipo',"!=",'PAN')->exists();
+    public function hasFlete()
+    {
+        return Panamas::where('movement_id', $this->id)->where('tipo', '!=', 'PAN')->exists();
     }
 
-    public function getPanama(){
-        return Panamas::where('movement_id',$this->id)->where('tipo','PAN')->first();
+    public function getPanama()
+    {
+        return Panamas::where('movement_id', $this->id)->where('tipo', 'PAN')->first();
     }
 
-    public function getFlete(){
-        return Panamas::where('movement_id',$this->id)->where('tipo',"!=",'PAN')->first();
+    public function getFlete()
+    {
+        return Panamas::where('movement_id', $this->id)->where('tipo', '!=', 'PAN')->first();
     }
 
     public function movement_ingreso_products()
@@ -216,7 +223,7 @@ class Movement extends Model
 
     public function neto()
     {
-        $arrEgreso = ['VENTA', 'VENTACLIENTE','TRASLADO'];
+        $arrEgreso = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
 
         $netoInvoice = DB::table('movements as m')
             ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
@@ -224,20 +231,20 @@ class Movement extends Model
             ->select([DB::raw('SUM(mp.bultos * mp.unit_price * mp.unit_package * mp.tasiva) as netoInvoice')])
             ->orderBy('m.date', 'ASC')
             ->where('m.id', $this->id)
-            ->where('mp.egress','>', 0)
-            ->where('mp.invoice','=', 1)
-            ->where('mp.entidad_id',\Auth::user()->store_active)
-            ->where('mp.entidad_tipo','S')
+            ->where('mp.egress', '>', 0)
+            ->where('mp.invoice', '=', 1)
+            ->where('mp.entidad_id', \Auth::user()->store_active)
+            ->where('mp.entidad_tipo', 'S')
             ->whereIn('m.type', $arrEgreso)
             ->pluck('netoInvoice')
             ->first();
 
-        return new JsonResponse(['netoInvoice' => number_format($netoInvoice,2,',','')]);
+        return new JsonResponse(['netoInvoice' => number_format($netoInvoice, 2, ',', '')]);
     }
 
     public function neto21($invoice)
     {
-        $arrEgreso = ['VENTA', 'VENTACLIENTE','TRASLADO'];
+        $arrEgreso = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
 
         $neto = DB::table('movements as m')
             ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
@@ -251,9 +258,9 @@ class Movement extends Model
             ->where('mp.iibb', true)
             ->where('mp.invoice', $invoice)
             ->where('m.id', $this->id)
-            ->where('mp.egress','>', 0)
-            ->where('mp.entidad_id',\Auth::user()->store_active)
-            ->where('mp.entidad_tipo','S')
+            ->where('mp.egress', '>', 0)
+            ->where('mp.entidad_id', \Auth::user()->store_active)
+            ->where('mp.entidad_tipo', 'S')
             ->whereIn('m.type', $arrEgreso)->first();
 
         return $neto;
@@ -261,7 +268,7 @@ class Movement extends Model
 
     public function neto105($invoice)
     {
-        $arrEgreso = ['VENTA', 'VENTACLIENTE','TRASLADO'];
+        $arrEgreso = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
 
         $neto = DB::table('movements as m')
             ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
@@ -275,9 +282,9 @@ class Movement extends Model
             ->where('mp.iibb', true)
             ->where('mp.invoice', $invoice)
             ->where('m.id', $this->id)
-            ->where('mp.egress','>', 0)
-            ->where('mp.entidad_id',\Auth::user()->store_active)
-            ->where('mp.entidad_tipo','S')
+            ->where('mp.egress', '>', 0)
+            ->where('mp.entidad_id', \Auth::user()->store_active)
+            ->where('mp.entidad_tipo', 'S')
             ->whereIn('m.type', $arrEgreso)->first();
 
         return $neto;
@@ -285,7 +292,7 @@ class Movement extends Model
 
     public function totalConIva($invoice)
     {
-        $arrEgreso = ['VENTA', 'VENTACLIENTE','TRASLADO'];
+        $arrEgreso = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
 
         $neto = DB::table('movements as m')
             ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
@@ -297,9 +304,9 @@ class Movement extends Model
             ->where('mp.iibb', true)
             ->where('mp.invoice', $invoice)
             ->where('m.id', $this->id)
-            ->where('mp.egress','>', 0)
-            ->where('mp.entidad_id',\Auth::user()->store_active)
-            ->where('mp.entidad_tipo','S')
+            ->where('mp.egress', '>', 0)
+            ->where('mp.entidad_id', \Auth::user()->store_active)
+            ->where('mp.entidad_tipo', 'S')
             ->whereIn('m.type', $arrEgreso)->first();
 
         return $neto;
@@ -307,7 +314,7 @@ class Movement extends Model
 
     public function totalIibb($invoice)
     {
-        $arrEgreso = ['VENTA', 'VENTACLIENTE','TRASLADO'];
+        $arrEgreso = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
 
         $neto = DB::table('movements as m')
             ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
@@ -319,9 +326,9 @@ class Movement extends Model
             ->where('mp.iibb', false)
             ->where('mp.invoice', $invoice)
             ->where('m.id', $this->id)
-            ->where('mp.egress','>', 0)
-            ->where('mp.entidad_id',\Auth::user()->store_active)
-            ->where('mp.entidad_tipo','S')
+            ->where('mp.egress', '>', 0)
+            ->where('mp.entidad_id', \Auth::user()->store_active)
+            ->where('mp.entidad_tipo', 'S')
             ->whereIn('m.type', $arrEgreso)->first();
 
         return $neto;
@@ -329,7 +336,7 @@ class Movement extends Model
 
     public function cosventa($invoice)
     {
-        $arrEgreso = ['VENTA', 'VENTACLIENTE','TRASLADO'];
+        $arrEgreso = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
 
         $neto = DB::table('movements as m')
             ->join('movement_products as mp', 'mp.movement_id', '=', 'm.id')
@@ -339,9 +346,9 @@ class Movement extends Model
             ])
             ->orderBy('m.date', 'ASC')
             ->where('m.id', $this->id)
-            ->where('mp.egress','>', 0)
-            ->where('mp.entidad_id',\Auth::user()->store_active)
-            ->where('mp.entidad_tipo','S')
+            ->where('mp.egress', '>', 0)
+            ->where('mp.entidad_id', \Auth::user()->store_active)
+            ->where('mp.entidad_tipo', 'S')
             ->where('mp.invoice', $invoice)
             ->whereIn('m.type', $arrEgreso)->first();
 
