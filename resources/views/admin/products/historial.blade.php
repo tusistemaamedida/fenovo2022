@@ -46,15 +46,15 @@
                                     <tbody class="kt-table-tbody text-dark">
                                         @foreach ($movimientos as $m)
                                         <tr>
-                                            <td>{{\Carbon\Carbon::parse($m->movement->created_at)->format('d/m/Y')}}</td>
-                                            <td>{{$m->movement->type}}</td>
-                                            <td>{{$m->movement->From($m->movement->type)}}</td>
-                                            <td>{{$m->movement->To($m->movement->type)}}</td>
-                                            <td>{{$m->unit_package}}</td>
-                                            <td>{{$m->bultos}}</td>
-                                            <td>{{$m->entry}}</td>
-                                            <td>{{$m->egress}}</td>
-                                            <th>{{$m->balance}}</th>
+                                            <td>{{ \Carbon\Carbon::parse($m->movement->created_at)->format('d/m/Y')}}</td>
+                                            <td>{{ $m->movement->type}}</td>
+                                            <td>{{ $m->movement->From($m->movement->type)}}</td>
+                                            <td>{{ $m->movement->To($m->movement->type)}}</td>
+                                            <td>{{ $m->unit_package}}</td>
+                                            <td>{{ $m->bultos}}</td>
+                                            <td>{{ $m->entry}}</td>
+                                            <td>{{ $m->egress}}</td>
+                                            <th>{{ ($m->unit_type == 'K')?$m->balance:(int)$m->balance}}</th>
                                         </tr>
                                         @endforeach
                                     </tbody>

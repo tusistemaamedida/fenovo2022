@@ -709,7 +709,7 @@ class ProductController extends Controller
 
     public function exportProductsToCsv()
     {
-        (new ProductsViewExport())->store('producto.csv');
+        return Excel::download(new ProductsViewExport(), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function compararStock(Request $request)

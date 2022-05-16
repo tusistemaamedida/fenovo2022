@@ -59,7 +59,8 @@
 <table style=" width:100%; font-size:9px">
     <tr>
         <td class="text-center">Bultos</td>
-        <td class="text-center">Cantidad</td>
+        <td class="text-center">Kgrs</td>
+        <td class="text-center">Unidades</td>
         <td class="w-25">Nombre del producto</td>
         <td class="text-center">Presentación</td>
     </tr>
@@ -78,6 +79,7 @@
     <tr>
         <td class="text-center">{{ (int)$session_product->quantity}}</td>
         <td class="text-center">{{ (float)$session_product->unit_weight * (float)$session_product->unit_package * (float)$session_product->quantity }} </td>
+        <td class="text-center">{{ $session_product->unit_package * $session_product->quantity }} </td>
         <td>{{$session_product->name}}</td>
         <td class="text-center">{{$session_product->unit_package}}</td>
     </tr>
