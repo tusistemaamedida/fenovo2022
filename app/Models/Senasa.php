@@ -33,7 +33,7 @@ class Senasa extends Model
         'dias_validez',
         'fecha_salida',
         'hora_salida',
-        'propia'
+        'propia',
     ];
 
     public function movements()
@@ -49,7 +49,7 @@ class Senasa extends Model
             ->join('movement_products as t4', 't4.movement_id', '=', 't3.id')
             ->join('products as t5', 't4.product_id', '=', 't5.id')
             ->join('senasa_definitions as t6', 't5.senasa_id', '=', 't6.id')
-            ->select([DB::raw('t6.product_name as name'), DB::raw('SUM(t4.bultos) as bultos'), DB::raw('SUM(t4.egress) as kilos')])
+            ->select([DB::raw('t6.product_name as name'), DB::raw('t5.unit_weight as unit_weight'), DB::raw('t5.unit_type as unit_type'), DB::raw('SUM(t4.bultos) as bultos'), DB::raw('SUM(t4.egress) as kilos'), DB::raw('t4.egress as egress')])
             ->groupBy('t5.senasa_id')
             ->orderBy('t5.name', 'ASC')
             ->where('t4.egress', '>', 0)
