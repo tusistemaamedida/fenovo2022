@@ -49,7 +49,7 @@
                             <div class="table-responsive">
                                 <table id="productTable" class=" table table-hover display dataTable no-footer yajra-datatable" role="grid">
                                     <thead class="text-body">
-                                        <tr class="bg-light">
+                                        <tr class="bg-light ">
                                             <th>Codigo</th>
                                             <th>Producto</th>
                                             <th>Stock</th>

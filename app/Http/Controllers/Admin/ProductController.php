@@ -709,6 +709,7 @@ class ProductController extends Controller
 
     public function exportProductsToCsv()
     {
+        // Descarga archivo actualizado
         return Excel::download(new ProductsViewExport(), 'producto.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
