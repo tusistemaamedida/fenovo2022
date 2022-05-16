@@ -1,12 +1,12 @@
 <div class="row mb-2">
     <div class="col-12">
-        <p>{{$product->cod_fenovo}} - {{$product->name}} <span id="mov_cod_fenovo"></span></p>
+        <strong>{{$product->cod_fenovo}} - {{$product->name}} <span id="mov_cod_fenovo"></span></strong>
     </div>
 </div>
 
 <div class="row mb-5">
     <div class="col-4">
-        STOCK ACTUAL
+        Stock
     </div>
     <div class="col-4  text-center">
         <strong> {{$stock_total}} </strong>
