@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
-use App\Models\Senasa;
 use App\Models\Panamas;
+use App\Models\Senasa;
 use App\Models\Vehiculo;
 use App\Repositories\LocalidadRepository;
 use App\Repositories\SenasaRepository;
@@ -93,7 +93,7 @@ class SenasaController extends Controller
     public function edit(Request $request)
     {
         try {
-            $senasa    = Senasa::find($request->id);
+            $senasa = Senasa::find($request->id);
             $vehiculos = $this->vehiculoRepository->getAll();
             return new JsonResponse([
                 'type' => 'success',
@@ -144,11 +144,11 @@ class SenasaController extends Controller
 
     public function vincularStore(Request $request)
     {
-        $senasa = Senasa::find($request->id);
+        $senasa     = Senasa::find($request->id);
         $tipo_flete = 'FLETE T';
-        $vehiculo = Vehiculo::where('patente',$senasa->patente_nro)->first();
+        $vehiculo   = Vehiculo::where('patente', $senasa->patente_nro)->first();
 
-        if($vehiculo->propio){
+        if ($vehiculo->propio) {
             $tipo_flete = 'FLETE P';
         }
 
