@@ -1,6 +1,6 @@
 <table>
     <tr>
-        <td colspan="13">{{ $data }}</td>
+        <td colspan="15">{{ $data }}</td>
     </tr>
     @foreach($arrMovimientos as $movimiento)
     <tr>
@@ -15,8 +15,10 @@
         <td>{{ $movimiento->flete }}</td>
         <td>{{ $movimiento->neto }}</td>
         <td>{{ $movimiento->factura }}</td>
+        <td>{{ $movimiento->panamaneto }}</td>
         <td>{{ $movimiento->panama1 }}</td>
         <td>{{ $movimiento->panama2 }}</td>
+        <td>{{ $movimiento->franquicia }}</td>
     </tr>
     @endforeach
 </table>
