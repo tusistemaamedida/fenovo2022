@@ -28,8 +28,10 @@ class OrdenConsolidadaViewExport implements FromView
             $destino    = Movement::find($movimiento->id)->To($movimiento->type, true);
             $destino_id = ($destino->cod_fenovo) ? $destino->cod_fenovo : $destino->id;
 
-            $explodes = explode('-', $movimiento->invoice->voucher_number);
-            $ptoVta   = str_pad((int)$explodes[0], 4, '0', STR_PAD_LEFT);
+            if ($movimiento->invoice) {
+                $explodes = explode('-', $movimiento->invoice->voucher_number);
+                $ptoVta   = str_pad((int)$explodes[0], 4, '0', STR_PAD_LEFT);
+            }
 
             /* 1  */ $objMovimiento->id         = str_pad($movimiento->id, 8, '0', STR_PAD_LEFT);
             /* 2  */ $objMovimiento->fecha      = date('d/m/Y', strtotime($movimiento->date));
