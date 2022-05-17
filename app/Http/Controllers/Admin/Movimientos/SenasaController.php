@@ -154,12 +154,13 @@ class SenasaController extends Controller
 
         $movements = $request->get('movements');
         $senasa->movements()->sync($movements);
-
-        foreach ($movements as $m) {
-            $panama = Panamas::where('movement_id', $m)->where('tipo', '!=', 'PAN')->first();
-            if (isset($panama)) {
-                $panama->tipo = $tipo_flete;
-                $panama->save();
+        if($movements){
+            foreach ($movements as $m) {
+                $panama = Panamas::where('movement_id',$m)->where('tipo','!=','PAN')->first();
+                if(isset($panama)){
+                    $panama->tipo = $tipo_flete;
+                    $panama->save();
+                }
             }
         }
 

@@ -112,7 +112,8 @@ class Invoice extends Model
 		'key',
 		'error',
         'costo_fenovo_total',
-        'orden'
+        'orden',
+        'tributos'
 	];
 
     public function tipoFactura(){
