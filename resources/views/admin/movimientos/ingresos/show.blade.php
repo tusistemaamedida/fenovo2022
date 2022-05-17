@@ -63,6 +63,7 @@
                                             <th class="text-center">#</th>
                                             <th>Cod fenovo</th>
                                             <th>Producto</th>
+                                            <th>$ Costo </th>
                                             <th>Unidad</th>
                                             <th class="text-center">Presentación</th>
                                             <th class="text-center">Bultos</th>
@@ -72,14 +73,16 @@
                                         <tr>
                                             <td class=" text-center"> {{ $loop->iteration }}</td>
                                             <td> {{ $movimiento->product->cod_fenovo }} </td>
-                                            <td> {{ $movimiento->product->name }}</td>
+                                            <td class=" text-left"> {{ $movimiento->product->name }}</td>
+                                            <td> {{ $movimiento->cost_fenovo }}</td>
                                             <td> {{ $movimiento->unit_type }} </td>
                                             <td class=" text-center"> {{ $movimiento->unit_package }} </td>
                                             <td class=" text-center"> {{ $movimiento->bultos }}</td>
-                                            <td class=" text-center"> {{ number_format($movimiento->entry,2) }} </td>
+                                            <td class=" text-center"> {{ number_format($movimiento->unit_package * $movimiento->bultos,0,'','') }} </td>
                                         </tr>
                                         @endforeach
                                         <tr class=" bg-black">
+                                            <th></th>
                                             <th></th>
                                             <th></th>
                                             <th></th>
@@ -93,9 +96,10 @@
                                             <th></th>
                                             <th></th>
                                             <th></th>
+                                            <th></th>
                                             <th class="text-center">Totales</th>
-                                            <th class="text-center">{{ number_format($movimientos->sum('bultos'), 2)}}</th>
-                                            <th class="text-center">{{ number_format($movimientos->sum('entry'), 2)}}</th>
+                                            <th class="text-center">{{ $movimientos->sum('bultos')}}</th>
+                                            <th class="text-center"></th>
                                         </tr>
                                     </table>
                                 </div>

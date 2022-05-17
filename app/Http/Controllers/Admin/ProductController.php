@@ -69,6 +69,42 @@ class ProductController extends Controller
 
     public function list(Request $request)
     {
+        // // Cod_fenovo 2903
+        // $producto           = Product::find(118);
+        // $stock_real         = $producto->stockReal(null, Auth::user()->store_active);
+        // $nro_presentaciones = count(explode('|', $producto->unit_package));
+        // $presentaciones     = explode('|', $producto->unit_package);
+        // $bultos             = 0;
+        // $arrStocks          = [];
+
+        // if ($nro_presentaciones == 1) {
+        //     $bultos = ($producto->unit_type == 'K')
+        //         ? $stock_real / ($producto->unit_weight * $producto->unit_package)
+        //         : $stock_real / $producto->unit_package;
+        // } else {
+        //     $stock_real  = 0;
+        //     $suma_bultos = 0;
+        //     foreach ($presentaciones as $presentacion) {
+        //         $stock_real = $producto->stockReal($presentacion, Auth::user()->store_active);
+        //         $bultos     = ($producto->unit_type == 'K')
+        //             ? $stock_real / ($producto->unit_weight * $presentacion)
+        //             : $stock_real / $presentacion;
+        //         $suma_bultos = $suma_bultos + $bultos;
+
+        //         array_push($arrStocks, $stock_real);
+        //     }
+        // }
+
+        // return new JsonResponse([
+        //     'stock_real'         => $stock_real,
+        //     'unit_type'          => $producto->unit_type,
+        //     'unit_package'       => $producto->unit_package,
+        //     'nro_presentaciones' => $nro_presentaciones,
+        //     'bultos'             => $bultos,
+        //     'suma_bultos'        => $suma_bultos,
+        //     'arrStocks'          => $arrStocks,
+        // ]);
+
         if ($request->ajax()) {
             $productos = $this->productRepository->all()->where('active', '=', 1);
 
@@ -102,7 +138,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock',  'borrar', 'editar', 'ajuste', 'costo', 'historial'])
+                ->rawColumns(['stock', 'borrar', 'editar', 'ajuste', 'costo', 'historial'])
                 ->make(true);
         }
 
