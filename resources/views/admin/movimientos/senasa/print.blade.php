@@ -41,8 +41,8 @@ $total_ku += $movimiento->egress*$movimiento->unit_weight;
     <td class="text-center"></td>
 </tr>
 
-<!-- Revisa si al imprimir el detalle, supera la linea 28 -->
-@if ($loop->iteration % 30 == 0)
+<!-- Revisa si al imprimir el detalle, supera la linea 32 -->
+@if ($loop->iteration % 32 == 0)
 
 </table>
 
