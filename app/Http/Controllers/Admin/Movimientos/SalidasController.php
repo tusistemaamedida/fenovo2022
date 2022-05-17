@@ -986,6 +986,7 @@ class SalidasController extends Controller
                     'balance'      => $balance
                 ]);
             } else {
+
                 array_push($code_not_found, $cod_fenovo);
             }
         }
