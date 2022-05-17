@@ -7,7 +7,7 @@
 <div class="form-group">
     <div class="row">
         <div class="col-6">
-            <label>Patente nro {{ $senasa->patente_nro }}</label>
+            <label>Patente nro</label>
             <fieldset class="form-group">
                 <select class="js-example-basic-single js-states form-control bg-transparent" id="patente_nro" name="patente_nro" onchange="getSenasa(this.value)">
                     <option value="" selected>Patente ...</option>
