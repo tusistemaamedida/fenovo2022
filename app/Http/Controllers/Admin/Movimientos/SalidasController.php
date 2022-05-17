@@ -975,7 +975,6 @@ class SalidasController extends Controller
             $product    = $this->productRepository->getByCodeFenovo($cod_fenovo);
 
             if ($product && $product->unit_type == 'U') {
-
                 MovementProduct::where('movement_id',612)
                                 ->where('product_id',$product->id)
                                 ->update([
@@ -1026,20 +1025,30 @@ class SalidasController extends Controller
                 }
 
                 if ($i > 0) {
+
                     $bultos = $mp->bultos * $mp->unit_package;
+
                     if($mp->entry > 0 && $m->type != 'AJUSTE'){
+
                         $new_balance = $balance_orig + $bultos;
                         $balance_orig = $new_balance;
                         MovementProduct::where('id', $mp->id)->update([
                             'balance' => $new_balance,
                         ]);
+
                     }elseif($mp->egress > 0 && $m->type != 'AJUSTE'){
+
                         $new_balance = $balance_orig - $bultos;
                         $balance_orig = $new_balance;
                         MovementProduct::where('id', $mp->id)->update([
                             'balance' => $new_balance,
                         ]);
+
                     }
+                }
+
+                if($m->type == "AJUSTE"){
+                    $m->delete();
                 }
             }
         }
