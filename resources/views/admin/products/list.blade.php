@@ -82,6 +82,7 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
+        autoWidth: false,
         ajax: "{{ route('products.list') }}",
         columns: [
             {data: 'cod_fenovo', orderable: false},

@@ -1,14 +1,5 @@
 @extends('layouts.app')
 
-@section('css')
-<style>
-    .table tbody tr td {
-        color: #1a3353;
-        font-weight: 500;
-    }
-</style>
-@endsection
-
 @section('content')
 <div class="subheader py-2 py-lg-6 subheader-solid">
     <div class="container-fluid">
