@@ -150,13 +150,18 @@ class Product extends Model
         // Buscar en la session iniciadas
         $subtotal         = 0.0;
         $session_products = SessionProduct::where('product_id', $this->id)->where('store_id', $entidad_id)->get();
+
         foreach ($session_products as $session_product) {
-            $subtotal = $subtotal + ($session_product->unit_package * $session_product->quantity * $this->unit_weight);
+            if($this->unit_type == 'K'){
+                $subtotal = $subtotal + ($session_product->unit_package * $session_product->quantity * $this->unit_weight);
+            }else{
+                $subtotal = $subtotal + ($session_product->unit_package * $session_product->quantity);
+            }
         }
+
         if ($session_products) {
             $stock = $stock - $subtotal;
         }
-
         return $stock;
     }
 

@@ -31,7 +31,7 @@ class CabeExport implements FromView {
             if($panama->tipo == 'PAN'){
                 $id_caja = 'PANAMA';
             }elseif($panama->tipo == 'FLE'){
-                $id_caja = 'FLETE';
+                $id_caja = 'FLETE T';
             }else{
                 $id_caja = $panama->tipo;
             }

@@ -36,6 +36,7 @@
                                             <th>Tipo</th>
                                             <th>Desde</th>
                                             <th>Hacia</th>
+                                            <th>Observaciones</th>
                                             <th>Presentacion</th>
                                             <th>Bultos</th>
                                             <th>Entrada</th>
@@ -50,6 +51,7 @@
                                             <td>{{ $m->movement->type}}</td>
                                             <td>{{ $m->movement->From($m->movement->type)}}</td>
                                             <td>{{ $m->movement->To($m->movement->type)}}</td>
+                                            <td>{{ $m->movement->observacion}}</td>
                                             <td>{{ $m->unit_package}}</td>
                                             <td>{{ $m->bultos}}</td>
                                             <td>{{ ($m->unit_type == 'K')?$m->entry:(int)$m->entry}}</td>
