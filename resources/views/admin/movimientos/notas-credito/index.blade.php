@@ -39,7 +39,8 @@
                                             <th>Factura Relacionada</th>
                                             <th>Comprobante NC</th>
                                             <th>Registro</th>
-                                            <th>Detalle</th>
+                                            <th>Ver</th>
+                                            <th>Comprobante</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -71,7 +72,8 @@
             {data: 'voucher_number',  'class':'text-center'},
             {data: 'comprobante_nc',  'class':'text-center'},
             {data: 'updated_at'},
-            {data: 'acciones','class':'flex'},
+            {data: 'show', 'class':'text-center'},
+            {data: 'nc','class':'text-center'},
         ]
     });
 
