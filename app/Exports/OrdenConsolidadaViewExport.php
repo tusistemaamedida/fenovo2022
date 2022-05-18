@@ -36,7 +36,7 @@ class OrdenConsolidadaViewExport implements FromView
             if ($movimiento->invoice) {
                 $importe = $movimiento->invoice->imp_neto;
             } else {
-                $importe = 0;
+                $importe = '0.0';
             }
 
             /* 1  */ $objMovimiento->id         = str_pad($movimiento->id, 8, '0', STR_PAD_LEFT);

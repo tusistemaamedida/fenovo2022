@@ -1,66 +1,88 @@
-<html>
+@extends('layouts.app-pdf')
 
-<head>
-    <meta charset="UTF-8">
-</head>
+@section('title', 'Panama')
 
-<body>
-    <table style="width:100%;">
+@section('css')
+
+<style>
+    #header {
+        line-height: 0.6cm;
+        position: fixed;
+        top: 0.5cm;
+        left: 1.5cm;
+        right: 1.5cm;
+    }
+</style>
+
+@endsection
+
+@section('content')
+
+<div id="header">
+    <table style="width: 100%">
         <tr>
-            <td>
-                <span style="font-size: 14px;">
-                    # {{$id_panama}}
-                </span>
+            <td style="width: 35%"> Página :: <strong> <span class="pagenum"></span> </strong> </td>
+            <td style="width: 35%; font-size:16px" class=" text-center">Fenovo S.A. </td>
+            <td style="width: 30%" class=" text-right"> Fecha {{ date(now()) }}</td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <hr />
             </td>
         </tr>
         <tr>
-            <td>
-                <span style="font-size: 14px;">
-                    Fecha: {{$fecha}}
-                </span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span style="font-size:14px;line-height: 18px;">
-                    {{$destino}}
-                </span>
+            <td colspan="3">
+                <br>
             </td>
         </tr>
     </table>
+</div>
 
-    <table style="margin-top:5px;">
+<table class="table mb-5" style=" font-size: 12px  ">
+    <tr>
+        <td class="w-25"># {{$id_panama}} </td>
+        <td class="text-left"> {{$destino}} </td>
+    </tr>
+</table>
 
-        @for ($i = 0; $i < count($array_productos); $i++)
+<table class="table mt-5">
+    <tr>
+        <th>Bultos</th>
+        <th>Cant</th>
+        <th>U</th>
+        <th>Producto</th>
+        <th>Precio </th>
+        <th>Subtotal</th>
+    </tr>
 
-            @php
-                $p = $array_productos[$i]
-            @endphp
+    @foreach ($array_productos as $p)
+    <tr>
+        <td class="text-center" style="width: 15px "> {{$p->bultos}} </td>
+        <td class="text-center" style="width: 15px "> {{$p->total_unit}} </td>
+        <td class="text-center" style="width: 15px "> {{$p->unidad}} </td>
+        <td class="text-left"> <strong> {{$p->cod_fenovo}}</strong> - {{$p->name}} </td>
+        <td class="text-center"> {{$p->unit_price}} </td>
+        <td class="text-center"> {{$p->subtotal}} </td>
+    </tr>
+    @endforeach
 
-            <tr>
-                <th style="font-size:12px;font-weight:0; width: 10%;text-align:left"><span class="{{$p->class}}">&nbsp;&nbsp;{{$p->total_unit}}</span></th>
-                <th style="font-size:12px;font-weight:0; width: 40%;text-align:left"><span class="{{$p->class}}">&nbsp;&nbsp;{{$p->name}}</span></th>
-                <th style="font-size:12px;font-weight:0; width: 10%;text-align:left"><span class="{{$p->class}}">&nbsp;&nbsp;{{$p->unit_price}}</span></th>
-                <th style="font-size:12px;font-weight:0; width: 10%;text-align:left"><span class="{{$p->class}}">&nbsp;&nbsp;{{$p->subtotal}}</span></th>
-            </tr>
-
-        @endfor
-            <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
-
-            <tr >
-                <th style="font-size:12px;font-weight:0;width: 15%;text-align:right"><span >&nbsp;</span></th>
-                <th style="font-size:12px;font-weight:500;width: 15%;text-align:left"><span >&nbsp;</span></th>
-                <th style="font-size:12px;font-weight:0;width: 15%;text-align:right"><span >Total: </span></th>
-                <th style="font-size:12px;font-weight:0; width: 40%;text-align:left"><span >${{number_format($neto, 2, ',', '.')}}</span></th>
-            </tr>
+    <tr>
+        <th colspan="4"></th>
+        <th>Total</th>
+        <th>${{number_format($neto, 2, ',', '.')}}</th>
+    </tr>
+</table>
 
 
+<footer>
+    <table class="table table-borderless table-condensed table-sm">
+        <tr>
+            <td>
+                # {{ str_pad($id_panama, 8, '0', STR_PAD_LEFT) }} - Página <strong> <span class="pagenum"></span> </strong>
+            </td>
+        </tr>
     </table>
-</body>
+</footer>
 
-<html>
+
+@endsection

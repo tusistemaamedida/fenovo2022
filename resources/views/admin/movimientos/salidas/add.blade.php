@@ -197,8 +197,6 @@
                 data: { id: id },
                 success: function (data) {
                     if (data['type'] == 'success') {
-                        toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
-                        toastr.info("Eliminado ... ");
                         cargarTablaProductos();
                     }
                 }

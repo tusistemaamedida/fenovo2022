@@ -39,12 +39,12 @@
                                                 <td>Item</td>
                                                 <td>Tipo</td>
                                                 <td>Kgrs</td>
-                                                <td>Fac</td>
-                                                <td>Rto</td>
+                                                <td>Factura</td>
+                                                <td>Remito</td>
                                                 <td>Paper</td>
                                                 <td>Flete</td>
                                                 <td>Orden</td>
-                                                <td>OPma</td>
+                                                <td>OrdenPan</td>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -69,65 +69,6 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        lengthMenu : [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-        ordering: false,
-        stateSave:true,
-        processing: true,
-        serverSide: true,
-        autoWidth: false,
-        dom: '<lfrtip>',
-        ajax: "{{ route('salidas.index') }}",
-        columns: [
-            {data: 'id', orderable:false,searchable: true},
-            {data: 'date'},
-            {data: 'destino', 'class':'text-left'},
-            {data: 'items'},
-            {data: 'type', 'class':'text-left', orderable:false,searchable: false},
-            {data: 'kgrs', orderable:false,searchable: false},
-            {data: 'factura_nro', orderable:false,searchable: false},
-            {data: 'remito', orderable:false,searchable: false},
-            {data: 'paper', orderable:false,searchable: false},
-            {data: 'flete', orderable:false,searchable: false},
-            {data: 'orden', orderable:false,searchable: false},
-            {data: 'ordenpanama', orderable:false,searchable: false},
-        ]
-    });
+        lengthMenu : [[10, 25, 50, -1], [10, 25, 50, " Todos"]], ordering: false, stateSave:true, processing: true, serverSide: true, autoWidth: false, dom: '<lfrtip>' , ajax: "{{ route('salidas.index') }}" , columns: [ {data: 'id' , orderable:false,searchable: true}, {data: 'date' }, {data: 'destino' , 'class' :'text-left'}, {data: 'items' }, {data: 'type' , 'class' :'text-left', orderable:false,searchable: false}, {data: 'kgrs' , orderable:false,searchable: false}, {data: 'factura_nro' , orderable:false,searchable: false}, {data: 'remito' , orderable:false,searchable: false}, {data: 'paper' , orderable:false,searchable: false}, {data: 'flete' , orderable:false,searchable: false}, {data: 'orden' , orderable:false,searchable: false}, {data: 'ordenpanama' , orderable:false,searchable: false}, ] }); jQuery('.yajra-datatable').on('draw.dt', function() { jQuery('[data-toggle="tooltip" ]').tooltip(); }); function createRemito(id){ var url="{{ route('get.total.movement') }}" ; jQuery.ajax({ url:url, type:'GET', data:{movement_id:id}, beforeSend: function() { jQuery('#loader').removeClass('hidden'); }, success:function(data){ if (data['type']=='success' ) { jQuery("#movement_id_in_modal").val(id); jQuery("#total_in_span").html(data['total']); jQuery('#createRemito').addClass('offcanvas-on'); } else{ toastr.error(data['msj'], 'Verifique' ); } jQuery('#loader').addClass('hidden'); }, error: function (data) { }, complete: function () { jQuery('#loader').addClass('hidden'); } }); }; jQuery('#close_modal_salida').on('click', function () { jQuery('#createRemito').removeClass('offcanvas-on'); }); </script>
 
-    jQuery('.yajra-datatable').on('draw.dt', function() {
-        jQuery('[data-toggle="tooltip"]').tooltip();
-    })
-
-    function createRemito(id){
-        var url ="{{ route('get.total.movement') }}";
-        jQuery.ajax({
-            url:url,
-            type:'GET',
-            data:{movement_id:id},
-            beforeSend: function() {
-                jQuery('#loader').removeClass('hidden');
-            },
-            success:function(data){
-                if (data['type'] == 'success') {
-                    jQuery("#movement_id_in_modal").val(id);
-                    jQuery("#total_in_span").html(data['total']);
-                    jQuery('#createRemito').addClass('offcanvas-on');
-                } else{
-                    toastr.error(data['msj'], 'Verifique');
-                }
-                jQuery('#loader').addClass('hidden');
-            },
-            error: function (data) {
-            },
-            complete: function () {
-                jQuery('#loader').addClass('hidden');
-            }
-        });
-    };
-
-    jQuery('#close_modal_salida').on('click', function () {
-        jQuery('#createRemito').removeClass('offcanvas-on');
-    });
-
-</script>
-
-@endsection
+                                                    @endsection
