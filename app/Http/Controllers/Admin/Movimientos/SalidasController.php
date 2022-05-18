@@ -103,21 +103,21 @@ class SalidasController extends Controller
                 })
                 ->addColumn('paper', function ($movement) {
                     if ($movement->hasPanama()) {
-                        $pan = $movement->getPanama();
-                        return '<a title="Imprimir Paper ' . $pan->orden . '"  href="' . route('print.panama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-file"></i> </a>';
+                        $orden = $movement->getPanama()->orden;
+                        return '<a class="text-primary" title="Imprime panama"  href="' . route('print.panama', ['id' => $movement->id]) . '" target="_blank">' . $orden . '</a>';
                     }
                 })
                 ->addColumn('flete', function ($movement) {
                     if ($movement->hasFlete()) {
-                        $fle = $movement->getFlete();
-                        return '<a class="m-0" title="Imprimir Flete' . $fle->orden . '"  href="' . route('print.panama.felete', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-car"></i> </a>';
+                        $orden = $movement->getFlete()->orden;
+                        return '<a class="text-primary" title="Imprimir flete' . $orden . '"  href="' . route('print.panama.felete', ['id' => $movement->id]) . '" target="_blank">' . $orden . '</a>';
                     }
                 })
                 ->addColumn('orden', function ($movement) {
-                    return '<a class="m-0" title="Imprimir Orden"  href="' . route('print.orden', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>';
+                    return '<a class="text-primary" title="Imprimir Orden"  href="' . route('print.orden', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>';
                 })
                 ->addColumn('ordenpanama', function ($movement) {
-                    return '<a class="m-0" title="Imprimir Orden panama"  href="' . route('print.ordenPanama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list text-danger"></i> </a>';
+                    return '<a title="Imprimir Orden panama"  href="' . route('print.ordenPanama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>';
                 })
 
                 ->rawColumns(['id', 'origen', 'items', 'date', 'type', 'kgrs', 'factura_nro', 'remito', 'paper', 'flete', 'orden', 'ordenpanama'])
@@ -431,7 +431,10 @@ class SalidasController extends Controller
             foreach ($productos as $producto) {
                 $subtotal               = $producto->bultos * $producto->unit_price * $producto->unit_package;
                 $objProduct             = new stdClass();
-                $objProduct->cant       = $producto->bultos;
+                $objProduct->cant       = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                $objProduct->bultos     = $producto->bultos;
+                $objProduct->unidad     = $producto->product->unit_type;
+                $objProduct->cod_fenovo = $producto->product->cod_fenovo;
                 $objProduct->codigo     = $producto->product->cod_fenovo;
                 $objProduct->name       = $producto->product->name;
                 $objProduct->unit_price = number_format($producto->unit_price, 2, ',', '.');
@@ -444,7 +447,7 @@ class SalidasController extends Controller
             }
 
             $pdf = PDF::loadView('print.panama', compact('destino', 'array_productos', 'neto', 'id_panama', 'fecha'));
-            return $pdf->download($id_panama . '.pdf');
+            return $pdf->stream($id_panama . '.pdf');
         }
     }
 
