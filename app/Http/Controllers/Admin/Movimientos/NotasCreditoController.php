@@ -24,8 +24,7 @@ class NotasCreditoController extends Controller
     public function __construct(
         InvoicesRepository $invoiceRepository,
         SessionProductRepository $sessionProductRepository
-    )
-    {
+    ) {
         $this->invoiceRepository        = $invoiceRepository;
         $this->sessionProductRepository = $sessionProductRepository;
     }
@@ -56,17 +55,21 @@ class NotasCreditoController extends Controller
                 ->editColumn('updated_at', function ($movement) {
                     return date('Y-m-d H:i:s', strtotime($movement->updated_at));
                 })
-                ->addColumn('acciones', function ($movement) {
-                    $links = '<a class="flex-button" href="' . route('nc.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                ->addColumn('show', function ($movement) {
+                    return '<a href="' . route('nc.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
+                })
+
+                ->addColumn('nc', function ($movement) {
                     if ($movement->invoice && !is_null($movement->invoice->cae)) {
-                        $links .= '<a class="flex-button" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
+                        $link = '<a target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
                     } else {
                         $ruta = "'" . route('create.invoice', ['movment_id' => $movement->id]) . "'";
-                        $links .= '<a class="flex-button"  href="javascript:void(0)" onclick="createInvoice(' . $ruta . ')"> <i class="fas fa-file-invoice"></i> </a>';
+                        $link = '<a  href="javascript:void(0)" onclick="createInvoice(' . $ruta . ')"> <i class="fas fa-file-invoice"></i> </a>';
                     }
-                    return $links;
+                    return $link;
                 })
-                ->rawColumns(['origen', 'date', 'type', 'acciones', 'comprobante_nc'])
+
+                ->rawColumns(['origen', 'date', 'type', 'show', 'nc', 'comprobante_nc'])
                 ->make(true);
         }
         return view('admin.movimientos.notas-credito.index');
@@ -87,21 +90,21 @@ class NotasCreditoController extends Controller
 
     public function searchVoucherNumber(Request $request)
     {
-        $term        = $request->term ?: '';
-        $valid_names = [];
-        $invoices    = $this->invoiceRepository->search($term);
+        $term         = $request->term ?: '';
+        $valid_names  = [];
+        $invoices     = $this->invoiceRepository->search($term);
         $tipo_factura = '';
         foreach ($invoices as $invoice) {
-            if($invoice->tipoFactura->afip_id == 3){
+            if ($invoice->tipoFactura->afip_id == 3) {
                 $tipo_factura = 'NCA';
-            }elseif($invoice->tipoFactura->afip_id == 2){
+            } elseif ($invoice->tipoFactura->afip_id == 2) {
                 $tipo_factura = 'NDA';
-            }elseif($invoice->tipoFactura->afip_id == 1){
+            } elseif ($invoice->tipoFactura->afip_id == 1) {
                 $tipo_factura = 'FCA';
             }
 
             $valid_names[] = ['id' => $invoice->voucher_number,
-                              'text' => $tipo_factura.$invoice->voucher_number . ' [ ' . substr($invoice->client_name,0,15) . ' ]'];
+                'text'             => $tipo_factura . $invoice->voucher_number . ' [ ' . substr($invoice->client_name, 0, 15) . ' ]', ];
         }
         return new JsonResponse($valid_names);
     }
@@ -126,12 +129,12 @@ class NotasCreditoController extends Controller
     {
         try {
             if ($request->input('voucher_number') != '' || !is_null($request->input('voucher_number'))) {
-                $list_id                       = $request->input('session_list_id');
-                $explode                       = explode('_', $list_id);
+                $list_id = $request->input('session_list_id');
+                $explode = explode('_', $list_id);
 
-                $from = \Auth::user()->store_active;
-                $count = Movement::where('from',$from)->whereIn('type', ['DEVOLUCION', 'DEVOLUCIONCLIENTE'])->count();
-                $orden = ($count)?$count+1:1;
+                $from  = \Auth::user()->store_active;
+                $count = Movement::where('from', $from)->whereIn('type', ['DEVOLUCION', 'DEVOLUCIONCLIENTE'])->count();
+                $orden = ($count) ? $count + 1 : 1;
 
                 $insert_data['type']           = $explode[0];
                 $insert_data['to']             = $explode[1];
@@ -141,27 +144,27 @@ class NotasCreditoController extends Controller
                 $insert_data['status']         = 'FINISHED';
                 $insert_data['voucher_number'] = $request->input('voucher_number');
 
-                $movement             = Movement::create($insert_data);
+                $movement = Movement::create($insert_data);
                 //$invoice              = Invoice::where('voucher_number', $request->input('voucher_number'))->first();
                 //$movement_relacionado = Movement::where('id', $invoice->movement_id)->first();
-                $session_products     = $this->sessionProductRepository->getByListId($list_id);
-                $entidad_tipo         = parent::getEntidadTipo($insert_data['type']);
+                $session_products = $this->sessionProductRepository->getByListId($list_id);
+                $entidad_tipo     = parent::getEntidadTipo($insert_data['type']);
 
                 foreach ($session_products as $product) {
-                    $kgs = $product->producto->unit_weight * $product->unit_package * $product->quantity;
+                    $cantidad = ($product->producto->unit_type == 'K') ? $product->producto->unit_weight * $product->unit_package * $product->quantity : $product->unit_package * $product->quantity;
 
                     //if($insert_data['type'] != 'DEVOLUCIONCLIENTE'){
                     // busco el balance del producto y el TO del movimento de salida para restarle la cantidad devuelta
                     $latest = MovementProduct::all()
-                                                ->where('entidad_id', $movement->to)
-                                                ->where('entidad_tipo', $entidad_tipo)
-                                                ->where('product_id', $product->product_id)
-                                                ->sortByDesc('id')
-                                                ->first();
+                        ->where('entidad_id', $movement->to)
+                        ->where('entidad_tipo', $entidad_tipo)
+                        ->where('product_id', $product->product_id)
+                        ->sortByDesc('id')
+                        ->first();
 
-                    $balance = ($latest) ? $latest->balance - $kgs : $kgs;
+                    $balance = ($latest) ? $latest->balance - $cantidad : $cantidad;
                     //}else{
-                    //   $balance =  $kgs;
+                    //   $balance =  $cantidad;
                     //}
 
                     MovementProduct::firstOrCreate([
@@ -175,7 +178,7 @@ class NotasCreditoController extends Controller
                             'tasiva'     => $product->tasiva,
                             'entry'      => 0,
                             'bultos'     => $product->quantity,
-                            'egress'     => $kgs,
+                            'egress'     => $cantidad,
                             'balance'    => $balance,
                         ]);
 
@@ -185,7 +188,7 @@ class NotasCreditoController extends Controller
                         ->where('product_id', $product->product_id)
                         ->sortByDesc('id')->first();
 
-                    $balance = ($latest) ? $latest->balance + $kgs : $kgs;
+                    $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
                     MovementProduct::firstOrCreate([
                         'entidad_id'     => \Auth::user()->store_active,
                         'entidad_tipo'   => 'S',
@@ -195,7 +198,7 @@ class NotasCreditoController extends Controller
                             'invoice'    => 1,
                             'unit_price' => $product->unit_price,
                             'tasiva'     => $product->tasiva,
-                            'entry'      => $kgs,
+                            'entry'      => $cantidad,
                             'bultos'     => $product->quantity,
                             'egress'     => 0,
                             'balance'    => $balance,
