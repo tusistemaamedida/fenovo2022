@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
-use App\Models\MovementProduct;
+use App\Models\MovementProductTemp;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -34,7 +34,7 @@ class DetalleIngresosController extends Controller
                     ->first();
                 $costo_fenovo = (!$oferta) ? $product->product_price->costfenovo : $oferta->costfenovo;
 
-                MovementProduct::firstOrCreate(
+                MovementProductTemp::firstOrCreate(
                     [
                         'entidad_id'   => Auth::user()->store_active,
                         'movement_id'  => $movimiento['movement_id'],
@@ -48,6 +48,20 @@ class DetalleIngresosController extends Controller
                 );
             }
             return new JsonResponse(['msj' => 'Guardado', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function getMovements(Request $request)
+    {
+        try {
+            $movimientos = MovementProductTemp::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
+            return new JsonResponse([
+                'data' => $movimientos,
+                'type' => 'success',
+                'html' => view('admin.movimientos.ingresos.detalleConfirm', compact('movimientos'))->render(),
+            ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
@@ -72,8 +86,8 @@ class DetalleIngresosController extends Controller
     public function destroy(Request $request)
     {
         try {
-            MovementProduct::where('movement_id', $request->movement_id)->where('product_id', $request->product_id)->delete();
-            $movimientos = MovementProduct::where('movement_id', $request->movement_id)->orderBy('id', 'desc')->get();
+            MovementProductTemp::where('movement_id', $request->movement_id)->where('product_id', $request->product_id)->delete();
+            $movimientos = MovementProductTemp::where('movement_id', $request->movement_id)->orderBy('id', 'desc')->get();
             return new JsonResponse([
                 'type' => 'success',
                 'html' => view('admin.movimientos.ingresos.detalleConfirm', compact('movimientos'))->render(),
