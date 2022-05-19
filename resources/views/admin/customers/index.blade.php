@@ -34,7 +34,7 @@
                                         <table class="display table-hover yajra-datatable">
                                             <thead>
                                                 <tr class="bg-dark text-white">
-                                                    <th>No</th>
+                                                    <th style="display: none">No</th>
                                                     <th>CLI_ID</th>
                                                     <th>Razon social</th>
                                                     <th>Tienda</th>
