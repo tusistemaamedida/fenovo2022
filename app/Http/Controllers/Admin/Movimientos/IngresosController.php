@@ -34,10 +34,10 @@ class IngresosController extends Controller
         if ($request->ajax()) {
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $arrTypes = ['COMPRA'];
-                $movement = MovementTemp::whereIn('type', $arrTypes)->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('id', 'DESC')->orderBy('date', 'DESC')->get();
+                $movement = MovementTemp::whereIn('type', $arrTypes)->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
             } else {
                 $arrTypes = ['VENTA', 'TRASLADO'];
-                $movement = MovementTemp::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('id', 'DESC')->orderBy('date', 'DESC')->get();
+                $movement = MovementTemp::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
             }
             return Datatables::of($movement)
                 ->addIndexColumn()
@@ -241,7 +241,7 @@ class IngresosController extends Controller
             DB::commit();
             Schema::enableForeignKeyConstraints();
 
-            return redirect()->route('ingresos.index');
+            return redirect()->route('ingresos.indexCerradas');
         } catch (\Exception $e) {
             DB::rollback();
             Schema::enableForeignKeyConstraints();
