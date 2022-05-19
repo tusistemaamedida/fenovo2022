@@ -34,7 +34,6 @@
                                         <table class="display table-hover yajra-datatable">
                                             <thead>
                                                 <tr class="bg-dark text-white">
-                                                    <th style="display: none">No</th>
                                                     <th>CLI_ID</th>
                                                     <th>Razon social</th>
                                                     <th>Tienda</th>
@@ -71,7 +70,6 @@
         @include('partials.table.setting'),
         ajax: "{{ route('customers.index') }}",
         columns: [
-            {data: 'DT_RowIndex', 'class':'text-center', orderable: false, searchable: false},
             {data: 'id'},
             {data: 'razon_social'},
             {data: 'tienda'},
