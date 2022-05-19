@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 // Ingresos
 Route::get('ingresos', [IngresosController::class, 'index'])->name('ingresos.index');
-Route::get('ingresos/cerras', [IngresosController::class, 'indexCerradas'])->name('ingresos.indexCerradas');
+Route::get('ingresos/cerradas', [IngresosController::class, 'indexCerradas'])->name('ingresos.indexCerradas');
 
 Route::get('ingresos/add', [IngresosController::class, 'add'])->name('ingresos.add');
 Route::post('ingresos/store', [IngresosController::class, 'store'])->name('ingresos.store');
@@ -21,11 +21,12 @@ Route::post('ingresos/update-producto', [IngresosController::class, 'updateProdu
 Route::get('ingresos/show', [IngresosController::class, 'show'])->name('ingresos.show');
 Route::post('ingresos/update', [IngresosController::class, 'update'])->name('ingresos.update');
 Route::post('ingresos/destroy', [IngresosController::class, 'destroy'])->name('ingresos.destroy');
+Route::post('ingresos/destroyTemp', [IngresosController::class, 'destroyTemp'])->name('ingresos.destroyTemp');
 
-Route::get('ingresos/movimentos', [IngresosController::class, 'getMovements'])->name('get.movements.ingreso');
 Route::get('ingresos/proveedores', [IngresosController::class, 'getProveedorIngreso'])->name('get.proveedor.ingreso');
 
 // Detalle ingresos
+Route::get('detalle-ingresos/movimentos', [DetalleIngresosController::class, 'getMovements'])->name('detalle-movimiento.getMovements');
+Route::post('detalle-ingresos/destroy', [DetalleIngresosController::class, 'destroy'])->name('detalle-ingresos.destroy');
 Route::post('detalle-ingresos/store', [DetalleIngresosController::class, 'store'])->name('detalle-ingresos.store');
 Route::post('detalle-ingresos/check', [DetalleIngresosController::class, 'check'])->name('detalle-ingresos.check');
-Route::post('detalle-ingresos/destroy', [DetalleIngresosController::class, 'destroy'])->name('detalle-ingresos.destroy');
