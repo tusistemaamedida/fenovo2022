@@ -969,7 +969,15 @@ class SalidasController extends Controller
             $i++;
         }
         fclose($file);
-
+       /*  $movement = Movement::create([
+            'id'             => 612,
+            'date'           => \Carbon\Carbon::parse('2022-05-01')->format('Y-m-d'),
+            'type'           => 'AJUSTE',
+            'from'           => 1,
+            'to'             => 1,
+            'status'         => 'CREATED',
+            'voucher_number' => '00001',
+        ]); */
         $code_not_found = [];
 
         foreach ($importData_arr2 as $importData) {
@@ -1028,30 +1036,25 @@ class SalidasController extends Controller
                 }
 
                 if ($i > 0) {
-
                     $bultos = $mp->bultos * $mp->unit_package;
-
                     if($mp->entry > 0 && $m->type != 'AJUSTE'){
-
                         $new_balance = $balance_orig + $bultos;
                         $balance_orig = $new_balance;
                         MovementProduct::where('id', $mp->id)->update([
                             'balance' => $new_balance,
+                            'entry'   => $bultos
                         ]);
-
                     }elseif($mp->egress > 0 && $m->type != 'AJUSTE'){
-
                         $new_balance = $balance_orig - $bultos;
                         $balance_orig = $new_balance;
                         MovementProduct::where('id', $mp->id)->update([
                             'balance' => $new_balance,
+                            'egress'  => $bultos
                         ]);
-
-                    }
-                }
-
-                if($m->type == "AJUSTE"){
-                    $m->delete();
+                    }/*
+                    if($m->type == "AJUSTE"){
+                        $m->delete();
+                    } */
                 }
             }
         }
