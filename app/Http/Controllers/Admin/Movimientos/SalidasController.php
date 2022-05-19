@@ -1017,7 +1017,7 @@ class SalidasController extends Controller
             }
         } */
 
-        $productos = Product::where('unit_type', 'U')->get();
+        $productos = Product::where('unit_type', 'K')->get();
 
         foreach ($productos as $p) {
             $movements_products = MovementProduct::where('movement_id', '>', 611)
@@ -1051,10 +1051,10 @@ class SalidasController extends Controller
                             'balance' => $new_balance,
                             'egress'  => $bultos
                         ]);
-                    }/*
+                    }
                     if($m->type == "AJUSTE"){
                         $m->delete();
-                    } */
+                    }
                 }
             }
         }
