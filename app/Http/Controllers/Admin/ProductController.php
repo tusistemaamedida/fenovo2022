@@ -69,42 +69,6 @@ class ProductController extends Controller
 
     public function list(Request $request)
     {
-        // // Cod_fenovo 2903
-        // $producto           = Product::find(118);
-        // $stock_real         = $producto->stockReal(null, Auth::user()->store_active);
-        // $nro_presentaciones = count(explode('|', $producto->unit_package));
-        // $presentaciones     = explode('|', $producto->unit_package);
-        // $bultos             = 0;
-        // $arrStocks          = [];
-
-        // if ($nro_presentaciones == 1) {
-        //     $bultos = ($producto->unit_type == 'K')
-        //         ? $stock_real / ($producto->unit_weight * $producto->unit_package)
-        //         : $stock_real / $producto->unit_package;
-        // } else {
-        //     $stock_real  = 0;
-        //     $suma_bultos = 0;
-        //     foreach ($presentaciones as $presentacion) {
-        //         $stock_real = $producto->stockReal($presentacion, Auth::user()->store_active);
-        //         $bultos     = ($producto->unit_type == 'K')
-        //             ? $stock_real / ($producto->unit_weight * $presentacion)
-        //             : $stock_real / $presentacion;
-        //         $suma_bultos = $suma_bultos + $bultos;
-
-        //         array_push($arrStocks, $stock_real);
-        //     }
-        // }
-
-        // return new JsonResponse([
-        //     'stock_real'         => $stock_real,
-        //     'unit_type'          => $producto->unit_type,
-        //     'unit_package'       => $producto->unit_package,
-        //     'nro_presentaciones' => $nro_presentaciones,
-        //     'bultos'             => $bultos,
-        //     'suma_bultos'        => $suma_bultos,
-        //     'arrStocks'          => $arrStocks,
-        // ]);
-
         if ($request->ajax()) {
             $productos = $this->productRepository->all()->where('active', '=', 1);
 
@@ -147,21 +111,38 @@ class ProductController extends Controller
 
     public function historial(Request $request)
     {
-        try {
-            $product_id = $request->id;
-            $producto   = $this->productRepository->getByIdWith($product_id);
+        $producto = Product::find($request->id);
 
-            $movimientos = MovementProduct::where('product_id', $product_id)
-                ->where('entidad_id', \Auth::user()->store_active)
-                ->where('entidad_tipo', 'S')
-                ->with('movement')
-                ->orderBy('created_at', 'DESC')->get();
+        if ($request->ajax()) {
+            $movimientos = MovementProduct::with(['movement'])
+                ->whereEntidadId(1)
+                ->whereProductId($producto->id)->orderBy('id', 'desc')->get();
 
-            return view('admin.products.historial', compact('producto', 'movimientos'));
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+            return Datatables::of($movimientos)
+                ->addIndexColumn()
+                ->addColumn('fecha', function ($movimiento) {
+                    return date('d/m/Y', strtotime($movimiento->created_at));
+                })
+                ->addColumn('type', function ($movimiento) {
+                    return $movimiento->movement->type;
+                })
+                ->addColumn('from', function ($movimiento) {
+                    return $movimiento->movement->From($movimiento->movement->type);
+                })
+                ->addColumn('to', function ($movimiento) {
+                    return $movimiento->movement->To($movimiento->movement->type);
+                })
+                ->addColumn('observacion', function ($movimiento) {
+                    return $movimiento->movement->observacion;
+                })
+
+                ->rawColumns(['fecha', 'type', 'from', 'to', 'observacion'])
+                ->make(true);
         }
+
+        return view('admin.products.historial', compact('producto'));
     }
+
 
     public function printHistorial(Request $request)
     {

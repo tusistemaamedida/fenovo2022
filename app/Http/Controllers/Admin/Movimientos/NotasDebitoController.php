@@ -23,13 +23,13 @@ class NotasDebitoController extends Controller
     public function __construct(
         InvoicesRepository $invoiceRepository,
         SessionProductRepository $sessionProductRepository
-    )
-    {
+    ) {
         $this->invoiceRepository        = $invoiceRepository;
         $this->sessionProductRepository = $sessionProductRepository;
     }
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         if ($request->ajax()) {
             $arrTypes = ['DEBITO','DEBITOCLIENTE'];
             $movement = Movement::all()->where('from', \Auth::user()->store_active)->whereIn('type', $arrTypes)->sortByDesc('created_at');
@@ -70,7 +70,8 @@ class NotasDebitoController extends Controller
         return view('admin.movimientos.notas-debito.index');
     }
 
-    public function add(){
+    public function add()
+    {
         $this->sessionProductRepository->deleteDebitos();
         return view('admin.movimientos.notas-debito.add');
     }
@@ -83,7 +84,7 @@ class NotasDebitoController extends Controller
                 $explode                       = explode('_', $list_id);
 
                 $from = \Auth::user()->store_active;
-                $count = Movement::where('from',$from)->whereIn('type', ['DEBITO', 'DEBITOCLIENTE'])->count();
+                $count = Movement::where('from', $from)->whereIn('type', ['DEBITO', 'DEBITOCLIENTE'])->count();
                 $orden = ($count)?$count+1:1;
 
                 $insert_data['type']           = $explode[0];
@@ -99,15 +100,15 @@ class NotasDebitoController extends Controller
                 $entidad_tipo         = parent::getEntidadTipo($insert_data['type']);
 
                 foreach ($session_products as $product) {
-                    $kgs = $product->producto->unit_weight * $product->unit_package * $product->quantity;
+                    $cantidad = ($product->producto->unit_type == 'K') ? $product->producto->unit_weight * $product->unit_package * $product->quantity : $product->unit_package * $product->quantity;
                     $latest = MovementProduct::all()
-                                                ->where('entidad_id', $movement->to)
-                                                ->where('entidad_tipo', $entidad_tipo)
-                                                ->where('product_id', $product->product_id)
-                                                ->sortByDesc('id')
-                                                ->first();
+                        ->where('entidad_id', $movement->to)
+                        ->where('entidad_tipo', $entidad_tipo)
+                        ->where('product_id', $product->product_id)
+                        ->sortByDesc('id')
+                        ->first();
 
-                    $balance = ($latest) ? $latest->balance + $kgs : $kgs;
+                    $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
 
                     MovementProduct::firstOrCreate([
                         'entidad_id'     => $movement->to,
@@ -120,7 +121,7 @@ class NotasDebitoController extends Controller
                             'tasiva'     => $product->tasiva,
                             'entry'      => 0,
                             'bultos'     => $product->quantity,
-                            'egress'     => $kgs,
+                            'egress'     => $cantidad,
                             'balance'    => $balance,
                         ]);
 
@@ -130,7 +131,7 @@ class NotasDebitoController extends Controller
                         ->where('product_id', $product->product_id)
                         ->sortByDesc('id')->first();
 
-                    $balance = ($latest) ? $latest->balance - $kgs : $kgs;
+                    $balance = ($latest) ? $latest->balance - $cantidad : $cantidad;
                     MovementProduct::firstOrCreate([
                         'entidad_id'     => \Auth::user()->store_active,
                         'entidad_tipo'   => 'S',
@@ -140,7 +141,7 @@ class NotasDebitoController extends Controller
                             'invoice'    => 1,
                             'unit_price' => $product->unit_price,
                             'tasiva'     => $product->tasiva,
-                            'entry'      => $kgs,
+                            'entry'      => $cantidad,
                             'bultos'     => $product->quantity,
                             'egress'     => 0,
                             'balance'    => $balance,
