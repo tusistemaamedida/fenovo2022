@@ -35,6 +35,7 @@
                                             <thead>
                                                 <tr class="bg-dark text-white">
                                                     <th>No</th>
+                                                    <th>CLI_ID</th>
                                                     <th>Razon social</th>
                                                     <th>Tienda</th>
                                                     <th>L.Precios</th>
@@ -66,11 +67,12 @@
 @section('js')
 
 <script>
-    var table = jQuery('.yajra-datatable').DataTable({     
+    var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
         ajax: "{{ route('customers.index') }}",
         columns: [
             {data: 'DT_RowIndex', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'id'},
             {data: 'razon_social'},
             {data: 'tienda'},
             {data: 'listprice_associate', 'class':'text-center'},
