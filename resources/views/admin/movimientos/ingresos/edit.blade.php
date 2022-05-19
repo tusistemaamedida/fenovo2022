@@ -248,7 +248,7 @@
     const actualizarIngreso = ()=>{
         const id = jQuery("#movement_id").val();
         jQuery.ajax({
-            url: '{{ route('get.movements.ingreso') }}',
+            url: '{{ route('detalle-movimiento.getMovements') }}',
             type: 'GET',
             data: {id},
             success: function (data) {
