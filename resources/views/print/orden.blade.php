@@ -72,8 +72,8 @@
     @foreach ($array_productos as $session_product)
 
     @php
-    $total_kgrs += (float)$session_product->unit_weight * (float)$session_product->unit_package * (float)$session_product->quantity;
-    $total_bultos += (float)$session_product->quantity;
+        $total_kgrs += (float)$session_product->unit_weight * (float)$session_product->unit_package * (float)$session_product->quantity;
+        $total_bultos += (float)$session_product->quantity;
     @endphp
 
     <tr>
