@@ -52,7 +52,7 @@
                 <th></th>
                 <th></th>
                 <th></th>
-                <th>{{ number_format($movement->totalKgrs(),2, ',', '.') }}</th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th>{{ $movimientos->sum('bultos')}}</th>
