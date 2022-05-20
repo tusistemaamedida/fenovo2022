@@ -988,7 +988,6 @@ class SalidasController extends Controller
         }
 
         dd('fin');
-
         // $filepath = public_path('/imports/ST.TXT');
         // $file     = fopen($filepath, 'r');
 
