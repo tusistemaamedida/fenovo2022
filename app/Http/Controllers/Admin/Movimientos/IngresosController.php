@@ -199,7 +199,7 @@ class IngresosController extends Controller
             // Guardo el nuevo movimiento
             $data['type']           = 'COMPRA';
             $data['to']             = $to;
-            $data['date']           = now();
+            $data['date']           = $movement_temp->date;
             $data['from']           = $movement_temp->from;
             $data['orden']          = $orden;
             $data['status']         = 'FINISHED';

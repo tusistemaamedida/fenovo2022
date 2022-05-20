@@ -959,76 +959,80 @@ class SalidasController extends Controller
 
         foreach ($productos as $p) {
             $movements_products = MovementProduct::where('movement_id', '>', 611)
-                                        ->where('product_id', $p->id)
-                                        ->where('entidad_id','!=', 1)
-                                        ->where('created_at','<',\Carbon\Carbon::parse('2022-05-15')->format('Y-m-d'))
-                                        ->orderBy('id', 'ASC')
-                                        ->get();
+                ->where('product_id', $p->id)
+                ->where('entidad_id', '!=', 1)
+                ->where('created_at', '<', \Carbon\Carbon::parse('2022-05-15')->format('Y-m-d'))
+                ->orderBy('id', 'ASC')
+                ->get();
 
             for ($i = 0; $i < count($movements_products); $i++) {
                 $mp = $movements_products[$i];
+
+                return $mp;
                 $balance = $mp->balance / $p->unit_weight;
 
-                if($mp->entry > 0){
+                if ($mp->entry > 0) {
                     $unidades = $mp->entry / $p->unit_weight;
                     MovementProduct::where('id', $mp->id)->update([
                         'entry'   => $unidades,
-                        'balance'   => $balance
+                        'balance' => $balance,
                     ]);
-                }elseif($mp->egress > 0){
+                } elseif ($mp->egress > 0) {
                     $unidades = $mp->egress / $p->unit_weight;
                     MovementProduct::where('id', $mp->id)->update([
                         'egress'  => $unidades,
-                        'balance'  => $balance
+                        'balance' => $balance,
                     ]);
                 }
             }
         }
+
         dd('fin');
-        $filepath = public_path('/imports/ST.TXT');
-        $file     = fopen($filepath, 'r');
 
-        $importData_arr2 = [];
-        $i               = 0;
+        // $filepath = public_path('/imports/ST.TXT');
+        // $file     = fopen($filepath, 'r');
 
-        while (($filedata2 = fgetcsv($file, 0, ',')) !== false) {
-            $num = count($filedata2);
-            for ($c = 0; $c < $num; $c++) {
-                $importData_arr2[$i][] = $filedata2[$c];
-            }
-            $i++;
-        }
-        fclose($file);
-        /*  $movement = Movement::create([
-             'id'             => 612,
-             'date'           => \Carbon\Carbon::parse('2022-05-01')->format('Y-m-d'),
-             'type'           => 'AJUSTE',
-             'from'           => 1,
-             'to'             => 1,
-             'status'         => 'CREATED',
-             'voucher_number' => '00001',
-         ]); */
-        $code_not_found = [];
+        // $importData_arr2 = [];
+        // $i               = 0;
 
-        foreach ($importData_arr2 as $importData) {
-            $cod_fenovo = $importData[0];
-            $balance    = $importData[1];
-            $product    = $this->productRepository->getByCodeFenovo($cod_fenovo);
+        // while (($filedata2 = fgetcsv($file, 0, ',')) !== false) {
+        //     $num = count($filedata2);
+        //     for ($c = 0; $c < $num; $c++) {
+        //         $importData_arr2[$i][] = $filedata2[$c];
+        //     }
+        //     $i++;
+        // }
+        // fclose($file);
+        // /*  $movement = Movement::create([
+        //      'id'             => 612,
+        //      'date'           => \Carbon\Carbon::parse('2022-05-01')->format('Y-m-d'),
+        //      'type'           => 'AJUSTE',
+        //      'from'           => 1,
+        //      'to'             => 1,
+        //      'status'         => 'CREATED',
+        //      'voucher_number' => '00001',
+        //  ]); */
+        // $code_not_found = [];
 
-            if ($product && $product->unit_type == 'U') {
-                MovementProduct::where('movement_id', 612)
-                                ->where('product_id', $product->id)
-                                ->update([
-                                    'unit_type' => $product->unit_type,
-                                    'invoice'   => 1,
-                                    'entry'     => $balance,
-                                    'egress'    => 0,
-                                    'balance'   => $balance,
-                                ]);
-            } else {
-                array_push($code_not_found, $cod_fenovo);
-            }
-        }
+        // foreach ($importData_arr2 as $importData) {
+        //     $cod_fenovo = $importData[0];
+        //     $balance    = $importData[1];
+        //     $product    = $this->productRepository->getByCodeFenovo($cod_fenovo);
+
+        //     if ($product && $product->unit_type == 'U') {
+        //         MovementProduct::where('movement_id', 612)
+        //                         ->where('product_id', $product->id)
+        //                         ->update([
+        //                             'unit_type' => $product->unit_type,
+        //                             'invoice'   => 1,
+        //                             'entry'     => $balance,
+        //                             'egress'    => 0,
+        //                             'balance'   => $balance,
+        //                         ]);
+        //     } else {
+        //         array_push($code_not_found, $cod_fenovo);
+        //     }
+        // }
 
         /* $movement_orig = Movement::where('id', 612)->with('movement_products')->get();
         foreach ($movement_orig as $m) {
@@ -1046,46 +1050,46 @@ class SalidasController extends Controller
             }
         } */
 
-        $productos = Product::where('unit_type', 'K')->get();
+        // $productos = Product::where('unit_type', 'K')->get();
 
-        foreach ($productos as $p) {
-            $movements_products = MovementProduct::where('movement_id', '>', 611)
-                                        ->where('product_id', $p->id)
-                                        ->where('entidad_id', 1)
-                                        ->orderBy('id', 'ASC')
-                                        ->get();
+        // foreach ($productos as $p) {
+        //     $movements_products = MovementProduct::where('movement_id', '>', 611)
+        //                                 ->where('product_id', $p->id)
+        //                                 ->where('entidad_id', 1)
+        //                                 ->orderBy('id', 'ASC')
+        //                                 ->get();
 
-            for ($i = 0; $i < count($movements_products); $i++) {
-                $mp = $movements_products[$i];
-                $m  = Movement::where('id', $mp->movement_id)->first();
+        //     for ($i = 0; $i < count($movements_products); $i++) {
+        //         $mp = $movements_products[$i];
+        //         $m  = Movement::where('id', $mp->movement_id)->first();
 
-                if ($i == 0) {
-                    $balance_orig = $new_balance = $mp->balance;
-                }
+        //         if ($i == 0) {
+        //             $balance_orig = $new_balance = $mp->balance;
+        //         }
 
-                if ($i > 0) {
-                    $bultos = $mp->bultos * $mp->unit_package;
-                    if ($mp->entry > 0 && $m->type != 'AJUSTE') {
-                        $new_balance  = $balance_orig + $bultos;
-                        $balance_orig = $new_balance;
-                        MovementProduct::where('id', $mp->id)->update([
-                            'balance' => $new_balance,
-                            'entry'   => $bultos,
-                        ]);
-                    } elseif ($mp->egress > 0 && $m->type != 'AJUSTE') {
-                        $new_balance  = $balance_orig - $bultos;
-                        $balance_orig = $new_balance;
-                        MovementProduct::where('id', $mp->id)->update([
-                            'balance' => $new_balance,
-                            'egress'  => $bultos,
-                        ]);
-                    }
-                    if ($m->type == 'AJUSTE') {
-                        $m->delete();
-                    }
-                }
-            }
-        }
+        //         if ($i > 0) {
+        //             $bultos = $mp->bultos * $mp->unit_package;
+        //             if ($mp->entry > 0 && $m->type != 'AJUSTE') {
+        //                 $new_balance  = $balance_orig + $bultos;
+        //                 $balance_orig = $new_balance;
+        //                 MovementProduct::where('id', $mp->id)->update([
+        //                     'balance' => $new_balance,
+        //                     'entry'   => $bultos,
+        //                 ]);
+        //             } elseif ($mp->egress > 0 && $m->type != 'AJUSTE') {
+        //                 $new_balance  = $balance_orig - $bultos;
+        //                 $balance_orig = $new_balance;
+        //                 MovementProduct::where('id', $mp->id)->update([
+        //                     'balance' => $new_balance,
+        //                     'egress'  => $bultos,
+        //                 ]);
+        //             }
+        //             if ($m->type == 'AJUSTE') {
+        //                 $m->delete();
+        //             }
+        //         }
+        //     }
+        // }
 
         /* $sessions = SessionProduct::all();
         foreach ($sessions as $s) {
