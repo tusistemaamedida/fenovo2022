@@ -81,6 +81,28 @@
             {data: 'show', 'class':'text-center', searchable: false},
         ],
         });
+
+     const editData = (id, route) =>{
+
+        var elements = document.querySelectorAll('.is-invalid');
+        jQuery.ajax({
+            url: route,
+            type: 'GET',
+            data: { id },
+            success: function (data) {
+                
+                if (data['type'] == 'success') {
+                    jQuery("#insertByAjax").html(data['html']);
+                    jQuery(".btn-guardar").hide()
+                    jQuery(".btn-actualizar").show()
+                    jQuery('.editpopup').addClass('offcanvas-on');
+                } else {
+                    toastr.error(data['html'], 'Verifique');
+                }
+            }
+        });
+
+     }
 </script>
 
 @endsection
