@@ -106,7 +106,17 @@ class CabeEleExport implements FromView {
     private function getImporteIva($ivas,$type_iva){
         $ivas = json_decode($ivas);
         foreach ($ivas as $iva) {
-            if($type_iva == $iva->Id) return $iva->Importe;
+            if($type_iva == $iva->Id){
+                if($type_iva == 4){
+                    $iva = ($iva->BaseImp * 10.5)/100;
+                    return round($iva,2);
+                }
+
+                if($type_iva == 5){
+                    $iva = ($iva->BaseImp * 21)/100;
+                    return round($iva,2);
+                }
+            }
         }
         return '0.0';
     }
