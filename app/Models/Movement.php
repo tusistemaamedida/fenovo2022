@@ -189,31 +189,17 @@ class Movement extends Model
 
     public function totalKgrs()
     {
-        $arrIngreso     = ['COMPRA'];
-        $arrEgreso      = ['VENTA', 'VENTACLIENTE'];
-        $arrOtros       = ['TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
-        $arrTypes       = ['COMPRA', 'VENTA', 'VENTACLIENTE', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
-        $fieldCondition = (in_array($this->type, $arrIngreso)) ? 't2.entry' : 't2.egress';
+        $kgrs = 0;
 
-        if (in_array($this->type, $arrOtros)) {
-            $movimiento = DB::table('movements as t1')
-            ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
-            ->groupBy('t2.movement_id')
-            ->select([DB::raw('SUM(t2.entry) as total')])
-            ->orderBy('t1.date', 'ASC')
-            ->where('t1.id', $this->id)
-            ->whereIn('t1.type', $arrOtros)->first();
-        } else {
-            $movimiento = DB::table('movements as t1')
-            ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
-            ->groupBy('t2.movement_id')
-            ->select([DB::raw("SUM($fieldCondition) as total")])
-            ->orderBy('t1.date', 'ASC')
-            ->where('t1.id', $this->id)
-            ->where($fieldCondition, '>', 0)
-            ->whereIn('t1.type', $arrTypes)->first();
+        $arrIngreso     = ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $arrEgreso      = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+        $mp             = (in_array($this->type, $arrIngreso)) ? $this->movement_ingreso_products : $this->movement_salida_products;
+
+        foreach ($mp as $m) {
+            $kgrs += $m->product->unit_weight * $m->unit_package * $m->bultos;
         }
-        return ($movimiento) ? $movimiento->total : 0;
+
+        return round($kgrs,2);
     }
 
     public function cantidad_ingresos()
