@@ -60,15 +60,16 @@
                                 <div class="table-responsive">
                                     <table class=" table table-hover table-sm text-center">
                                         <tr class=" bg-dark text-white">
-                                            <th class="text-center">#</th>
+                                            <th>#</th>
                                             <th>Cod fenovo</th>
                                             <th>Producto</th>
-                                            <th>Unidad</th>
+                                            <th>Medida</th>
+                                            <th>Kgrs</th>
                                             <th>Presentación</th>
                                             <th>$_Costo </th>
                                             <th>Bultos</th>
                                             <th>$_Total</th>
-                                            <th>Cantidad</th>
+                                            <th>Unidades</th>
                                         </tr>
 
                                         @php
@@ -81,10 +82,11 @@
                                         $total += $movimiento->cost_fenovo*$movimiento->unit_package*$movimiento->bultos;
                                         @endphp
                                         <tr>
-                                            <td class=" text-center"> {{ $loop->iteration }}</td>
+                                            <td> {{ $loop->iteration }}</td>
                                             <td> {{ $movimiento->product->cod_fenovo }} </td>
                                             <td class=" text-left"> {{ $movimiento->product->name }}</td>
                                             <td> {{ $movimiento->unit_type }} </td>
+                                            <td> {{ number_format($movimiento->product->unit_weight*$movimiento->unit_package*$movimiento->bultos,2, ',', '.') }}</td>
                                             <td> {{ $movimiento->unit_package }} </td>
                                             <td> {{ $movimiento->cost_fenovo }}</td>
                                             <td> {{ $movimiento->bultos }}</td>
@@ -92,18 +94,19 @@
                                             <td> {{ number_format($movimiento->unit_package * $movimiento->bultos,0,'','') }} </td>
                                         </tr>
                                         @endforeach
-                                        <tr class=" bg-black">
-                                            <th colspan="9">
-                                                &nbsp;
+                                        <tr>
+                                            <th colspan="10">
+                                                </hr>
                                             </th>
                                         </tr>
-                                        <tr class=" bg-dark text-white">
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
+                                        <tr class=" bg-dark text-black-50">
                                             <th>Totales</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th>{{ number_format($movement->totalKgrs(),2, ',', '.') }}</th>
+                                            <th></th>
+                                            <th></th>
                                             <th> {{ $movimientos->sum('bultos')}} </th>
                                             <th> {{ number_format($total, 2,',', '.')}} </th>
                                             <th></th>
