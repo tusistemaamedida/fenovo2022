@@ -248,7 +248,7 @@ class IngresosController extends Controller
             DB::commit();
             Schema::enableForeignKeyConstraints();
 
-            return redirect()->route('ingresos.indexCerradas');
+            return redirect()->route('ingresos.index');
         } catch (\Exception $e) {
             DB::rollback();
             Schema::enableForeignKeyConstraints();
