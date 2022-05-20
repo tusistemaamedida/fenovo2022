@@ -955,6 +955,36 @@ class SalidasController extends Controller
 
     public function updateCostos()
     {
+        $productos = Product::where('unit_type', 'U')->get();
+
+        foreach ($productos as $p) {
+            $movements_products = MovementProduct::where('movement_id', '>', 611)
+                                        ->where('product_id', $p->id)
+                                        ->where('entidad_id','!=', 1)
+                                        ->where('created_at','<',\Carbon\Carbon::parse('2022-05-15')->format('Y-m-d'))
+                                        ->orderBy('id', 'ASC')
+                                        ->get();
+
+            for ($i = 0; $i < count($movements_products); $i++) {
+                $mp = $movements_products[$i];
+                $balance = $mp->balance / $p->unit_weight;
+
+                if($mp->entry > 0){
+                    $unidades = $mp->entry / $p->unit_weight;
+                    MovementProduct::where('id', $mp->id)->update([
+                        'entry'   => $unidades,
+                        'balance'   => $balance
+                    ]);
+                }elseif($mp->egress > 0){
+                    $unidades = $mp->egress / $p->unit_weight;
+                    MovementProduct::where('id', $mp->id)->update([
+                        'egress'  => $unidades,
+                        'balance'  => $balance
+                    ]);
+                }
+            }
+        }
+        dd('fin');
         $filepath = public_path('/imports/ST.TXT');
         $file     = fopen($filepath, 'r');
 
