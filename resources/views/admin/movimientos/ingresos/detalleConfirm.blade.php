@@ -23,7 +23,7 @@
             @foreach ($movimientos as $movimiento)
 
             @php
-            $total = $total+($movimiento->cost_fenovo*$movimiento->unit_package*$movimiento->bultos);
+            $total += $movimiento->cost_fenovo*$movimiento->unit_package*$movimiento->bultos;
             @endphp
 
             <tr>
