@@ -13,7 +13,7 @@
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
                                         Editar ruta
-                                        </h3>
+                                    </h4>
                                 </div>
                                 <div class="icons d-flex">
 

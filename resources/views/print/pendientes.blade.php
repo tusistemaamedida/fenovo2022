@@ -53,13 +53,14 @@
 
 <table class="table table-condensed table-sm">
     <tr class="">
-        <tr class="">
-            <th class="text-center">Bultos</th>
-            <th class="text-center">Cantidad</th>
-            <th style=" width: 30%; " class="text-center">Nombre</th>
-            <th style="float: left;text-align:left">Proveedor</th>
-            <th class="text-center">Presentación</th>
-        </tr>
+    <tr class="">
+        <th class="text-center">Bultos</th>
+        <th class="text-center">Cantidad</th>
+        <th style=" width: 30%; " class="text-center">Nombre</th>
+        <th style="float: left;text-align:left">Proveedor</th>
+        <th class="text-center">Presentación</th>
+        <th class="text-center">Unidad</th>
+    </tr>
     </tr>
 
     @php
@@ -78,6 +79,7 @@
         <td>{{$session_product->cod_fenovo}} {{$session_product->name}}</td>
         <td style="float: left;text-align:left">{{$session_product->cod_proveedor }}</td>
         <td class="text-center">{{$session_product->unit_package}}</td>
+        <td class="text-center">{{$session_product->unit_type}}</td>
     </tr>
     @endforeach
 
@@ -88,6 +90,7 @@
         <th>{{ number_format($session_products->sum('quantity'),2) }} </th>
         <th>{{ $total_kgrs }} Kgrs</th>
         <th></th>
+        <th> </th>
         <th> </th>
         <th> </th>
     </tr>

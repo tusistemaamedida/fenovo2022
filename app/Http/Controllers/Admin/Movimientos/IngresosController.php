@@ -44,11 +44,18 @@ class IngresosController extends Controller
                 ->addColumn('origen', function ($movement) {
                     return $movement->origenData($movement->type);
                 })
+                ->editColumn('id', function ($movement) {
+                    $ruta = 'editData(' . $movement->id . ",'" . route('ingresos.editIngreso') . "')";
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '">' . $movement->id . '</a>';
+                })
                 ->editColumn('date', function ($movement) {
                     return date('d-m-Y', strtotime($movement->date));
                 })
                 ->addColumn('items', function ($movement) {
                     return '<span class="badge badge-primary">' . count($movement->movement_ingreso_products) . '</span>';
+                })
+                ->addColumn('kgrs', function ($movement) {
+                    return '<span class="badge badge-primary">' . $movement->totalKgrs() . '</span>';
                 })
                 ->addColumn('voucher', function ($movement) {
                     return  $movement->voucher_number;
@@ -59,7 +66,7 @@ class IngresosController extends Controller
                 ->addColumn('show', function ($movement) {
                     return '<a href="' . route('ingresos.show', ['id' => $movement->id, 'is_cerrada' => false]) . '"> <i class="fa fa-eye"></i> </a>';
                 })
-                ->rawColumns(['origen', 'date', 'items', 'voucher', 'show', 'edit'])
+                ->rawColumns(['id', 'origen', 'date', 'items', 'kgrs', 'voucher', 'show', 'edit'])
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.index');
@@ -263,7 +270,7 @@ class IngresosController extends Controller
 
     public function destroy(Request $request)
     {
-        MovementTemp::find($request->id)->update(['status' => 'CANCELED']);
+        Movement::find($request->id)->update(['status' => 'CANCELED']);
         return new JsonResponse(
             [
                 'msj'  => 'Eliminado ... ',

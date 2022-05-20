@@ -41,6 +41,7 @@
                                                     <th>Proveedor</th>
                                                     @endif
                                                     <th>Items</th>
+                                                    <th>Kgrs</th>
                                                     <th>Nro compra</th>
                                                     <th>Edicion</th>
                                                     <th>Detalle</th>
@@ -76,11 +77,34 @@
             {data: 'date', 'class':'text-center', searchable: false},
             {data: 'origen'},
             {data: 'items', 'class':'text-center', searchable: false},
+            {data: 'kgrs', 'class':'text-center', searchable: false},
             {data: 'voucher',  'class':'text-center'},
             {data: 'edit', 'class':'text-center', searchable: false},
             {data: 'show', 'class':'text-center', searchable: false},
         ],
         });
+
+     const editData = (id, route) =>{
+
+        var elements = document.querySelectorAll('.is-invalid');
+        jQuery.ajax({
+            url: route,
+            type: 'GET',
+            data: { id },
+            success: function (data) {
+                
+                if (data['type'] == 'success') {
+                    jQuery("#insertByAjax").html(data['html']);
+                    jQuery(".btn-guardar").hide()
+                    jQuery(".btn-actualizar").show()
+                    jQuery('.editpopup').addClass('offcanvas-on');
+                } else {
+                    toastr.error(data['html'], 'Verifique');
+                }
+            }
+        });
+
+     }
 </script>
 
 @endsection

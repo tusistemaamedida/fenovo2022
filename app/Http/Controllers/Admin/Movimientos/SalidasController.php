@@ -190,7 +190,7 @@ class SalidasController extends Controller
 
         $session_products = DB::table('session_products as t1')
             ->join('products as t2', 't1.product_id', '=', 't2.id')
-            ->select('t1.id', 't2.cod_fenovo', 't2.name', 't2.cod_proveedor', 't1.quantity', 't2.unit_weight', 't1.unit_package')
+            ->select('t1.id', 't2.cod_fenovo', 't2.name', 't2.cod_proveedor', 't1.quantity', 't2.unit_weight', 't1.unit_package', 't2.unit_type')
             ->where('t1.list_id', '=', $request->list_id)
             ->orderBy('t2.cod_fenovo')
             ->get();
@@ -999,15 +999,15 @@ class SalidasController extends Controller
             $i++;
         }
         fclose($file);
-       /*  $movement = Movement::create([
-            'id'             => 612,
-            'date'           => \Carbon\Carbon::parse('2022-05-01')->format('Y-m-d'),
-            'type'           => 'AJUSTE',
-            'from'           => 1,
-            'to'             => 1,
-            'status'         => 'CREATED',
-            'voucher_number' => '00001',
-        ]); */
+        /*  $movement = Movement::create([
+             'id'             => 612,
+             'date'           => \Carbon\Carbon::parse('2022-05-01')->format('Y-m-d'),
+             'type'           => 'AJUSTE',
+             'from'           => 1,
+             'to'             => 1,
+             'status'         => 'CREATED',
+             'voucher_number' => '00001',
+         ]); */
         $code_not_found = [];
 
         foreach ($importData_arr2 as $importData) {
@@ -1016,17 +1016,16 @@ class SalidasController extends Controller
             $product    = $this->productRepository->getByCodeFenovo($cod_fenovo);
 
             if ($product && $product->unit_type == 'U') {
-                MovementProduct::where('movement_id',612)
-                                ->where('product_id',$product->id)
+                MovementProduct::where('movement_id', 612)
+                                ->where('product_id', $product->id)
                                 ->update([
-                    'unit_type'    => $product->unit_type,
-                    'invoice'      => 1,
-                    'entry'        => $balance,
-                    'egress'       => 0,
-                    'balance'      => $balance
-                ]);
+                                    'unit_type' => $product->unit_type,
+                                    'invoice'   => 1,
+                                    'entry'     => $balance,
+                                    'egress'    => 0,
+                                    'balance'   => $balance,
+                                ]);
             } else {
-
                 array_push($code_not_found, $cod_fenovo);
             }
         }
@@ -1057,9 +1056,8 @@ class SalidasController extends Controller
                                         ->get();
 
             for ($i = 0; $i < count($movements_products); $i++) {
-
                 $mp = $movements_products[$i];
-                $m  = Movement::where('id',$mp->movement_id)->first();
+                $m  = Movement::where('id', $mp->movement_id)->first();
 
                 if ($i == 0) {
                     $balance_orig = $new_balance = $mp->balance;
@@ -1067,22 +1065,22 @@ class SalidasController extends Controller
 
                 if ($i > 0) {
                     $bultos = $mp->bultos * $mp->unit_package;
-                    if($mp->entry > 0 && $m->type != 'AJUSTE'){
-                        $new_balance = $balance_orig + $bultos;
+                    if ($mp->entry > 0 && $m->type != 'AJUSTE') {
+                        $new_balance  = $balance_orig + $bultos;
                         $balance_orig = $new_balance;
                         MovementProduct::where('id', $mp->id)->update([
                             'balance' => $new_balance,
-                            'entry'   => $bultos
+                            'entry'   => $bultos,
                         ]);
-                    }elseif($mp->egress > 0 && $m->type != 'AJUSTE'){
-                        $new_balance = $balance_orig - $bultos;
+                    } elseif ($mp->egress > 0 && $m->type != 'AJUSTE') {
+                        $new_balance  = $balance_orig - $bultos;
                         $balance_orig = $new_balance;
                         MovementProduct::where('id', $mp->id)->update([
                             'balance' => $new_balance,
-                            'egress'  => $bultos
+                            'egress'  => $bultos,
                         ]);
                     }
-                    if($m->type == "AJUSTE"){
+                    if ($m->type == 'AJUSTE') {
                         $m->delete();
                     }
                 }

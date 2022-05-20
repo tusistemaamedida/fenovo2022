@@ -329,6 +329,7 @@ namespace App\Models{
  * @property Carbon|null $updated_at
  * @package App\Models
  * @property int|null $orden
+ * @property string|null $tributos
  * @property string|null $costo_fenovo_total
  * @property-read \App\Models\VoucherType|null $tipoFactura
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice newModelQuery()
@@ -369,6 +370,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereMovementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereOrden($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice wherePtoVta($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereTributos($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereVoucherNumber($value)
  */
@@ -459,6 +461,8 @@ namespace App\Models{
  * @property int|null $flete_invoice
  * @property int|null $orden
  * @property int|null $exported
+ * @property int|null $user_id
+ * @property string|null $observacion
  * @property-read \App\Models\Invoice|null $invoice
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $movement_ingreso_products
  * @property-read int|null $movement_ingreso_products_count
@@ -479,11 +483,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereFleteInvoice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereFrom($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereObservacion($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereOrden($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereVoucherNumber($value)
  */
 	class Movement extends \Eloquent {}
@@ -503,6 +509,7 @@ namespace App\Models{
  * @property string|null $unit_price
  * @property string|null $cost_fenovo
  * @property float|null $unit_package
+ * @property string|null $unit_type
  * @property int|null $bultos
  * @property bool|null $invoice
  * @property int|null $iibb
@@ -534,9 +541,109 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereTasiva($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereUnitPackage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereUnitPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereUnitType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereUpdatedAt($value)
  */
 	class MovementProduct extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\MovementProductTemp
+ *
+ * @property int $id
+ * @property int|null $movement_id
+ * @property int|null $entidad_id
+ * @property string|null $entidad_tipo
+ * @property int|null $product_id
+ * @property int|null $exported_number
+ * @property string|null $tasiva
+ * @property string|null $unit_price
+ * @property string|null $cost_fenovo
+ * @property float|null $unit_package
+ * @property string|null $unit_type
+ * @property int|null $bultos
+ * @property bool|null $invoice
+ * @property int|null $iibb
+ * @property float|null $entry
+ * @property float|null $egress
+ * @property float|null $balance
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\MovementTemp|null $movement
+ * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\Store|null $store
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereBultos($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereCostFenovo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereEgress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereEntidadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereEntidadTipo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereEntry($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereExportedNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereIibb($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereInvoice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereMovementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereTasiva($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereUnitPackage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereUnitPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereUnitType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereUpdatedAt($value)
+ */
+	class MovementProductTemp extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\MovementTemp
+ *
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $date
+ * @property string $type
+ * @property string|null $from
+ * @property string|null $to
+ * @property string|null $status
+ * @property string|null $voucher_number
+ * @property string|null $flete
+ * @property int|null $flete_invoice
+ * @property int|null $orden
+ * @property int|null $exported
+ * @property int|null $user_id
+ * @property string|null $observacion
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProductTemp[] $movement_ingreso_products
+ * @property-read int|null $movement_ingreso_products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProductTemp[] $movement_products
+ * @property-read int|null $movement_products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProductTemp[] $movement_salida_products
+ * @property-read int|null $movement_salida_products_count
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereExported($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereFlete($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereFleteInvoice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereObservacion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereOrden($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereVoucherNumber($value)
+ */
+	class MovementTemp extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -1345,6 +1452,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereTasiva($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereUnitPackage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereUnitPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereUnitType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereUpdatedAt($value)
  */
 	class SessionProduct extends \Eloquent {}
