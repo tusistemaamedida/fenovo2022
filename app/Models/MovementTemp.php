@@ -39,9 +39,29 @@ class MovementTemp extends Model
         return $this->hasMany(MovementProductTemp::class, 'movement_id');
     }
 
+    public function movement_salida_products()
+    {
+        return $this->hasMany(MovementProductTemp::class, 'movement_id')->where('egress', '>', 0);
+    }
+
     public function movement_ingreso_products()
     {
         return $this->hasMany(MovementProductTemp::class, 'movement_id')->where('entry', '>', 0);
+    }
+
+    public function totalKgrs()
+    {
+        $kgrs = 0;
+
+        $arrIngreso = ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $arrEgreso  = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+        $mp         = (in_array($this->type, $arrIngreso)) ? $this->movement_ingreso_products : $this->movement_salida_products;
+
+        foreach ($mp as $m) {
+            $kgrs += $m->product->unit_weight * $m->unit_package * $m->bultos;
+        }
+
+        return round($kgrs, 2);
     }
 
     public function From($type, $returnObject = false)
@@ -93,21 +113,6 @@ class MovementTemp extends Model
                 }
                 return $Customer->razon_social;
         }
-    }
-
-    public function totalKgrs()
-    {
-        $kgrs = 0;
-
-        $arrIngreso     = ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
-        $arrEgreso      = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-        $mp             = (in_array($this->type, $arrIngreso)) ? $this->movement_ingreso_products : $this->movement_salida_products;
-
-        foreach ($mp as $m) {
-            $kgrs += $m->product->unit_weight * $m->unit_package * $m->bultos;
-        }
-
-        return round($kgrs,2);
     }
 
     public function origenData($type)
