@@ -622,6 +622,8 @@ namespace App\Models{
  * @property-read int|null $movement_ingreso_products_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProductTemp[] $movement_products
  * @property-read int|null $movement_products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProductTemp[] $movement_salida_products
+ * @property-read int|null $movement_salida_products_count
  * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp query()

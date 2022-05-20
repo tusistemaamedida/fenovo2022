@@ -54,6 +54,9 @@ class IngresosController extends Controller
                 ->addColumn('items', function ($movement) {
                     return '<span class="badge badge-primary">' . count($movement->movement_ingreso_products) . '</span>';
                 })
+                ->addColumn('kgrs', function ($movement) {
+                    return '<span class="badge badge-primary">' . $movement->totalKgrs() . '</span>';
+                })
                 ->addColumn('voucher', function ($movement) {
                     return  $movement->voucher_number;
                 })
@@ -63,7 +66,7 @@ class IngresosController extends Controller
                 ->addColumn('show', function ($movement) {
                     return '<a href="' . route('ingresos.show', ['id' => $movement->id, 'is_cerrada' => false]) . '"> <i class="fa fa-eye"></i> </a>';
                 })
-                ->rawColumns(['id', 'origen', 'date', 'items', 'voucher', 'show', 'edit'])
+                ->rawColumns(['id', 'origen', 'date', 'items', 'kgrs', 'voucher', 'show', 'edit'])
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.index');
