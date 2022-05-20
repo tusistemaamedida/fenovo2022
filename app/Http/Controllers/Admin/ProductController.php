@@ -143,7 +143,6 @@ class ProductController extends Controller
         return view('admin.products.historial', compact('producto'));
     }
 
-
     public function printHistorial(Request $request)
     {
         $cod_fenovo = Product::find($request->id)->first()->cod_fenovo;

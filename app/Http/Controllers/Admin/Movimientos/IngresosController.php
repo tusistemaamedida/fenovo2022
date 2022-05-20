@@ -44,6 +44,10 @@ class IngresosController extends Controller
                 ->addColumn('origen', function ($movement) {
                     return $movement->origenData($movement->type);
                 })
+                ->editColumn('id', function ($movement) {
+                    $ruta = 'editData(' . $movement->id . ",'" . route('ingresos.editIngreso') . "')";
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '">' . $movement->id . '</a>';
+                })
                 ->editColumn('date', function ($movement) {
                     return date('d-m-Y', strtotime($movement->date));
                 })
@@ -59,7 +63,7 @@ class IngresosController extends Controller
                 ->addColumn('show', function ($movement) {
                     return '<a href="' . route('ingresos.show', ['id' => $movement->id, 'is_cerrada' => false]) . '"> <i class="fa fa-eye"></i> </a>';
                 })
-                ->rawColumns(['origen', 'date', 'items', 'voucher', 'show', 'edit'])
+                ->rawColumns(['id', 'origen', 'date', 'items', 'voucher', 'show', 'edit'])
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.index');
