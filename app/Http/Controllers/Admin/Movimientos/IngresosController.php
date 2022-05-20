@@ -267,7 +267,7 @@ class IngresosController extends Controller
 
     public function destroy(Request $request)
     {
-        MovementTemp::find($request->id)->update(['status' => 'CANCELED']);
+        Movement::find($request->id)->update(['status' => 'CANCELED']);
         return new JsonResponse(
             [
                 'msj'  => 'Eliminado ... ',

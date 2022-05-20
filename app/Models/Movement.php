@@ -66,6 +66,11 @@ class Movement extends Model
         return $this->hasMany(MovementProduct::class)->where('egress', '>', 0);
     }
 
+    public function movement_ingreso_products()
+    {
+        return $this->hasMany(MovementProduct::class)->where('entry', '>', 0);
+    }
+
     public function invoice()
     {
         return $this->hasOne(Invoice::class);
@@ -99,11 +104,6 @@ class Movement extends Model
     public function getFlete()
     {
         return Panamas::where('movement_id', $this->id)->where('tipo', '!=', 'PAN')->first();
-    }
-
-    public function movement_ingreso_products()
-    {
-        return $this->hasMany(MovementProduct::class)->where('entry', '>', 0);
     }
 
     public function senasa()
@@ -191,15 +191,15 @@ class Movement extends Model
     {
         $kgrs = 0;
 
-        $arrIngreso     = ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
-        $arrEgreso      = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-        $mp             = (in_array($this->type, $arrIngreso)) ? $this->movement_ingreso_products : $this->movement_salida_products;
+        $arrIngreso = ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $arrEgreso  = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+        $mp         = (in_array($this->type, $arrIngreso)) ? $this->movement_ingreso_products : $this->movement_salida_products;
 
         foreach ($mp as $m) {
             $kgrs += $m->product->unit_weight * $m->unit_package * $m->bultos;
         }
 
-        return round($kgrs,2);
+        return round($kgrs, 2);
     }
 
     public function cantidad_ingresos()

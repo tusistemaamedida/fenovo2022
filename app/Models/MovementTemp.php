@@ -95,6 +95,21 @@ class MovementTemp extends Model
         }
     }
 
+    public function totalKgrs()
+    {
+        $kgrs = 0;
+
+        $arrIngreso     = ['COMPRA', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $arrEgreso      = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+        $mp             = (in_array($this->type, $arrIngreso)) ? $this->movement_ingreso_products : $this->movement_salida_products;
+
+        foreach ($mp as $m) {
+            $kgrs += $m->product->unit_weight * $m->unit_package * $m->bultos;
+        }
+
+        return round($kgrs,2);
+    }
+
     public function origenData($type)
     {
         $typeTo = $this->to;
