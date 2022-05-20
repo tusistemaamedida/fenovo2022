@@ -10,7 +10,7 @@
                     <div class="card-header align-items-center  border-bottom-dark px-0">
                         <div class="card-title mb-0">
                             <h4 class="card-label mb-0 font-weight-bold text-body">
-                                Historial del producto {{ $producto->cod_fenovo }} - {{ $producto->name }}
+                                Historial del producto {{ $producto->cod_fenovo }} - {{ $producto->name }} - Unidad <span class=" text-danger">{{ $producto->unit_type }} </span>
                             </h4>
                         </div>
                         <div class="icons d-flex">
