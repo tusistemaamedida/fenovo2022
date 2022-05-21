@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
+use PDFMerger;
 use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -206,7 +207,7 @@ class SalidasController extends Controller
     public function printOrden(Request $request)
     {
         $orden    = $request->id;
-        $movement = Movement::whereId($orden)->with('movement_salida_products')->first();
+        $movement = Movement::with(['movement_salida_products'])->whereId($orden)->first();
 
         if ($movement) {
             if ($movement->type == 'TRASLADO') {
@@ -236,6 +237,109 @@ class SalidasController extends Controller
             $pdf = PDF::loadView('print.orden', compact('orden', 'destino', 'array_productos'));
             return $pdf->stream('orden-' . $request->id . '.pdf');
         }
+    }
+
+    public function printOrdenPanama(Request $request)
+    {
+        $orden    = $request->id;
+        $movement = Movement::with(['panamas'])->whereId($orden)->first();
+
+        if ($movement) {
+            if ($movement->type == 'TRASLADO') {
+                $store = Store::find($movement->to);
+                if (isset($store) && ($store->store_type == 'B')) {
+                    $mercaderia_en_transito = 'MERCADERIA EN TRANSITO';
+                }
+            }
+            $destino         = $this->origenData($movement->type, $movement->to, true);
+            $array_productos = [];
+            $productos       = $movement->panamas;
+            foreach ($productos as $producto) {
+                $objProduct               = new stdClass();
+                $objProduct->cod_fenovo   = $producto->product->cod_fenovo;
+                $objProduct->name         = $producto->product->name;
+                $objProduct->unit_weight  = $producto->product->unit_weight;
+                $objProduct->unit_package = $producto->unit_package;
+                $objProduct->quantity     = $producto->bultos;
+                $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
+                $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                $objProduct->class        = '';
+                array_push($array_productos, $objProduct);
+            }
+
+            $pdf = PDF::loadView('print.ordenPanama', compact('orden', 'destino', 'array_productos'));
+            return $pdf->stream('orden-' . $request->id . '.pdf');
+        }
+    }
+
+    public function printOrdenes(Request $request)
+    {
+        // Orden
+        $orden    = $request->id;
+        $movement = Movement::with(['movement_salida_products'])->whereId($orden)->first();
+
+        if ($movement->type == 'TRASLADO') {
+            $store = Store::find($movement->to);
+            if (isset($store) && ($store->store_type == 'B')) {
+                $mercaderia_en_transito = 'MERCADERIA EN TRANSITO';
+            }
+        }
+        $destino         = $this->origenData($movement->type, $movement->to, true);
+        $array_productos = [];
+        $productos       = $movement->movement_salida_products;
+        foreach ($productos as $producto) {
+            if ($producto->invoice) {
+                $objProduct               = new stdClass();
+                $objProduct->cod_fenovo   = $producto->product->cod_fenovo;
+                $objProduct->name         = $producto->product->name;
+                $objProduct->unit_weight  = $producto->product->unit_weight;
+                $objProduct->unit_package = $producto->unit_package;
+                $objProduct->quantity     = $producto->bultos;
+                $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
+                $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                $objProduct->class        = '';
+                array_push($array_productos, $objProduct);
+            }
+        }
+
+        // Guarda el PDF en la carpeta public
+
+        $orden = 'orden-' . $request->id . '.pdf';
+        $pdf   = PDF::loadView('print.orden', compact('orden', 'destino', 'array_productos'));
+        $pdf->save($orden);
+
+        if ($movement->type == 'TRASLADO') {
+            $store = Store::find($movement->to);
+            if (isset($store) && ($store->store_type == 'B')) {
+                $mercaderia_en_transito = 'MERCADERIA EN TRANSITO';
+            }
+        }
+        $destino         = $this->origenData($movement->type, $movement->to, true);
+        $array_productos = [];
+        $productos       = $movement->panamas;
+        foreach ($productos as $producto) {
+            $objProduct               = new stdClass();
+            $objProduct->cod_fenovo   = $producto->product->cod_fenovo;
+            $objProduct->name         = $producto->product->name;
+            $objProduct->unit_weight  = $producto->product->unit_weight;
+            $objProduct->unit_package = $producto->unit_package;
+            $objProduct->quantity     = $producto->bultos;
+            $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
+            $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+            $objProduct->class        = '';
+            array_push($array_productos, $objProduct);
+        }
+
+        $ordenp = 'ordenp-' . $request->id . '.pdf';
+        $pdfp   = PDF::loadView('print.ordenPanama', compact('orden', 'destino', 'array_productos'));
+        $pdf->save($ordenp);
+
+        $pdfMerger = PDFMerger::init();
+        $pdfMerger->addPDF($orden, 'all');
+        $pdfMerger->addPDF($ordenp, 'all');
+        $pdfMerger->merge();
+        $pdfMerger->setFileName('ordenes-' . $request->id . '.pdf');
+        $pdfMerger->download();
     }
 
     public function indexOrdenConsolidada(Request $request)
@@ -323,39 +427,6 @@ class SalidasController extends Controller
             array_push($array_productos, $objProduct);
             $pdf = PDF::loadView('print.panamaFelete', compact('destino', 'array_productos', 'neto', 'id_flete', 'fecha'));
             return $pdf->stream($id_flete . '.pdf');
-        }
-    }
-
-    public function printOrdenPanama(Request $request)
-    {
-        $orden    = $request->id;
-        $movement = Movement::with(['panamas'])->whereId($orden)->first();
-
-        if ($movement) {
-            if ($movement->type == 'TRASLADO') {
-                $store = Store::find($movement->to);
-                if (isset($store) && ($store->store_type == 'B')) {
-                    $mercaderia_en_transito = 'MERCADERIA EN TRANSITO';
-                }
-            }
-            $destino         = $this->origenData($movement->type, $movement->to, true);
-            $array_productos = [];
-            $productos       = $movement->panamas;
-            foreach ($productos as $producto) {
-                $objProduct               = new stdClass();
-                $objProduct->cod_fenovo   = $producto->product->cod_fenovo;
-                $objProduct->name         = $producto->product->name;
-                $objProduct->unit_weight  = $producto->product->unit_weight;
-                $objProduct->unit_package = $producto->unit_package;
-                $objProduct->quantity     = $producto->bultos;
-                $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
-                $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
-                $objProduct->class        = '';
-                array_push($array_productos, $objProduct);
-            }
-
-            $pdf = PDF::loadView('print.ordenPanama', compact('orden', 'destino', 'array_productos'));
-            return $pdf->stream('orden-' . $request->id . '.pdf');
         }
     }
 
