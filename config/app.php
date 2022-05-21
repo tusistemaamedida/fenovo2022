@@ -46,12 +46,14 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
         // Provider agregados al sistema
         Spatie\Permission\PermissionServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class,
 
     ],
 
@@ -103,6 +105,7 @@ return [
         'Html'       => Collective\Html\HtmlFacade::class,
         'QrCode'     => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'Excel'      => Maatwebsite\Excel\Facades\Excel::class,
+        'PDFMerger'  => Webklex\PDFMerger\Facades\PDFMergerFacade::class,
     ],
 
 ];

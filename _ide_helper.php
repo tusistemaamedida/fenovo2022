@@ -17998,6 +17998,141 @@
      
 }
 
+    namespace Webklex\PDFMerger\Facades { 
+            /**
+     * 
+     *
+     * @see \Illuminate\Translation\Translator
+     */ 
+        class PDFMergerFacade {
+                    /**
+         * Initialize a new internal instance of FPDI in order to prevent any problems with shared resources
+         * Please visit https://www.setasign.com/products/fpdi/manual/#p-159 for more information on this issue
+         *
+         * @return self 
+         * @static 
+         */ 
+        public static function init()
+        {
+                        /** @var \Webklex\PDFMerger\PDFMerger $instance */
+                        return $instance->init();
+        }
+                    /**
+         * Stream the merged PDF content
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function stream()
+        {
+                        /** @var \Webklex\PDFMerger\PDFMerger $instance */
+                        return $instance->stream();
+        }
+                    /**
+         * Download the merged PDF content
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function download()
+        {
+                        /** @var \Webklex\PDFMerger\PDFMerger $instance */
+                        return $instance->download();
+        }
+                    /**
+         * Save the merged PDF content to the filesystem
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function save($filePath = null)
+        {
+                        /** @var \Webklex\PDFMerger\PDFMerger $instance */
+                        return $instance->save($filePath);
+        }
+                    /**
+         * Get the merged PDF content
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function output()
+        {
+                        /** @var \Webklex\PDFMerger\PDFMerger $instance */
+                        return $instance->output();
+        }
+                    /**
+         * Set the final filename
+         *
+         * @param string $fileName
+         * @return string 
+         * @static 
+         */ 
+        public static function setFileName($fileName)
+        {
+                        /** @var \Webklex\PDFMerger\PDFMerger $instance */
+                        return $instance->setFileName($fileName);
+        }
+                    /**
+         * Set the final filename
+         *
+         * @param string $string
+         * @param mixed $pages
+         * @param mixed $orientation
+         * @return string 
+         * @static 
+         */ 
+        public static function addString($string, $pages = 'all', $orientation = null)
+        {
+                        /** @var \Webklex\PDFMerger\PDFMerger $instance */
+                        return $instance->addString($string, $pages, $orientation);
+        }
+                    /**
+         * Add a PDF for inclusion in the merge with a valid file path. Pages should be formatted: 1,3,6, 12-16.
+         *
+         * @param string $filePath
+         * @param string $pages
+         * @param string $orientation
+         * @return self 
+         * @throws \Exception if the given pages aren't correct
+         * @static 
+         */ 
+        public static function addPDF($filePath, $pages = 'all', $orientation = null)
+        {
+                        /** @var \Webklex\PDFMerger\PDFMerger $instance */
+                        return $instance->addPDF($filePath, $pages, $orientation);
+        }
+                    /**
+         * Merges your provided PDFs and outputs to specified location.
+         *
+         * @param string $orientation
+         * @return void 
+         * @throws \Exception if there are now PDFs to merge
+         * @static 
+         */ 
+        public static function merge($orientation = 'P')
+        {
+                        /** @var \Webklex\PDFMerger\PDFMerger $instance */
+                        $instance->merge($orientation);
+        }
+                    /**
+         * Merges your provided PDFs and adds blank pages between documents as needed to allow duplex printing
+         *
+         * @param string $orientation
+         * @return void 
+         * @throws \Exception if there are now PDFs to merge
+         * @static 
+         */ 
+        public static function duplexMerge($orientation = 'P')
+        {
+                        /** @var \Webklex\PDFMerger\PDFMerger $instance */
+                        $instance->duplexMerge($orientation);
+        }
+         
+    }
+     
+}
+
     namespace Barryvdh\DomPDF { 
             /**
      * 
@@ -22379,6 +22514,7 @@ namespace  {
             class Html extends \Collective\Html\HtmlFacade {}
             class QrCode extends \SimpleSoftwareIO\QrCode\Facades\QrCode {}
             class Excel extends \Maatwebsite\Excel\Facades\Excel {}
+            class PDFMerger extends \Webklex\PDFMerger\Facades\PDFMergerFacade {}
             class PDF extends \Barryvdh\DomPDF\Facade {}
             class ReCaptcha extends \Biscolab\ReCaptcha\Facades\ReCaptcha {}
             class Flare extends \Facade\Ignition\Facades\Flare {}
