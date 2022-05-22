@@ -101,6 +101,13 @@ class Movement extends Model
         return MovementProduct::where('movement_id', $this->id)->where('invoice', true)->count();
     }
 
+    public function hasInvoices()
+    {
+        return  count($this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('invoice', '1')->get()) > 0
+            ? true
+            : false;
+    }
+
     public function hasPanama()
     {
         return Panamas::where('movement_id', $this->id)->where('tipo', 'PAN')->exists();
