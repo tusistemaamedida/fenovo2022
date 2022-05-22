@@ -76,7 +76,7 @@ class SalidasController extends Controller
                     return $movement->origenData($movement->type);
                 })
                 ->editColumn('date', function ($movement) {
-                    return date('Y-m-d', strtotime($movement->date));
+                    return date('d-m-Y', strtotime($movement->date));
                 })
                 ->addColumn('items', function ($movement) {
                     $count = count(MovementProduct::whereMovementId($movement->id)->where('egress', '>', 0)->get());
