@@ -115,10 +115,14 @@ class SalidasController extends Controller
                     }
                 })
                 ->addColumn('orden', function ($movement) {
-                    return '<a class="text-primary" title="Imprimir Orden"  href="' . route('print.orden', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>';
+                    return ($movement->hasInvoices())
+                        ? '<a class="text-primary" title="Imprimir Orden"  href="' . route('print.orden', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>'
+                        : null;
                 })
                 ->addColumn('ordenpanama', function ($movement) {
-                    return '<a title="Imprimir Orden panama"  href="' . route('print.ordenPanama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>';
+                    return ($movement->hasPanama())
+                        ? '<a title="Imprimir Orden panama"  href="' . route('print.ordenPanama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>'
+                        : null;
                 })
 
                 ->rawColumns(['id', 'origen', 'items', 'date', 'type', 'kgrs', 'factura_nro', 'remito', 'paper', 'flete', 'orden', 'ordenpanama'])
