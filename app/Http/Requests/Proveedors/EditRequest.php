@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class EditRequest extends FormRequest
 {
     /**
-     * 
+     *
      *
      * @return bool
      */
@@ -20,7 +20,7 @@ class EditRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'cuit' => 'required',
+            'cuit' => 'required|cuil',
         ];
     }
 
@@ -29,6 +29,7 @@ class EditRequest extends FormRequest
         return [
             'name.required'   => 'Razon social es requerido',
             'cuit.required'   => 'El cuit es requerido!',
+            'cuil.cuil'       => 'El CUIT es incorrecto!'
         ];
     }
 }
