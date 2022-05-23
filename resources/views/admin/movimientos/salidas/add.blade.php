@@ -16,18 +16,16 @@
     <div class="container-fluid">
         <div class="row">
             @include('admin.movimientos.salidas.partials.form-select-cliente')
-            @if (Session()->has('error'))
+
+            @if ($message = Session::get('error'))
             <div class="col-md-12">
-                <div class="alert alert-danger">
+                <div class="alert alert-info">
                     <button type="button" class="close" data-dismiss="alert">
                         <i class="ace-icon fa fa-times"></i>
                     </button>
 
-                    <strong>
-                        <i class="ace-icon fa fa-check"></i>
-                        ERROR!<br>
-                    </strong>
-                    {{ Session::get('error') }}
+                    <i class="ace-icon fa fa-check"></i> COD-FENOVO <strong> {{ Session::get('codfenovo') }}</strong> insuficiente. Imposible vender <strong> {{ Session::get('cantidad') }}</strong>, porque el stock actual es <strong> {{ Session::get('stock') }} </strong> {{ Session::get('unidad') }}
+
                 </div>
             </div>
             @endif
@@ -46,7 +44,7 @@
 
 @section('js')
 <script>
-    jQuery(document).ready(function(){
+    jQuery(document).ready(function(){       
         @if(isset($destino))
             cargarTablaProductos();
         @endif
@@ -423,10 +421,6 @@
             }
         });
     }
-
-</script>
-
-<script>
-    jQuery(".yajra-datatable").DataTable();
+    
 </script>
 @endsection
