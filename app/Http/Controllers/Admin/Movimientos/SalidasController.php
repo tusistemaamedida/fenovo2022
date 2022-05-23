@@ -1042,8 +1042,6 @@ class SalidasController extends Controller
 
             for ($i = 0; $i < count($movements_products); $i++) {
                 $mp = $movements_products[$i];
-
-                return $mp;
                 $balance = $mp->balance / $p->unit_weight;
 
                 if ($mp->entry > 0) {
@@ -1063,7 +1061,6 @@ class SalidasController extends Controller
         }
 
         dd('fin');
-
         // $filepath = public_path('/imports/ST.TXT');
         // $file     = fopen($filepath, 'r');
 
