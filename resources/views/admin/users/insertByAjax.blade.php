@@ -51,7 +51,7 @@
             <option value="">Seleccione ...</option>
             @foreach ($stores as $store)
             <option value="{{$store->id}}" @if(isset($user) && ($user->store_active == $store->id)) selected @endif>
-                {{$store->description}}
+                {{ str_pad($store->cod_fenovo, 3, '0', STR_PAD_LEFT) }} - {{$store->description}}
             </option>
             @endforeach
         </select>
