@@ -4,7 +4,7 @@ namespace App\Http\Requests\Proveedors;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class EditRequest extends FormRequest
+class StoreRequest extends FormRequest
 {
     /**
      * @return bool
@@ -17,7 +17,7 @@ class EditRequest extends FormRequest
     public function rules()
     {
         return [
-            'cuit' => 'required|string|min:11|max:11|cuit|unique:proveedors,cuit,' . $this->proveedor_id,
+            'cuit' => 'required|string|min:11|max:11|cuil|unique:proveedors',
             'name' => 'required',
         ];
     }
@@ -26,8 +26,7 @@ class EditRequest extends FormRequest
     {
         return [
             'cuit.required' => 'El cuit es requerido!',
-            'cuit.cuil'     => 'El nro de cuit no es válido !',
-            'cuit.unique'   => 'El cuit se encuentra repetido !',
+            'cuil.cuil'     => 'El nro de cuit no es válido !',
             'name.required' => 'Razon social es requerida',
         ];
     }
