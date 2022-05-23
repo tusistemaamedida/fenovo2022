@@ -111,7 +111,7 @@ class UserController extends Controller
                     'branch_id'  => 1,
                     'verified'   => 1,
                     'is_admin'   => 1,
-                    'role_id'    => 2,
+                    'role_id'    => 2,      // Rol tipo Tienda en Fenovo Tienda
                     'tienda_id'  => $data['store_active'],
                 ]);
             }
@@ -165,7 +165,7 @@ class UserController extends Controller
             DB::connection('tienda')->table('users')
                 ->where('email', $request->email)
                 ->update([
-                    'tienda_id' => $data['store_active']
+                    'tienda_id' => $data['store_active'],
                 ]);
 
             $user = $this->userRepository->getOne($request->user_id);
