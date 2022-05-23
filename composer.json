@@ -17,6 +17,7 @@
         "hazzard/config": "^1.0",
         "intervention/image": "^2.7",
         "intervention/imagecache": "^2.5",
+        "iutrace/laravel-cuit-validator": "^1.0",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
