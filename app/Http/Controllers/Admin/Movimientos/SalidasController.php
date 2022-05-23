@@ -827,8 +827,13 @@ class SalidasController extends Controller
                 $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
                 $balance  = $product->producto->stockReal(null, \Auth::user()->store_active);
                 if ($balance < $cantidad) {
-                    $request->session()->flash('error', 'STOCK INSUFICIENTE - COD FENOVO ' . $product->producto->cod_fenovo . ' stock actual ' . $balance . 'Kgrs');
-                    return redirect()->back()->withInput();
+                    return redirect()->back()->withInput()->with([
+                        'error'     => 'Sin stock',
+                        'codfenovo' => $product->producto->cod_fenovo,
+                        'stock'     => $balance,
+                        'unidad'    => $product->producto->unit_type,
+                        'cantidad'  => $cantidad,
+                    ]);
                 }
             }
 
@@ -1041,7 +1046,7 @@ class SalidasController extends Controller
                 ->get();
 
             for ($i = 0; $i < count($movements_products); $i++) {
-                $mp = $movements_products[$i];
+                $mp      = $movements_products[$i];
                 $balance = $mp->balance / $p->unit_weight;
 
                 if ($mp->entry > 0) {
