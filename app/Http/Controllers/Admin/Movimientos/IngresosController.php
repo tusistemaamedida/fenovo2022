@@ -189,9 +189,6 @@ class IngresosController extends Controller
             // Obtengo los datos del movimiento
             $movement_temp = MovementTemp::where('id', $request->id)->with('movement_ingreso_products')->first();
 
-            // Actualizo como finalizado el Movimiento temporal
-            MovementTemp::find($request->id)->update(['status' => 'FINISHED']);
-
             $to    = Auth::user()->store_active;
             $count = Movement::where('to', $to)->where('type', 'COMPRA')->count();
             $orden = ($count) ? $count + 1 : 1;
@@ -244,6 +241,9 @@ class IngresosController extends Controller
                     'balance'      => $movimiento['balance'],
                 ]);
             }
+
+            // Elimino el Movimiento temporal
+            MovementTemp::find($request->id)->delete();
 
             DB::commit();
             Schema::enableForeignKeyConstraints();
