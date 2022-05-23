@@ -25,10 +25,7 @@
         </div>
 
         <div class="topbar">
-            <div class=" text-black-50 mr-3">
-                <span id="hours"></span> <span class=" text-warning"> : </span> <span id="min"></span> <span class=" text-warning"> : </span> <span id="sec"></span>
-            </div>
-            
+
             <li class="dropdown">
                 <span class="dropdown-toggle text-black-50 p-1" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" title="{{ Auth::user()->rol() }}">
                     {{ ucfirst(Auth::user()->username) }} <span class=" text-warning">[</span>{{ Auth::user()->rol() }}<span class=" text-warning">]</span>
