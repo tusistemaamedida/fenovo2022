@@ -1,6 +1,6 @@
 <table>
     <tr>
-        <td colspan="15">{{ $data }}</td>
+        <td colspan="17">{{ $data }}</td>
     </tr>
 
     @foreach($arr_elementos as $element)
@@ -19,6 +19,8 @@
         <td>{{ $element->NETO_2}}</td>
         <td>{{ $element->IVAA_2}}</td>
         <td>{{ $element->NOGRAV}}</td>
+        <td>{{ $element->TRIBNETO}}</td>
+        <td>{{ $element->TRIBIVA}}</td>
         <td>{{ $element->TOTVTA}}</td>
     </tr>
     @endforeach
