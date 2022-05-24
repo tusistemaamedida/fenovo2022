@@ -74,6 +74,8 @@ class CabeEleExport implements FromView {
             $element->NETO_2 = $this->getBaseImporteIva($invoice->ivas,5); //5 es el 21
             $element->IVAA_2 = $this->getImporteIva($invoice->ivas,5); //45 es el 215
             $element->NOGRAV = $invoice->imp_tot_conc;
+            $element->TRIBNETO= $this->getTributoNeto($invoice->tributos);
+            $element->TRIBIVA=  $this->getTributoIva($invoice->tributos);
             $element->TOTVTA = $invoice->imp_total;
             $element->PAGEFV = 0;
             $element->PAGTAR = 0;
@@ -125,6 +127,26 @@ class CabeEleExport implements FromView {
         $ivas = json_decode($ivas);
         foreach ($ivas as $iva) {
             if($type_iva == $iva->Id) return $iva->BaseImp;
+        }
+        return '0.0';
+    }
+
+    private function getTributoNeto($tributos){
+        if(!is_null($tributos)){
+            $t = json_decode($tributos);
+            if(count($t)){
+                return $t[0]->BaseImp;
+            }
+        }
+        return '0.0';
+    }
+
+    private function getTributoIva($tributos){
+        if(!is_null($tributos)){
+            $t = json_decode($tributos);
+            if(count($t)){
+                return $t[0]->Importe;
+            }
         }
         return '0.0';
     }
