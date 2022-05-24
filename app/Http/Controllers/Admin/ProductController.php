@@ -115,13 +115,20 @@ class ProductController extends Controller
 
         if ($request->ajax()) {
             $movimientos = MovementProduct::with(['movement'])
-                ->whereEntidadId(1)
-                ->whereProductId($producto->id)->orderBy('id', 'desc')->get();
+            ->whereEntidadId(1)
+            ->whereProductId($producto->id)
+            ->get()
+            ->sortByDesc(function ($query) {
+                return $query->id;
+            })
+            ->sortByDesc(function ($query) {
+                return $query->movement->date;
+            });
 
             return Datatables::of($movimientos)
                 ->addIndexColumn()
                 ->addColumn('fecha', function ($movimiento) {
-                    return date('d/m/Y', strtotime($movimiento->created_at));
+                    return date('d/m/Y', strtotime($movimiento->movement->date));
                 })
                 ->addColumn('type', function ($movimiento) {
                     return $movimiento->movement->type;
