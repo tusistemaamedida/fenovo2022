@@ -19,8 +19,7 @@
         <td>{{ $element->NETO_2}}</td>
         <td>{{ $element->IVAA_2}}</td>
         <td>{{ $element->NOGRAV}}</td>
-        <td>{{ $element->TRIBNETO}}</td>
-        <td>{{ $element->TRIBIVA}}</td>
+        <td>{{ $element->IIBB}}</td>
         <td>{{ $element->TOTVTA}}</td>
     </tr>
     @endforeach
