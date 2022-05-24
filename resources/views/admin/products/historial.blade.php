@@ -32,7 +32,6 @@
                                 <table class=" table table-hover display dataTable yajra-datatable">
                                     <thead class="text-body">
                                         <tr class="bg-light">
-                                            <th>#MovId</th>
                                             <th>Fecha</th>
                                             <th>Tipo</th>
                                             <th>Desde</th>
@@ -68,7 +67,6 @@
         autoWidth: false,
         ajax: '{{ route('product.historial', ['id' => $producto->id] ) }}',
         columns: [
-            {data: 'id', 'class':'text-center', orderable: false, searchable: false},
             {data: 'fecha', 'class':'text-center', orderable: false, searchable: false},
             {data: 'type', 'class':'text-left', orderable: false, searchable: true},
             {data: 'from', 'class':'text-left', orderable: false, searchable: true},
