@@ -1033,39 +1033,90 @@ class SalidasController extends Controller
         );
     }
 
-    public function updateCostos()
+    public function updateStock()
     {
-        $productos = Product::where('unit_type', 'U')->get();
+        $productos = Product::where('active', '1')->get();
 
         foreach ($productos as $p) {
-            $movements_products = MovementProduct::where('movement_id', '>', 611)
-                ->where('product_id', $p->id)
-                ->where('entidad_id', '!=', 1)
-                ->where('created_at', '<', \Carbon\Carbon::parse('2022-05-15')->format('Y-m-d'))
-                ->orderBy('id', 'ASC')
-                ->get();
 
-            for ($i = 0; $i < count($movements_products); $i++) {
-                $mp      = $movements_products[$i];
-                $balance = $mp->balance / $p->unit_weight;
+        // Obtengo el stock inicial
+            $stock = MovementProduct::where('movement_id', 612)->where('product_id', $p->id)->first()->balance;
 
-                if ($mp->entry > 0) {
-                    $unidades = $mp->entry / $p->unit_weight;
-                    MovementProduct::where('id', $mp->id)->update([
-                        'entry'   => $unidades,
-                        'balance' => $balance,
-                    ]);
-                } elseif ($mp->egress > 0) {
-                    $unidades = $mp->egress / $p->unit_weight;
-                    MovementProduct::where('id', $mp->id)->update([
-                        'egress'  => $unidades,
-                        'balance' => $balance,
-                    ]);
-                }
+            // Ordena los movimientos Mayo 2022
+            $movimientos = DB::table('movements as t1')
+            ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
+            ->where('t1.date', '>', '2022-05-01')
+            ->where('t2.product_id', $p->id)
+            ->where('t2.entidad_id', 1)
+            ->orderBy('t1.date', 'ASC')
+            ->get();
+
+            // Regenero los saldos
+            foreach ($movimientos as $movimiento) {
+                $balance = $stock + $movimiento->entry - $movimiento->egress;
+                MovementProduct::find($movimiento->id)->update(['balance' => $balance]);
+                $stock = $balance;
             }
         }
 
+        return 'Fin ';
+    }
+
+    public function updateCostos()
+    {
+        $productos = Product::where('active', '1')->get();
+
+        foreach ($productos as $p) {
+
+        // Obtengo el stock inicial
+            $stock = MovementProduct::where('movement_id', 612)->where('product_id', $p->id)->first()->balance;
+
+            // Ordena los movimientos Mayo 2022
+            $movimientos = DB::table('movements as t1')
+            ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
+            ->where('t1.date', '>', '2022-05-01')
+            ->where('t2.product_id', $p->id)
+            ->where('t2.entidad_id', 1)
+            ->orderBy('t1.date', 'ASC')
+            ->get();
+
+            // Regenero los saldos
+            foreach ($movimientos as $movimiento) {
+                $balance = $stock + $movimiento->entry - $movimiento->egress;
+                MovementProduct::find($movimiento->id)->update(['balance' => $balance]);
+                $stock = $balance;
+            }
+        }
+
+        //     $movements_products = MovementProduct::where('movement_id', '>', 611)
+        //         ->where('product_id', $p->id)
+        //         ->where('entidad_id', '!=', 1)
+        //         ->where('created_at', '<', \Carbon\Carbon::parse('2022-05-15')->format('Y-m-d'))
+        //         ->orderBy('id', 'ASC')
+        //         ->get();
+
+        //     for ($i = 0; $i < count($movements_products); $i++) {
+        //         $mp      = $movements_products[$i];
+        //         $balance = $mp->balance / $p->unit_weight;
+
+        //         if ($mp->entry > 0) {
+        //             $unidades = $mp->entry / $p->unit_weight;
+        //             MovementProduct::where('id', $mp->id)->update([
+        //                 'entry'   => $unidades,
+        //                 'balance' => $balance,
+        //             ]);
+        //         } elseif ($mp->egress > 0) {
+        //             $unidades = $mp->egress / $p->unit_weight;
+        //             MovementProduct::where('id', $mp->id)->update([
+        //                 'egress'  => $unidades,
+        //                 'balance' => $balance,
+        //             ]);
+        //         }
+        //     }
+        // }
+
         dd('fin');
+
         // $filepath = public_path('/imports/ST.TXT');
         // $file     = fopen($filepath, 'r');
 
