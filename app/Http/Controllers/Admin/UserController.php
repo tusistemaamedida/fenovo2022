@@ -110,7 +110,7 @@ class UserController extends Controller
                     'created_by' => 0,
                     'branch_id'  => 1,
                     'verified'   => 1,
-                    'is_admin'   => 1,
+                    'is_admin'   => 0,      // Solo muestra el Panel de control
                     'role_id'    => 2,      // Rol tipo Tienda en Fenovo Tienda
                     'tienda_id'  => $data['store_active'],
                 ]);
