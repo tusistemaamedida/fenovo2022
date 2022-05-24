@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
@@ -152,9 +153,9 @@ class Product extends Model
         $session_products = SessionProduct::where('product_id', $this->id)->where('store_id', $entidad_id)->get();
 
         foreach ($session_products as $session_product) {
-            if($this->unit_type == 'K'){
+            if ($this->unit_type == 'K') {
                 $subtotal = $subtotal + ($session_product->unit_package * $session_product->quantity * $this->unit_weight);
-            }else{
+            } else {
                 $subtotal = $subtotal + ($session_product->unit_package * $session_product->quantity);
             }
         }
@@ -169,13 +170,16 @@ class Product extends Model
     {
         $stock = 0.0;
         // Buscar el ultimo movimiento
-        $movement_product = MovementProduct::where('product_id', $this->id)
-            ->where('entidad_id', $entidad_id)
-            ->where('entidad_tipo', $entidad_tipo)
+        $movement_product = DB::table('movements as t1')
+            ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
+            ->where('t2.product_id', $this->id)
+            ->where('t2.entidad_id', $entidad_id)
+            ->where('t2.entidad_tipo', $entidad_tipo)
             ->when($unit_package, function ($q, $unit_package) {
-                $q->where('unit_package', $unit_package);
+                $q->where('t2.unit_package', $unit_package);
             })
-            ->orderBy('id', 'DESC')
+            ->orderBy('t1.date', 'desc')
+            ->orderBy('t2.id', 'desc')
             ->first();
 
         if ($movement_product) {
