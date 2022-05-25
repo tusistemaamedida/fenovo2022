@@ -166,7 +166,7 @@ class Product extends Model
         return $stock;
     }
 
-    public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
+   /*  public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
     {
         $stock = 0.0;
         // Buscar el ultimo movimiento
@@ -187,9 +187,9 @@ class Product extends Model
         }
 
         return $stock;
-    }
+    } */
 
-   /*  public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
+   public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
     {
         $stock = 0.0;
         // Buscar el ultimo movimiento
@@ -207,7 +207,7 @@ class Product extends Model
         }
 
         return $stock;
-    } */
+    }
 
     public function stockInicioSemana()
     {

@@ -1297,4 +1297,55 @@ class SalidasController extends Controller
             }
         } */
     }
+
+    public function updateStock($cod_fenovo){
+        $products = Product::all();
+
+        foreach ($products as $p) {
+            $movements_products = MovementProduct::where('movement_id', '>', 611)
+                                        ->where('product_id', $p->id)
+                                        ->where('entidad_id', 1)
+                                        ->orderBy('id', 'ASC')
+                                        ->get();
+
+            for ($i = 0; $i < count($movements_products); $i++) {
+                $mp = $movements_products[$i];
+                $m  = Movement::where('id', $mp->movement_id)->first();
+
+                if ($i == 0) {
+                    $balance_orig = $new_balance = $mp->balance;
+                }
+
+                if ($i > 0) {
+
+                    $bultos = $mp->bultos * $mp->unit_package;
+
+                    if ($mp->entry > 0 && $m->type != 'AJUSTE') {
+
+                        $new_balance  = $balance_orig + $bultos;
+                        $balance_orig = $new_balance;
+
+                        MovementProduct::where('id', $mp->id)->update([
+                            'balance' => $new_balance,
+                            'entry'   => $bultos,
+                        ]);
+
+                    } elseif ($mp->egress > 0 && $m->type != 'AJUSTE') {
+
+                        $new_balance  = $balance_orig - $bultos;
+                        $balance_orig = $new_balance;
+
+                        MovementProduct::where('id', $mp->id)->update([
+                            'balance' => $new_balance,
+                            'egress'  => $bultos,
+                        ]);
+                    }
+
+                    if ($m->type == 'AJUSTE') {
+                        $m->delete();
+                    }
+                }
+            }
+        }
+    }
 }

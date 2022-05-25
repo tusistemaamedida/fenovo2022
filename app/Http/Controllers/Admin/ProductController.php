@@ -117,18 +117,20 @@ class ProductController extends Controller
             $movimientos = MovementProduct::with(['movement'])
             ->whereEntidadId(1)
             ->whereProductId($producto->id)
-            ->get()
+            ->orderBy('id','DESC')
+            ->get();
+            /*
             ->sortByDesc(function ($query) {
                 return $query->id;
             })
             ->sortByDesc(function ($query) {
                 return $query->movement->date;
-            });
+            }); */
 
             return Datatables::of($movimientos)
                 ->addIndexColumn()
                 ->addColumn('fecha', function ($movimiento) {
-                    return date('d/m/Y', strtotime($movimiento->movement->date));
+                    return date('d/m/Y', strtotime($movimiento->created_at));
                 })
                 ->addColumn('type', function ($movimiento) {
                     return $movimiento->movement->type;
