@@ -37,6 +37,10 @@
     @yield('content')
     @endguest
 
+    <script>
+        const APP_URL = {!! json_encode(url('/')) !!};
+    </script>
+
     @include('partials.scripts')
 
     @yield('js')

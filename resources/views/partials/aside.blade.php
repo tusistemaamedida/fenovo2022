@@ -130,8 +130,8 @@
                             <a class="dropdown-item" href="{{ route('vehiculos.index') }}">
                                 <span class="text-black-50">Vehículos</span>
                             </a>
-                            <a class="dropdown-item" href="{{ route('ciudades.index') }}">
-                                <span class="text-black-50"> Ciudades </span>
+                            <a class="dropdown-item" href="{{ route('localidades.index') }}">
+                                <span class="text-black-50"> Localidades </span>
                             </a>
                         </div>
                     </li>
