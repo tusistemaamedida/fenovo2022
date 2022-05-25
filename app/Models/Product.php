@@ -166,7 +166,7 @@ class Product extends Model
         return $stock;
     }
 
-    public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
+   /*  public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
     {
         $stock = 0.0;
         // Buscar el ultimo movimiento
@@ -180,6 +180,26 @@ class Product extends Model
             })
             ->orderBy('t1.date', 'desc')
             ->orderBy('t2.id', 'desc')
+            ->first();
+
+        if ($movement_product) {
+            $stock = ($this->unit_type == 'K') ? (float)$movement_product->balance : (int)$movement_product->balance;
+        }
+
+        return $stock;
+    } */
+
+   public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
+    {
+        $stock = 0.0;
+        // Buscar el ultimo movimiento
+        $movement_product = MovementProduct::where('product_id', $this->id)
+            ->where('entidad_id', $entidad_id)
+            ->where('entidad_tipo', $entidad_tipo)
+            ->when($unit_package, function ($q, $unit_package) {
+                $q->where('unit_package', $unit_package);
+            })
+            ->orderBy('id', 'DESC')
             ->first();
 
         if ($movement_product) {

@@ -191,7 +191,7 @@ class SalidasController extends Controller
 
     public function pendientePrint(Request $request)
     {
-        // Cod:: salpend001
+        //Cod:: salpend001
 
         $session_products = DB::table('session_products as t1')
             ->join('products as t2', 't1.product_id', '=', 't2.id')
@@ -1033,90 +1033,8 @@ class SalidasController extends Controller
         );
     }
 
-    public function updateStock()
-    {
-        $productos = Product::where('active', '1')->get();
-
-        foreach ($productos as $p) {
-
-        // Obtengo el stock inicial
-            $stock = MovementProduct::where('movement_id', 612)->where('product_id', $p->id)->first()->balance;
-
-            // Ordena los movimientos Mayo 2022
-            $movimientos = DB::table('movements as t1')
-            ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
-            ->where('t1.date', '>', '2022-05-01')
-            ->where('t2.product_id', $p->id)
-            ->where('t2.entidad_id', 1)
-            ->orderBy('t1.date', 'ASC')
-            ->get();
-
-            // Regenero los saldos
-            foreach ($movimientos as $movimiento) {
-                $balance = $stock + $movimiento->entry - $movimiento->egress;
-                MovementProduct::find($movimiento->id)->update(['balance' => $balance]);
-                $stock = $balance;
-            }
-        }
-
-        return 'Fin ';
-    }
-
     public function updateCostos()
     {
-        $productos = Product::where('active', '1')->get();
-
-        foreach ($productos as $p) {
-
-        // Obtengo el stock inicial
-            $stock = MovementProduct::where('movement_id', 612)->where('product_id', $p->id)->first()->balance;
-
-            // Ordena los movimientos Mayo 2022
-            $movimientos = DB::table('movements as t1')
-            ->join('movement_products as t2', 't2.movement_id', '=', 't1.id')
-            ->where('t1.date', '>', '2022-05-01')
-            ->where('t2.product_id', $p->id)
-            ->where('t2.entidad_id', 1)
-            ->orderBy('t1.date', 'ASC')
-            ->get();
-
-            // Regenero los saldos
-            foreach ($movimientos as $movimiento) {
-                $balance = $stock + $movimiento->entry - $movimiento->egress;
-                MovementProduct::find($movimiento->id)->update(['balance' => $balance]);
-                $stock = $balance;
-            }
-        }
-
-        //     $movements_products = MovementProduct::where('movement_id', '>', 611)
-        //         ->where('product_id', $p->id)
-        //         ->where('entidad_id', '!=', 1)
-        //         ->where('created_at', '<', \Carbon\Carbon::parse('2022-05-15')->format('Y-m-d'))
-        //         ->orderBy('id', 'ASC')
-        //         ->get();
-
-        //     for ($i = 0; $i < count($movements_products); $i++) {
-        //         $mp      = $movements_products[$i];
-        //         $balance = $mp->balance / $p->unit_weight;
-
-        //         if ($mp->entry > 0) {
-        //             $unidades = $mp->entry / $p->unit_weight;
-        //             MovementProduct::where('id', $mp->id)->update([
-        //                 'entry'   => $unidades,
-        //                 'balance' => $balance,
-        //             ]);
-        //         } elseif ($mp->egress > 0) {
-        //             $unidades = $mp->egress / $p->unit_weight;
-        //             MovementProduct::where('id', $mp->id)->update([
-        //                 'egress'  => $unidades,
-        //                 'balance' => $balance,
-        //             ]);
-        //         }
-        //     }
-        // }
-
-        dd('fin');
-
         // $filepath = public_path('/imports/ST.TXT');
         // $file     = fopen($filepath, 'r');
 
@@ -1178,46 +1096,115 @@ class SalidasController extends Controller
             }
         } */
 
-        // $productos = Product::where('unit_type', 'K')->get();
+        $productos = Product::where('unit_type', 'U')->get();
 
-        // foreach ($productos as $p) {
-        //     $movements_products = MovementProduct::where('movement_id', '>', 611)
-        //                                 ->where('product_id', $p->id)
-        //                                 ->where('entidad_id', 1)
-        //                                 ->orderBy('id', 'ASC')
-        //                                 ->get();
+        foreach ($productos as $p) {
+            $movements_products = MovementProduct::where('movement_id', '>', 611)
+                                        ->where('product_id', $p->id)
+                                        ->where('entidad_id', 1)
+                                        ->orderBy('id', 'ASC')
+                                        ->get();
 
-        //     for ($i = 0; $i < count($movements_products); $i++) {
-        //         $mp = $movements_products[$i];
-        //         $m  = Movement::where('id', $mp->movement_id)->first();
+            for ($i = 0; $i < count($movements_products); $i++) {
+                $mp = $movements_products[$i];
+                $m  = Movement::where('id', $mp->movement_id)->first();
 
-        //         if ($i == 0) {
-        //             $balance_orig = $new_balance = $mp->balance;
-        //         }
+                if ($i == 0) {
+                    $balance_orig = $new_balance = $mp->balance;
+                }
 
-        //         if ($i > 0) {
-        //             $bultos = $mp->bultos * $mp->unit_package;
-        //             if ($mp->entry > 0 && $m->type != 'AJUSTE') {
-        //                 $new_balance  = $balance_orig + $bultos;
-        //                 $balance_orig = $new_balance;
-        //                 MovementProduct::where('id', $mp->id)->update([
-        //                     'balance' => $new_balance,
-        //                     'entry'   => $bultos,
-        //                 ]);
-        //             } elseif ($mp->egress > 0 && $m->type != 'AJUSTE') {
-        //                 $new_balance  = $balance_orig - $bultos;
-        //                 $balance_orig = $new_balance;
-        //                 MovementProduct::where('id', $mp->id)->update([
-        //                     'balance' => $new_balance,
-        //                     'egress'  => $bultos,
-        //                 ]);
-        //             }
-        //             if ($m->type == 'AJUSTE') {
-        //                 $m->delete();
-        //             }
-        //         }
-        //     }
-        // }
+                if ($i > 0) {
+                    $bultos = $mp->bultos * $mp->unit_package;
+                    if ($mp->entry > 0 && $m->type != 'AJUSTE') {
+                        $new_balance  = $balance_orig + $bultos;
+                        $balance_orig = $new_balance;
+                        MovementProduct::where('id', $mp->id)->update([
+                            'balance' => $new_balance,
+                            'entry'   => $bultos,
+                        ]);
+                    } elseif ($mp->egress > 0 && $m->type != 'AJUSTE') {
+                        $new_balance  = $balance_orig - $bultos;
+                        $balance_orig = $new_balance;
+                        MovementProduct::where('id', $mp->id)->update([
+                            'balance' => $new_balance,
+                            'egress'  => $bultos,
+                        ]);
+                    }
+                    if ($m->type == 'AJUSTE') {
+                        $m->delete();
+                    }
+                }
+            }
+        }
+
+        $productos = Product::where('unit_type', 'K')->get();
+
+        foreach ($productos as $p) {
+            $movements_products = MovementProduct::where('movement_id', '>', 611)
+                                        ->where('product_id', $p->id)
+                                        ->where('entidad_id', 1)
+                                        ->orderBy('id', 'ASC')
+                                        ->get();
+
+            for ($i = 0; $i < count($movements_products); $i++) {
+                $mp = $movements_products[$i];
+                $m  = Movement::where('id', $mp->movement_id)->first();
+
+                if ($i == 0) {
+                    $balance_orig = $new_balance = $mp->balance;
+                }
+
+                if ($i > 0) {
+                    $bultos = $mp->bultos * $mp->unit_package;
+                    if ($mp->entry > 0 && $m->type != 'AJUSTE') {
+                        $new_balance  = $balance_orig + $bultos;
+                        $balance_orig = $new_balance;
+                        MovementProduct::where('id', $mp->id)->update([
+                            'balance' => $new_balance,
+                            'entry'   => $bultos,
+                        ]);
+                    } elseif ($mp->egress > 0 && $m->type != 'AJUSTE') {
+                        $new_balance  = $balance_orig - $bultos;
+                        $balance_orig = $new_balance;
+                        MovementProduct::where('id', $mp->id)->update([
+                            'balance' => $new_balance,
+                            'egress'  => $bultos,
+                        ]);
+                    }
+                    if ($m->type == 'AJUSTE') {
+                        $m->delete();
+                    }
+                }
+            }
+        }
+
+        foreach ($productos as $p) {
+            $movements_products = MovementProduct::where('movement_id', '>', 611)
+                ->where('product_id', $p->id)
+                ->where('entidad_id', '!=', 1)
+                ->where('created_at', '<', \Carbon\Carbon::parse('2022-05-15')->format('Y-m-d'))
+                ->orderBy('id', 'ASC')
+                ->get();
+
+            for ($i = 0; $i < count($movements_products); $i++) {
+                $mp      = $movements_products[$i];
+                $balance = $mp->balance / $p->unit_weight;
+
+                if ($mp->entry > 0) {
+                    $unidades = $mp->entry / $p->unit_weight;
+                    MovementProduct::where('id', $mp->id)->update([
+                        'entry'   => $unidades,
+                        'balance' => $balance,
+                    ]);
+                } elseif ($mp->egress > 0) {
+                    $unidades = $mp->egress / $p->unit_weight;
+                    MovementProduct::where('id', $mp->id)->update([
+                        'egress'  => $unidades,
+                        'balance' => $balance,
+                    ]);
+                }
+            }
+        }
 
         /* $sessions = SessionProduct::all();
         foreach ($sessions as $s) {
@@ -1309,5 +1296,56 @@ class SalidasController extends Controller
                 }
             }
         } */
+    }
+
+    public function updateStock($cod_fenovo){
+        $products = Product::all();
+
+        foreach ($products as $p) {
+            $movements_products = MovementProduct::where('movement_id', '>', 611)
+                                        ->where('product_id', $p->id)
+                                        ->where('entidad_id', 1)
+                                        ->orderBy('id', 'ASC')
+                                        ->get();
+
+            for ($i = 0; $i < count($movements_products); $i++) {
+                $mp = $movements_products[$i];
+                $m  = Movement::where('id', $mp->movement_id)->first();
+
+                if ($i == 0) {
+                    $balance_orig = $new_balance = $mp->balance;
+                }
+
+                if ($i > 0) {
+
+                    $bultos = $mp->bultos * $mp->unit_package;
+
+                    if ($mp->entry > 0 && $m->type != 'AJUSTE') {
+
+                        $new_balance  = $balance_orig + $bultos;
+                        $balance_orig = $new_balance;
+
+                        MovementProduct::where('id', $mp->id)->update([
+                            'balance' => $new_balance,
+                            'entry'   => $bultos,
+                        ]);
+
+                    } elseif ($mp->egress > 0 && $m->type != 'AJUSTE') {
+
+                        $new_balance  = $balance_orig - $bultos;
+                        $balance_orig = $new_balance;
+
+                        MovementProduct::where('id', $mp->id)->update([
+                            'balance' => $new_balance,
+                            'egress'  => $bultos,
+                        ]);
+                    }
+
+                    if ($m->type == 'AJUSTE') {
+                        $m->delete();
+                    }
+                }
+            }
+        }
     }
 }
