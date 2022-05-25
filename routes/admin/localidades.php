@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\LocalidadesController;
 use Illuminate\Support\Facades\Route;
-
 
 Route::get('localidades', [LocalidadesController::class, 'index'])->name('localidades.index');
 Route::get('localidades/add', [LocalidadesController::class, 'add'])->name('localidades.add');
