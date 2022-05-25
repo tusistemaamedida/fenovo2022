@@ -11,7 +11,7 @@
     </tr>
     @foreach ($movimientos as $m)
     <tr>
-        <td>{{\Carbon\Carbon::parse($m->movement->created_at)->format('d/m/Y')}}</td>
+        <td>{{\Carbon\Carbon::parse($m->created_at)->format('d/m/Y')}}</td>
         <td>{{$m->movement->type}}</td>
         <td>{{$m->movement->From($m->movement->type)}}</td>
         <td>{{$m->movement->To($m->movement->type)}}</td>
