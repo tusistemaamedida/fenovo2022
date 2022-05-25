@@ -15,7 +15,7 @@
                         </div>
                         <div class="icons d-flex">
                             <a href="{{ route('product.printHistorial',['id'=>$producto->id]) }}" class="mt-1 mr-3">
-                                <i class=" fa fa-print"></i> Imprimir
+                                <i class=" fa fa-file-excel"></i> Exportar
                             </a>
                         </div>
 
