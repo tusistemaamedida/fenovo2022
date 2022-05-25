@@ -75,7 +75,7 @@ class CabeEleExport implements FromView {
             $element->IVAA_2 = $this->getImporteIva($invoice->ivas,5); //45 es el 215
             $element->NOGRAV = $invoice->imp_tot_conc;
             //$element->TRIBNETO= $this->getTributoNeto($invoice->tributos);
-            $element->IIBB=  $this->getTributoIva($invoice->tributos);
+            $element->IIBB   =  $this->getTributoIva($invoice->tributos);
             $element->TOTVTA = $invoice->imp_total;
             $element->PAGEFV = 0;
             $element->PAGTAR = 0;
