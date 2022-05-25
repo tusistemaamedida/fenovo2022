@@ -98,9 +98,6 @@
                             <a class="dropdown-item" href="{{ url('users') }}">
                                 <span class="text-black-50"> Usuarios </span>
                             </a>
-                            <a class="dropdown-item" href="{{ url('setting') }}">
-                                <span class="text-black-50"> Settings </span>
-                            </a>
                             @role('superadmin')
                             <a class="dropdown-item" href="{{ route('roles.index') }}">
                                 <span class="text-black-50"> Roles </span>
@@ -132,6 +129,9 @@
                             </a>
                             <a class="dropdown-item" href="{{ route('vehiculos.index') }}">
                                 <span class="text-black-50">Vehículos</span>
+                            </a>
+                            <a class="dropdown-item" href="{{ route('localidades.index') }}">
+                                <span class="text-black-50"> Localidades </span>
                             </a>
                         </div>
                     </li>
