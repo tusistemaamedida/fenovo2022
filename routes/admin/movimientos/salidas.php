@@ -39,3 +39,5 @@ Route::get('imprimir-flete/', [SalidasController::class, 'printPanamaFlete'])->n
 Route::get('total-del-movimiento', [SalidasController::class, 'getTotalMovement'])->name('get.total.movement');
 
 Route::get('actualizar-costos', [SalidasController::class, 'updateCostos'])->name('create.panamas');
+
+Route::get('update-stock', [SalidasController::class, 'updateStock'])->name('actualizar.temp.stock');
