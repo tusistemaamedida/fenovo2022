@@ -117,16 +117,8 @@ class ProductController extends Controller
             $movimientos = MovementProduct::with(['movement'])
             ->whereEntidadId(1)
             ->whereProductId($producto->id)
-            ->orderBy('id','DESC')
+            ->orderBy('id', 'DESC')
             ->get();
-            /*
-            ->sortByDesc(function ($query) {
-                return $query->id;
-            })
-            ->sortByDesc(function ($query) {
-                return $query->movement->date;
-            }); */
-
             return Datatables::of($movimientos)
                 ->addIndexColumn()
                 ->addColumn('fecha', function ($movimiento) {
@@ -154,8 +146,8 @@ class ProductController extends Controller
 
     public function printHistorial(Request $request)
     {
-        $cod_fenovo = Product::find($request->id)->first()->cod_fenovo;
-        return Excel::download(new ProductsViewHistorial($request->id), $cod_fenovo . '_' . date('d-m-Y') . '.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        $product = Product::find($request->id);
+        return Excel::download(new ProductsViewHistorial($request->id), $product->cod_fenovo . '_' . date('d-m-Y') . '.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
     public function add()
