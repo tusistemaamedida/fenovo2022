@@ -29,7 +29,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/utils.php';
         require __DIR__ . '/admin/invoice.php';
         require __DIR__ . '/admin/print.php';
-        require __DIR__ . '/admin/setting.php';
+        require __DIR__ . '/admin/ciudades.php';
         require __DIR__ . '/admin/mails.php';
         // Movimientos
         require __DIR__ . '/admin/movimientos/ingresos.php';
