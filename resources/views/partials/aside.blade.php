@@ -40,9 +40,6 @@
                                 Compras cerradas
                             </a>
                         </div>
-
-
-
                     </li>
                     <li class="dropdown dropright">
                         <button type="button" class="btn dropdown-toggle text-black-50" data-toggle="dropdown" title="Salida de mercadería">
