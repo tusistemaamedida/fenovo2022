@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Localidad\LocalidadRequest;
 use App\Models\Localidad;
 use Illuminate\Http\Request;
 
@@ -13,12 +14,13 @@ class LocalidadController extends Controller
         return Localidad::orderByDesc('id')->get();
     }
 
-    public function storeLocalidad(Request $request)
+    public function createLocalidad()
     {
-        $this->validate($request, [
-            'nombre' => 'required',
-        ]);
+        return view('admin.localidades.create');
+    }
 
+    public function storeLocalidad(LocalidadRequest $request)
+    {
         Localidad::create($request->all());
     }
 

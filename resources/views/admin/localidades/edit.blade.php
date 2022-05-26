@@ -13,7 +13,7 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Crear localidad
+                                        Editar localidad
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
@@ -31,7 +31,7 @@
 
                         <div class="col-sm-12">
 
-                            <form @submit.prevent="createLocalidad">
+                            <form @submit.prevent="updateLocalidad(localidadEdit.id)">
 
                                 <div class="card">
                                     <div class="card-header">
@@ -40,15 +40,15 @@
                                     <div class="card-body">
                                         <div class="form-group">
                                             <label for="nombre">Localidad</label>
-                                            <input type="text" name="nombre" class="form-control" v-model="localidad.nombre">
+                                            <input type="text" name="nombre" class="form-control" v-model="localidadEdit.nombre">
                                         </div>
                                         <div class="form-group">
                                             <label for="nombre">Departamento</label>
-                                            <input type="text" name="departamento" class="form-control" v-model="localidad.departamento">
+                                            <input type="text" name="departamento" class="form-control" v-model="localidadEdit.departamento">
                                         </div>
                                         <div class="form-group">
                                             <label for="nombre">Provincia</label>
-                                            <input type="text" name="provincia" class="form-control" v-model="localidad.provincia">
+                                            <input type="text" name="provincia" class="form-control" v-model="localidadEdit.provincia">
                                         </div>
                                         <div class="form-group mt-5 mb-5">
                                             <span v-for="error in errors" class=" text-danger ">

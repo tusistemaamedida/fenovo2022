@@ -2643,7 +2643,12 @@ var app = Vue.createApp({
 
     data() {
         return {
-            nuevoNombre: '',
+            localidad: {
+                id: '',
+                nombre: '',
+                departamento: '',
+                provincia: '',
+            },
             localidades: [],
             errors: [],
         }
@@ -2652,34 +2657,36 @@ var app = Vue.createApp({
         this.getLocalidades();
     },
     methods: {
+        limpiarLocalidad: function () {
+            this.localidad.id = '';
+            this.localidad.nombre = '';
+            this.localidad.departamento = '';
+            this.localidad.provincia = '';
+        },
         getLocalidades: function () {
             const urlLocalidades = URL_SERVER + '/getLocalidades';
             axios.get(urlLocalidades).then(response => {
                 this.localidades = response.data
             })
         },
-        destroyLocalidad: function (id) {
+        destroyLocalidad: async function (id) {
+            if (!confirm('Confirma eliminar ?')) return
             const urlDestroy = URL_SERVER + '/destroyLocalidad/' + id;
-            axios.delete(urlDestroy).then(response => {
-                toastr.info('Localidad', 'Eliminada');
-                this.getLocalidades();
-            })
+            await axios.delete(urlDestroy).then(response => {
+                this.localidades = this.localidades.filter(localidad => localidad.id !== id)
+                toastr.info('Ok', 'Localidad eliminada ');
+            });
         },
         createLocalidad: function () {
             var urlStore = URL_SERVER + '/storeLocalidad';
 
-            console.log(this.nuevoNombre);
-
-            return false;
-
             axios.post(urlStore, {
-                nombre: this.nuevoNombre,
+                nombre: this.localidad.nombre,
+                departamento: this.localidad.departamento,
+                provincia: this.localidad.provincia,
             }).then(response => {
-
-                this.getLocalidades();
-                this.nuevoNombre = '';
+                this.limpiarLocalidad();
                 this.errors = [];
-                jQuery('#createLocalidad').modal('hide');
                 toastr.info('Localidad', 'Agregada');
             }).catch(error => {
                 this.errors = error.response.data

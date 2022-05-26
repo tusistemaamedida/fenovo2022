@@ -17,7 +17,7 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="#" class="ml-2 " data-toggle="modal" data-target="#createLocalidad">
+                                    <a href="{{ route('api.createLocalidad') }}" class="ml-2 ">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
                                 </div>
@@ -63,8 +63,6 @@
             </div>
         </div>
     </div>
-
-    @include('admin.localidades.create')
 
     @endsection
 
