@@ -196,6 +196,7 @@ class Product extends Model
         $movement_product = MovementProduct::where('product_id', $this->id)
             ->where('entidad_id', $entidad_id)
             ->where('entidad_tipo', $entidad_tipo)
+            ->select('balance')
             ->when($unit_package, function ($q, $unit_package) {
                 $q->where('unit_package', $unit_package);
             })
