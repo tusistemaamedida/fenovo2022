@@ -17,18 +17,14 @@ class LocalidadRequest extends FormRequest
     public function rules()
     {
         return [
-            'nombre' => 'required|unique:localidades,nombre,' . $this->nombre,
-            'departamento' => 'required',
-            'provincia' => 'required',
+            'nombre' => 'required',
         ];
     }
 
     public function messages()
     {
         return [
-            'nombre.required' => 'Informacion es requerida',
-            'departamento.required' => 'Informacion es requerida',
-            'provincia.required' => 'Informacion es requerida',
+            'nombre.required' => 'Localidad es requerida',
         ];
     }
 }
