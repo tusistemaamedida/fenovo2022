@@ -78,6 +78,9 @@ class ProductController extends Controller
                 ->addColumn('stock', function ($product) {
                     return $product->stockReal(null, Auth::user()->store_active);
                 })
+                ->addColumn('stockEnSession', function ($product) {
+                    return $product->stockEnSession(null, Auth::user()->store_active);
+                })
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();
                 })
@@ -102,7 +105,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'borrar', 'editar', 'ajuste', 'costo', 'historial'])
+                ->rawColumns(['stock', 'borrar', 'editar', 'ajuste', 'costo', 'historial','stockEnSession'])
                 ->make(true);
         }
 

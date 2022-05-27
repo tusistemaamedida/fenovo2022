@@ -631,7 +631,8 @@ class SalidasController extends Controller
                 if ($product) {
                     $stock_presentaciones = [];
                     $presentaciones       = explode('|', $product->unit_package);
-                    $stock_total          = $product->stock(null, Auth::user()->store_active);
+                    $stock_total          = $product->stockReal(null, Auth::user()->store_active);
+                    $stock_session        = $product->stockEnSession(null, Auth::user()->store_active);
 
                     for ($i = 0; $i < count($presentaciones); $i++) {
                         $bultos                                   = 0;
@@ -665,7 +666,7 @@ class SalidasController extends Controller
                         'type' => 'success',
                         'html' => view(
                             $view,
-                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total')
+                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total','stock_session')
                         )->render(),
                     ]);
                 }

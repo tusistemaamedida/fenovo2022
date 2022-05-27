@@ -3,7 +3,8 @@
 <div class="form-group">
 
         <div class="row text-center">
-            <div class="col-12 bg-dark text-white">Kgrs</div>
+            <div class="col-12 bg-dark text-white">Unidad ::
+                {{$product->unit_type}}</div>
         </div>
         <div class="row text-center">
             <div class="col-6">Stock</div>

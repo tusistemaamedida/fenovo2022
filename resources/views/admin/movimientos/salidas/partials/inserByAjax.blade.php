@@ -7,14 +7,18 @@
             {{$product->unit_type}}</div>
     </div>
     <div class="row text-center">
-        <div class="col-6">Stock</div>
-        <div class="col-6">Envío</div>
+        <div class="col-4">S. Real</div>
+        <div class="col-4">S. en Prep</div>
+        <div class="col-4">Envío</div>
     </div>
     <div class="row text-center font-size-bold ">
-        <div class="col-6">
+        <div class="col-4">
             <h4>{{$stock_total}}</h4>
         </div>
-        <div class="col-6">
+        <div class="col-4">
+            <h4>{{$stock_session}}</h4>
+        </div>
+        <div class="col-4">
             <h4> <span id="envio_total" class=" text-danger">0</span> </h4>
         </div>
     </div>
