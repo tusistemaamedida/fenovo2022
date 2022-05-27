@@ -9,7 +9,7 @@ class StockSummaryDaily extends Command
 {
 
     protected $signature = 'stock:daily';
-    protected $description = 'Ejecta a diario la suma de venta diarias para calcular la capacidad de la FTK';
+    protected $description = 'Ejecuta a diario la suma de venta diarias para calcular la capacidad de la FTK';
 
     public function __construct()
     {

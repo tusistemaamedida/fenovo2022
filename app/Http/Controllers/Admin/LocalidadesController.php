@@ -9,5 +9,6 @@ class LocalidadesController extends Controller
 {
     public function index(Request $request)
     {
+        return view('admin.localidades.index');
     }
 }
