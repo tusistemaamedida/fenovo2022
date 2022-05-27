@@ -437,9 +437,7 @@ class SalidasController extends Controller
     public function printRemito(Request $request)
     {
         $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
-
         if ($movement) {
-
             // Ver si es un traslado a base
             $mercaderia_en_transito = null;
             if ($movement->type == 'TRASLADO') {
@@ -467,22 +465,7 @@ class SalidasController extends Controller
                 }
             }
 
-            $total_lineas             = 27;
-            $paginas                  = (int)((count($array_productos) / $total_lineas) + 1);
-            $faltantes_para_completar = ($total_lineas * $paginas) - count($array_productos);
-
-            for ($aux = 0; $aux < $faltantes_para_completar; $aux++) {
-                $objProduct             = new stdClass();
-                $objProduct->cant       = 0;
-                $objProduct->codigo     = 'none';
-                $objProduct->name       = 'none';
-                $objProduct->total_unit = 'none';
-                $objProduct->unity      = 'none';
-                $objProduct->class      = 'no-visible';
-                array_push($array_productos, $objProduct);
-            }
-
-            $pdf = PDF::loadView('print.remito', compact('destino', 'fecha', 'array_productos', 'neto', 'paginas', 'total_lineas', 'mercaderia_en_transito'));
+            $pdf = PDF::loadView('print.remito', compact('destino', 'fecha', 'array_productos', 'neto', 'mercaderia_en_transito'));
             return $pdf->stream('remito.pdf');
         }
     }

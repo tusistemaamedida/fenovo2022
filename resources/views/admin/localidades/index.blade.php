@@ -1,9 +1,13 @@
 @extends('layouts.app')
 
+@section('css')
+
+@endsection
+
 @section('content')
 
-<div class="d-flex flex-column-fluid">
-    <div id="app-localidades" class="container-fluid">
+<div id="app-localidades" class="d-flex flex-column-fluid">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-12">
 
@@ -17,8 +21,8 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="#" class="ml-2 " data-toggle="modal" data-target="#createLocalidad">
-                                        <i class="fa fa-2x fa-plus-circle text-primary"></i>
+                                    <a href="#" data-toggle="modal" data-target="#crearLocalidad" class="ml-2">
+                                        <i class="fa fa-2x fa-plus-circle text-primary" @click="limpiarLocalidad"></i>
                                     </a>
                                 </div>
                             </div>
@@ -27,51 +31,50 @@
                 </div>
 
                 <div class="card card-body gutter-b bg-white border-0">
-                    <div class="row mt-3 ml-3 mb-4 font-weight-bolder">
 
-                        <div class="col-sm-12">
-
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Localidad</th>
-                                        <th>Departamento</th>
-                                        <th>Provincia</th>
-                                        <th>&nbsp;</th>
-                                        <th>&nbsp;</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="localidad in localidades">
-                                        <td> @{{ localidad.id }}</td>
-                                        <td> @{{ localidad.nombre }}</td>
-                                        <td> @{{ localidad.departamento }}</td>
-                                        <td> @{{ localidad.provincia }} </td>
-                                        <td> <a href="#" class="btn btn-light btn-sm">Editar</a></td>
-                                        <td> <a href="#" class="btn btn-light btn-sm text-danger" @click.prevent="destroyLocalidad(localidad.id)">Borrar </a> </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped" id="tablaLocalidades">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Localidad</th>
+                                            <th>Departamento</th>
+                                            <th>Provincia</th>
+                                            <th>&nbsp;</th>
+                                            <th>&nbsp;</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="localidad in localidades">
+                                            <td> @{{ localidad.id }}</td>
+                                            <td> @{{ localidad.nombre }}</td>
+                                            <td> @{{ localidad.departamento }}</td>
+                                            <td> @{{ localidad.provincia }} </td>
+                                            <td> <a href="javascript:void(0)" class="btn btn-light btn-sm" @click.prevent="editarLocalidad(localidad)">Editar</a></td>
+                                            <td> <a href="javascript:void(0)" class="btn btn-light btn-sm text-danger" @click.prevent="destroyLocalidad(localidad.id)">Borrar </a> </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>
-
     @include('admin.localidades.create')
+    @include('admin.localidades.edit')
+</div>
 
-    @endsection
+@endsection
 
-    @section('js')
+@section('js')
 
-    <script>
+<script>
 
-    </script>
+</script>
 
-    @endsection
+@endsection
