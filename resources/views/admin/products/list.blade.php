@@ -52,6 +52,7 @@
                                         <td>Codigo</td>
                                         <td>Producto</td>
                                         <td>Stock</td>
+                                        <td>S. en Prep.</td>
                                         <td>Unidad</td>
                                         <td>Costo</td>
                                         <td>Proveedor</td>
@@ -88,6 +89,7 @@
             {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},
             {data: 'stock', class:'text-center', orderable: false, searchable: false},
+            {data: 'stockEnSession', class:'text-center', orderable: false, searchable: false},
             {data: 'unit_type',class:'text-center', orderable: false, searchable: false},
             {data: 'costo', orderable: false, searchable: false},
             {data: 'proveedor', orderable: false},
