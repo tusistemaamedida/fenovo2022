@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('stock:daily')->dailyAt('23:57')->runInBackground();
+        // $schedule->command('stock:daily')->dailyAt('23:57')->runInBackground();
         $schedule->command('update:prices')->dailyAt('03:27')->runInBackground();
 
         // Copias DB / mantiene últimas 7 copias
