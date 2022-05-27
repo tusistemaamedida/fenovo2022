@@ -14,25 +14,18 @@ class LocalidadController extends Controller
         return Localidad::orderByDesc('id')->get();
     }
 
-    public function createLocalidad()
-    {
-        return view('admin.localidades.create');
-    }
-
     public function storeLocalidad(LocalidadRequest $request)
     {
         Localidad::create($request->all());
     }
 
-    public function updateLocalidad($id)
+    public function updateLocalidad(LocalidadRequest $request, $id)
     {
-        $localidad = Localidad::findOrFail($id);
-        return $localidad;
+        Localidad::find($id)->update($request->all());
     }
 
     public function destroyLocalidad($id)
     {
-        $localidad = Localidad::findOrFail($id);
-        $localidad->delete();
+        Localidad::find($id)->delete();
     }
 }
