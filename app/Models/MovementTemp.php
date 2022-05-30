@@ -22,6 +22,7 @@ class MovementTemp extends Model
     protected $fillable = [
         'date',
         'type',
+        'subtype',
         'from',
         'to',
         'status',

@@ -44,6 +44,7 @@ class Movement extends Model
     protected $fillable = [
         'date',
         'type',
+        'subtype',
         'from',
         'to',
         'status',
