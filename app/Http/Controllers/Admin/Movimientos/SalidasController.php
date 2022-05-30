@@ -911,6 +911,7 @@ class SalidasController extends Controller
                         'unit_package'   => $product->unit_package, ], [
                             'invoice'    => $product->invoice,
                             'bultos'     => $product->quantity,
+                            'cost_fenovo'=> $product->costo_fenovo,
                             'entry'      => $cantidad,
                             'unit_price' => ($product->invoice) ? $product->unit_price : $product->neto,
                             'tasiva'     => $product->tasiva,
@@ -927,6 +928,7 @@ class SalidasController extends Controller
                         'unit_package'   => $product->unit_package, ], [
                             'invoice'    => $product->invoice,
                             'bultos'     => $product->quantity,
+                            'cost_fenovo'=> $product->costo_fenovo,
                             'entry'      => $cantidad,
                             'unit_price' => ($product->invoice) ? $product->unit_price : $product->neto,
                             'tasiva'     => $product->tasiva,
@@ -1019,6 +1021,18 @@ class SalidasController extends Controller
 
     public function updateCostos()
     {
+        $movements_products = MovementProduct::whereNull('cost_fenovo')->orderBy('movement_id','DESC')->get();
+
+        foreach ($movements_products as $mp) {
+            $mp_con_costo = MovementProduct::whereNotNull('cost_fenovo')
+                                           ->where('product_id',$mp->product_id)
+                                           ->where('movement_id',$mp->movement_id)
+                                           ->first();
+            if($mp_con_costo){
+                $mp->cost_fenovo = $mp_con_costo->cost_fenovo;
+                $mp->save();
+            }
+        }
         // $filepath = public_path('/imports/ST.TXT');
         // $file     = fopen($filepath, 'r');
 
