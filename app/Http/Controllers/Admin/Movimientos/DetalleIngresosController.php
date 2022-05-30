@@ -45,6 +45,8 @@ class DetalleIngresosController extends Controller
                         'unit_price'   => $unit_price,
                         'unit_package' => $movimiento['unit_package'],
                         'unit_type'    => $movimiento['unit_type'],
+                        'invoice'      => $movimiento['invoice'],
+                        'cyo'          => $movimiento['cyo'],
                     ],
                     $movimiento
                 );
