@@ -27,12 +27,13 @@ class DetalleIngresosController extends Controller
                 // Buscar si el producto tiene oferta del proveedor
                 $oferta = DB::table('products as t1')
                     ->join('session_ofertas as t2', 't1.id', '=', 't2.product_id')
-                    ->select('t2.costfenovo')
+                    ->select('t2.costfenovo', 't2.plist0neto')
                     ->where('t1.id', $movimiento['product_id'])
                     ->where('t2.fecha_desde', '<=', $hoy)
                     ->where('t2.fecha_hasta', '>=', $hoy)
                     ->first();
                 $costo_fenovo = (!$oferta) ? $product->product_price->costfenovo : $oferta->costfenovo;
+                $unit_price   = (!$oferta) ? $product->product_price->plist0neto : $oferta->plist0neto;
 
                 MovementProductTemp::firstOrCreate(
                     [
@@ -41,6 +42,7 @@ class DetalleIngresosController extends Controller
                         'product_id'   => $movimiento['product_id'],
                         'tasiva'       => $product->product_price->tasiva,
                         'cost_fenovo'  => $costo_fenovo,
+                        'unit_price'   => $unit_price,
                         'unit_package' => $movimiento['unit_package'],
                         'unit_type'    => $movimiento['unit_type'],
                     ],

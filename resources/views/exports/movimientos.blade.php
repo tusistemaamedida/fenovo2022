@@ -13,6 +13,8 @@
         <td>{{ $arrMovement->codproducto}}</td>
         <td>{{ $arrMovement->cantidad   }}</td>
         <td>{{ $arrMovement->unidad   }}</td>
+        <td>{{ $arrMovement->cosftk   }}</td>
+        <td>{{ $arrMovement->cosven   }}</td>
     </tr>
     @endforeach
 </table>
