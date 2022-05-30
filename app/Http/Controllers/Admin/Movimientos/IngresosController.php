@@ -216,16 +216,6 @@ class IngresosController extends Controller
                 $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
                 $movimiento['balance'] = $balance;
 
-                // Buscar si el producto tiene oferta del proveedor
-                $oferta = DB::table('products as t1')
-                    ->join('session_ofertas as t2', 't1.id', '=', 't2.product_id')
-                    ->select('t2.costfenovo')
-                    ->where('t1.id', $movimiento['product_id'])
-                    ->where('t2.fecha_desde', '<=', $hoy)
-                    ->where('t2.fecha_hasta', '>=', $hoy)
-                    ->first();
-                $costo_fenovo = (!$oferta) ? $product->product_price->costfenovo : $oferta->costfenovo;
-
                 MovementProduct::create([
                     'entidad_id'   => Auth::user()->store_active,
                     'movement_id'  => $movement_new->id,
@@ -233,8 +223,9 @@ class IngresosController extends Controller
                     'product_id'   => $movimiento['product_id'],
                     'unit_package' => $movimiento['unit_package'],
                     'unit_type'    => $movimiento['unit_type'],
-                    'tasiva'       => $product->product_price->tasiva,
-                    'cost_fenovo'  => $costo_fenovo,
+                    'tasiva'       => $movimiento['tasiva'],
+                    'cost_fenovo'  => $movimiento['cost_fenovo'],
+                    'unit_price'   => $movimiento['unit_price'],
                     'bultos'       => $movimiento['bultos'],
                     'entry'        => $movimiento['entry'],
                     'egress'       => $movimiento['egress'],
@@ -244,6 +235,7 @@ class IngresosController extends Controller
 
             // Elimino el Movimiento temporal
             MovementTemp::find($request->id)->delete();
+            MovementProductTemp::whereMovementId($request->id)->delete();
 
             DB::commit();
             Schema::enableForeignKeyConstraints();
