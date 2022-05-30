@@ -158,6 +158,8 @@
                     if (data['type'] == 'success') {
                         jQuery("#movement_id_in_modal").val(id)
                         jQuery("#total_in_span").html(data['total'])
+                        let neto = data['total'].replace(/\./g, '').replace(/\,/g, '.')
+                        jQuery("#neto").val(neto).select()
                         jQuery('#createRemito').addClass('offcanvas-on')
                     } else {
                         toastr.error(data['msj'], 'Verifique')
