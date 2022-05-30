@@ -458,6 +458,7 @@ namespace App\Models{
  * @property Carbon|null $updated_at
  * @property Collection|MovementProduct[] $movement_products
  * @package App\Models
+ * @property string|null $subtype
  * @property int|null $flete_invoice
  * @property int|null $orden
  * @property int|null $exported
@@ -486,6 +487,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereObservacion($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereOrden($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Movement whereSubtype($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement whereUpdatedAt($value)
@@ -512,6 +514,7 @@ namespace App\Models{
  * @property string|null $unit_type
  * @property int|null $bultos
  * @property bool|null $invoice
+ * @property bool|null $cyo Cta y Orden
  * @property int|null $iibb
  * @property float|null $entry
  * @property float|null $egress
@@ -528,6 +531,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereBultos($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereCostFenovo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereCyo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereEgress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereEntidadId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereEntidadTipo($value)
@@ -564,6 +568,7 @@ namespace App\Models{
  * @property string|null $unit_type
  * @property int|null $bultos
  * @property bool|null $invoice
+ * @property bool|null $cyo Cta y Orden
  * @property int|null $iibb
  * @property float|null $entry
  * @property float|null $egress
@@ -580,6 +585,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereBultos($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereCostFenovo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereCyo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereEgress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereEntidadId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProductTemp whereEntidadTipo($value)
@@ -605,7 +611,8 @@ namespace App\Models{
  *
  * @property int $id
  * @property \Illuminate\Support\Carbon|null $date
- * @property string $type
+ * @property string|null $type
+ * @property string|null $subtype
  * @property string|null $from
  * @property string|null $to
  * @property string|null $status
@@ -637,6 +644,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereObservacion($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereOrden($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereSubtype($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementTemp whereUpdatedAt($value)
