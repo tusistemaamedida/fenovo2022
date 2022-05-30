@@ -195,6 +195,7 @@ class IngresosController extends Controller
 
             // Guardo el nuevo movimiento
             $data['type']           = 'COMPRA';
+            $data['subtype']        = $movement_temp->subtype;
             $data['to']             = $to;
             $data['date']           = $movement_temp->date;
             $data['from']           = $movement_temp->from;
@@ -226,6 +227,8 @@ class IngresosController extends Controller
                     'tasiva'       => $movimiento['tasiva'],
                     'cost_fenovo'  => $movimiento['cost_fenovo'],
                     'unit_price'   => $movimiento['unit_price'],
+                    'invoice'      => $movimiento['invoice'],
+                    'cyo'          => $movimiento['cyo'],
                     'bultos'       => $movimiento['bultos'],
                     'entry'        => $movimiento['entry'],
                     'egress'       => $movimiento['egress'],
