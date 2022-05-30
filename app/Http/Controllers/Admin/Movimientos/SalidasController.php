@@ -911,6 +911,7 @@ class SalidasController extends Controller
                         'unit_package'   => $product->unit_package, ], [
                             'invoice'    => $product->invoice,
                             'bultos'     => $product->quantity,
+                            'cost_fenovo'=> $product->costo_fenovo,
                             'entry'      => $cantidad,
                             'unit_price' => ($product->invoice) ? $product->unit_price : $product->neto,
                             'tasiva'     => $product->tasiva,
@@ -927,6 +928,7 @@ class SalidasController extends Controller
                         'unit_package'   => $product->unit_package, ], [
                             'invoice'    => $product->invoice,
                             'bultos'     => $product->quantity,
+                            'cost_fenovo'=> $product->costo_fenovo,
                             'entry'      => $cantidad,
                             'unit_price' => ($product->invoice) ? $product->unit_price : $product->neto,
                             'tasiva'     => $product->tasiva,
