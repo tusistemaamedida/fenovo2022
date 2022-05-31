@@ -760,7 +760,9 @@ namespace App\Models{
  * @property float|null $unit_weight
  * @property float|null $porcentaje_bruto
  * @property float|null $stock_min
- * @property int|null $stock_actual
+ * @property string|null $stock_f
+ * @property string|null $stock_r
+ * @property string|null $stock_cyo
  * @property int|null $stock_sem_min
  * @property int|null $stock_sem_max
  * @property float|null $hight
@@ -828,8 +830,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePublicationLog($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePublicationState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereSenasaId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Product whereStockActual($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereStockCyo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereStockF($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereStockMin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereStockR($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereStockSemMax($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereStockSemMin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereUnitAmount($value)
