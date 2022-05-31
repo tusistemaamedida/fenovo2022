@@ -137,7 +137,7 @@ class NotasCreditoController extends Controller
                 $orden = ($count) ? $count + 1 : 1;
 
                 $insert_data['type']           = $explode[0];
-                $insert_data['to']             = $explode[1];
+                $insert_data['to']             = 64;// $explode[1]; Se cambio a deposito reclamos
                 $insert_data['date']           = now();
                 $insert_data['from']           = $from;
                 $insert_data['orden']          = $orden;
