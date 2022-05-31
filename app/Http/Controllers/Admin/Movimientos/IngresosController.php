@@ -238,6 +238,16 @@ class IngresosController extends Controller
                     'egress'       => $movimiento['egress'],
                     'balance'      => $movimiento['balance'],
                 ]);
+
+                $p = Product::where('id',$movimiento['product_id'])->first();
+                if($movimiento['cyo']){
+                    $p->stock_cyo = $p->stock_cyo + $movimiento['entry'];
+                }elseif($movimiento['invoice']){
+                    $p->stock_f = $p->stock_f + $movimiento['entry'];
+                }else{
+                    $p->stock_r = $p->stock_r + $movimiento['entry'];
+                }
+                $p->save();
             }
 
             // Elimino el Movimiento temporal
