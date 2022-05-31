@@ -56,13 +56,14 @@
 </table>
 
 
-<table style=" width:100%; font-size:9px">
+<table class="table table-borderless table-condensed text-center" style="font-size:10px">
     <tr>
-        <td class="text-center">Bultos</td>
-        <td class="text-center">Kgrs</td>
-        <td class="text-center">Unidades</td>
-        <td class="w-25">Nombre del producto</td>
-        <td class="text-center">Presentación</td>
+        <td>Bultos</td>
+        <td>Kgrs</td>
+        <td>Unidades</td>
+        <td class="w-25 text-left">Nombre del producto</td>
+        <td>Presentación</td>
+        <td>Unidad</td>
     </tr>
     @php
     $total_kgrs = 0;
@@ -77,22 +78,24 @@
     @endphp
 
     <tr>
-        <td class="text-center">{{ (int)$session_product->quantity}}</td>
-        <td class="text-center">{{ (float)$session_product->unit_weight * (float)$session_product->unit_package * (float)$session_product->quantity }} </td>
-        <td class="text-center">{{ $session_product->unit_package * $session_product->quantity }} </td>
-        <td>{{$session_product->name}}</td>
-        <td class="text-center">{{$session_product->unit_package}}</td>
+        <td>{{ (int)$session_product->quantity}}</td>
+        <td>{{ (float)$session_product->unit_weight * (float)$session_product->unit_package * (float)$session_product->quantity }} </td>
+        <td>{{ $session_product->unit_package * $session_product->quantity }} </td>
+        <td style="text-align: left">{{$session_product->name}}</td>
+        <td>{{$session_product->unit_package}}</td>
+        <td>{{$session_product->unit_type}}</td>
     </tr>
 
     @endforeach
 
     <tr>
-        <th colspan="5"><br></th>
+        <th colspan="6"><br></th>
     </tr>
     <tr class=" bg-info text-white">
         <th> {{ number_format($total_bultos,2) }}</th>
         <th> {{ number_format($total_kgrs,2) }} </th>
         <th> </th>
+        <th></th>
         <th></th>
         <th></th>
     </tr>
