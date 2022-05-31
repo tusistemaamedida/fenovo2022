@@ -56,7 +56,7 @@
 </table>
 
 
-<table class="table table-borderless table-condensed text-center" style="font-size:10px">
+<table style="width: 100%; font-size:10px">
     <tr>
         <td>Bultos</td>
         <td>Kgrs</td>
