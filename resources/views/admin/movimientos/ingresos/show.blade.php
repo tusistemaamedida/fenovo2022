@@ -18,36 +18,38 @@
         <div class="card gutter-b bg-white border-0">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3">
-                        <label class="text-body">Fecha</label>
-                        <fieldset class="form-group mb-3">
-                            <strong>{{ date('d-m-Y',strtotime($movement->date)) }}</strong>
-                        </fieldset>
+                    <div class="col-md-2">
+                        <label>Fecha</label>                                         
                     </div>
-                    <div class="col-md-3">
-                        <label class="text-body">Operación</label>
-                        <fieldset class="form-group mb-3">
-                            <strong>{{ $movement->type }}</strong>
-                        </fieldset>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="text-body">Origen</label>
-                        <fieldset class="form-group mb-3">
-                            <strong>{{ $movement->origenData($movement->type) }}</strong>
-                        </fieldset>
+                    <div class="col-md-3 text-center">
+                        <label>Operación</label>              
                     </div>
                     <div class="col-md-2 text-center">
-                        <label class="text-dark">Nro Comprobante</label>
-                        <fieldset class="form-group mb-3">
-                            <strong>{{ $movement->voucher_number }}</strong>
-                        </fieldset>
+                        <label>Tipo</label>
                     </div>
-                    <div class="col-md-1 text-center">
-
+                    <div class="col-md-3 text-center">
+                        <label>Origen</label>
                     </div>
-                    <div class="col-md-1 text-center">
-
+                    <div class="col-md-2 text-center">
+                        <label>Comprobante</label>
+                    </div>                    
+                </div>
+                <div class="row font-weight-bolder">
+                    <div class="col-md-2">                
+                        {{ date('d-m-Y',strtotime($movement->date)) }}                        
                     </div>
+                    <div class="col-md-3 text-center">
+                        {{ $movement->type }}                        
+                    </div>
+                    <div class="col-md-2 text-center">
+                        {{ $movement->subtype }}  
+                    </div>
+                    <div class="col-md-3 text-center">
+                        {{ $movement->origenData($movement->type) }}
+                    </div>
+                    <div class="col-md-2 text-center">
+                        {{ $movement->voucher_number }}
+                    </div>                    
                 </div>
             </div>
 

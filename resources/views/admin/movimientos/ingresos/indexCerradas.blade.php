@@ -38,6 +38,7 @@
                                                     @else
                                                     <th>Proveedor</th>
                                                     @endif
+                                                    <th>Tipo</th>
                                                     <th>Items</th>
                                                     <th>Kgrs</th>
                                                     <th>Nro compra</th>
@@ -71,6 +72,7 @@
             {data: 'id', 'class':'text-center', searchable: false},
             {data: 'date', 'class':'text-center', searchable: false},
             {data: 'origen'},
+            {data: 'subtype'},
             {data: 'items', 'class':'text-center', searchable: false},
             {data: 'kgrs', 'class':'text-center', searchable: false},
             {data: 'voucher',  'class':'text-center'},
