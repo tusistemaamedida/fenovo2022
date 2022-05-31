@@ -39,9 +39,9 @@
                                 <div class="col-md-2">
                                     <label class="text-body">Tipo compra</label>
                                     <select class="form-control bg-transparent" name="subtype" id="subtype">
-                                        <option value="BLANCO" selected>B</option>
+                                        <option value="FACTURA" selected>F</option>
                                         <option value="CYO">CYO</option>
-                                        <option value="NEGRO">N</option>
+                                        <option value="REMITO">R</option>
                                     </select>
                                 </div>
                                 <div class="col-md-2">

@@ -28,19 +28,19 @@ class MovementProduct extends Model
         'entidad_id',
         'entidad_tipo',
         'product_id',
-        'exported_number',
+        'tasiva',
+        'cost_fenovo',
+        'unit_price',
         'unit_package',
         'unit_type',
         'invoice',
         'cyo',
         'iibb',
+        'exported_number',
         'bultos',
         'entry',
         'egress',
         'balance',
-        'unit_price',
-        'cost_fenovo',
-        'tasiva',
     ];
 
     public function movement()
