@@ -1021,7 +1021,13 @@ class SalidasController extends Controller
 
     public function updateCostos()
     {
-        $movements_products = MovementProduct::whereNull('cost_fenovo')->orderBy('movement_id','DESC')->get();
+        $productos = Product::all();
+        foreach ($productos as $p) {
+            $p->stock_f = $p->stockReal();
+            $p->save();
+        }
+
+        /* $movements_products = MovementProduct::whereNull('cost_fenovo')->orderBy('movement_id','DESC')->get();
 
         foreach ($movements_products as $mp) {
             $mp_con_costo = MovementProduct::whereNotNull('cost_fenovo')
@@ -1032,7 +1038,7 @@ class SalidasController extends Controller
                 $mp->cost_fenovo = $mp_con_costo->cost_fenovo;
                 $mp->save();
             }
-        }
+        } */
         // $filepath = public_path('/imports/ST.TXT');
         // $file     = fopen($filepath, 'r');
 
