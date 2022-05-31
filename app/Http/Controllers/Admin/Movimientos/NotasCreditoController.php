@@ -189,14 +189,14 @@ class NotasCreditoController extends Controller
                         ]);
 
                     $latest = MovementProduct::all()
-                        ->where('entidad_id', \Auth::user()->store_active)
+                        ->where('entidad_id', 64)
                         ->where('entidad_tipo', 'S')
                         ->where('product_id', $product->product_id)
                         ->sortByDesc('id')->first();
 
                     $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
                     MovementProduct::firstOrCreate([
-                        'entidad_id'     => \Auth::user()->store_active,
+                        'entidad_id'     => 64,
                         'entidad_tipo'   => 'S',
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
