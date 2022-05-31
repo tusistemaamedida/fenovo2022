@@ -136,6 +136,12 @@ class NotasCreditoController extends Controller
                 $count = Movement::where('from', $from)->whereIn('type', ['DEVOLUCION', 'DEVOLUCIONCLIENTE'])->count();
                 $orden = ($count) ? $count + 1 : 1;
 
+                $store = Store::where('id',$explode[1])->first();
+                $label = '';
+                if($store){
+                    $label .= $store->razon_social .' '.$store->description;
+                }
+                $insert_data['observacion']    = 'NC a '.$label;
                 $insert_data['type']           = $explode[0];
                 $insert_data['to']             = 64;// $explode[1]; Se cambio a deposito reclamos
                 $insert_data['date']           = now();
