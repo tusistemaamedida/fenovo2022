@@ -49,6 +49,9 @@ class Store extends Model
         'stock_capacity',
         'online_sale',
         'listprice_associate',
+        'logistica_express',            // Ingresar porcentaje de flete logistica de distribucion desde la Base
+        'punto_venta',                  // Punto de venta para la facturacion
+        'habilitado_panama',            // Puede facturar en negro
         'active',
     ];
 
