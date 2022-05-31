@@ -45,6 +45,7 @@
                                                     <th>Nro compra</th>
                                                     <th>Edicion</th>
                                                     <th>Detalle</th>
+                                                    <th>Borrar</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -81,6 +82,7 @@
             {data: 'voucher',  'class':'text-center'},
             {data: 'edit', 'class':'text-center', searchable: false},
             {data: 'show', 'class':'text-center', searchable: false},
+            {data: 'borrar', 'class':'text-center', searchable: false},
         ],
         });
 
