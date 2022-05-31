@@ -34,11 +34,11 @@ class RoleController extends Controller
                 })
                 ->addColumn('edit', function ($rol) {
                     $ruta = route('roles.edit', ['id' => $rol->id]);
-                    return '<a class="dropdown-item" href="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                    return '<a href="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($rol) {
                     $ruta = 'destroy(' . $rol->id . ",'" . route('roles.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
                 ->rawColumns(['inactivo', 'edit', 'destroy'])
                 ->make(true);
