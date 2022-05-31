@@ -66,7 +66,11 @@ class IngresosController extends Controller
                 ->addColumn('show', function ($movement) {
                     return '<a href="' . route('ingresos.show', ['id' => $movement->id, 'is_cerrada' => false]) . '"> <i class="fa fa-eye"></i> </a>';
                 })
-                ->rawColumns(['id', 'origen', 'date', 'items', 'kgrs', 'voucher', 'show', 'edit'])
+                ->addColumn('borrar', function ($movement) {
+                    $ruta = 'destroy(' . $movement->id . ",'" . route('ingresos.destroyTemp') . "')";
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                })
+                ->rawColumns(['id', 'origen', 'date', 'items', 'kgrs', 'voucher', 'show', 'edit', 'borrar'])
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.index');

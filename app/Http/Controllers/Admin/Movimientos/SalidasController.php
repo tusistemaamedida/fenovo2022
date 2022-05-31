@@ -222,17 +222,18 @@ class SalidasController extends Controller
             }
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $array_productos = [];
-            $productos       = $movement->movement_salida_products;
-            foreach ($productos as $producto) {
-                if ($producto->invoice) {
+            $movimientos     = $movement->movement_salida_products;
+            foreach ($movimientos as $movimiento) {
+                if ($movimiento->invoice) {
                     $objProduct               = new stdClass();
-                    $objProduct->cod_fenovo   = $producto->product->cod_fenovo;
-                    $objProduct->name         = $producto->product->name;
-                    $objProduct->unit_weight  = $producto->product->unit_weight;
-                    $objProduct->unit_package = $producto->unit_package;
-                    $objProduct->quantity     = $producto->bultos;
-                    $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
-                    $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                    $objProduct->cod_fenovo   = $movimiento->product->cod_fenovo;
+                    $objProduct->name         = $movimiento->product->name;
+                    $objProduct->unit_weight  = $movimiento->product->unit_weight;
+                    $objProduct->unit_type    = $movimiento->unit_type;
+                    $objProduct->unit_package = $movimiento->unit_package;
+                    $objProduct->quantity     = $movimiento->bultos;
+                    $objProduct->unity        = '( ' . $movimiento->unit_package . ' ' . $movimiento->product->unit_type . ' )';
+                    $objProduct->total_unit   = number_format($movimiento->bultos * $movimiento->unit_package, 2, ',', '.');
                     $objProduct->class        = '';
                     array_push($array_productos, $objProduct);
                 }
@@ -666,7 +667,7 @@ class SalidasController extends Controller
                         'type' => 'success',
                         'html' => view(
                             $view,
-                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total','stock_session')
+                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total', 'stock_session')
                         )->render(),
                     ]);
                 }
@@ -904,37 +905,37 @@ class SalidasController extends Controller
 
                     $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
                     MovementProduct::firstOrCreate([
-                        'entidad_id'     => $insert_data['to'],
-                        'entidad_tipo'   => $enitidad_tipo,
-                        'movement_id'    => $movement->id,
-                        'product_id'     => $product->product_id,
-                        'unit_package'   => $product->unit_package, ], [
-                            'invoice'    => $product->invoice,
-                            'bultos'     => $product->quantity,
-                            'cost_fenovo'=> $product->costo_fenovo,
-                            'entry'      => $cantidad,
-                            'unit_price' => ($product->invoice) ? $product->unit_price : $product->neto,
-                            'tasiva'     => $product->tasiva,
-                            'unit_type'  => $product->unit_type,
-                            'egress'     => 0,
-                            'balance'    => $balance,
+                        'entidad_id'      => $insert_data['to'],
+                        'entidad_tipo'    => $enitidad_tipo,
+                        'movement_id'     => $movement->id,
+                        'product_id'      => $product->product_id,
+                        'unit_package'    => $product->unit_package, ], [
+                            'invoice'     => $product->invoice,
+                            'bultos'      => $product->quantity,
+                            'cost_fenovo' => $product->costo_fenovo,
+                            'entry'       => $cantidad,
+                            'unit_price'  => ($product->invoice) ? $product->unit_price : $product->neto,
+                            'tasiva'      => $product->tasiva,
+                            'unit_type'   => $product->unit_type,
+                            'egress'      => 0,
+                            'balance'     => $balance,
                         ]);
                 } else {
                     MovementProduct::firstOrCreate([
-                        'entidad_id'     => $insert_data['to'],
-                        'entidad_tipo'   => $enitidad_tipo,
-                        'movement_id'    => $movement->id,
-                        'product_id'     => $product->product_id,
-                        'unit_package'   => $product->unit_package, ], [
-                            'invoice'    => $product->invoice,
-                            'bultos'     => $product->quantity,
-                            'cost_fenovo'=> $product->costo_fenovo,
-                            'entry'      => $cantidad,
-                            'unit_price' => ($product->invoice) ? $product->unit_price : $product->neto,
-                            'tasiva'     => $product->tasiva,
-                            'unit_type'  => $product->unit_type,
-                            'egress'     => 0,
-                            'balance'    => $balance,
+                        'entidad_id'      => $insert_data['to'],
+                        'entidad_tipo'    => $enitidad_tipo,
+                        'movement_id'     => $movement->id,
+                        'product_id'      => $product->product_id,
+                        'unit_package'    => $product->unit_package, ], [
+                            'invoice'     => $product->invoice,
+                            'bultos'      => $product->quantity,
+                            'cost_fenovo' => $product->costo_fenovo,
+                            'entry'       => $cantidad,
+                            'unit_price'  => ($product->invoice) ? $product->unit_price : $product->neto,
+                            'tasiva'      => $product->tasiva,
+                            'unit_type'   => $product->unit_type,
+                            'egress'      => 0,
+                            'balance'     => $balance,
                         ]);
                 }
 
@@ -1021,14 +1022,14 @@ class SalidasController extends Controller
 
     public function updateCostos()
     {
-        $movements_products = MovementProduct::whereNull('cost_fenovo')->orderBy('movement_id','DESC')->get();
+        $movements_products = MovementProduct::whereNull('cost_fenovo')->orderBy('movement_id', 'DESC')->get();
 
         foreach ($movements_products as $mp) {
             $mp_con_costo = MovementProduct::whereNotNull('cost_fenovo')
-                                           ->where('product_id',$mp->product_id)
-                                           ->where('movement_id',$mp->movement_id)
+                                           ->where('product_id', $mp->product_id)
+                                           ->where('movement_id', $mp->movement_id)
                                            ->first();
-            if($mp_con_costo){
+            if ($mp_con_costo) {
                 $mp->cost_fenovo = $mp_con_costo->cost_fenovo;
                 $mp->save();
             }
@@ -1296,7 +1297,8 @@ class SalidasController extends Controller
         } */
     }
 
-    public function updateStock($cod_fenovo){
+    public function updateStock($cod_fenovo)
+    {
         $products = Product::all();
 
         foreach ($products as $p) {
@@ -1315,11 +1317,9 @@ class SalidasController extends Controller
                 }
 
                 if ($i > 0) {
-
                     $bultos = $mp->bultos * $mp->unit_package;
 
                     if ($mp->entry > 0 && $m->type != 'AJUSTE') {
-
                         $new_balance  = $balance_orig + $bultos;
                         $balance_orig = $new_balance;
 
@@ -1327,9 +1327,7 @@ class SalidasController extends Controller
                             'balance' => $new_balance,
                             'entry'   => $bultos,
                         ]);
-
                     } elseif ($mp->egress > 0 && $m->type != 'AJUSTE') {
-
                         $new_balance  = $balance_orig - $bultos;
                         $balance_orig = $new_balance;
 

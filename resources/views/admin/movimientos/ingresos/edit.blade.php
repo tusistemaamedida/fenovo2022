@@ -41,22 +41,12 @@
                             <input type="text" id="voucher_number" name="voucher_number"
                                 value="{{ $movement->voucher_number }}" class="form-control text-center" readonly>
                         </div>
-                        <div class="col-md-1 text-center">
+                        <div class="col-md-2 text-center">
                             <label class="text-dark font-size-bold">Cerrar</label>
                             <fieldset class="form-group">
                                 <a href="javascript:void(0)" onclick="close_compra('{{ $movement->id }}')"
                                     class="btn btn-link btn-cerrar-ingreso">
                                     <i class="fa fa-lock text-primary"></i>
-                                </a>
-                            </fieldset>
-                        </div>
-                        <div class="col-md-1 text-center">
-                            <label class="text-dark">Anular</label>
-                            <fieldset class="form-group">
-                                <a href="javascript:void(0)"
-                                    onclick="destroy_local('{{ $movement->id }}', '{{ route('ingresos.destroy') }}')"
-                                    class="btn btn-link">
-                                    <i class="fa fa-trash"></i>
                                 </a>
                             </fieldset>
                         </div>
@@ -211,7 +201,7 @@
             let cyo = 0;
 
             // Definir subtype     
-            if (jQuery("#subtype").val() == 'BLANCO') {
+            if (jQuery("#subtype").val() == 'FACTURA') {
                 invoice = 1;
             } else {
                 if (jQuery("#subtype").val() == 'CYO') {
