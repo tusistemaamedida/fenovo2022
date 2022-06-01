@@ -54,16 +54,13 @@
                                     <tr class="bg-light ">
                                         <td>Codigo</td>
                                         <td>Producto</td>
-                                        <td>Stock</td>
-                                        <td>S. en Prep.</td>
                                         <td>Unidad</td>
-                                        <td>Costo</td>
-                                        <td>Proveedor</td>
+                                        <td>CyO</td>
+                                        <td>Remito</td>
+                                        <td>Factura</td>
+                                        <td>Total</td>
                                         @can('products.create')
-                                        <td>Historial</td>
-                                        <td>Ajust Stock</td>
-                                        <td>Editar</td>
-                                        <td>Borrar</td>
+                                        <td>Ajustar Stock</td>
                                         @endcan
                                     </tr>
                                 </thead>
@@ -91,16 +88,13 @@
         columns: [
             {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},
-            {data: 'stock', class:'text-center', orderable: false, searchable: false},
-            {data: 'stockEnSession', class:'text-center', orderable: false, searchable: false},
             {data: 'unit_type',class:'text-center', orderable: false, searchable: false},
-            {data: 'costo', orderable: false, searchable: false},
-            {data: 'proveedor', orderable: false},
+            {data: 'stock_cyo', class:'text-center', orderable: true, searchable: false},
+            {data: 'stock_r', class:'text-center', orderable: true, searchable: false},
+            {data: 'stock_f', orderable: false, searchable: true},
+            {data: 'stock', orderable: true},
             @can('products.create')
-            {data: 'historial', class:'text-center', orderable: false, searchable: false},
             {data: 'ajuste', class:'text-center', orderable: false, searchable: false},
-            {data: 'editar', class:'text-center', orderable: false, searchable: false},
-            {data: 'borrar', class:'text-center', orderable: false, searchable: false},
             @endcan
         ]
     });
@@ -110,7 +104,7 @@
         jQuery.ajax({
             url: route,
             type: 'GET',
-            data: { id },
+            data: { id, 'discriminado':true },
             success: function (data) {
                 if (data['type'] == 'success') {
                     jQuery("#insertByAjax").html(data['html']);
@@ -129,7 +123,7 @@
     }
 
     const ajustarStock = () =>{
-        var url ="{{ route('ajustar.stock') }}";
+        var url ="{{ route('ajustar.by.stock') }}";
         jQuery.ajax({
             url:url,
             type:'POST',
