@@ -35,9 +35,8 @@
                                                     <td>#</td>
                                                     <td style="width: 70px" ">Fecha</td>
                                                                 <td>Destino</td>
-                                                                <td>Item</td>
                                                                 <td>Tipo</td>
-                                                                <td>Kgrs</td>
+                                                                <td>Item</td>
                                                                 <td>Factura</td>
                                                                 <td>Remito</td>
                                                                 <td>Paper</td>
@@ -92,18 +91,13 @@
                     'class': 'text-left'
                 },
                 {
-                    data: 'items'
-                },
-                {
                     data: 'type',
                     'class': 'text-left',
                     orderable: false,
                     searchable: false
                 },
                 {
-                    data: 'kgrs',
-                    orderable: false,
-                    searchable: false
+                    data: 'items'
                 },
                 {
                     data: 'factura_nro',

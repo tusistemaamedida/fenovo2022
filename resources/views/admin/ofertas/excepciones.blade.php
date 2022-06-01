@@ -16,6 +16,10 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
+
+                                    <a href="{{ route('oferta.excepciones.exportCSV') }}" class="mr-2">
+                                        <i class=" fa fa-file-csv"></i> Exportar
+                                    </a>                                    
                                     <a href="{{ route('oferta.index') }}" class="mr-2">
                                         Ofertas
                                     </a>
