@@ -66,7 +66,7 @@ class SalidasController extends Controller
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('date')->sortByDesc('id');
             } else {
-                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->get();
+                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
             }
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
@@ -84,9 +84,6 @@ class SalidasController extends Controller
                 })
                 ->editColumn('type', function ($movement) {
                     return $movement->type;
-                })
-                ->addColumn('kgrs', function ($movement) {
-                    return $movement->totalKgrs();
                 })
                 ->editColumn('factura_nro', function ($movement) {
                     if ($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE') {
@@ -125,7 +122,7 @@ class SalidasController extends Controller
                         : null;
                 })
 
-                ->rawColumns(['id', 'origen', 'items', 'date', 'type', 'kgrs', 'factura_nro', 'remito', 'paper', 'flete', 'orden', 'ordenpanama'])
+                ->rawColumns(['id', 'origen', 'items', 'date', 'type', 'factura_nro', 'remito', 'paper', 'flete', 'orden', 'ordenpanama'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.index');
