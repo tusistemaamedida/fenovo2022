@@ -69,12 +69,7 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        lengthMenu : [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
-        stateSave:false,
-        processing: true,
-        serverSide: true,
-        ordering:true,
-        dom: '<lfrtip>',
+        @include('partials.table.setting'),
         ajax: "{{ route('users.index') }}",
         columns: [
             {data: 'user_id', 'class':'text-center', orderable: false, searchable: false},

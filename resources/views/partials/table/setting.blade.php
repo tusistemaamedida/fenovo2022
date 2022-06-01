@@ -3,4 +3,5 @@ stateSave:true,
 processing: true,
 serverSide: true,
 ordering:false,
+autoWidth: false,
 dom: '<lfrtip>'

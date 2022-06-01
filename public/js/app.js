@@ -2668,7 +2668,13 @@ var app = Vue.createApp({
         },
         crearTabla: function () {
             this.$nextTick(() => {
-                jQuery("#tablaLocalidades").DataTable();
+                jQuery("#tablaLocalidades").DataTable({
+                    lengthMenu : [[25, 50, -1], [25, 50, "Todos"]],
+                    stateSave:true,
+                    processing: true,
+                    ordering:false,
+                    autoWidth: false,
+                });
             })
         },
         // Limpiar datos
