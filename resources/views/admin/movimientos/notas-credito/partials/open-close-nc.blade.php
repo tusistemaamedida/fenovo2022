@@ -17,6 +17,19 @@
             </div>
         </div>
 
+        <div class="row mt-3">
+            <div class="col-12">
+                <label class="text-dark">Asociar a depósito</label>
+                <fieldset class="form-group mb-3 d-flex">
+                    <select class="js-example-basic-single js-states form-control bg-transparent" name="deposito" id="deposito">
+                        @foreach ($storesNaves as $store)
+                            <option value="{{$store->id}}">{{$store->description}}</option>
+                        @endforeach
+                    </select>
+                </fieldset>
+            </div>
+        </div>
+
         <div class="row mt-5">
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-primary" id="close_modal_salida"><i class="fa fa-times"></i> NO</button>

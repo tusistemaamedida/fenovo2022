@@ -77,8 +77,9 @@ class NotasCreditoController extends Controller
 
     public function add()
     {
+        $storesNaves = Store::where('store_type','N')->get(); //Los depositos los tenemos como N = Nave
         $this->sessionProductRepository->deleteDevoluciones();
-        return view('admin.movimientos.notas-credito.add');
+        return view('admin.movimientos.notas-credito.add',compact('storesNaves'));
     }
 
     public function show(Request $request)
@@ -120,9 +121,9 @@ class NotasCreditoController extends Controller
             if ($movement_relacionado && $movement_relacionado->to == $to) {
                 return new JsonResponse(['type' => 'success']);
             }
-            return new JsonResponse(['type' => 'error', 'msj' => 'El número de facura con corresponde a la tienda seleccionada']);
+            return new JsonResponse(['type' => 'error', 'msj' => 'El número de facura no corresponde a la tienda seleccionada']);
         }
-        return new JsonResponse(['type' => 'error', 'msj' => 'El número de facura con corresponde a la tienda seleccionada']);
+        return new JsonResponse(['type' => 'error', 'msj' => 'El número de facura no corresponde a la tienda seleccionada']);
     }
 
     public function storeNotaCredito(Request $request)
@@ -131,6 +132,7 @@ class NotasCreditoController extends Controller
             if ($request->input('voucher_number') != '' || !is_null($request->input('voucher_number'))) {
                 $list_id = $request->input('session_list_id');
                 $explode = explode('_', $list_id);
+                $deposito = (int) $request->input('deposito');
 
                 $from  = \Auth::user()->store_active;
                 $count = Movement::where('from', $from)->whereIn('type', ['DEVOLUCION', 'DEVOLUCIONCLIENTE'])->count();
@@ -143,7 +145,7 @@ class NotasCreditoController extends Controller
                 }
                 $insert_data['observacion']    = 'NC a '.$label;
                 $insert_data['type']           = $explode[0];
-                $insert_data['to']             = 64;// $explode[1]; Se cambio a deposito reclamos
+                $insert_data['to']             = $deposito;// $explode[1]; Se cambio a deposito reclamos
                 $insert_data['date']           = now();
                 $insert_data['from']           = $from;
                 $insert_data['orden']          = $orden;
@@ -189,14 +191,14 @@ class NotasCreditoController extends Controller
                         ]);
 
                     $latest = MovementProduct::all()
-                        ->where('entidad_id', 64)
+                        ->where('entidad_id', $deposito)
                         ->where('entidad_tipo', 'S')
                         ->where('product_id', $product->product_id)
                         ->sortByDesc('id')->first();
 
                     $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
                     MovementProduct::firstOrCreate([
-                        'entidad_id'     => 64,
+                        'entidad_id'     => $deposito,
                         'entidad_tipo'   => 'S',
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
