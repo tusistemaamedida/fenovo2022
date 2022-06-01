@@ -67,16 +67,7 @@
 @section('js')
     <script>
         var table = jQuery('.yajra-datatable').DataTable({
-            lengthMenu: [
-                [10, 25, 50, -1],
-                [10, 25, 50, " Todos"]
-            ],
-            ordering: false,
-            stateSave: true,
-            processing: true,
-            serverSide: true,
-            autoWidth: false,
-            dom: '<lfrtip>',
+            @include('partials.table.setting'),
             ajax: "{{ route('salidas.index') }}",
             columns: [{
                     data: 'id',

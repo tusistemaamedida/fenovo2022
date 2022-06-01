@@ -62,13 +62,7 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        lengthMenu : [[10, 25, 50, -1], [10, 25, 50, "All"]],
-        stateSave:true,
-        processing: true,
-        serverSide: true,
-        ordering:false,
-        dom: 'lfrtip',
-        buttons: ['excel'],
+        @include('partials.table.setting'),
         ajax: "{{ route('products.compararStock') }}",
         columns: [
             {data: 'proveedor', orderable: false},
