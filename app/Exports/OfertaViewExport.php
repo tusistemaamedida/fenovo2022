@@ -11,11 +11,6 @@ class OfertaViewExport implements FromView
 {
     use Exportable;
 
-    public function __construct($request)
-    {
-        $this->request = $request;
-    }
-
     public function view(): View
     {
         $sessionOfertas = SessionOferta::orderBy('fecha_desde', 'asc')->get();
