@@ -7,6 +7,7 @@ use App\Exports\CabeExport;
 use App\Exports\DescuentosViewExport;
 use App\Exports\ExcepViewExport;
 use App\Exports\MovementsViewExport;
+use App\Exports\OfertaViewExport;
 use App\Exports\OrdenConsolidadaViewExport;
 use App\Exports\PresentacionesViewExport;
 use App\Exports\ProductsViewExport;
@@ -32,6 +33,8 @@ class SincronizaDiaria extends Command
         (new DescuentosViewExport())->store('des.csv');
         // Exportar Excepciones
         (new ExcepViewExport())->store('excepc.csv');
+        // Exportar Ofertas
+        (new OfertaViewExport())->store('ofertas.csv');
         // Exportar Ordenes
         (new OrdenConsolidadaViewExport())->store('ordenes.csv');
         // Exportar movimientos
