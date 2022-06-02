@@ -37,7 +37,7 @@ class OfertaController extends Controller
     {
         if ($request->ajax()) {
 
-            $oferta = SessionOferta::has('stores', '=', 0)->orderBy('fecha_desde', 'asc')->get();
+            $oferta = SessionOferta::doesntHave('stores')->orderBy('fecha_desde', 'asc')->get();
 
             return DataTables::of($oferta)
                 ->addIndexColumn()

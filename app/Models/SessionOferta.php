@@ -89,4 +89,6 @@ class SessionOferta extends Model
     {	
         return $this->belongsToMany(Store::class, OfertaStore::class, 'session_id', 'store_id')->exists();
     }
+
+    
 }
