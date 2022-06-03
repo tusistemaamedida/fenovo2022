@@ -23,7 +23,7 @@
         <tr>
             <td style="width: 35%"> Página :: <strong> <span class="pagenum"></span> </strong> </td>
             <td style="width: 35%; font-size:16px" class=" text-center">Fenovo S.A. </td>
-            <td style="width: 30%" class=" text-right"> Fecha {{ date(now()) }}</td>
+            <td style="width: 30%" class=" text-right"> Fecha {{ $fecha }}</td>
         </tr>
         <tr>
             <td colspan="3">

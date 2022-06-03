@@ -1,5 +1,5 @@
 <div id="closeSalida" class="offcanvas offcanvas-right kt-color-panel p-5">
-    <form action="{{route('guardar.salida')}}" method="POST">
+    <form action="{{route('guardar.salida')}}" method="POST" id="formGuardarSalida">
         @csrf
         <div class="row mb-2">
             <div class="col-12">
@@ -48,7 +48,7 @@
         <div class="row mt-5">
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-primary" id="close_modal_salida"><i class="fa fa-times"></i> Cerrar</button>
-                <button type="submit" class="btn btn-primary" id="btnCloseSalida" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+                <button type="button" class="btn btn-primary" id="btnCloseSalida" style="float: right"><i class="fa fa-save"></i> Guardar</button>
             </div>
         </div>
     </form>
