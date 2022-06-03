@@ -809,13 +809,13 @@ class SalidasController extends Controller
                 $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
                 $balance  = $product->producto->stockReal(null, \Auth::user()->store_active);
                 if ($balance < $cantidad) {
-                    return redirect()->back()->withInput()->with([
-                        'error'     => 'Sin stock',
-                        'codfenovo' => $product->producto->cod_fenovo,
-                        'stock'     => $balance,
-                        'unidad'    => $product->producto->unit_type,
-                        'cantidad'  => $cantidad,
-                    ]);
+                    $alert = '<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert"><i class="ace-icon fa fa-times"></i></button>';
+                    $alert .= '<i class="ace-icon fa fa-ban"></i> COD-FENOVO <strong>';
+                    $alert .= $product->producto->cod_fenovo .'</strong> insuficiente. Imposible vender <strong>';
+                    $alert .= $cantidad .'</strong>, porque el stock actual es <strong>';
+                    $alert .= $balance .'</strong>'. $product->producto->unit_type .'</div>';
+
+                    return new JsonResponse(['msj' => 'Stock Insuficiente', 'type' => 'error', 'alert' => $alert]);
                 }
             }
 
@@ -984,7 +984,7 @@ class SalidasController extends Controller
             $this->sessionProductRepository->deleteList($list_id);
             DB::commit();
             Schema::enableForeignKeyConstraints();
-            return redirect()->route('salidas.add');
+            return new JsonResponse(['msj' => 'Salida cerrada correctamente', 'type' => 'success']);
         } catch (\Exception $e) {
             DB::rollback();
             Schema::enableForeignKeyConstraints();

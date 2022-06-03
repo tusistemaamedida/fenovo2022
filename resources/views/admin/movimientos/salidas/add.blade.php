@@ -16,19 +16,7 @@
     <div class="container-fluid">
         <div class="row">
             @include('admin.movimientos.salidas.partials.form-select-cliente')
-
-            @if ($message = Session::get('error'))
-            <div class="col-md-12">
-                <div class="alert alert-info">
-                    <button type="button" class="close" data-dismiss="alert">
-                        <i class="ace-icon fa fa-times"></i>
-                    </button>
-
-                    <i class="ace-icon fa fa-check"></i> COD-FENOVO <strong> {{ Session::get('codfenovo') }}</strong> insuficiente. Imposible vender <strong> {{ Session::get('cantidad') }}</strong>, porque el stock actual es <strong> {{ Session::get('stock') }} </strong> {{ Session::get('unidad') }}
-
-                </div>
-            </div>
-            @endif
+            <div class="col-md-12" id="divAlertStock"></div>
             <div style="width: 100%" id="session_products_table"></div>
         </div>
     </div>
@@ -44,7 +32,7 @@
 
 @section('js')
 <script>
-    jQuery(document).ready(function(){       
+    jQuery(document).ready(function(){
         @if(isset($destino))
             cargarTablaProductos();
         @endif
@@ -235,7 +223,7 @@
         var to_type = jQuery("#to_type").val();
         var to = jQuery("#to").val();
         var list_id = to_type+'_'+to;
-        var total_from_session = jQuery("#total_from_session").val();        
+        var total_from_session = jQuery("#total_from_session").val();
         var formData =  {list_id,total_from_session};
         var url ="{{ route('get.flete.session.products') }}";
 
@@ -244,7 +232,7 @@
             type:'GET',
             data:formData,
             success:function(data){
-                
+
                 jQuery("#porcentajeFlete").html(data['porcentaje']);
                 jQuery("#flete").val(parseFloat(data['flete']).toFixed(2));
             },
@@ -396,7 +384,34 @@
     })
 
     jQuery("#btnCloseSalida").click(function(){
-        jQuery('#loader').removeClass('hidden');
+        var url ="{{route('guardar.salida')}}";
+        var formData = jQuery("#formGuardarSalida").serialize();
+        jQuery.ajax({
+            url:url,
+            type:'POST',
+            data:formData,
+            beforeSend: function() {
+                jQuery('#loader').removeClass('hidden');
+            },
+            success:function(data){
+                if (data['type'] == 'error') {
+                    toastr.error(data['msj'], 'ERROR');
+                    jQuery("#divAlertStock").html('');
+                    jQuery("#divAlertStock").html(data['alert']);
+                    cargarTablaProductos()
+                } else{
+                    toastr.error(data['msj'], 'EXITO');
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1200);
+                }
+            },
+            error: function (data) {
+            },
+            complete: function () {
+                jQuery('#loader').addClass('hidden');
+            }
+        });
     })
 
     function changeInvoice(list_id,product_id){
@@ -421,6 +436,6 @@
             }
         });
     }
-    
+
 </script>
 @endsection
