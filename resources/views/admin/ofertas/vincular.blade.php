@@ -30,7 +30,7 @@
         </div>
 
         <div class="row mb-5 mt-3">
-            <div class="col-3">
+            <div class="col-md-3">
                 @foreach ($stores as $store)
                 {{ Form::checkbox('stores[]', $store->id ) }}
                 <label class="ml-3 mb-3">
@@ -40,7 +40,7 @@
 
                 @if ($loop->iteration % 8 == 0)
             </div>
-            <div class="col-4"> @endif
+            <div class="col-md-3"> @endif
                 @endforeach
             </div>
         </div>
