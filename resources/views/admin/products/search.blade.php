@@ -6,6 +6,7 @@
 
 
 @section('js')
+    @parent
     <script>
         jQuery('#buscar_producto').select2({
             placeholder: 'Ingrese codigo fenovo',
