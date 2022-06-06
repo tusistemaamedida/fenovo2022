@@ -104,7 +104,6 @@ class ProductController extends Controller
                     $ruta = ($oferta)
                     ?route('product.edit',['id' => $producto->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
                     :route('product.edit', ['id' => $producto->id]);
-
                     return '<a title="Editar" href="' . $ruta . '"><i class="fa fa-edit"></i></a>';
                 })
                 ->addColumn('borrar', function ($producto) {
@@ -167,6 +166,15 @@ class ProductController extends Controller
         $descuentos        = $this->productDescuentoRepository->getActives('codigo', 'ASC');
         $proveedores       = $this->proveedorRepository->getActives('name', 'ASC');
         return view('admin.products.add', compact('alicuotas', 'categories', 'descuentos', 'proveedores', 'senasaDefinitions'));
+    }
+
+    public function ver(Request $request)
+    {	
+        $oferta = SessionOferta::doesntHave('stores')->whereProductId($request->id)->first();
+        $ruta = ($oferta)
+        ?route('product.edit',['id' => $request->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
+        :route('product.edit', ['id' => $request->id]);
+        return redirect($ruta);
     }
 
     public function store(AddProduct $request)
@@ -310,8 +318,6 @@ class ProductController extends Controller
             $fecha_oferta               = $request->input('fecha_oferta');
             $product                    = $this->productRepository->getByIdWith($request->id);
 
-            //$productosProveedor         = Product::where('proveedor_id',$product->proveedor_id)->cursorPaginate(1);
-            //dd($productosProveedor);
 
             $ofertas           = SessionOferta::where('product_id', $request->id)->get();
             $oferta            = ($request->has('fecha_oferta')) ? SessionOferta::where('id', $request->oferta_id)->first() : null;

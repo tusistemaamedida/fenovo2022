@@ -15,7 +15,6 @@ use App\Models\Product;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
-use App\Models\Vehiculo;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -571,6 +570,27 @@ class SalidasController extends Controller
         return  new JsonResponse($valid_names);
     }
 
+    public function buscarProductos(Request $request)
+    {
+        $producto    = Product::whereCodFenovo($request->term)->first();
+        $arrProducto = [];
+        if ($producto) {
+            $oferta = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
+            $ruta   = ($oferta)
+            ? route('product.edit', ['id' => $producto->id, 'oferta_id' => $oferta->id, 'fecha_oferta' => $oferta->id]) . '#precios'
+            : route('product.edit', ['id' => $producto->id]);
+
+            $dir           = '<a title="editar" href="' . $ruta . '"><i class="fa fa-edit"></i></a>';
+            $arrProducto[] = [
+                'id'   => $producto->id,
+                'text' => $producto->name,
+                'dir'  => $dir,
+            ];
+
+            return  new JsonResponse($arrProducto);
+        }
+    }
+
     public function getSessionProducts(Request $request)
     {
         try {
@@ -811,9 +831,9 @@ class SalidasController extends Controller
                 if ($balance < $cantidad) {
                     $alert = '<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert"><i class="ace-icon fa fa-times"></i></button>';
                     $alert .= '<i class="ace-icon fa fa-ban"></i> COD-FENOVO <strong>';
-                    $alert .= $product->producto->cod_fenovo .'</strong> insuficiente. Imposible vender <strong>';
-                    $alert .= $cantidad .'</strong>, porque el stock actual es <strong>';
-                    $alert .= $balance .'</strong>'. $product->producto->unit_type .'</div>';
+                    $alert .= $product->producto->cod_fenovo . '</strong> insuficiente. Imposible vender <strong>';
+                    $alert .= $cantidad . '</strong>, porque el stock actual es <strong>';
+                    $alert .= $balance . '</strong>' . $product->producto->unit_type . '</div>';
 
                     return new JsonResponse(['msj' => 'Stock Insuficiente', 'type' => 'error', 'alert' => $alert]);
                 }
@@ -841,7 +861,7 @@ class SalidasController extends Controller
 
             $movement = Movement::create($insert_data);
 
-            $enitidad_tipo = parent::getEntidadTipo($insert_data['type']);
+            $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
             $pto_vta       = $cuit       = $iva_type       = '';
             $cliente       = null;
@@ -867,11 +887,20 @@ class SalidasController extends Controller
                 $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
 
                 // resta del balance de la store fenovo porque es salida
-                $latest = MovementProduct::all()
+                // $latest = MovementProduct::all()
+                //     ->where('entidad_id', $from)
+                //     ->where('entidad_tipo', 'S')
+                //     ->where('product_id', $product->product_id)
+                //     ->sortByDesc('id')->first();
+
+                $latest = MovementProduct::query()
+                    ->select('balance')
                     ->where('entidad_id', $from)
                     ->where('entidad_tipo', 'S')
                     ->where('product_id', $product->product_id)
-                    ->sortByDesc('id')->first();
+                    ->orderBy('id', 'desc')
+                    ->limit(1)
+                    ->first();
 
                 $balance = ($latest) ? $latest->balance - $cantidad : 0;
                 MovementProduct::firstOrCreate([
@@ -894,16 +923,25 @@ class SalidasController extends Controller
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
                     // Suma al balance de la store to
-                    $latest = MovementProduct::all()
+                    // $latest = MovementProduct::all()
+                    //     ->where('entidad_id', $insert_data['to'])
+                    //     ->where('entidad_tipo', $entidad_tipo)
+                    //     ->where('product_id', $product->product_id)
+                    //     ->sortByDesc('id')->first();
+
+                    $latest = MovementProduct::query()
+                        ->select('balance')
                         ->where('entidad_id', $insert_data['to'])
-                        ->where('entidad_tipo', $enitidad_tipo)
+                        ->where('entidad_tipo', $entidad_tipo)
                         ->where('product_id', $product->product_id)
-                        ->sortByDesc('id')->first();
+                        ->orderBy('id', 'desc')
+                        ->limit(1)
+                        ->first();
 
                     $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
                     MovementProduct::firstOrCreate([
                         'entidad_id'      => $insert_data['to'],
-                        'entidad_tipo'    => $enitidad_tipo,
+                        'entidad_tipo'    => $entidad_tipo,
                         'movement_id'     => $movement->id,
                         'product_id'      => $product->product_id,
                         'unit_package'    => $product->unit_package, ], [
@@ -920,7 +958,7 @@ class SalidasController extends Controller
                 } else {
                     MovementProduct::firstOrCreate([
                         'entidad_id'      => $insert_data['to'],
-                        'entidad_tipo'    => $enitidad_tipo,
+                        'entidad_tipo'    => $entidad_tipo,
                         'movement_id'     => $movement->id,
                         'product_id'      => $product->product_id,
                         'unit_package'    => $product->unit_package, ], [
