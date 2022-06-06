@@ -197,7 +197,7 @@ class OfertaController extends Controller
     public function vincularTienda(Request $request)
     {
         $oferta = $this->ofertaRepository->getOne($request->id);
-        $stores = Store::where('store_type', 'T')->get();
+        $stores = Store::where('store_type', 'T')->orWhere('store_type', 'E') ->get();
         return view('admin.ofertas.vincular', compact('oferta', 'stores'));
     }
 
