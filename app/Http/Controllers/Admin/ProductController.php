@@ -99,13 +99,19 @@ class ProductController extends Controller
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
                 ->addColumn('editar', function ($producto) {
-                    return '<a title="Editar" href="' . route('product.edit', ['id' => $producto->id]) . '"><i class="fa fa-edit"></i></a>';
+
+                    $oferta = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
+                    $ruta = ($oferta)
+                    ?route('product.edit',['id' => $producto->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
+                    :route('product.edit', ['id' => $producto->id]);
+
+                    return '<a title="Editar" href="' . $ruta . '"><i class="fa fa-edit"></i></a>';
                 })
                 ->addColumn('borrar', function ($producto) {
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'borrar', 'editar', 'ajuste', 'costo', 'historial','stockEnSession'])
+                ->rawColumns(['stock', 'borrar', 'editar', 'ajuste', 'costo', 'historial', 'stockEnSession'])
                 ->make(true);
         }
 
@@ -263,7 +269,7 @@ class ProductController extends Controller
 
                 foreach ($data as $item => $bultos) {
                     if (is_numeric($bultos)) {
-                        $presentacion = (float)str_replace('_', ',', str_replace('unidades_', '', $item));
+                        $presentacion = (float)str_replace('_', '.', str_replace('unidades_', '', $item));
                         $suma_balances += ($producto->unit_type == 'K') ? $bultos * $presentacion * $producto->unit_weight : $bultos * $presentacion;
                         $suma_bultos   += $bultos;
                     }
@@ -402,8 +408,13 @@ class ProductController extends Controller
                 $this->productPriceRepository->fill($producto->product_price->id, $data);
                 $tipo = 'actual';
             } else {
+
+                // Actualizacion de Ofertas
+
                 if (isset($data['fecha_desde'], $data['fecha_hasta'])) {
                     $data['p2tienda'] = $data['p1tienda'];
+                    $data['descp1']   = $data['descp2']   = 0;
+
                     if ($data['oferta_id'] > 0) {
                         SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
                     } else {
@@ -456,6 +467,7 @@ class ProductController extends Controller
             $preciosCalculados = $this->calcularPrecios($request);
             $data              = array_merge($data, $preciosCalculados);
             $data['p2tienda']  = $data['p1tienda'];
+            $data['descp1']   = $data['descp2']   = 0;
             $oferta            = SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
 
             return new JsonResponse([
