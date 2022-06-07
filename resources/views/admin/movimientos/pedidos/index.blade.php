@@ -11,7 +11,7 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Preparar Pedido
+                                        Pedido solicitados
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
@@ -35,11 +35,7 @@
                                                 <tr class="bg-dark text-white">
                                                     <th>#</th>
                                                     <th>Fecha</th>
-                                                    @if (\Auth::user()->rol() == 'base')
-                                                        <th>Origen</th>
-                                                    @else
-                                                    <th>Proveedor</th>
-                                                    @endif
+                                                    <th>Origen pedido</th>
                                                     <th>Items</th>
                                                     <th>Nro pedido</th>
                                                     <th>Preparar</th>
