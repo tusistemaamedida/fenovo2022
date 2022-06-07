@@ -37,6 +37,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/mails.php';
         // Movimientos
         require __DIR__ . '/admin/movimientos/ingresos.php';
+        require __DIR__ . '/admin/movimientos/pedidos.php';
         require __DIR__ . '/admin/movimientos/salidas.php';
         require __DIR__ . '/admin/movimientos/notas_credito.php';
         require __DIR__ . '/admin/movimientos/notas_debito.php';

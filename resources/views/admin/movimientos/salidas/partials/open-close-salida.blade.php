@@ -1,6 +1,9 @@
 <div id="closeSalida" class="offcanvas offcanvas-right kt-color-panel p-5">
     <form action="{{route('guardar.salida')}}" method="POST" id="formGuardarSalida">
         @csrf
+
+        <input type="hidden" name="pedido" id="nro_pedido" value="{{$pedido}}">
+
         <div class="row mb-2">
             <div class="col-12">
                 <h4>CERRAR SALIDA</h4>
@@ -17,7 +20,7 @@
         <div class="row mt-5">
             <div class="col-6">
                 <label class="text-dark">#Nro de identificación</label>
-                <input type="text" name="voucher_number" value="{{ strtoupper(substr(md5(time()), 0, 6)) }}" id="voucher_number" class="form-control text-center" autofocus>
+                <input type="text" name="voucher_number" @if($pedido) value="{{$pedido}}" @else value="{{ strtoupper(substr(md5(time()), 0, 6)) }}" @endif id="voucher_number" class="form-control text-center" autofocus>
             </div>
         </div>
 
