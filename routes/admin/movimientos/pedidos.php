@@ -25,10 +25,8 @@ Route::post('pedidos/update', [PedidosController::class, 'update'])->name('pedid
 Route::post('pedidos/destroy', [PedidosController::class, 'destroy'])->name('pedidos.destroy');
 Route::post('pedidos/destroyTemp', [PedidosController::class, 'destroyTemp'])->name('pedidos.destroyTemp');
 
-Route::get('pedidos/proveedores', [PedidosController::class, 'getProveedorIngreso'])->name('get.proveedor.ingreso');
-
 // Detalle pedidos
-Route::get('detalle-pedidos/movimentos', [PedidosController::class, 'getMovements'])->name('detalle-movimiento.getMovements');
+Route::get('detalle-pedidos/movimentos', [PedidosController::class, 'getMovements'])->name('detalle-pedido.getMovements');
 Route::post('detalle-pedidos/destroy', [PedidosController::class, 'destroyProduct'])->name('detalle-pedidos.destroy');
 Route::post('detalle-pedidos/store', [PedidosController::class, 'storeDetallesPedido'])->name('detalle-pedidos.store');
 Route::post('detalle-pedidos/check', [PedidosController::class, 'check'])->name('detalle-pedidos.check');
