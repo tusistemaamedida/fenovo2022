@@ -195,9 +195,15 @@
         }
 
         function cargarTablaProductos() {
+            var nro_pedido = jQuery("#nro_pedido").val();
             var to_type = jQuery("#to_type").val();
             var to = jQuery("#to").val();
-            var list_id = to_type + '_' + to;
+            if(nro_pedido){
+                var list_id = to_type + '_' + to + '_' + nro_pedido;
+            }else{
+                var list_id = to_type + '_' + to;
+            }
+
             var formData = {
                 list_id
             };

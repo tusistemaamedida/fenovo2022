@@ -22,6 +22,11 @@ use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
 
+
+use App\Models\Pedido;
+use App\Models\PedidoProductos;
+use App\Models\PedidoEstados;
+
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 
@@ -164,10 +169,14 @@ class SalidasController extends Controller
     public function pendienteShow(Request $request)
     {
         $explode     = explode('_', $request->input('list_id'));
+        $pedido = null;
+        if(count($explode)==3){
+            $pedido = $explode[2];
+        }
         $tipo        = $explode[0];
         $destino     = $this->origenData($tipo, $explode[1], true);
         $destinoName = $this->origenData($tipo, $explode[1]);
-        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
+        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName','pedido'));
     }
 
     public function getTotalMovement(Request $request)
@@ -822,7 +831,6 @@ class SalidasController extends Controller
             Schema::disableForeignKeyConstraints();
             $list_id = $request->input('session_list_id');
             $explode = explode('_', $list_id);
-
             $session_products = $this->sessionProductRepository->getByListId($list_id);
 
             foreach ($session_products as $product) {
@@ -861,6 +869,21 @@ class SalidasController extends Controller
 
             $movement = Movement::create($insert_data);
 
+            if(count($explode) == 3){
+                $voucher_number = $explode[2];
+                $pedido = Pedido::where('voucher_number',$voucher_number)->first();
+                $pedido->movement_id = $movement->id;
+                $pedido->status = 'FINISHED';
+                $pedido->save();
+
+                PedidoEstados::create([
+                    'user_id'=> \Auth::user()->id,
+                    'pedido_id' => $pedido->id,
+                    'fecha'   => now(),
+                    'estado' => 'CERRADO',
+                ]);
+            }
+
             $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
             $pto_vta       = $cuit       = $iva_type       = '';
@@ -885,13 +908,12 @@ class SalidasController extends Controller
 
             foreach ($session_products as $product) {
                 $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
-
-                // resta del balance de la store fenovo porque es salida
-                // $latest = MovementProduct::all()
-                //     ->where('entidad_id', $from)
-                //     ->where('entidad_tipo', 'S')
-                //     ->where('product_id', $product->product_id)
-                //     ->sortByDesc('id')->first();
+                if(isset($pedido)){
+                    $ped_producto = PedidoProductos::where('pedido_id',$pedido->id)->where('product_id',$product->product_id)->first();
+                    $ped_producto->bultos_enviados = $product->quantity;
+                    $ped_producto->bultos_pendientes = $ped_producto->bultos - $product->quantity;
+                    $ped_producto->save();
+                }
 
                 $latest = MovementProduct::query()
                     ->select('balance')
@@ -903,7 +925,7 @@ class SalidasController extends Controller
                     ->first();
 
                 $balance = ($latest) ? $latest->balance - $cantidad : 0;
-                MovementProduct::firstOrCreate([
+                MovementProduct::updateOrCreate([
                     'entidad_id'      => $from,
                     'entidad_tipo'    => 'S',
                     'movement_id'     => $movement->id,
@@ -922,13 +944,6 @@ class SalidasController extends Controller
                     ]);
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
-                    // Suma al balance de la store to
-                    // $latest = MovementProduct::all()
-                    //     ->where('entidad_id', $insert_data['to'])
-                    //     ->where('entidad_tipo', $entidad_tipo)
-                    //     ->where('product_id', $product->product_id)
-                    //     ->sortByDesc('id')->first();
-
                     $latest = MovementProduct::query()
                         ->select('balance')
                         ->where('entidad_id', $insert_data['to'])
@@ -939,7 +954,7 @@ class SalidasController extends Controller
                         ->first();
 
                     $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
-                    MovementProduct::firstOrCreate([
+                    MovementProduct::updateOrCreate([
                         'entidad_id'      => $insert_data['to'],
                         'entidad_tipo'    => $entidad_tipo,
                         'movement_id'     => $movement->id,
@@ -956,7 +971,7 @@ class SalidasController extends Controller
                             'balance'     => $balance,
                         ]);
                 } else {
-                    MovementProduct::firstOrCreate([
+                    MovementProduct::updateOrCreate([
                         'entidad_id'      => $insert_data['to'],
                         'entidad_tipo'    => $entidad_tipo,
                         'movement_id'     => $movement->id,

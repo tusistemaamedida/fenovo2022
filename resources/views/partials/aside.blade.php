@@ -63,6 +63,14 @@
                             </a>
                         </div>
                     </li>
+
+                    <li class="nav-item" title="Lista de Pedidos">
+                        <a href="{{route('pedidos.index')}}" class="nav-link">
+                            <span class="svg-icon nav-icon"> <i class="fas fa-list"></i> </span>
+                            <span class="nav-text"> Pedidos </span>
+                        </a>
+                    </li>
+
                     <li class="nav-item" title="Lista de Friotekas">
                         <a href="{{ url('tiendas') }}" class="nav-link">
                             <span class="svg-icon nav-icon">

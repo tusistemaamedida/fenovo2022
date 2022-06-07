@@ -54,7 +54,7 @@ class SenasaController extends Controller
                 })
                 ->addColumn('destroy', function ($senasa) {
                     $ruta = 'destroy(' . $senasa->id . ",'" . route('senasa.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
                 ->rawColumns(['print', 'desvincular', 'vincular', 'edit', 'destroy'])
                 ->make(true);
