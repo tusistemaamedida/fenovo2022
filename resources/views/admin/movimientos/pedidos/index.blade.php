@@ -15,9 +15,7 @@
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-                                    <a href="{{ route('pedidos.add') }}">
-                                        <i class="fa fa-2x fa-plus-circle text-primary"></i>
-                                    </a>
+                                    
                                 </div>
                             </div>
                         </div>
