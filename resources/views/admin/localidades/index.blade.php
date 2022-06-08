@@ -30,7 +30,7 @@
                     </div>
                 </div>
 
-                <div class="card card-body gutter-b bg-white border-0">
+                <div class="card card-body gutter-b bg-white border-0" data-aos="fade-up">
 
                     <div class="row">
                         <div class="col-12">

@@ -66,6 +66,9 @@
             break;
             }
         @endif
+
+        AOS.init();
+        
     </script>
 
 </body>

@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="row">
+<div class="row" data-aos="fade-down">
     <div class=" offset-4 col-4">
         <div class="card-body bg-dark text-black-50">
             <p class=" text-center font-size-bold"> PERFIL USUARIO </p>

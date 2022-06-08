@@ -64,10 +64,15 @@
                         </div>
                     </li>
 
-                    <li class="nav-item" title="Lista de Pedidos">
+                    <li class="nav-item" title="@if ($nroPedidos>0) Tiene {{ $nroPedidos }} pedido pendientes @else Lista de pedidos @endif ">
                         <a href="{{route('pedidos.index')}}" class="nav-link">
-                            <span class="svg-icon nav-icon"> <i class="fas fa-list"></i> </span>
-                            <span class="nav-text"> Pedidos </span>
+                            <span class="svg-icon nav-icon"> 
+                                @if ($nroPedidos>0)
+                                <i class="fas fa-list text-primary"></i> <span class="text-primary">{{ $nroPedidos }}</span>
+                                @else
+                                <i class="fas fa-list"></i> 
+                                @endif
+                            </span>
                         </a>
                     </li>
 
