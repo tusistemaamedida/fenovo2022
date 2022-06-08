@@ -34,7 +34,7 @@ class ExportarArchivosController extends Controller
             $percibido = $this->getTributoIva($invoice->tributos);
             $regimen = 004 ;
             $jurisdiccion = 908;
-            $dataTxt .= $nro.','.$tipo_comprobante.','.$nro_comprobante.','.$cuit.','.$fecha.','.$monto.','.$alicuota.','.$percibido.','.$regimen.','.$jurisdiccion.PHP_EOL;
+            $dataTxt .= $nro.','.$tipo_comprobante.','.$letra.','.$nro_comprobante.','.$cuit.','.$fecha.','.$monto.','.$alicuota.','.$percibido.','.$regimen.','.$jurisdiccion.PHP_EOL;
             $i++;
         }
 
