@@ -101,6 +101,21 @@
                     </div>
                 </div>
 
+                <div class="card card-body gutter-b bg-white border-0">
+                    <div class="row mt-3 mb-4 font-weight-bolder">
+                        <div class="col-12">
+                            Retenciones y Percepciones ER
+                        </div>
+                    </div>
+                    <div class="row mb-5 ml-2 border-bottom-dark">
+                        <div class="col-2">
+                            <a href="{{route('export.iibb')}}" title="Exportar Ingresos Brutos" class="mt-1 mr-3">
+                                <i class=" fa fa-file-csv"></i> IIBB
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

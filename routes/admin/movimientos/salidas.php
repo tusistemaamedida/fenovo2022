@@ -44,3 +44,4 @@ Route::get('actualizar-costos', [SalidasController::class, 'updateCostos'])->nam
 
 //Route::get('update-stock', [SalidasController::class, 'updateStock'])->name('actualizar.temp.stock');
 //Route::get('update-stock/{cod_fenovo}', [SalidasController::class, 'updateStock']);
+Route::get('update-jurisdiccion', [SalidasController::class, 'updateJurisdiccion']);

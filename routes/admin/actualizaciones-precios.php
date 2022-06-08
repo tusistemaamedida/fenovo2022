@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ActualizacionController;
+use App\Http\Controllers\ExportarArchivosController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('actualizacion', [ActualizacionController::class, 'index'])->name('actualizacion.index');
@@ -19,3 +20,4 @@ Route::get('actualizacion/exportarM2', [ActualizacionController::class, 'exportT
 
 Route::get('exportar/cabe-ped', [ActualizacionController::class, 'exportCabePed'])->name('export.cabePed');
 Route::get('exportar/cabe-ele', [ActualizacionController::class, 'exportCabeEle'])->name('export.cabeEle');
+Route::get('exportar/ingresos-brutos', [ExportarArchivosController::class, 'exportIIBB'])->name('export.iibb');
