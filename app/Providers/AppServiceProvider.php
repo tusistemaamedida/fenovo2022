@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Pedido;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,5 +24,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $nroPedidos = Pedido::whereStatus('PENDING')->count();
+
+        View::share(['nroPedidos' => $nroPedidos]);
     }
 }

@@ -26,7 +26,7 @@
                 </div>
                 <div class="row">
                     <div class="col-12 ">
-                        <div class="card card-custom gutter-b bg-white border-0">
+                        <div class="card card-custom gutter-b bg-white border-0" data-aos="fade-left">
                             <div class="card-body">
 
                                 <div class="table-datapos">
