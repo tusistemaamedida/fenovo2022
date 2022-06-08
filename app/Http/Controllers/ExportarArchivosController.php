@@ -34,8 +34,10 @@ class ExportarArchivosController extends Controller
             $percibido = $this->getTributoIva($invoice->tributos);
             $regimen = 004 ;
             $jurisdiccion = 908;
-            $dataTxt .= $nro.','.$tipo_comprobante.','.$letra.','.$nro_comprobante.','.$cuit.','.$fecha.','.$monto.','.$alicuota.','.$percibido.','.$regimen.','.$jurisdiccion.PHP_EOL;
-            $i++;
+            if((int)$percibido > 0 ){
+                $dataTxt .= $nro.','.$tipo_comprobante.','.$letra.','.$nro_comprobante.','.$cuit.','.$fecha.','.$monto.','.$alicuota.','.$percibido.','.$regimen.','.$jurisdiccion.PHP_EOL;
+                $i++;
+            }
         }
 
         $file = "exportacion/iibb.txt";
