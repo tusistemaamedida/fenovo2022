@@ -83,6 +83,7 @@ class Invoice extends Model
 		'movement_id',
 		'client_name',
 		'client_address',
+        'jurisdiccion',
 		'client_cuit',
 		'client_iva_type',
 		'voucher_number',

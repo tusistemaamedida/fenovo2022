@@ -220,6 +220,7 @@ class InvoiceController extends Controller
                 $more_data->movement_id        = $movement->id;
                 $more_data->client_name        = strtoupper($data_invoice['client']->razon_social);
                 $more_data->client_address     = strtoupper($data_invoice['client']->address . ' ' . $data_invoice['client']->city . ' ' . $data_invoice['client']->state);
+                $more_data->jurisdiccion       = $this->getJurisdiccion($data_invoice['client']->state);
                 $more_data->client_cuit        = $data_invoice['client']->cuit;
                 $more_data->client_iva_type    = $this->get_iva_type($data_invoice['client']->iva_type);
                 $more_data->voucher_number     = str_pad($this->pto_vta, 4, '0', STR_PAD_LEFT) . '-' . str_pad($data_invoice['numero_de_factura'], 8, '0', STR_PAD_LEFT);
@@ -543,6 +544,38 @@ class InvoiceController extends Controller
               return true;
           default:
             return false;
+        }
+    }
+
+    private function getJurisdiccion($loc){
+        switch ($loc) {
+            case 'Santa Fe':
+                return 921;
+                break;
+            case 'Entre Ríos':
+                return 908;
+                break;
+            case 'Misiones':
+                return 914;
+                break;
+            case 'Buenos Aires':
+                return 902;
+                break;
+            case 'Chaco':
+                return 906;
+                break;
+            case 'Córdoba':
+                return 904;
+                break;
+            case 'Corrientes':
+                return 905;
+                break;
+            case 'San Luis':
+                return 919;
+                break;
+            default:
+                return null;
+                break;
         }
     }
 }

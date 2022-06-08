@@ -21,7 +21,7 @@ use App\Repositories\ProductRepository;
 use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
-
+use App\Models\Invoice;
 
 use App\Models\Pedido;
 use App\Models\PedidoProductos;
@@ -1124,6 +1124,49 @@ class SalidasController extends Controller
                     }
                 }
             }
+        }
+    }
+
+    public function updateJurisdiccion(){
+        $invoices = Invoice::all();
+        foreach ($invoices as $invoice) {
+            $mov = Movement::where('id',$invoice->movement_id)->first();
+            $store = $mov->To($mov->type,true);
+            $juris = $this->getJurisdiccion($store->state);
+            $invoice->jurisdiccion = $juris;
+            $invoice->save();
+        }
+    }
+
+    private function getJurisdiccion($loc){
+        switch ($loc) {
+            case 'Santa Fe':
+                return 921;
+                break;
+            case 'Entre Ríos':
+                return 908;
+                break;
+            case 'Misiones':
+                return 914;
+                break;
+            case 'Buenos Aires':
+                return 902;
+                break;
+            case 'Chaco':
+                return 906;
+                break;
+            case 'Córdoba':
+                return 904;
+                break;
+            case 'Corrientes':
+                return 905;
+                break;
+            case 'San Luis':
+                return 919;
+                break;
+            default:
+                return null;
+                break;
         }
     }
 }
