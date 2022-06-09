@@ -15,6 +15,8 @@ Route::get('salidas-pendiente/print', [SalidasController::class, 'pendientePrint
 
 Route::get('clientes/salidas', [SalidasController::class, 'getClienteSalida'])->name('get.cliente.salida');
 Route::get('search-products', [SalidasController::class, 'searchProducts'])->name('search.products');
+Route::get('buscar-productos', [SalidasController::class, 'buscarProductos'])->name('buscar.productos');
+
 Route::get('session-products-by-list-id', [SalidasController::class, 'getSessionProducts'])->name('get.session.products');
 Route::get('flete-by-list-id', [SalidasController::class, 'getFleteSessionProducts'])->name('get.flete.session.products');
 
@@ -42,3 +44,4 @@ Route::get('actualizar-costos', [SalidasController::class, 'updateCostos'])->nam
 
 //Route::get('update-stock', [SalidasController::class, 'updateStock'])->name('actualizar.temp.stock');
 //Route::get('update-stock/{cod_fenovo}', [SalidasController::class, 'updateStock']);
+Route::get('update-jurisdiccion', [SalidasController::class, 'updateJurisdiccion']);

@@ -41,12 +41,12 @@
                     <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
                     <td class=" text-center ">
                         <input type="number"
-                               name="unidades_{{(float)$stock_presentaciones[$i]['presentacion']}}"
-                               id="{{(float)$stock_presentaciones[$i]['presentacion']}}"
-                               class="form-control calculate text-center"
-                               max="{{$stock_presentaciones[$i]['bultos']}}"
-                               value="0"
-                               onkeyup="sumar(this)" >
+                            name="unidades_{{(float)$stock_presentaciones[$i]['presentacion']}}"
+                            id="{{$stock_presentaciones[$i]['presentacion']}}"
+                            class="form-control calculate text-center"
+                            max="{{$stock_presentaciones[$i]['bultos']}}"
+                            value="0"
+                            onkeyup="sumar(this)" >
                     </td>
                     </tr>
                     @endfor

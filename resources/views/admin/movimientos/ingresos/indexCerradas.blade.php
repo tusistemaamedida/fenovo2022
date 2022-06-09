@@ -40,7 +40,6 @@
                                                     @endif
                                                     <th>Tipo</th>
                                                     <th>Items</th>
-                                                    <th>Kgrs</th>
                                                     <th>Nro compra</th>
                                                     <th>Detalle</th>
                                                 </tr>
@@ -74,7 +73,6 @@
             {data: 'origen'},
             {data: 'subtype'},
             {data: 'items', 'class':'text-center', searchable: false},
-            {data: 'kgrs', 'class':'text-center', searchable: false},
             {data: 'voucher',  'class':'text-center'},
             {data: 'show', 'class':'text-center', searchable: false},
         ],

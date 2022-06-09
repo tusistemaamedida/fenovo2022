@@ -242,7 +242,7 @@ class Product extends Model
     public function stockFinSemana()
     {
         $registro = MovementProduct::whereEntidadId(1)->whereProductId($this->id)->orderByDesc('id')->first();
-        return number_format($registro->balance, 0, '', '');
+        return ($registro)?number_format($registro->balance, 0, '', ''):0;
     }
 
     public function scopeName($query, $name)

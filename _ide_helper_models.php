@@ -1531,6 +1531,9 @@ namespace App\Models{
  * @property int $online_sale
  * @property int $active
  * @property string|null $listprice_associate
+ * @property string|null $logistica_express
+ * @property int|null $punto_venta
+ * @property int|null $habilitado_panama
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Customer[] $customers
@@ -1552,13 +1555,16 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereDeliveryPercentage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Store whereHabilitadoPanama($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereIvaType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereLat($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereListpriceAssociate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Store whereLogisticaExpress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereLon($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereOnlineSale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store wherePrintType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Store wherePuntoVenta($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereRazonSocial($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereRegionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereResponsable($value)

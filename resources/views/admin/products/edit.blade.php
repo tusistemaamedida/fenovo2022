@@ -46,25 +46,33 @@
                     </div>
 
                     <div class="card-body">
-                        <ul class="nav nav-pills mb-3" id="pills-tab1" role="tablist">
-                            <li class="nav-item mr-2">
-                                <a class="nav-link btn-light active shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="true">
-                                    Precios
-                                </a>
-                            </li>
-                            <li class="nav-item mr-2" id="nav-item-precios">
-                                <a class="nav-link btn-light shadow-none" id="detalle-tab-basic" data-toggle="pill" href="#detalle" role="tab" aria-controls="detalle" aria-selected="false">
-                                    Detalles
-                                </a>
-                            </li>
-                            <li class="nav-item mr-2" id="nav-item-imagenes">
-                                <a class="nav-link btn-light shadow-none" id="imagenes-tab-basic" data-toggle="pill" href="#imagenes" role="tab" aria-controls="imagenes" aria-selected="false">
-                                    Imágenes
-                                </a>
-                            </li>
-                        </ul>
                         <div class="row">
-                            <form style="width: 100%;margin-top: 15px;" method="POST" action="{{route('product.update')}}" id="formData">
+                            <div class="col-xs-12 col-md-6">
+                                <ul class="nav nav-pills mb-3" id="pills-tab1" role="tablist">
+                                    <li class="nav-item mr-2">
+                                        <a class="nav-link btn-light active shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="true">
+                                            Precios
+                                        </a>
+                                    </li>
+                                    <li class="nav-item mr-2" id="nav-item-precios">
+                                        <a class="nav-link btn-light shadow-none" id="detalle-tab-basic" data-toggle="pill" href="#detalle" role="tab" aria-controls="detalle" aria-selected="false">
+                                            Detalles
+                                        </a>
+                                    </li>
+                                    <li class="nav-item mr-2" id="nav-item-imagenes">
+                                        <a class="nav-link btn-light shadow-none" id="imagenes-tab-basic" data-toggle="pill" href="#imagenes" role="tab" aria-controls="imagenes" aria-selected="false">
+                                            Imágenes
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                @include('admin.products.search')
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <form method="POST" action="{{route('product.update')}}" id="formData">
                                 @csrf
                                 @if (isset($product))
                                 <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">

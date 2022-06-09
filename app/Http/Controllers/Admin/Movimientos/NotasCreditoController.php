@@ -145,7 +145,7 @@ class NotasCreditoController extends Controller
                 }
                 $insert_data['observacion']    = 'NC a '.$label;
                 $insert_data['type']           = $explode[0];
-                $insert_data['to']             = $deposito;// $explode[1]; Se cambio a deposito reclamos
+                $insert_data['to']             = $explode[1];// $explode[1]; Se cambio a deposito reclamos
                 $insert_data['date']           = now();
                 $insert_data['from']           = $from;
                 $insert_data['orden']          = $orden;

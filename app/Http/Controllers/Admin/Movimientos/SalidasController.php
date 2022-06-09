@@ -15,13 +15,17 @@ use App\Models\Product;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
-use App\Models\Vehiculo;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
 use App\Traits\OriginDataTrait;
+use App\Models\Invoice;
+
+use App\Models\Pedido;
+use App\Models\PedidoProductos;
+use App\Models\PedidoEstados;
 
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
@@ -66,7 +70,7 @@ class SalidasController extends Controller
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('date')->sortByDesc('id');
             } else {
-                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->get();
+                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
             }
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
@@ -84,9 +88,6 @@ class SalidasController extends Controller
                 })
                 ->editColumn('type', function ($movement) {
                     return $movement->type;
-                })
-                ->addColumn('kgrs', function ($movement) {
-                    return $movement->totalKgrs();
                 })
                 ->editColumn('factura_nro', function ($movement) {
                     if ($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE') {
@@ -125,7 +126,7 @@ class SalidasController extends Controller
                         : null;
                 })
 
-                ->rawColumns(['id', 'origen', 'items', 'date', 'type', 'kgrs', 'factura_nro', 'remito', 'paper', 'flete', 'orden', 'ordenpanama'])
+                ->rawColumns(['id', 'origen', 'items', 'date', 'type', 'factura_nro', 'remito', 'paper', 'flete', 'orden', 'ordenpanama'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.index');
@@ -168,10 +169,14 @@ class SalidasController extends Controller
     public function pendienteShow(Request $request)
     {
         $explode     = explode('_', $request->input('list_id'));
+        $pedido = null;
+        if(count($explode)==3){
+            $pedido = $explode[2];
+        }
         $tipo        = $explode[0];
         $destino     = $this->origenData($tipo, $explode[1], true);
         $destinoName = $this->origenData($tipo, $explode[1]);
-        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName'));
+        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName','pedido'));
     }
 
     public function getTotalMovement(Request $request)
@@ -574,6 +579,27 @@ class SalidasController extends Controller
         return  new JsonResponse($valid_names);
     }
 
+    public function buscarProductos(Request $request)
+    {
+        $producto    = Product::whereCodFenovo($request->term)->first();
+        $arrProducto = [];
+        if ($producto) {
+            $oferta = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
+            $ruta   = ($oferta)
+            ? route('product.edit', ['id' => $producto->id, 'oferta_id' => $oferta->id, 'fecha_oferta' => $oferta->id]) . '#precios'
+            : route('product.edit', ['id' => $producto->id]);
+
+            $dir           = '<a title="editar" href="' . $ruta . '"><i class="fa fa-edit"></i></a>';
+            $arrProducto[] = [
+                'id'   => $producto->id,
+                'text' => $producto->name,
+                'dir'  => $dir,
+            ];
+
+            return  new JsonResponse($arrProducto);
+        }
+    }
+
     public function getSessionProducts(Request $request)
     {
         try {
@@ -805,20 +831,19 @@ class SalidasController extends Controller
             Schema::disableForeignKeyConstraints();
             $list_id = $request->input('session_list_id');
             $explode = explode('_', $list_id);
-
             $session_products = $this->sessionProductRepository->getByListId($list_id);
 
             foreach ($session_products as $product) {
                 $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
                 $balance  = $product->producto->stockReal(null, \Auth::user()->store_active);
                 if ($balance < $cantidad) {
-                    return redirect()->back()->withInput()->with([
-                        'error'     => 'Sin stock',
-                        'codfenovo' => $product->producto->cod_fenovo,
-                        'stock'     => $balance,
-                        'unidad'    => $product->producto->unit_type,
-                        'cantidad'  => $cantidad,
-                    ]);
+                    $alert = '<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert"><i class="ace-icon fa fa-times"></i></button>';
+                    $alert .= '<i class="ace-icon fa fa-ban"></i> COD-FENOVO <strong>';
+                    $alert .= $product->producto->cod_fenovo . '</strong> insuficiente. Imposible vender <strong>';
+                    $alert .= $cantidad . '</strong>, porque el stock actual es <strong>';
+                    $alert .= $balance . '</strong>' . $product->producto->unit_type . '</div>';
+
+                    return new JsonResponse(['msj' => 'Stock Insuficiente', 'type' => 'error', 'alert' => $alert]);
                 }
             }
 
@@ -844,7 +869,22 @@ class SalidasController extends Controller
 
             $movement = Movement::create($insert_data);
 
-            $enitidad_tipo = parent::getEntidadTipo($insert_data['type']);
+            if(count($explode) == 3){
+                $voucher_number = $explode[2];
+                $pedido = Pedido::where('voucher_number',$voucher_number)->first();
+                $pedido->movement_id = $movement->id;
+                $pedido->status = 'FINISHED';
+                $pedido->save();
+
+                PedidoEstados::create([
+                    'user_id'=> \Auth::user()->id,
+                    'pedido_id' => $pedido->id,
+                    'fecha'   => now(),
+                    'estado' => 'CERRADO',
+                ]);
+            }
+
+            $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
             $pto_vta       = $cuit       = $iva_type       = '';
             $cliente       = null;
@@ -868,16 +908,24 @@ class SalidasController extends Controller
 
             foreach ($session_products as $product) {
                 $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
+                if(isset($pedido)){
+                    $ped_producto = PedidoProductos::where('pedido_id',$pedido->id)->where('product_id',$product->product_id)->first();
+                    $ped_producto->bultos_enviados = $product->quantity;
+                    $ped_producto->bultos_pendientes = $ped_producto->bultos - $product->quantity;
+                    $ped_producto->save();
+                }
 
-                // resta del balance de la store fenovo porque es salida
-                $latest = MovementProduct::all()
+                $latest = MovementProduct::query()
+                    ->select('balance')
                     ->where('entidad_id', $from)
                     ->where('entidad_tipo', 'S')
                     ->where('product_id', $product->product_id)
-                    ->sortByDesc('id')->first();
+                    ->orderBy('id', 'desc')
+                    ->limit(1)
+                    ->first();
 
                 $balance = ($latest) ? $latest->balance - $cantidad : 0;
-                MovementProduct::firstOrCreate([
+                MovementProduct::updateOrCreate([
                     'entidad_id'      => $from,
                     'entidad_tipo'    => 'S',
                     'movement_id'     => $movement->id,
@@ -896,17 +944,19 @@ class SalidasController extends Controller
                     ]);
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
-                    // Suma al balance de la store to
-                    $latest = MovementProduct::all()
+                    $latest = MovementProduct::query()
+                        ->select('balance')
                         ->where('entidad_id', $insert_data['to'])
-                        ->where('entidad_tipo', $enitidad_tipo)
+                        ->where('entidad_tipo', $entidad_tipo)
                         ->where('product_id', $product->product_id)
-                        ->sortByDesc('id')->first();
+                        ->orderBy('id', 'desc')
+                        ->limit(1)
+                        ->first();
 
                     $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
-                    MovementProduct::firstOrCreate([
+                    MovementProduct::updateOrCreate([
                         'entidad_id'      => $insert_data['to'],
-                        'entidad_tipo'    => $enitidad_tipo,
+                        'entidad_tipo'    => $entidad_tipo,
                         'movement_id'     => $movement->id,
                         'product_id'      => $product->product_id,
                         'unit_package'    => $product->unit_package, ], [
@@ -921,9 +971,9 @@ class SalidasController extends Controller
                             'balance'     => $balance,
                         ]);
                 } else {
-                    MovementProduct::firstOrCreate([
+                    MovementProduct::updateOrCreate([
                         'entidad_id'      => $insert_data['to'],
-                        'entidad_tipo'    => $enitidad_tipo,
+                        'entidad_tipo'    => $entidad_tipo,
                         'movement_id'     => $movement->id,
                         'product_id'      => $product->product_id,
                         'unit_package'    => $product->unit_package, ], [
@@ -987,7 +1037,7 @@ class SalidasController extends Controller
             $this->sessionProductRepository->deleteList($list_id);
             DB::commit();
             Schema::enableForeignKeyConstraints();
-            return redirect()->route('salidas.add');
+            return new JsonResponse(['msj' => 'Salida cerrada correctamente', 'type' => 'success']);
         } catch (\Exception $e) {
             DB::rollback();
             Schema::enableForeignKeyConstraints();
@@ -1074,6 +1124,49 @@ class SalidasController extends Controller
                     }
                 }
             }
+        }
+    }
+
+    public function updateJurisdiccion(){
+        $invoices = Invoice::all();
+        foreach ($invoices as $invoice) {
+            $mov = Movement::where('id',$invoice->movement_id)->first();
+            $store = $mov->To($mov->type,true);
+            $juris = $this->getJurisdiccion($store->state);
+            $invoice->jurisdiccion = $juris;
+            $invoice->save();
+        }
+    }
+
+    private function getJurisdiccion($loc){
+        switch ($loc) {
+            case 'Santa Fe':
+                return 921;
+                break;
+            case 'Entre Ríos':
+                return 908;
+                break;
+            case 'Misiones':
+                return 914;
+                break;
+            case 'Buenos Aires':
+                return 902;
+                break;
+            case 'Chaco':
+                return 906;
+                break;
+            case 'Córdoba':
+                return 904;
+                break;
+            case 'Corrientes':
+                return 905;
+                break;
+            case 'San Luis':
+                return 919;
+                break;
+            default:
+                return null;
+                break;
         }
     }
 }

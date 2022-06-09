@@ -1,6 +1,11 @@
 <div id="closeSalida" class="offcanvas offcanvas-right kt-color-panel p-5">
-    <form action="{{route('guardar.salida')}}" method="POST">
+    <form action="{{ route('guardar.salida') }}" method="POST" id="formGuardarSalida">
         @csrf
+
+        @if (isset($pedido))
+            <input type="hidden" name="pedido" id="nro_pedido" value="{{ $pedido }}">
+        @endif
+
         <div class="row mb-2">
             <div class="col-12">
                 <h4>CERRAR SALIDA</h4>
@@ -17,7 +22,9 @@
         <div class="row mt-5">
             <div class="col-6">
                 <label class="text-dark">#Nro de identificación</label>
-                <input type="text" name="voucher_number" value="{{ strtoupper(substr(md5(time()), 0, 6)) }}" id="voucher_number" class="form-control text-center" autofocus>
+                <input type="text" name="voucher_number"
+                    @if (isset($pedido)) value="{{ $pedido }}" @else value="{{ strtoupper(substr(md5(time()), 0, 6)) }}" @endif
+                    id="voucher_number" class="form-control text-center" autofocus>
             </div>
         </div>
 
@@ -29,7 +36,8 @@
             <div class="col-5" style="margin-top: 30px;">
                 <fieldset>
                     <div class="custom-control custom-checkbox">
-                        <input type="checkbox" name="factura_flete" id="factura_flete" value='1' class="custom-control-input">
+                        <input type="checkbox" name="factura_flete" id="factura_flete" value='1'
+                            class="custom-control-input">
                         <label class="custom-control-label" for="factura_flete">Factura flete </label>
                     </div>
                 </fieldset>
@@ -47,8 +55,10 @@
 
         <div class="row mt-5">
             <div class="col-12">
-                <button type="reset" class="btn btn-outline-primary" id="close_modal_salida"><i class="fa fa-times"></i> Cerrar</button>
-                <button type="submit" class="btn btn-primary" id="btnCloseSalida" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+                <button type="reset" class="btn btn-outline-primary" id="close_modal_salida"><i
+                        class="fa fa-times"></i> Cerrar</button>
+                <button type="button" class="btn btn-primary" id="btnCloseSalida" style="float: right"><i
+                        class="fa fa-save"></i> Guardar</button>
             </div>
         </div>
     </form>

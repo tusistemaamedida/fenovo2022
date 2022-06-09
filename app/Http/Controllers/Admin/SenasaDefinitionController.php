@@ -34,11 +34,11 @@ class SenasaDefinitionController extends Controller
                 })
                 ->addColumn('edit', function ($senasa) {
                     $ruta = 'edit(' . $senasa->id . ",'" . route('senasa-definition.edit') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($senasa) {
                     $ruta = 'destroy(' . $senasa->id . ",'" . route('senasa-definition.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
                 ->rawColumns(['categoria', 'inactivo', 'edit', 'destroy'])
                 ->make(true);

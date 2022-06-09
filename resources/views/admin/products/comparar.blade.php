@@ -62,25 +62,19 @@
 
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
-        lengthMenu : [[10, 25, 50, -1], [10, 25, 50, "All"]],
-        stateSave:true,
-        processing: true,
-        serverSide: true,
-        ordering:false,
-        dom: 'lfrtip',
-        buttons: ['excel'],
+        @include('partials.table.setting'),
         ajax: "{{ route('products.compararStock') }}",
         columns: [
             {data: 'proveedor', orderable: false},
-            {data: 'cod_fenovo', 'className': 'font-weight-bold text-danger', orderable: false},
+            {data: 'cod_fenovo', orderable: false},
             {data: 'name', 'className': 'text-left',orderable: false},
             {data: 'costo', orderable: false, searchable: false},
             {data: 'unit_type', orderable: false, searchable: false},
             {data: 'unit_package', orderable: false, searchable: false},
-            {data: 'stockInicioSemana','className': 'font-weight-bold text-danger',  orderable: false, searchable: false},
+            {data: 'stockInicioSemana','className': 'text-danger',  orderable: false, searchable: false},
             {data: 'ingresoSemana', orderable: false, searchable: false},
             {data: 'salidaSemana', orderable: false, searchable: false},
-            {data: 'stock', 'className': 'font-weight-bold text-danger', orderable: false, searchable: false},
+            {data: 'stock', 'className': 'text-danger', orderable: false, searchable: false},
         ]
     });
 </script>

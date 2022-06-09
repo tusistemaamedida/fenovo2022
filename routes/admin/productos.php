@@ -17,6 +17,9 @@ Route::get('descuento-por-rubro', [ProductController::class, 'getDescuentoAplica
 Route::post('productos/destroy', [ProductController::class, 'destroy'])->middleware('can:products.edit')->name('product.destroy');
 
 Route::get('producto/edit/{fecha_actualizacion?}', [ProductController::class, 'edit'])->middleware('can:products.edit')->name('product.edit');
+
+Route::get('producto/ver/{id?}', [ProductController::class, 'ver'])->middleware('can:products.edit')->name('product.ver');
+
 Route::post('producto/update', [ProductController::class, 'update'])->name('product.update');
 Route::post('producto/actualizar-precios', [ProductController::class, 'updatePrices'])->name('actualizar.precios');
 Route::post('producto/actualizar-oferta', [ProductController::class, 'updateOferta'])->name('actualizar.oferta');

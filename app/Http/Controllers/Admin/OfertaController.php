@@ -37,7 +37,7 @@ class OfertaController extends Controller
     {
         if ($request->ajax()) {
 
-            $oferta = SessionOferta::has('stores', '=', 0)->orderBy('fecha_desde', 'asc')->get();
+            $oferta = SessionOferta::doesntHave('stores')->orderBy('fecha_desde', 'asc')->get();
 
             return DataTables::of($oferta)
                 ->addIndexColumn()
@@ -197,7 +197,7 @@ class OfertaController extends Controller
     public function vincularTienda(Request $request)
     {
         $oferta = $this->ofertaRepository->getOne($request->id);
-        $stores = Store::where('store_type', 'T')->get();
+        $stores = Store::where('store_type', 'T')->orWhere('store_type', 'E') ->get();
         return view('admin.ofertas.vincular', compact('oferta', 'stores'));
     }
 
