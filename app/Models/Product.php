@@ -75,6 +75,7 @@ class Product extends Model
         'senasa_id',
         'iibb',
         'active',
+        'coeficiente_relacion_stock'
     ];
 
     public function product_category()

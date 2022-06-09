@@ -190,7 +190,7 @@ class ProductController extends Controller
     }
 
     public function ver(Request $request)
-    {	
+    {
         $oferta = SessionOferta::doesntHave('stores')->whereProductId($request->id)->first();
         $ruta = ($oferta)
         ?route('product.edit',['id' => $request->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
@@ -348,6 +348,7 @@ class ProductController extends Controller
             $stock_b = (int) (($porc_blanco * $balance_producto) / 100);
             $producto->stock_f = $stock_b;
             $producto->stock_r = $balance_producto - $stock_b;
+            $producto->coeficiente_relacion_stock = $porc_blanco;
             $producto->save();
 
             return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
