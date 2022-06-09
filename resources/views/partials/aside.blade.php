@@ -12,21 +12,8 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{route('inicio')}}" class="nav-link">
-                            <span class="svg-icon nav-icon"> <i class=" fa fa-home"> </i> </span>
-                            <span class="nav-text"> Inicio </span>
-                        </a>
-                    </li>
-
-                    @can('products.index')
-                    <li class="nav-item" title="Lista de Productos">
-                        <a href="{{url('productos')}}" class="nav-link">
-                            <span class="svg-icon nav-icon"> <i class="fas fa-barcode"></i> </span>
-                            <span class="nav-text"> Productos </span>
-                        </a>
-                    </li>
-                    @endcan
+                    
+                    
 
                     <li class="dropdown dropright">
                         <button type="button" class="btn dropdown-toggle text-black-50" data-toggle="dropdown" title="Compras de mercadería">
