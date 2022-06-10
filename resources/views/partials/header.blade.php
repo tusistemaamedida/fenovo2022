@@ -30,7 +30,7 @@
                     </div>
                   </li>
 
-                <li class="dropdown dropdown mt-2">
+                <li class="nav-item dropdown mt-2">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-dolly-flatbed"></i>
                     </a>
