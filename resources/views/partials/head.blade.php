@@ -8,6 +8,7 @@
 
 	
 	<link href="{{asset('assets/css/style.css?v=1.0')}}" rel="stylesheet" type="text/css" />
+	<link href="{{asset('assets/css/navbar.css')}}" rel="stylesheet" type="text/css" />
 	<link href="{{asset('assets/api/pace/pace-theme-flat-top.css')}}" rel="stylesheet" type="text/css" />
 
 	<link href="{{asset('assets/api/mcustomscrollbar/jquery.mCustomScrollbar.css')}}" rel="stylesheet" type="text/css" />
