@@ -618,8 +618,7 @@ class SalidasController extends Controller
     public function getSessionProducts(Request $request)
     {
         try {
-            $pausado = false;
-            $session_products      = $this->sessionProductRepository->getByListId($request->input('list_id'),$pausado);
+            $session_products      = $this->sessionProductRepository->getByListId($request->input('list_id'));
             $mostrar_check_invoice = !(str_contains($request->input('list_id'), 'DEVOLUCION_') || str_contains($request->input('list_id'), 'DEBITO_'));
             return new JsonResponse([
                 'type' => 'success',
