@@ -15,6 +15,8 @@ use App\Imports\movementImport;
 use App\Models\Movement;
 
 use App\Models\MovementProduct;
+use App\Models\MovementProductTemp;
+use App\Models\MovementTemp;
 use App\Models\Product;
 use App\Models\ProductDescuento;
 use App\Models\ProductPrice;
@@ -36,6 +38,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -101,9 +104,9 @@ class ProductController extends Controller
                 })
                 ->addColumn('editar', function ($producto) {
                     $oferta = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
-                    $ruta = ($oferta)
-                    ?route('product.edit', ['id' => $producto->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
-                    :route('product.edit', ['id' => $producto->id]);
+                    $ruta   = ($oferta)
+                    ? route('product.edit', ['id' => $producto->id, 'oferta_id' => $oferta->id, 'fecha_oferta' => $oferta->id]) . '#precios'
+                    : route('product.edit', ['id' => $producto->id]);
                     return '<a title="Editar" href="' . $ruta . '"><i class="fa fa-edit"></i></a>';
                 })
                 ->addColumn('borrar', function ($producto) {
@@ -171,9 +174,9 @@ class ProductController extends Controller
     public function ver(Request $request)
     {
         $oferta = SessionOferta::doesntHave('stores')->whereProductId($request->id)->first();
-        $ruta = ($oferta)
-        ?route('product.edit', ['id' => $request->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
-        :route('product.edit', ['id' => $request->id]);
+        $ruta   = ($oferta)
+        ? route('product.edit', ['id' => $request->id, 'oferta_id' => $oferta->id, 'fecha_oferta' => $oferta->id]) . '#precios'
+        : route('product.edit', ['id' => $request->id]);
         return redirect($ruta);
     }
 
@@ -317,7 +320,6 @@ class ProductController extends Controller
             $fecha_actualizacion_activa = ($request->has('fecha_actualizacion_activa')) ? $request->input('fecha_actualizacion_activa') : 0;
             $fecha_oferta               = $request->input('fecha_oferta');
             $product                    = $this->productRepository->getByIdWith($request->id);
-
 
             $ofertas           = SessionOferta::where('product_id', $request->id)->get();
             $oferta            = ($request->has('fecha_oferta')) ? SessionOferta::where('id', $request->oferta_id)->first() : null;
@@ -473,7 +475,7 @@ class ProductController extends Controller
             $preciosCalculados = $this->calcularPrecios($request);
             $data              = array_merge($data, $preciosCalculados);
             $data['p2tienda']  = $data['p1tienda'];
-            $data['descp1']   = $data['descp2']   = 0;
+            $data['descp1']    = $data['descp2']    = 0;
             $oferta            = SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
 
             return new JsonResponse([
@@ -804,8 +806,93 @@ class ProductController extends Controller
 
     public function ajustarStockDepositos(Request $request)
     {
-        $stores = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
-        return view('admin.products.ajustar', compact('stores'));
+        try {
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
+            $number   = date('d') . date('m') . date('y') . date('H') . date('i');
+            $movement = MovementTemp::create([
+                'date'           => now(),
+                'type'           => 'AJUSTE',
+                'from'           => 1,
+                'user_id'        => \Auth::user()->id,
+                'to'             => \Auth::user()->store_active,
+                'status'         => 'CREATED',
+                'voucher_number' => $number,
+            ]);
+
+            $voucher_number           = $number . '-' . $movement->id;
+            $movement->voucher_number = $voucher_number;
+            $movement->save();
+
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
+            return redirect()->route('products.ajustarStockDepositos.edit', ['id' => $movement->id]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
+            return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
+        }
+    }
+
+    public function ajustarStockDepositosEdit(Request $request)
+    {
+        $movement  = MovementTemp::find($request->id);
+        $productos = Product::selectRaw('id, CONCAT(name," - ",cod_fenovo) as nombreCompleto')->orderBy('name')->pluck('nombreCompleto', 'id');
+        $stores    = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
+
+        return view('admin.products.ajustar', compact('movement', 'productos', 'stores'));
+    }
+
+    public function ajustarStockStoreDetalle(Request $request)
+    {	
+        try {
+            $hoy = Carbon::parse(now())->format('Y-m-d');
+
+            foreach ($request->datos as $movimiento) {
+                $product               = Product::find($movimiento['product_id']);
+                $latest                = $product->stockReal(null, Auth::user()->store_active);
+                $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
+                $movimiento['balance'] = $balance;
+
+                $costo_fenovo = 0;
+                $unit_price   = 0;
+
+                MovementProductTemp::firstOrCreate(
+                    [
+                        'entidad_id'   => Auth::user()->store_active,
+                        'movement_id'  => $movimiento['movement_id'],
+                        'product_id'   => $movimiento['product_id'],
+                        'tasiva'       => $product->product_price->tasiva,
+                        'cost_fenovo'  => $costo_fenovo,
+                        'unit_price'   => $unit_price,
+                        'unit_package' => $movimiento['unit_package'],
+                        'unit_type'    => $movimiento['unit_type'],
+                        'invoice'      => $movimiento['invoice'],
+                        'cyo'          => $movimiento['cyo'],
+                    ],
+                    $movimiento
+                );
+            }
+            return new JsonResponse(['msj' => 'Guardado', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function check(Request $request)
+    {
+        try {
+            $productId      = $request->productId;
+            $producto       = Product::find($productId);
+            $presentaciones = explode('|', $producto->unit_package);
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.products.detalleTemp', compact('producto', 'presentaciones'))->render(),
+
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
     }
 
     public function printCompararStock(Request $request)

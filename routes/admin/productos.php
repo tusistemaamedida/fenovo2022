@@ -36,6 +36,12 @@ Route::get('productos/imprimir', [PrintController::class, 'printProductsPDF'])->
 Route::get('productos/exportar', [ProductController::class, 'exportProductsToCsv'])->name('products.exportCSV');
 Route::get('productos/comparar/stock', [ProductController::class, 'compararStock'])->name('products.compararStock');
 Route::get('productos/ajustar/stockDepositos', [ProductController::class, 'ajustarStockDepositos'])->name('products.ajustarStockDepositos');
+Route::get('producto/ajustar/stockDepositos/edit/{id}', [ProductController::class, 'ajustarStockDepositosEdit'])->name('products.ajustarStockDepositos.edit');
+Route::post('producto/ajustar/storeDetalle', [ProductController::class, 'ajustarStockStoreDetalle'])->name('product.ajuste-detalle.store');
+
+
+
+
 Route::get('productos/comparar/stock/print', [ProductController::class, 'printCompararStock'])->name('products.printCompararStock');
 
 Route::get('productos-presentaciones/exportar', [ProductController::class, 'exportPresentacionesToCsv'])->name('products.exportPresentacionesCSV');
@@ -44,6 +50,8 @@ Route::get('productos-descuentos/exportar', [ProductController::class, 'exportDe
 Route::get('productos/importar/movimientos', [ProductController::class, 'importProductsMovement'])->name('products.importMovement');
 Route::get('producto/ajuste-stock', [ProductController::class, 'getDataStock'])->name('getData.stock');
 Route::post('producto/ajustar-stock', [ProductController::class, 'ajustarStock'])->name('ajustar.stock');
+
+Route::post('producto/check', [ProductController::class, 'check'])->name('producto.check');
 
 Route::get('producto/historial/{id?}', [ProductController::class, 'historial'])->middleware('can:products.edit')->name('product.historial');
 Route::get('producto/print-historial', [ProductController::class, 'printHistorial'])->middleware('can:products.edit')->name('product.printHistorial');
