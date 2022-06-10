@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-red navbar-dark mt-2">
     <div class="wrapper-f"></div>
     <div class="container-fluid all-show">
-        <a class="navbar-brand ml-5" href="{{ route('inicio') }}">FENOVO S.A. <i class="fa fa-codepen"></i></a>
+        <a class="navbar-brand" href="{{ route('inicio') }}">FENOVO S.A. <i class="fa fa-codepen"></i></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -9,14 +9,37 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
-
-                <li class="nav-item">
-                    <a href="{{ url('productos') }}" class="nav-link mt-2" aria-current="page" title="Lista de productos">
+                <li class="nav-item dropdown mt-2" title="Lista de productos">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-barcode"></i> </span>
                     </a>
+                    <div class="dropdown-menu bg-dark">
+                        <a class="dropdown-item" href="{{ url('productos') }}">
+                            <span class="text-black-50"> Lista de productos </span>
+                        </a>
+                        
+                        <a class="dropdown-item" href="{{ route('products.compararStock') }}">
+                            <span class="text-black-50">Comparar stocks</span>
+                        </a>
+                        <a class="dropdown-item" href="{{ route('products.ajustarStockDepositos') }}">
+                            <span class="text-black-50">Ajustar stocks depósitos</span>
+                        </a>
+
+                        <a class="dropdown-item" href="{{url('oferta')}}" title="Oferta de precios">
+                            <span class="text-black-50">Ofertas</span>
+                        </a>
+
+                        <a class="dropdown-item" href="{{url('actualizacion')}}" title="Actualización de precios">
+                            <span class="text-black-50">Actualizaciones</span>
+                        </a>
+
+                        <a class="dropdown-item" href="{{url('descuento')}}" title="Lista de descuentos">
+                            <span class="text-black-50">Descuentos</span>
+                        </a>
+                    </div>
                 </li>
 
-                <li class="nav-item dropdown mt-2">
+                <li class="nav-item dropdown mt-2" title="Compras">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-cart-arrow-down"></i>
                     </a>
@@ -28,9 +51,10 @@
                             Compras cerradas
                         </a>
                     </div>
-                  </li>
+                </li>
 
-                <li class="nav-item dropdown mt-2">
+                
+                <li class="nav-item dropdown mt-2" title="Salidas">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-dolly-flatbed"></i>
                     </a>
@@ -64,7 +88,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item" title="Lista de Friotekas">
+                <li class="nav-item" title="Lista de franquicias">
                     <a href="{{ url('tiendas') }}" class="nav-link mt-2">
                         <span class="svg-icon nav-icon">
                             <i class="fas fa-store"></i>
@@ -88,7 +112,7 @@
                     </a>
                 </li>
 
-                <li class="dropdown dropdown mt-2">
+                <li class="nav-item dropdown mt-2">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-cogs"></i>
                     </a>
@@ -115,7 +139,7 @@
                     </a>
                 </li>
 
-                <li class="dropdown dropdown mt-2">
+                <li class="nav-item dropdown mt-2" title="Transporte">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-shipping-fast"></i>
                     </a>

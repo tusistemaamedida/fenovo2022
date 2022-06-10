@@ -12,7 +12,6 @@
     line-height: 1;
     background-color: transparent;
     border: 1px solid white;
-
 }
 
 .nav-link {
@@ -30,11 +29,10 @@
 }
 
 .navbar-brand {
-
     color: #fff;
     font-family: 'Allerta Stencil', sans-serif;
     margin-bottom: 4px;
-    font-size: 27px;
+    font-size: 1.2em;
 }
 
 .navbar-red:hover .wrapper-f {
@@ -55,7 +53,7 @@
 }
 
 .navbar .nav-item:not(:last-child) {
-    margin-right: 35px;
+    margin-right: 5px;
   }
    
   .dropdown-toggle::after {
