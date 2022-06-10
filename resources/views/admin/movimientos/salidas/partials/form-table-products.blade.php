@@ -180,7 +180,21 @@
     var dataTable = jQuery(".yajra-datatable").DataTable({
         scrollY: 300,
         paging: false,
-        ordering: false,
+        ordering: true,
+        columnDefs: [
+            { orderable: false, targets: 0 },
+            { orderable: false, targets: 2 },
+            { orderable: false, targets: 3 },
+            { orderable: false, targets: 4 },
+            { orderable: false, targets: 5 },
+            { orderable: false, targets: 6 },
+            { orderable: false, targets: 7 },
+            { orderable: false, targets: 8 },
+            { orderable: false, targets: 9 },
+            { orderable: false, targets: 10 },
+            { orderable: false, targets: 11 },
+        ],
+        order: [[1, 'asc']],
         iDisplayLength: -1,
     });
 
