@@ -123,12 +123,12 @@ class MovementsViewExport implements FromView
                     $objMovement = new stdClass();
                     $creado      = true;
 
-                    $objMovement->origen      = str_pad($cod_fenovo, 3, '0', STR_PAD_LEFT);
+                    $objMovement->origen      = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
                     $objMovement->id          = 'O' . str_pad($movement->exported_number, 8, '0', STR_PAD_LEFT);
                     $objMovement->orden       = 'R' . str_pad($movement->id, 8, '0', STR_PAD_LEFT);
                     $objMovement->fecha       = date('d-m-Y', strtotime($movement->date));
-                    $objMovement->tipo        = 'E';
-                    $objMovement->codtienda   = str_pad($movement->cod_tienda, 3, '0', STR_PAD_LEFT);
+                    $objMovement->tipo        = 'S';
+                    $objMovement->codtienda   = str_pad($cod_fenovo, 3, '0', STR_PAD_LEFT);
                     $objMovement->codproducto = str_pad($movement->cod_producto, 4, '0', STR_PAD_LEFT);
                     $objMovement->cantidad    = $movement->entry;
                     $objMovement->unidad      = $movement->unidad;
