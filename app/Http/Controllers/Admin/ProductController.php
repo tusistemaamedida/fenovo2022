@@ -21,6 +21,7 @@ use App\Models\ProductPrice;
 use App\Models\Proveedor;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
+use App\Models\Store;
 use App\Repositories\AlicuotaTypeRepository;
 
 use App\Repositories\ProducDescuentoRepository;
@@ -99,10 +100,9 @@ class ProductController extends Controller
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
                 ->addColumn('editar', function ($producto) {
-
                     $oferta = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
                     $ruta = ($oferta)
-                    ?route('product.edit',['id' => $producto->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
+                    ?route('product.edit', ['id' => $producto->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
                     :route('product.edit', ['id' => $producto->id]);
                     return '<a title="Editar" href="' . $ruta . '"><i class="fa fa-edit"></i></a>';
                 })
@@ -169,10 +169,10 @@ class ProductController extends Controller
     }
 
     public function ver(Request $request)
-    {	
+    {
         $oferta = SessionOferta::doesntHave('stores')->whereProductId($request->id)->first();
         $ruta = ($oferta)
-        ?route('product.edit',['id' => $request->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
+        ?route('product.edit', ['id' => $request->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
         :route('product.edit', ['id' => $request->id]);
         return redirect($ruta);
     }
@@ -800,6 +800,12 @@ class ProductController extends Controller
         }
 
         return view('admin.products.comparar');
+    }
+
+    public function ajustarStockDepositos(Request $request)
+    {
+        $stores = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
+        return view('admin.products.ajustar', compact('stores'));
     }
 
     public function printCompararStock(Request $request)
