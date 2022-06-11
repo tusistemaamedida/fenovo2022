@@ -25,8 +25,20 @@ Route::post('ingresos/destroyTemp', [IngresosController::class, 'destroyTemp'])-
 
 Route::get('ingresos/proveedores', [IngresosController::class, 'getProveedorIngreso'])->name('get.proveedor.ingreso');
 
+// Ajustar Stock entre depositos
+Route::get('ingresos/ajustar/index', [IngresosController::class, 'indexAjustarStock'])->name('ingresos.ajustarStockIndex');
+Route::get('ingresos/ajustar/stockDepositos', [IngresosController::class, 'ajustarStockDepositos'])->name('ingresos.ajustarStockDepositos.add');
+Route::get('ingresos/ajustar/stockDepositos/edit/{id}', [IngresosController::class, 'ajustarStockDepositosEdit'])->name('ingresos.ajustarStockDepositos.edit');
+Route::get('ingresos/ajustar/stockDepositos/show/{id}', [IngresosController::class, 'ajustarStockDepositosShow'])->name('ingresos.ajustarStockDepositos.show');
+Route::post('ingresos/ajustar/storeDetalle', [IngresosController::class, 'ajustarStockStoreDetalle'])->name('ingresos.ajuste-detalle.store');
+Route::get('ingresos/movimientos/getMovements', [IngresosController::class, 'getMovements'])->name('ingresos.getMovements');
+Route::post('ingresos/check', [IngresosController::class, 'check'])->name('ingresos.check');
+Route::get('ingresos/ajustar/stockDepositos/close', [IngresosController::class, 'ajustarStockDepositosClose'])->name('ingresos.close.ajuste');
+
+
 // Detalle ingresos
 Route::get('detalle-ingresos/movimentos', [DetalleIngresosController::class, 'getMovements'])->name('detalle-movimiento.getMovements');
 Route::post('detalle-ingresos/destroy', [DetalleIngresosController::class, 'destroy'])->name('detalle-ingresos.destroy');
 Route::post('detalle-ingresos/store', [DetalleIngresosController::class, 'store'])->name('detalle-ingresos.store');
 Route::post('detalle-ingresos/check', [DetalleIngresosController::class, 'check'])->name('detalle-ingresos.check');
+

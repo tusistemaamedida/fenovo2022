@@ -23,16 +23,15 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card card-custom gutter-b bg-white border-0">
-                        <div class="card-body">
+                        <div class="card-body" style="min-height: 330px">
                             <div class="row">
-                                <div class="col-6">
-                                    <div class="form-group mb-3">
-                                        <label class="text-dark">Dónde <span class=" text-success">ingresa la
-                                                mercadería </span></label>
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label class="text-dark">Origen</label>
                                         <fieldset class="form-group">
-                                            <select class="rounded form-control bg-transparent" name="store_active"
-                                                required>
-                                                <option value="">Seleccione ...</option>
+                                            <select class="rounded form-control bg-transparent" id="tienda_egreso"
+                                                name="tienda_egreso" required>
+                                                <option value="0">Seleccione ...</option>
                                                 @foreach ($stores as $store)
                                                     <option value="{{ $store->id }}">
                                                         {{ str_pad($store->cod_fenovo, 3, '0', STR_PAD_LEFT) }} -
@@ -43,14 +42,13 @@
                                         </fieldset>
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="form-group mb-3">
-                                        <label class="text-dark">Desde dónde <span class=" text-danger">sale la
-                                                mercadería</span></label>
+                                <div class="col-5">
+                                    <div class="form-group">
+                                        <label class="text-dark">Destino</label>
                                         <fieldset class="form-group">
-                                            <select class="rounded form-control bg-transparent" name="store_active"
-                                                required>
-                                                <option value="">Seleccione ...</option>
+                                            <select class="rounded form-control bg-transparent" id="tienda_ingreso"
+                                                name="tienda_ingreso" required>
+                                                <option value="0">Seleccione ...</option>
                                                 @foreach ($stores as $store)
                                                     <option value="{{ $store->id }}">
                                                         {{ str_pad($store->cod_fenovo, 3, '0', STR_PAD_LEFT) }} -
@@ -58,19 +56,21 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="col-2 text-center">
+                                    <div class="form-group">
+                                        <label>Cerrar</label>
+                                        <fieldset class="form-group">
+                                            <a href="javascript:void(0)" onclick="close_ajuste('{{ $movement->id }}')"
+                                                class="btn btn-link btn-cerrar-ingreso">
+                                                <i class="fa fa-lock text-dark"></i>
+                                            </a>
                                         </fieldset>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="card card-custom gutter-b bg-white border-0">
-                        <div class="card-body">
                             <div class="row">
                                 <div class="col-4">
                                     <div class="row font-weight-bold">
@@ -78,7 +78,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                            <input type="hidden" name="movement_id" id="movement_id" value={{ $movement->id }} />
+                                            <input type="hidden" name="movement_id" id="movement_id"
+                                                value={{ $movement->id }} />
                                             {{ Form::select('product_id', $productos, null, ['id' => 'product_id', 'class' => 'js-example-basic-single form-control bg-transparent', 'placeholder' => 'Seleccione productos ...']) }}
                                         </div>
                                     </div>
@@ -86,7 +87,7 @@
                                 </div>
                                 <div class="col-8">
                                     <div id="dataTemp">
-                                        @include('admin.products.detalleTemp')
+                                        @include('admin.movimientos.ingresos.detalleTempAjuste')
                                     </div>
                                 </div>
                             </div>
@@ -102,13 +103,12 @@
                             <div class="row">
                                 <div class="col-lg-12 col-xl-12">
                                     <div id="dataConfirm">
-                                        @include('admin.products.detalleConfirm')
+                                        @include('admin.movimientos.ingresos.detalleConfirmAjuste')
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
 
@@ -118,10 +118,13 @@
 
 @section('js')
     <script>
+        jQuery("#tienda_ingreso").select2();
+        jQuery("#tienda_egreso").select2();
+
         jQuery("#product_id").on('change', function() {
             const productId = jQuery("#product_id").val();
             jQuery.ajax({
-                url: '{{ route('producto.check') }}',
+                url: '{{ route('ingresos.check') }}',
                 type: 'POST',
                 data: {
                     productId
@@ -220,7 +223,7 @@
                 }
             });
             jQuery.ajax({
-                url: '{{ route('product.ajuste-detalle.store') }}',
+                url: '{{ route('ingresos.ajuste-detalle.store') }}',
                 type: 'POST',
                 data: {
                     datos: arrMovimientos
@@ -243,7 +246,7 @@
         const actualizarIngreso = () => {
             const id = jQuery("#movement_id").val();
             jQuery.ajax({
-                url: '{{ route('detalle-movimiento.getMovements') }}',
+                url: '{{ route('ingresos.getMovements') }}',
                 type: 'GET',
                 data: {
                     id
@@ -277,13 +280,10 @@
                         },
                         success: function(data) {
                             if (data['type'] == 'success') {
-                                jQuery("#dataConfirm").html(data['html']);
-                                toastr.options = {
-                                    "progressBar": true,
-                                    "showDuration": "300",
-                                    "timeOut": "1000"
-                                };
-                                toastr.info("Eliminado ... ");
+                                actualizarIngreso();
+                                jQuery("#dataTemp").html('');
+                                jQuery("#product_id").val(null).trigger('change').select2(
+                                    'open');
                             }
                         }
                     })
@@ -291,47 +291,33 @@
             })
         }
 
-        const destroy_local = (id, route) => {
-            ymz.jq_confirm({
-                title: 'Eliminar',
-                text: "confirma borrar registro ?",
-                no_btn: "Cancelar",
-                yes_btn: "Confirma",
-                no_fn: function() {
+        const close_ajuste = (id) => {
+
+            let tiendaIngreso = jQuery("#tienda_ingreso").val();
+            let tiendaEgreso = jQuery("#tienda_egreso").val();
+            let registros = jQuery("#registros").val();
+
+            if (tiendaIngreso == 0 || tiendaEgreso == 0) {
+                toastr.error('Defina depósitos origen y destino de la mercadería ')
+                return false;
+            } else {
+                if (registros == 0) {
+                    toastr.error('Debe cargar al menos un producto a ajustar ')
                     return false;
-                },
-                yes_fn: function() {
-                    jQuery.ajax({
-                        url: route,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            id: id
-                        },
-                        success: function(data) {
-                            if (data['type'] == 'success') {
-                                let ruta = "{{ route('ingresos.index') }}";
-                                window.location = ruta;
-                            }
-                        }
-                    });
                 }
-            });
-        };
-
-        const close_compra = (id) => {
+            }
 
             ymz.jq_confirm({
-                title: 'Compra ',
-                text: "Confirma el cierre de la  compra ?",
+                title: 'Ajuste ',
+                text: "Confirma el cierre del ajuste ?",
                 no_btn: "Cancelar",
                 yes_btn: "Confirma",
                 no_fn: function() {
                     return false;
                 },
                 yes_fn: function() {
-                    let ruta = '{{ route('ingresos.close', ['id' => $movement->id]) }}';
-                    window.location = ruta;
+                    let url = `{{ route('ingresos.close.ajuste') }}?id=${id}&tiendaIngreso=${tiendaIngreso}&tiendaEgreso=${tiendaEgreso}`
+                    window.location = url;
                 }
             });
         };
