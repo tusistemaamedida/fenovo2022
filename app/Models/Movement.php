@@ -145,6 +145,7 @@ class Movement extends Model
                 return $Proveedor->name;
             case 'VENTA':
             case 'TRASLADO':
+            case 'AJUSTE':
             case 'DEVOLUCION':
             case 'VENTACLIENTE':
                 $Store = Store::find($this->from);
@@ -164,6 +165,7 @@ class Movement extends Model
             case 'COMPRA':
             case 'VENTA':
             case 'TRASLADO':
+            case 'AJUSTE':
             case 'DEVOLUCION':
                 $Store = Store::find($this->to);
                 if ($returnObject) {

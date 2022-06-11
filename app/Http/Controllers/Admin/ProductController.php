@@ -15,15 +15,12 @@ use App\Imports\movementImport;
 use App\Models\Movement;
 
 use App\Models\MovementProduct;
-use App\Models\MovementProductTemp;
-use App\Models\MovementTemp;
 use App\Models\Product;
 use App\Models\ProductDescuento;
 use App\Models\ProductPrice;
 use App\Models\Proveedor;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
-use App\Models\Store;
 use App\Repositories\AlicuotaTypeRepository;
 
 use App\Repositories\ProducDescuentoRepository;
@@ -802,97 +799,6 @@ class ProductController extends Controller
         }
 
         return view('admin.products.comparar');
-    }
-
-    public function ajustarStockDepositos(Request $request)
-    {
-        try {
-            DB::beginTransaction();
-            Schema::disableForeignKeyConstraints();
-            $number   = date('d') . date('m') . date('y') . date('H') . date('i');
-            $movement = MovementTemp::create([
-                'date'           => now(),
-                'type'           => 'AJUSTE',
-                'from'           => 1,
-                'user_id'        => \Auth::user()->id,
-                'to'             => \Auth::user()->store_active,
-                'status'         => 'CREATED',
-                'voucher_number' => $number,
-            ]);
-
-            $voucher_number           = $number . '-' . $movement->id;
-            $movement->voucher_number = $voucher_number;
-            $movement->save();
-
-            DB::commit();
-            Schema::enableForeignKeyConstraints();
-            return redirect()->route('products.ajustarStockDepositos.edit', ['id' => $movement->id]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            Schema::enableForeignKeyConstraints();
-            return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
-        }
-    }
-
-    public function ajustarStockDepositosEdit(Request $request)
-    {
-        $movement  = MovementTemp::find($request->id);
-        $productos = Product::selectRaw('id, CONCAT(name," - ",cod_fenovo) as nombreCompleto')->orderBy('name')->pluck('nombreCompleto', 'id');
-        $stores    = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
-
-        return view('admin.products.ajustar', compact('movement', 'productos', 'stores'));
-    }
-
-    public function ajustarStockStoreDetalle(Request $request)
-    {	
-        try {
-            $hoy = Carbon::parse(now())->format('Y-m-d');
-
-            foreach ($request->datos as $movimiento) {
-                $product               = Product::find($movimiento['product_id']);
-                $latest                = $product->stockReal(null, Auth::user()->store_active);
-                $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
-                $movimiento['balance'] = $balance;
-
-                $costo_fenovo = 0;
-                $unit_price   = 0;
-
-                MovementProductTemp::firstOrCreate(
-                    [
-                        'entidad_id'   => Auth::user()->store_active,
-                        'movement_id'  => $movimiento['movement_id'],
-                        'product_id'   => $movimiento['product_id'],
-                        'tasiva'       => $product->product_price->tasiva,
-                        'cost_fenovo'  => $costo_fenovo,
-                        'unit_price'   => $unit_price,
-                        'unit_package' => $movimiento['unit_package'],
-                        'unit_type'    => $movimiento['unit_type'],
-                        'invoice'      => $movimiento['invoice'],
-                        'cyo'          => $movimiento['cyo'],
-                    ],
-                    $movimiento
-                );
-            }
-            return new JsonResponse(['msj' => 'Guardado', 'type' => 'success']);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
-    }
-
-    public function check(Request $request)
-    {
-        try {
-            $productId      = $request->productId;
-            $producto       = Product::find($productId);
-            $presentaciones = explode('|', $producto->unit_package);
-            return new JsonResponse([
-                'type' => 'success',
-                'html' => view('admin.products.detalleTemp', compact('producto', 'presentaciones'))->render(),
-
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
     }
 
     public function printCompararStock(Request $request)
