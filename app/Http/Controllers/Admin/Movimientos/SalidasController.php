@@ -810,16 +810,32 @@ class SalidasController extends Controller
             $insert_data['iibb']         = $product->iibb;
             $insert_data['product_id']   = $product_id;
 
+            $SR   = $product->stock_r;
+            $SF   = $product->stock_f;
+            $ST   = $SF + $SR;
+            $coef_f = (int) round(($SF * 100) / $ST);
+
             for ($i = 0; $i < count($unidades); $i++) {
                 $unidad   = $unidades[$i];
                 $quantity = (float)$unidad['value'];
 
                 if ($quantity > 0) {
+                    $qty_f = (int) (($coef_f * $quantity) / 100);
+                    $qty_r = $quantity - $qty_f;
                     $explode                     = explode('_', $unidad['name']);
                     $insert_data['unit_package'] = $explode[1];
-                    $stock_en_session            = $this->sessionProductRepository->getCantidadTotalDeBultosByListId($product_id, $insert_data['unit_package'], $insert_data['list_id']);
-                    $insert_data['quantity']     = $quantity + $stock_en_session;
-                    $this->sessionProductRepository->updateOrCreate($insert_data);
+                    // Inserta session product en F
+                    $insert_data['circuito']     = 'F';
+                    $stock_en_session_f          = $this->sessionProductRepository->getCantidadTotalDeBultosByListId($product_id, $insert_data['unit_package'], $insert_data['list_id'],'F');
+                    $insert_data['quantity']     = $qty_f + $stock_en_session_f;
+                    if($insert_data['quantity'] > 0) $this->sessionProductRepository->updateOrCreate($insert_data);
+
+                    // Inserta session product en R
+                    $insert_data['circuito']     = 'R';
+                    $insert_data['invoice']      = 0;
+                    $stock_en_session_r          = $this->sessionProductRepository->getCantidadTotalDeBultosByListId($product_id, $insert_data['unit_package'], $insert_data['list_id'],'R');
+                    $insert_data['quantity']     = $qty_r + $stock_en_session_r;
+                    if($insert_data['quantity'] > 0) $this->sessionProductRepository->updateOrCreate($insert_data);
                 }
             }
             return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
@@ -923,6 +939,15 @@ class SalidasController extends Controller
 
             foreach ($session_products as $product) {
                 $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
+
+                if($product->circuito == 'F'){
+                    $product->producto->stock_f -= $cantidad;
+                }elseif($product->circuito == 'R'){
+                    $product->producto->stock_r -= $cantidad;
+                }
+
+                $product->producto->save();
+
                 if(isset($pedido)){
                     $ped_producto = PedidoProductos::where('pedido_id',$pedido->id)->where('product_id',$product->product_id)->first();
                     $ped_producto->bultos_enviados = $product->quantity;
@@ -945,7 +970,9 @@ class SalidasController extends Controller
                     'entidad_tipo'    => 'S',
                     'movement_id'     => $movement->id,
                     'product_id'      => $product->product_id,
-                    'unit_package'    => $product->unit_package, ], [
+                    'unit_package'    => $product->unit_package,
+                    'circuito'    => $product->circuito,
+                ], [
                         'invoice'     => $product->invoice,
                         'iibb'        => $product->iibb,
                         'unit_price'  => ($product->invoice) ? $product->unit_price : $product->neto,
@@ -955,7 +982,7 @@ class SalidasController extends Controller
                         'entry'       => 0,
                         'bultos'      => $product->quantity,
                         'egress'      => $cantidad,
-                        'balance'     => $balance,
+                        'balance'     => $balance
                     ]);
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
@@ -974,7 +1001,9 @@ class SalidasController extends Controller
                         'entidad_tipo'    => $entidad_tipo,
                         'movement_id'     => $movement->id,
                         'product_id'      => $product->product_id,
-                        'unit_package'    => $product->unit_package, ], [
+                        'unit_package'    => $product->unit_package,
+                        'circuito'        => $product->circuito,
+                     ], [
                             'invoice'     => $product->invoice,
                             'bultos'      => $product->quantity,
                             'cost_fenovo' => $product->costo_fenovo,
@@ -983,7 +1012,7 @@ class SalidasController extends Controller
                             'tasiva'      => $product->tasiva,
                             'unit_type'   => $product->unit_type,
                             'egress'      => 0,
-                            'balance'     => $balance,
+                            'balance'     => $balance
                         ]);
                 } else {
                     MovementProduct::updateOrCreate([
@@ -991,7 +1020,9 @@ class SalidasController extends Controller
                         'entidad_tipo'    => $entidad_tipo,
                         'movement_id'     => $movement->id,
                         'product_id'      => $product->product_id,
-                        'unit_package'    => $product->unit_package, ], [
+                        'unit_package'    => $product->unit_package,
+                        'circuito'        => $product->circuito,
+                    ], [
                             'invoice'     => $product->invoice,
                             'bultos'      => $product->quantity,
                             'cost_fenovo' => $product->costo_fenovo,

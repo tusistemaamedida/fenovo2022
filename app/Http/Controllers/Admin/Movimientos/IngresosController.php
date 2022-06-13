@@ -236,6 +236,7 @@ class IngresosController extends Controller
                 ]);
 
                 $p = Product::where('id', $movimiento['product_id'])->first();
+
                 if ($movimiento['cyo']) {
                     $p->stock_cyo = $p->stock_cyo + $movimiento['entry'];
                 } elseif ($movimiento['invoice']) {
@@ -329,7 +330,7 @@ class IngresosController extends Controller
                     return  $movement->voucher_number;
                 })
                 ->addColumn('accion', function ($movement) {
-                    return ($movement->status == 'FINISHED') 
+                    return ($movement->status == 'FINISHED')
                     ?'<a href="' . route('ingresos.ajustarStockDepositos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>'
                     :'<a href="' . route('ingresos.ajustarStockDepositos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
                 })
