@@ -117,6 +117,27 @@ class ProductController extends Controller
         return view('admin.products.list');
     }
 
+    public function listByStocks(Request $request)
+    {
+        if ($request->ajax()) {
+            $productos = $this->productRepository->all()->where('active', '=', 1);
+
+            return Datatables::of($productos)
+                ->addIndexColumn()
+                ->addColumn('stock', function ($product) {
+                    return $product->stockReal();
+                })
+                ->addColumn('ajuste', function ($producto) {
+                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
+                })
+                ->rawColumns(['stock','ajuste'])
+                ->make(true);
+        }
+
+        return view('admin.products.listByStock');
+    }
+
     public function historial(Request $request)
     {
         $producto = Product::find($request->id);
@@ -204,28 +225,25 @@ class ProductController extends Controller
             if ($product) {
                 $stock_presentaciones = [];
                 $presentaciones       = explode('|', $product->unit_package);
-                $stock_total          = $product->stockReal(null, \Auth::user()->store_active);
+                $stock_total          = $product->stockReal();
 
                 for ($i = 0; $i < count($presentaciones); $i++) {
                     $bultos                                   = 0;
                     $presentacion                             = ($presentaciones[$i] == 0) ? 1 : $presentaciones[$i];
-                    $stock                                    = $product->stockReal($presentacion, \Auth::user()->store_active);
                     $stock_presentaciones[$i]['presentacion'] = $presentacion;
                     $stock_presentaciones[$i]['unit_weight']  = $product->unit_weight;
-                    $stock_presentaciones[$i]['stock']        = $stock;
-                    // los bultos que hay disponibles se calcula dividiendo el balance por el peso del bulto
-                    $peso_por_bulto = $product->unit_weight * $presentacion;
-
-                    if ($stock) {
-                        $bultos = $stock / $peso_por_bulto;
-                    }
-                    $stock_presentaciones[$i]['bultos'] = (int)$bultos;
                 }
+            }
+
+            if($request->has('discriminado') && $request->input('discriminado')){
+                $view = 'admin.products.insertByAjaxStocks';
+            }else{
+                $view = 'admin.products.insertByAjax';
             }
 
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.products.insertByAjax', compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total'))->render(),
+                'html' => view($view, compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -304,6 +322,36 @@ class ProductController extends Controller
                 return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
             }
             return new JsonResponse(['msj' => 'Error en el ajuste', 'type' => 'error']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function ajustarByStock(Request $request)
+    {
+        try {
+            $valida = false;
+            $data   = $request->except('_token', 'product_id', 'user_id', 'observacion');
+
+            if(!isset($data['stock_f'])){
+                return new JsonResponse(['msj' => 'Complete el porcentaje.', 'type' => 'error']);
+            }
+
+            if($data['stock_f']<0 || $data['stock_f']>100){
+                return new JsonResponse(['msj' => 'El porcentaje debe ser mayor a 0 menor a 100.', 'type' => 'error']);
+            }
+
+            $producto         = Product::where('id', $request->product_id)->first();
+            $balance_producto = $producto->stock_f + $producto->stock_r;
+            $porc_blanco = $data['stock_f'];
+
+            $stock_b = (int) (($porc_blanco * $balance_producto) / 100);
+            $producto->stock_f = $stock_b;
+            $producto->stock_r = $balance_producto - $stock_b;
+            $producto->coeficiente_relacion_stock = $porc_blanco;
+            $producto->save();
+
+            return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
