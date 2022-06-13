@@ -35,6 +35,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -99,11 +100,10 @@ class ProductController extends Controller
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
                 ->addColumn('editar', function ($producto) {
-
                     $oferta = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
-                    $ruta = ($oferta)
-                    ?route('product.edit',['id' => $producto->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
-                    :route('product.edit', ['id' => $producto->id]);
+                    $ruta   = ($oferta)
+                    ? route('product.edit', ['id' => $producto->id, 'oferta_id' => $oferta->id, 'fecha_oferta' => $oferta->id]) . '#precios'
+                    : route('product.edit', ['id' => $producto->id]);
                     return '<a title="Editar" href="' . $ruta . '"><i class="fa fa-edit"></i></a>';
                 })
                 ->addColumn('borrar', function ($producto) {
@@ -192,9 +192,9 @@ class ProductController extends Controller
     public function ver(Request $request)
     {
         $oferta = SessionOferta::doesntHave('stores')->whereProductId($request->id)->first();
-        $ruta = ($oferta)
-        ?route('product.edit',['id' => $request->id, 'oferta_id' => $oferta->id,'fecha_oferta' => $oferta->id])."#precios"
-        :route('product.edit', ['id' => $request->id]);
+        $ruta   = ($oferta)
+        ? route('product.edit', ['id' => $request->id, 'oferta_id' => $oferta->id, 'fecha_oferta' => $oferta->id]) . '#precios'
+        : route('product.edit', ['id' => $request->id]);
         return redirect($ruta);
     }
 
@@ -366,7 +366,6 @@ class ProductController extends Controller
             $fecha_oferta               = $request->input('fecha_oferta');
             $product                    = $this->productRepository->getByIdWith($request->id);
 
-
             $ofertas           = SessionOferta::where('product_id', $request->id)->get();
             $oferta            = ($request->has('fecha_oferta')) ? SessionOferta::where('id', $request->oferta_id)->first() : null;
             $alicuotas         = $this->alicuotaTypeRepository->get('value', 'DESC');
@@ -521,7 +520,7 @@ class ProductController extends Controller
             $preciosCalculados = $this->calcularPrecios($request);
             $data              = array_merge($data, $preciosCalculados);
             $data['p2tienda']  = $data['p1tienda'];
-            $data['descp1']   = $data['descp2']   = 0;
+            $data['descp1']    = $data['descp2']    = 0;
             $oferta            = SessionOferta::updateOrCreate(['product_id' => $data['product_id']], $data);
 
             return new JsonResponse([

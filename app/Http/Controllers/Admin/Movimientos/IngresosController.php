@@ -9,13 +9,15 @@ use App\Models\MovementProductTemp;
 use App\Models\MovementTemp;
 use App\Models\Product;
 use App\Models\Proveedor;
+use App\Models\Store;
+
 use App\Repositories\ProductRepository;
 use App\Repositories\ProveedorRepository;
-use DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -233,12 +235,12 @@ class IngresosController extends Controller
                     'balance'      => $movimiento['balance'],
                 ]);
 
-                $p = Product::where('id',$movimiento['product_id'])->first();
-                if($movimiento['cyo']){
+                $p = Product::where('id', $movimiento['product_id'])->first();
+                if ($movimiento['cyo']) {
                     $p->stock_cyo = $p->stock_cyo + $movimiento['entry'];
-                }elseif($movimiento['invoice']){
+                } elseif ($movimiento['invoice']) {
                     $p->stock_f = $p->stock_f + $movimiento['entry'];
-                }else{
+                } else {
                     $p->stock_r = $p->stock_r + $movimiento['entry'];
                 }
                 $p->save();
@@ -290,7 +292,6 @@ class IngresosController extends Controller
                 'type' => 'success', ]
         );
     }
-
     public function getProveedorIngreso(Request $request)
     {
         $term        = $request->term ?: '';
@@ -302,5 +303,260 @@ class IngresosController extends Controller
         }
 
         return new JsonResponse($valid_names);
+    }
+    public function indexAjustarStock(Request $request)
+    {
+        if ($request->ajax()) {
+            $query1   = MovementTemp::whereType('AJUSTE')->orderBy('date', 'DESC')->get();
+            $query2   = Movement::whereType('AJUSTE')->whereColumn('from', '!=', 'to')->orderBy('date', 'DESC')->get();
+            $movement = $query1->merge($query2);
+
+            return Datatables::of($movement)
+                ->addIndexColumn()
+                ->addColumn('origen', function ($movement) {
+                    return $movement->From($movement->type);
+                })
+                ->addColumn('destino', function ($movement) {
+                    return $movement->To($movement->type);
+                })
+                ->editColumn('date', function ($movement) {
+                    return date('d-m-Y', strtotime($movement->date));
+                })
+                ->addColumn('items', function ($movement) {
+                    return '<span class="badge badge-primary">' . count($movement->movement_ingreso_products) . '</span>';
+                })
+                ->addColumn('voucher', function ($movement) {
+                    return  $movement->voucher_number;
+                })
+                ->addColumn('accion', function ($movement) {
+                    return ($movement->status == 'FINISHED') 
+                    ?'<a href="' . route('ingresos.ajustarStockDepositos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>'
+                    :'<a href="' . route('ingresos.ajustarStockDepositos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
+                })
+                ->addColumn('borrar', function ($movement) {
+                    $ruta = 'destroy(' . $movement->id . ",'" . route('ingresos.destroyTemp') . "')";
+                    return ($movement->status == 'CREATED') ? '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>' : null;
+                })
+
+                ->rawColumns(['origen', 'destino', 'date', 'items', 'voucher', 'accion', 'borrar'])
+                ->make(true);
+        }
+        return view('admin.movimientos.ingresos.indexAjustes');
+    }
+    public function ajustarStockDepositos(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
+            $number   = date('d') . date('m') . date('y') . date('H') . date('i');
+            $movement = MovementTemp::create([
+                'date'           => now(),
+                'type'           => 'AJUSTE',
+                'from'           => 0,
+                'to'             => 0,
+                'user_id'        => \Auth::user()->id,
+                'status'         => 'CREATED',
+                'voucher_number' => $number,
+            ]);
+
+            $voucher_number           = $number . '-' . $movement->id;
+            $movement->voucher_number = $voucher_number;
+            $movement->save();
+
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
+            return redirect()->route('ingresos.ajustarStockDepositos.edit', ['id' => $movement->id]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
+            return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
+        }
+    }
+    public function ajustarStockDepositosEdit(Request $request)
+    {
+        $movement    = MovementTemp::find($request->id);
+        $productos   = Product::selectRaw('id, CONCAT(name," - ",cod_fenovo) as nombreCompleto')->orderBy('name')->pluck('nombreCompleto', 'id');
+        $stores      = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
+        $movimientos = MovementProductTemp::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
+        return view('admin.movimientos.ingresos.ajustar', compact('movement', 'productos', 'stores', 'movimientos'));
+    }
+    public function ajustarStockDepositosShow(Request $request)
+    {
+        $movement    = Movement::query()->where('id', $request->id)->with('movement_ingreso_products')->first();
+        $movimientos = $movement->movement_ingreso_products;
+        return view('admin.movimientos.ingresos.showAjustes', compact('movement', 'movimientos'));
+    }
+    public function ajustarStockStoreDetalle(Request $request)
+    {
+        try {
+            $hoy = Carbon::parse(now())->format('Y-m-d');
+
+            foreach ($request->datos as $movimiento) {
+                $product               = Product::find($movimiento['product_id']);
+                $latest                = $product->stockReal(null, Auth::user()->store_active);
+                $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
+                $movimiento['balance'] = $balance;
+
+                $costo_fenovo = 0;
+                $unit_price   = 0;
+
+                MovementProductTemp::firstOrCreate(
+                    [
+                        'entidad_id'   => Auth::user()->store_active,
+                        'movement_id'  => $movimiento['movement_id'],
+                        'product_id'   => $movimiento['product_id'],
+                        'tasiva'       => $product->product_price->tasiva,
+                        'cost_fenovo'  => $costo_fenovo,
+                        'unit_price'   => $unit_price,
+                        'unit_package' => $movimiento['unit_package'],
+                        'unit_type'    => $movimiento['unit_type'],
+                        'invoice'      => $movimiento['invoice'],
+                        'cyo'          => $movimiento['cyo'],
+                    ],
+                    $movimiento
+                );
+            }
+            return new JsonResponse(['msj' => 'Guardado', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+    public function getMovements(Request $request)
+    {
+        try {
+            $movimientos = MovementProductTemp::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
+            return new JsonResponse([
+                'data' => $movimientos,
+                'type' => 'success',
+                'html' => view('admin.movimientos.ingresos.detalleConfirmAjuste', compact('movimientos'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+    public function check(Request $request)
+    {
+        try {
+            $productId      = $request->productId;
+            $producto       = Product::find($productId);
+            $presentaciones = explode('|', $producto->unit_package);
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.movimientos.ingresos.detalleTemp', compact('producto', 'presentaciones'))->render(),
+
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+    public function ajustarStockDepositosClose(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
+
+            $movement_id   = $request->id;
+            $tiendaIngreso = $request->tiendaIngreso;
+            $tiendaEgreso  = $request->tiendaEgreso;
+
+            // Obtengo los datos del movimiento
+            $movement_temp = MovementTemp::where('id', $movement_id)->with('movement_products')->first();
+
+            $count = Movement::where('to', $tiendaIngreso)->where('type', 'AJUSTE')->count();
+            $orden = ($count) ? $count + 1 : 1;
+
+            // Guardo el nuevo movimiento
+            $data['type']           = 'AJUSTE';
+            $data['to']             = $tiendaIngreso;
+            $data['from']           = $tiendaEgreso;
+            $data['date']           = $movement_temp->date;
+            $data['orden']          = $orden;
+            $data['status']         = 'FINISHED';
+            $data['voucher_number'] = $movement_temp->voucher_number;
+            $data['flete']          = $movement_temp->flete;
+            $data['observacion']    = 'AJUSTE ENTRE DEPOSITOS. DESDE ' . str_pad($tiendaEgreso, 3, '0', STR_PAD_LEFT) . ' HACIA ' . str_pad($tiendaIngreso, 3, '0', STR_PAD_LEFT);
+            $data['user_id']        = \Auth::user()->id;
+            $data['flete_invoice']  = 0;
+            $movement_new           = Movement::create($data);
+
+            $hoy = Carbon::parse(now())->format('Y-m-d');
+
+            // Recorro el arreglo y voy guardando
+            foreach ($movement_temp->movement_products as $movimiento) {
+                $cantidad = $movimiento['entry'];
+
+                // Ajustar tiendaEgreso
+                $product               = Product::find($movimiento['product_id']);
+                $latest                = $product->stockReal(null, $tiendaEgreso);
+                $balance               = $latest - $cantidad;
+                $movimiento['balance'] = $balance;
+
+                MovementProduct::create([
+                    'entidad_id'   => $tiendaEgreso,
+                    'movement_id'  => $movement_new->id,
+                    'entidad_tipo' => 'S',
+                    'product_id'   => $movimiento['product_id'],
+                    'unit_package' => $movimiento['unit_package'],
+                    'unit_type'    => $movimiento['unit_type'],
+                    'tasiva'       => $movimiento['tasiva'],
+                    'cost_fenovo'  => $movimiento['cost_fenovo'],
+                    'unit_price'   => $movimiento['unit_price'],
+                    'invoice'      => $movimiento['invoice'],
+                    'cyo'          => $movimiento['cyo'],
+                    'bultos'       => $movimiento['bultos'],
+                    'entry'        => 0,
+                    'egress'       => $cantidad,
+                    'balance'      => $movimiento['balance'],
+                ]);
+
+                // Ajustar tiendaIngreso
+                $product               = Product::find($movimiento['product_id']);
+                $latest                = $product->stockReal(null, $tiendaIngreso);
+                $balance               = ($latest) ? $latest + $cantidad : $cantidad;
+                $movimiento['balance'] = $balance;
+
+                MovementProduct::create([
+                    'entidad_id'   => $tiendaIngreso,
+                    'movement_id'  => $movement_new->id,
+                    'entidad_tipo' => 'S',
+                    'product_id'   => $movimiento['product_id'],
+                    'unit_package' => $movimiento['unit_package'],
+                    'unit_type'    => $movimiento['unit_type'],
+                    'tasiva'       => $movimiento['tasiva'],
+                    'cost_fenovo'  => $movimiento['cost_fenovo'],
+                    'unit_price'   => $movimiento['unit_price'],
+                    'invoice'      => $movimiento['invoice'],
+                    'cyo'          => $movimiento['cyo'],
+                    'bultos'       => $movimiento['bultos'],
+                    'entry'        => $cantidad,
+                    'egress'       => 0,
+                    'balance'      => $movimiento['balance'],
+                ]);
+
+                $p = Product::where('id', $movimiento['product_id'])->first();
+                if ($movimiento['cyo']) {
+                    $p->stock_cyo = $p->stock_cyo + $cantidad;
+                } elseif ($movimiento['invoice']) {
+                    $p->stock_f = $p->stock_f + $cantidad;
+                } else {
+                    $p->stock_r = $p->stock_r + $cantidad;
+                }
+                $p->save();
+            }
+
+            // Elimino el Movimiento temporal
+            MovementTemp::find($request->id)->delete();
+            MovementProductTemp::whereMovementId($request->id)->delete();
+
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
+
+            return redirect()->route('ingresos.ajustarStockIndex');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
+            dd($e->getMessage());
+            return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
+        }
     }
 }

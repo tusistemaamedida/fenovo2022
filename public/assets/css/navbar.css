@@ -12,7 +12,6 @@
     line-height: 1;
     background-color: transparent;
     border: 1px solid white;
-
 }
 
 .nav-link {
@@ -30,11 +29,10 @@
 }
 
 .navbar-brand {
-
     color: #fff;
     font-family: 'Allerta Stencil', sans-serif;
     margin-bottom: 4px;
-    font-size: 27px;
+    font-size: 1.2em;
 }
 
 .navbar-red:hover .wrapper-f {
@@ -53,3 +51,19 @@
 .all-show {
     z-index: 10;
 }
+
+.navbar .nav-item:not(:last-child) {
+    margin-right: 5px;
+  }
+   
+  .dropdown-toggle::after {
+     transition: transform 0.15s linear; 
+  }
+   
+  .show.dropdown .dropdown-toggle::after {
+    transform: translateY(3px);
+  }
+  
+  .dropdown-menu {
+    margin-top: 0;
+  }
