@@ -72,7 +72,12 @@
                                                                 <input type="text" id="cuit" name="cuit" @if (isset($proveedor)) value="{{$proveedor->cuit}}" @else value="" @endif class="form-control">
                                                             </div>
 
-                                                            <div class="col-6">
+                                                            <div class="col-2">
+                                                                <label class="text-dark">Punto Venta</label>
+                                                                <input type="text" id="punto_venta" name="punto_venta" @if (isset($proveedor)) value="{{$proveedor->punto_venta}}" @else value="" @endif class="form-control">
+                                                            </div>
+
+                                                            <div class="col-4">
                                                                 <label class="text-dark">E-mail</label>
                                                                 <input type="text" id="email" name="email" @if (isset($proveedor)) value="{{$proveedor->email}}" @else value="" @endif class="form-control" required>
                                                             </div>

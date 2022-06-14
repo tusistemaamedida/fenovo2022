@@ -41,7 +41,8 @@ class MovementProduct extends Model
         'entry',
         'egress',
         'balance',
-        'circuito'
+        'circuito',
+        'punto_venta'
     ];
 
     public function movement()
