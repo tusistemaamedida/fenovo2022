@@ -402,7 +402,8 @@
             jQuery('#closeSalida').removeClass('offcanvas-on');
         })
 
-        jQuery("#btnCloseSalida").click(function() {
+        jQuery("#btnCloseSalida").click(function(e) {
+            e.preventDefault();
             var url = "{{ route('guardar.salida') }}";
             var formData = jQuery("#formGuardarSalida").serialize();
             jQuery.ajax({
@@ -410,6 +411,7 @@
                 type: 'POST',
                 data: formData,
                 beforeSend: function() {
+                    jQuery("#btnCloseSalida").attr('disabled',true);
                     jQuery('#loader').removeClass('hidden');
                 },
                 success: function(data) {
@@ -421,8 +423,8 @@
                     } else {
                         toastr.info(data['msj'], 'EXITO');
                         setTimeout(() => {
-                            window.location.reload()
-                        }, 1200);
+                            window.location.href = "{{route('salidas.index')}}"
+                        }, 600);
                     }
                 },
                 error: function(data) {},
