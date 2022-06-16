@@ -10,14 +10,15 @@
 
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown mt-2" title="Lista de productos">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-barcode"></i> </span>
                     </a>
                     <div class="dropdown-menu bg-dark">
                         <a class="dropdown-item" href="{{ url('productos') }}">
                             <span class="text-black-50"> Lista de productos </span>
                         </a>
-                        
+
                         <a class="dropdown-item" href="{{ route('products.compararStock') }}">
                             <span class="text-black-50">Comparar stocks</span>
                         </a>
@@ -25,22 +26,23 @@
                             <span class="text-black-50">Ajustes de stocks depósitos</span>
                         </a>
 
-                        <a class="dropdown-item" href="{{url('oferta')}}" title="Oferta de precios">
+                        <a class="dropdown-item" href="{{ url('oferta') }}" title="Oferta de precios">
                             <span class="text-black-50">Ofertas</span>
                         </a>
 
-                        <a class="dropdown-item" href="{{url('actualizacion')}}" title="Actualización de precios">
+                        <a class="dropdown-item" href="{{ url('actualizacion') }}" title="Actualización de precios">
                             <span class="text-black-50">Actualizaciones</span>
                         </a>
 
-                        <a class="dropdown-item" href="{{url('descuento')}}" title="Lista de descuentos">
+                        <a class="dropdown-item" href="{{ url('descuento') }}" title="Lista de descuentos">
                             <span class="text-black-50">Descuentos</span>
                         </a>
                     </div>
                 </li>
 
                 <li class="nav-item dropdown mt-2" title="Compras">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-cart-arrow-down"></i>
                     </a>
                     <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
@@ -53,9 +55,10 @@
                     </div>
                 </li>
 
-                
+
                 <li class="nav-item dropdown mt-2" title="Salidas">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-dolly-flatbed"></i>
                     </a>
                     <div class="dropdown-menu bg-dark">
@@ -77,14 +80,16 @@
                     </div>
                 </li>
 
-                <li class="nav-item" title="@if ($nroPedidos > 0) Tiene {{ $nroPedidos }} pedido pendientes @else Lista de pedidos @endif ">
+                <li class="nav-item"
+                    title="@if ($nroPedidos > 0) Tiene {{ $nroPedidos }} pedido pendientes @else Lista de pedidos @endif ">
                     <a href="{{ route('pedidos.index') }}" class="nav-link mt-2">
                         @if ($nroPedidos > 0)
-                            <i class="fas fa-list text-primary"></i> <span class="text-primary">{{ $nroPedidos }}</span>
+                            <i class="fas fa-list text-primary"></i> <span
+                                class="text-primary">{{ $nroPedidos }}</span>
                         @else
                             <i class="fas fa-list"></i>
                         @endif
-                        
+
                     </a>
                 </li>
 
@@ -113,7 +118,8 @@
                 </li>
 
                 <li class="nav-item dropdown mt-2">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-cogs"></i>
                     </a>
                     <div class="dropdown-menu bg-dark">
@@ -140,7 +146,8 @@
                 </li>
 
                 <li class="nav-item dropdown mt-2" title="Transporte">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-shipping-fast"></i>
                     </a>
                     <div class="dropdown-menu bg-dark">
@@ -161,7 +168,7 @@
             </ul>
 
             <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-                <li class="nav-item">
+                <li class="nav-item" title="Opciones del usuario">
                     <a href="{{ route('users.editProfile') }}" class="nav-link">
                         [ <i class="fa fa-user "></i> {{ ucfirst(Auth::user()->username) }} ]
                     </a>
@@ -170,8 +177,8 @@
             <div class="d-flex flex-column sim">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class=" btn nav-link">
-                        <span class="text-white">Salir</span> <i class="fas fa-sign-out-alt text-white"></i>
+                    <button type="submit" class=" btn nav-link" title="Salir">
+                        <i class="fas fa-sign-out-alt text-white"></i>
                     </button>
                 </form>
             </div>

@@ -56,7 +56,6 @@ class UserController extends Controller
                 ->addColumn('asociadas', function ($user) {
                     return count($user->stores);
                 })
-
                 ->addColumn('edit', function ($user) {
                     $ruta = 'edit(' . $user->id . ",'" . route('users.edit') . "')";
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
