@@ -30,11 +30,7 @@ class StoreController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $store = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
-            } else {
-                $store = Auth::user()->stores;
-            }
+            $store = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
             return Datatables::of($store)
                 ->addIndexColumn()
                 ->addColumn('cod_fenovo', function ($store) {

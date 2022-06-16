@@ -30,22 +30,15 @@
 
                     <div class="card card-body gutter-b bg-white border-0" data-aos="fade-up">
                         <div class="row">
-                            <div class="col-2">
-                                <button class="btn btn-outline-dark">
-                                    <i class="fa fa-arrow-alt-circle-left" @click="anteriorRegistro"></i>
-                                </button>
+                            <div class="col-8"> 
+                                Valor buscado <span class=" font-weight-bolder"> @{{ txtLocalidad }} </span>
                             </div>
-                            <div class="col-2">
-                                <button class="btn btn-outline-dark">
-                                    <i class="fa fa-arrow-alt-circle-right" @click="siguienteRegistro"></i>
-                                </button>
-                            </div>
-                            <div class="col-8">
+                            <div class="col-4">
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="basic-addon1"><i class=" fa fa-search"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" @keyup ="buscarRegistro" >
+                                    <input type="text" class="form-control" @keyup ="buscarRegistro" v-model="txtLocalidad">
                                 </div>
                             </div>
                         </div>
@@ -55,7 +48,6 @@
                                     <table class="table table-hover table-striped" id="tablaLocalidades">
                                         <thead>
                                             <tr>
-                                                <th>Id</th>
                                                 <th>Localidad</th>
                                                 <th>Departamento</th>
                                                 <th>Provincia</th>
@@ -65,8 +57,7 @@
                                         </thead>
                                         <tbody>
                                             <tr v-for="localidad in localidades">
-                                                <td> @{{ localidad.id }}</td>
-                                                <td> @{{ localidad.nombre }}</td>
+                                                <td class="w-25"> @{{ localidad.nombre }}</td>
                                                 <td> @{{ localidad.departamento }}</td>
                                                 <td> @{{ localidad.provincia }} </td>
                                                 <td> <a href="javascript:void(0)" class="btn btn-light btn-sm"
@@ -79,7 +70,17 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row">
+                            <div class="col-10"></div>
+                            <div class="col-2">
+                                <button class="btn btn-sm btn-outline-dark">
+                                    <i class="fa fa-arrow-alt-circle-left" @click="anteriorRegistro"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-dark">
+                                    <i class="fa fa-arrow-alt-circle-right" @click="siguienteRegistro"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

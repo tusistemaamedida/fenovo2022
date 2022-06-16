@@ -16,51 +16,47 @@
 
 @section('content')
 
-<div class="d-flex flex-column-fluid">
-    <div class="container-fluid addproduct-main">
-
-        <div class="row">
-            <div class="col-lg-12 col-xl-12">
-                <div class="card card-custom gutter-b bg-white border-0">
-
-                    <div class="row">
-                        <div class="col-xs-12 col-md-6">
-                            <div class="card-header align-items-center  border-0">
-                                <div class="card-title mb-0">
-                                    <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Editar Producto - <small>{{ $product->cod_fenovo }} :: {{ $product->name }}</small>
-                                    </h4>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-md-6 mt-4 text-right">
-                            @can('products.create')
-                            <a href="{{url('oferta')}}" title="Oferta de precios" class="mr-3">
-                                Ofertas
-                            </a>
-                            <a href="{{url('actualizacion')}}" title="Actualización de precios" class="mr-3">
-                                Actualizaciones
-                            </a>
-                            @endcan
+<div class="row mt-5">
+    <div class="col-lg-12 col-xl-12">
+        <div class="card card-custom gutter-b bg-white border-0">
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+                    <div class="card-header align-items-center  border-0">
+                        <div class="card-title mb-0">
+                            <h4 class="card-label mb-0 font-weight-bold text-body">
+                                Editar Producto - <small>{{ $product->cod_fenovo }} :: {{ $product->name }}</small>
+                            </h4>
                         </div>
                     </div>
+                </div>
+                <div class="col-xs-12 col-md-6 mt-4 text-right">
+                    @can('products.create')
+                    <a href="{{url('oferta')}}" title="Oferta de precios" class="mr-3">
+                        Ofertas
+                    </a>
+                    <a href="{{url('actualizacion')}}" title="Actualización de precios" class="mr-3">
+                        Actualizaciones
+                    </a>
+                    @endcan
+                </div>
+            </div>
 
                     <div class="card-body">
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
                                 <ul class="nav nav-pills mb-3" id="pills-tab1" role="tablist">
                                     <li class="nav-item mr-2">
-                                        <a class="nav-link btn-light active shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="true">
+                                        <a class="nav-link btn-dark active shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="true">
                                             Precios
                                         </a>
                                     </li>
                                     <li class="nav-item mr-2" id="nav-item-precios">
-                                        <a class="nav-link btn-light shadow-none" id="detalle-tab-basic" data-toggle="pill" href="#detalle" role="tab" aria-controls="detalle" aria-selected="false">
+                                        <a class="nav-link btn-dark shadow-none" id="detalle-tab-basic" data-toggle="pill" href="#detalle" role="tab" aria-controls="detalle" aria-selected="false">
                                             Detalles
                                         </a>
                                     </li>
                                     <li class="nav-item mr-2" id="nav-item-imagenes">
-                                        <a class="nav-link btn-light shadow-none" id="imagenes-tab-basic" data-toggle="pill" href="#imagenes" role="tab" aria-controls="imagenes" aria-selected="false">
+                                        <a class="nav-link btn-dark shadow-none" id="imagenes-tab-basic" data-toggle="pill" href="#imagenes" role="tab" aria-controls="imagenes" aria-selected="false">
                                             Imágenes
                                         </a>
                                     </li>
@@ -110,11 +106,54 @@
                             </form>
                         </div>
                     </div>
+                    <div class="col-xs-12 col-md-6">
+                        @include('admin.products.search')
+                    </div>
+
+                </div>
+                <div class="row">
+                    <form method="POST" action="{{route('product.update')}}" id="formData">
+                        @csrf
+                        @if (isset($product))
+                        <input type="hidden" name="product_id" id="product_id" value="{{$product->id}}">
+                        <input type="hidden" name="fecha_actualizacion_activa" id="fecha_actualizacion_activa" value="{{$fecha_actualizacion_activa}}">
+                        <input type="hidden" name="fecha_actualizacion_label" id="fecha_actualizacion_label" value="{{$fecha_actualizacion_label}}">
+                        @else
+                        <input type="hidden" name="product_id" id="product_id" value="0">
+                        @endif
+
+                        @if(Request::get('fecha_oferta') !== null)
+                        <input type="hidden" name="oferta_id" id="oferta_id" value="{{$oferta->id}}">
+                        @else
+                        <input type="hidden" name="oferta_id" id="oferta_id" value="0">
+                        @endif
+
+                        <div class="col-12">
+                            <div class="tab-content" id="v-pills-tabContent1">
+                                <div class="tab-pane fade show active" id="precios" role="tabpanel" aria-labelledby="home-tab-basic">
+                                    @include('admin.products.form-product-prices')
+                                </div>
+                                <div class="tab-pane fade" id="detalle" role="tabpanel" aria-labelledby="service-tab-basic">
+                                    @include('admin.products.form-product-details')
+                                </div>
+                                <div class="tab-pane fade" id="imagenes" role="tabpanel" aria-labelledby="account-tab-basic">
+                                    @include('admin.products.form-product-images')
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (isset($product))
+                        <div class="col-12" style="float: right">
+                            <button type="button" id="btn_product" disabled  class="btn btn-primary" onclick="updateProduct('{{ route('product.update') }}')" style="float: right"><i class="fa fa-save"></i> Guardar</button>
+                        </div>
+                        @endif
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+    
 @endsection
 
 @section('js')
