@@ -715,6 +715,10 @@ class SalidasController extends Controller
             $product_id          = $request->input('product_id');
             $unit_type           = $request->input('unit_type');
 
+            if (!$to || $to_type == '') {
+                return new JsonResponse(['msj' => 'Ingrese el tipo de movimiento.', 'type' => 'error', 'index' => 'to_type']);
+            }
+
             if (!$to) {
                 return new JsonResponse(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
             }
