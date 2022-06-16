@@ -6,6 +6,7 @@ var app = Vue.createApp({
     data() {
         return {
             pagina:1,
+            txtLocalidad : '',
             localidades: [],
             errors: [],
             localidad: {
@@ -17,27 +18,27 @@ var app = Vue.createApp({
         }
     },
     created() {
-        this.getLocalidades(this.pagina);
+        this.getLocalidades();
     },
     methods: {
         // Obtener localidades
-        getLocalidades: function (pagina) {
-            console.log(pagina);
-            const urlLocalidades = URL_SERVER + `/getLocalidades?page=${pagina}`;
+        getLocalidades: function () {
+            const urlLocalidades = URL_SERVER + `/getLocalidades?page=${this.pagina}&localidad=${this.txtLocalidad}`;
             axios.get(urlLocalidades).then(response => {
                 this.localidades = response.data.data
             })
         },
         siguienteRegistro: function(){
             this.pagina ++;
-            this.getLocalidades(this.pagina);
+            this.getLocalidades();
         },
         anteriorRegistro: function(){
             if(this.pagina > 1) this.pagina --;
-            this.getLocalidades(this.pagina);
+            this.getLocalidades();
         },
         buscarRegistro: function(){
-            console.log('llega');
+            console.log(this.txtLocalidad);
+            this.getLocalidades()
         },
         // Crear DataTable
         crearTabla: function () {
