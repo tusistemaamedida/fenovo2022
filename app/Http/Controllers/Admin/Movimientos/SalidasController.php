@@ -1134,7 +1134,6 @@ class SalidasController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             Schema::enableForeignKeyConstraints();
-            dd($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
