@@ -10,7 +10,7 @@
                 <div class="card-header align-items-center  border-0">
                     <div class="card-title mb-0">
                         <h4 class="card-label mb-0 font-weight-bold text-body">
-                            Ajustar de stock de productos
+                            Ajustar de stock de producto
                         </h4>
                     </div>
                 </div>
@@ -21,18 +21,7 @@
         </div>
 
         <div class="card-body" style="min-height: 500px">
-            <div class="row mb-2">
-                <div class="col-xs-12 col-md-4">
-                    <fieldset class="form-group mb-3 d-flex">
-                        <select class="js-example-basic-single js-states form-control bg-transparent" name="buscar_producto"
-                            id="buscar_producto">
-                        </select>
-                    </fieldset>
-                </div>
-            </div>
-
-            <div id="info-stock"> </div>
-
+            @include('admin.products.ajustar-stock-detail')
         </div>
     </div>
 @endsection

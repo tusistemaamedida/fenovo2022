@@ -22,9 +22,6 @@
                         <a class="dropdown-item" href="{{ route('products.compararStock') }}">
                             <span class="text-black-50">Comparar stocks</span>
                         </a>
-                        <a class="dropdown-item" href="{{ route('ajustar.stock.opcion') }}">
-                            <span class="text-black-50">Ajustar stock de producto</span>
-                        </a>
                         <a class="dropdown-item" href="{{ route('ingresos.ajustarStockIndex') }}">
                             <span class="text-black-50">Ajustes de stocks entre depósitos</span>
                         </a>

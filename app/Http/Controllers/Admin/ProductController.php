@@ -95,8 +95,8 @@ class ProductController extends Controller
                     return '<a href="' . route('product.historial', ['id' => $producto->id]) . '"> <i class="fa fa-list" aria-hidden="true"></i> </a>';
                 })
                 ->addColumn('ajuste', function ($producto) {
-                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
-                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
+                    $ruta =  route('getData.stock.detail',['id'=>$producto->id ]);
+                    return '<a href="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
                 ->addColumn('editar', function ($producto) {
                     $oferta = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
@@ -377,10 +377,8 @@ class ProductController extends Controller
                 $stock_presentaciones[$i]['unit_weight']  = $product->unit_weight;
             }
 
-            return new JsonResponse([
-                'type' => 'success',
-                'html' => view('admin.products.ajustar-stock-detail', 
-                compact('product', 'presentaciones', 'stock', 'stock_presentaciones'))->render(),  ]);
+            return  view('admin.products.ajustar-stock',
+                compact('product', 'presentaciones', 'stock', 'stock_presentaciones'));
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
@@ -395,7 +393,7 @@ class ProductController extends Controller
         foreach ($products as $product) {
             $valid_names[] = [
                 'id'       => $product->id,
-                'text'     =>  $product->cod_fenovo.' '.$product->name 
+                'text'     =>  $product->cod_fenovo.' '.$product->name
             ];
         }
 
@@ -403,22 +401,22 @@ class ProductController extends Controller
     }
 
     public function ajustarStockStore(Request $request)
-    {	
-        try {            
+    {
+        try {
 
             $producto = Product::find($request->product_id);
             $cantidad = $request->cantidad;
-            
+
             switch ($request->tipo) {
                 case 'F':
-                    $producto->stock_f =  ($request->operacion == 'suma') ? $producto->stock_f +  $cantidad: $producto->stock_f -  $cantidad; 
+                    $producto->stock_f =  ($request->operacion == 'suma') ? $producto->stock_f +  $cantidad: $producto->stock_f -  $cantidad;
                     break;
                 case 'R':
-                    $producto->stock_r =  ($request->operacion == 'suma') ? $producto->stock_r +  $cantidad: $producto->stock_r -  $cantidad; 
+                    $producto->stock_r =  ($request->operacion == 'suma') ? $producto->stock_r +  $cantidad: $producto->stock_r -  $cantidad;
                     break;
                 case 'CyO':
-                    $producto->stock_cyo =  ($request->operacion == 'suma') ? $producto->stock_cyo +  $cantidad: $producto->stock_cyo -  $cantidad; 
-                    break;    
+                    $producto->stock_cyo =  ($request->operacion == 'suma') ? $producto->stock_cyo +  $cantidad: $producto->stock_cyo -  $cantidad;
+                    break;
             }
             $producto->save();
             $stock = $producto->stockReal();
@@ -426,7 +424,7 @@ class ProductController extends Controller
             $from  = \Auth::user()->store_active;
             $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();
             $orden = ($count) ? $count + 1 : 1;
-            
+
             // Inserta movimiento de Ajuste
             $insert_data                   = [];
             $insert_data['type']           = 'AJUSTE';
