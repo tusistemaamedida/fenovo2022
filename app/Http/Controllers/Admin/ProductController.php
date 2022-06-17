@@ -117,6 +117,11 @@ class ProductController extends Controller
         return view('admin.products.list');
     }
 
+    public function index(Request $request)
+    {
+        return view('admin.products.index');
+    }
+
     public function historial(Request $request)
     {
         $producto = Product::find($request->id);
