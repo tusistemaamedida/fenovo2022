@@ -187,7 +187,7 @@ class NotasCreditoController extends Controller
                         $producto = Product::find($product->producto->id);
                         $producto->stock_f += $cantidad;
                         $producto->save();
-                        $balance = ($product->producto->stock_f + $product->producto->stock_r + $product->producto->stock_cyo) + $cantidad;
+                        $balance = $product->producto->stockReal() + $cantidad;
                     } else {
                         // A otros :: Depósito Reclamos
                         $latest = MovementProduct::all()
