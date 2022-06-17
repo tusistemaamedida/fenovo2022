@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <div class="card-body" style="min-height: 500px">
+        <div class="card-body" style="min-height: 500px" id="info-stock">
             @include('admin.products.ajustar-stock-detail')
         </div>
     </div>
@@ -29,49 +29,7 @@
 @section('js')
     @parent
     <script>
-        jQuery('#buscar_producto').select2({
-            placeholder: 'Codigo fenovo / Nombre del producto ',
-            minimumInputLength: 2,
-            tags: false,
-            ajax: {
-                dataType: 'json',
-                url: '{{ route('productos.buscar.nombre') }}',
-                delay: 50,
-                data: function(params) {
-                    return {
-                        term: params.term
-                    }
-                },
-                processResults: function(data) {
-                    return {
-                        results: data
-                    };
-                },
-            }
-        }).select2('open');
-
-        jQuery('#buscar_producto').change(function() {
-            cargarProducto();
-        })
-
-        const cargarProducto = () => {
-            var id = jQuery("#buscar_producto").val();
-            jQuery('#product_id').val(jQuery("#buscar_producto").val());
-            var route = '{{ route('getData.stock.detail') }}';
-
-            jQuery.ajax({
-                url: route,
-                type: 'GET',
-                data: {
-                    id
-                },
-                success: function(data) {
-                    if (data['type'] == 'success') {
-                        jQuery("#info-stock").html(data['html']);
-                    }
-                }
-            });
-        }
+        toastr.options.positionClass = 'toast-bottom-right';
 
         const sumar = (objeto) => {
 
@@ -96,7 +54,7 @@
                     let unit_type = jQuery("#unit_type").val();
                     let presentacion = presentacion_input[1];
 
-                    if(valor > 0){
+                    if (valor > 0) {
                         observacion += valor + ' x ' + presentacion + ', ';
                     }
 
@@ -117,14 +75,10 @@
         const ajustar = () => {
 
             if (jQuery('#cantidad').val() <= 0) {
-                toastr.options.positionClass = 'toast-bottom-right';
-                toastr.error('Cantidad debe ser superior a 0', "Ajuste");
+                toastr.error('La cantidad de <strong>bultos debe ser superior a 0 </strong>', "Ajuste");
                 return false
             }
-
             var url = "{{ route('ajustar.stock.store') }}";
-
-
             jQuery.ajax({
                 url: url,
                 type: 'POST',
@@ -134,8 +88,8 @@
                 },
                 success: function(data) {
                     if (data['type'] = 'success') {
-                        cargarProducto();
-                        toastr.info(data['msj'], 'Ajustado');
+                        jQuery("#info-stock").html(data['html']);
+                        toastr.error(data['msj'], 'Ajustado');
                     } else {
                         toastr.error(data['msj'], 'Verifique');
                     }

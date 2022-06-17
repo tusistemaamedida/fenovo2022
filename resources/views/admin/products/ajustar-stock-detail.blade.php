@@ -18,7 +18,7 @@
     </div>
     <div class="row">
         <div class="col-xs-12 col-md-6">
-            <table style="width: 100%; font-size: 1.2em;  height: 50px;">
+            <table class="table">
                 <tr>
                     <td colspan="2"><br></td>
                 </tr>
@@ -60,7 +60,7 @@
             <input type="hidden" name="unit_weight" id="unit_weight" value="{{ $product->unit_weight }}">
             <input type="hidden" name="bultos" id="bultos">
 
-            <table style="width: 100%; font-size: 1.2em;  height: 50px;">
+            <table class="table">
                 <tr>
                     <td colspan="2"><br></td>
                 </tr>
@@ -76,7 +76,7 @@
 
                     <tr>
                         <th class="text-center">
-                            <h4>{{ $stock_presentaciones[$i]['presentacion'] }}</h4>
+                            {{ $stock_presentaciones[$i]['presentacion'] }}
                         </th>
                         <td class="text-center">
                             <input type="text" name="unidades_{{ $stock_presentaciones[$i]['presentacion'] }}"
@@ -86,17 +86,21 @@
                         </td>
                     </tr>
                 @endfor
+
                 <tr>
-                    <td colspan="2"><br></td>
+                    <td>Observaciones / comentarios del ajuste</td>
+                    <th>
+                        <input type="text" name="observacion" id="observacion" class="form-control bg-white">
+                    </th>
                 </tr>
                 <tr>
                     <th>
-                        AJUSTAR
+
                     </th>
                     <th class=" text-center">
                         <a href="javascript:ajustar()" id="btnAplicar" class="btn btn-block btn-danger"
                             title="Ajustar stock ">
-                            <i class="fas fa-wrench text-white"></i>
+                            Ajustar stock
                         </a>
                     </th>
                 </tr>
@@ -106,54 +110,47 @@
                 <tr>
                     <td>OPERACION </td>
                     <th>
-                        <div class="form-check form-check-inline">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="operacion" checked value="suma">
-                                SUMAR
-                            </label>
-                        </div>
-                    
-                        <div class="form-check form-check-inline text-right">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="operacion" value="resta">
-                                RESTAR
-                            </label>
+                        <div class="row">
+                            <div class="col-6 text-center">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="operacion" checked
+                                        value="suma">
+                                    SUMA
+                                </label>
+                            </div>
+                            <div class="col-6 text-center">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="operacion" value="resta">RESTA
+                                </label>
+                            </div>
                         </div>
                     </th>
-                </tr>
-                <tr>
-                    <td colspan="2"><br></td>
                 </tr>
                 <tr>
                     <td>TIPO</td>
                     <th>
-                        <div class="form-check form-check-inline">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="tipo" checked value="F">
-                                FACTURADO
-                            </label>
+                        <div class="row">
+                            <div class="col-4 text-center">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="tipo" checked
+                                        value="F">
+                                    Factura
+                                </label>
+                            </div>
+                            <div class="col-4 text-center">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="tipo" value="R">
+                                    Remito
+                                </label>
+                            </div>
+                            <div class="col-4 text-center">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="radio" name="tipo" value="CyO">
+                                    Cta-Orden
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="tipo" value="R">
-                                REMITO
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="tipo" value="CyO">
-                                CTAyORDEN
-                            </label>
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <td colspan="2"><br></td>
-                </tr>
-                <tr>
-                    <td>OBSERVACIONES</td>
-                    <th>
-                        <input type="text" name="observacion" id="observacion" class="form-control">
+
                     </th>
                 </tr>
                 <tr>
