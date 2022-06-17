@@ -139,7 +139,6 @@
                     jQuery("#session_products_table").html('')
                 },
                 success: function(data) {
-
                     jQuery("#session_products_table").html(data['html']);
                     jQuery("#btnOpenCerrarNC").attr('disabled', false);
                     jQuery("#session_list_id").val(list_id);

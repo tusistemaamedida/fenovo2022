@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -64,19 +65,18 @@ class Movement extends Model
 
     public function movement_salida_products()
     {
-        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('circuito',"!=",'CyO');
+        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('circuito', '!=', 'CyO');
     }
 
     public function salida_products_no_cyo()
     {
-        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('circuito',"!=",'CyO');
+        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('circuito', '!=', 'CyO');
     }
 
     public function salida_products_cyo()
     {
-        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('circuito','CyO');
+        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('circuito', 'CyO');
     }
-
 
     public function movement_ingreso_products()
     {
@@ -101,6 +101,12 @@ class Movement extends Model
     public function invoice()
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function invoice_fenovo()
+    {
+        $pto_vta = env('PTO_VTA_FENOVO');
+        return $invoice   = $this->invoice->where('pto_vta', $pto_vta)->first();
     }
 
     public function panamas()
@@ -158,6 +164,7 @@ class Movement extends Model
             case 'TRASLADO':
             case 'AJUSTE':
             case 'DEVOLUCION':
+            case 'DEBITO':
             case 'VENTACLIENTE':
                 $Store = Store::find($this->from);
                 if ($returnObject) {
@@ -177,6 +184,7 @@ class Movement extends Model
             case 'VENTA':
             case 'TRASLADO':
             case 'AJUSTE':
+            case 'DEBITO':
             case 'DEVOLUCION':
                 $Store = Store::find($this->to);
                 if ($returnObject) {

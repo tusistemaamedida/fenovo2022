@@ -42,7 +42,5 @@ Route::get('total-del-movimiento', [SalidasController::class, 'getTotalMovement'
 
 Route::get('actualizar-costos', [SalidasController::class, 'updateCostos'])->name('create.panamas');
 
-//Route::get('update-stock', [SalidasController::class, 'updateStock'])->name('actualizar.temp.stock');
-//Route::get('update-stock/{cod_fenovo}', [SalidasController::class, 'updateStock']);
 Route::get('update-jurisdiccion', [SalidasController::class, 'updateJurisdiccion']);
 Route::post('salidas-pendiente-cambiar-pausa', [SalidasController::class, 'cambiarPausaSalida'])->name('cambiar.pausa.salida');

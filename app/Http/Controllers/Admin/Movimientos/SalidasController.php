@@ -66,12 +66,10 @@ class SalidasController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-            if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('date')->sortByDesc('id');
-            } else {
-                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
-            }
+            
+            $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];            
+            $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('date')->sortByDesc('id');
+            
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
                     return '<a title="Detalles de salida" href="' . route('salidas.show', ['id' => $movement->id]) . '">' . str_pad($movement->id, 6, '0', STR_PAD_LEFT) . '</a>';
@@ -376,13 +374,12 @@ class SalidasController extends Controller
 
     public function indexOrdenConsolidada(Request $request)
     {
+       
         if ($request->ajax()) {
+
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-            if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('id');
-            } else {
-                $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
-            }
+            $movement = Movement::all()->whereIn('type', $arrTypes)->sortByDesc('id'); 
+
             return DataTables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('destino_id', function ($movement) {
@@ -412,7 +409,7 @@ class SalidasController extends Controller
                     return  ($movement->hasFlete()) ? $movement->getFlete()->neto105 + $movement->getFlete()->neto21 : '0.0';
                 })
                 ->addColumn('neto', function ($movement) {
-                    return  ($movement->invoice) ? $movement->invoice->imp_neto : '0.0';
+                    return  ($movement->invoice) ? $movement->invoice->sum('imp_neto') : '0.0';
                 })
                 ->addColumn('panama1', function ($movement) {
                     return  ($movement->hasFlete()) ? $movement->getFlete()->id : '0.0';
