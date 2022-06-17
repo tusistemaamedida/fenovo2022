@@ -59,9 +59,7 @@
                                         <td>Remito</td>
                                         <td>Factura</td>
                                         <td>Total</td>
-                                        @can('products.create')
                                         <td>Ajustar Stock</td>
-                                        @endcan
                                     </tr>
                                 </thead>
                                 <tbody class="kt-table-tbody text-dark">
@@ -84,7 +82,7 @@
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
         autoWidth: false,
-        ajax: "{{ route('products.list') }}",
+        ajax: "{{ route('products.by.stocks') }}",
         columns: [
             {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},

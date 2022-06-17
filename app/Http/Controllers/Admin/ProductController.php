@@ -127,10 +127,10 @@ class ProductController extends Controller
                     return $product->stockReal();
                 })
                 ->addColumn('ajuste', function ($producto) {
-                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
+                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('ajustar.by.stock') . "')";
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
-                ->rawColumns(['stock', 'ajuste'])
+                ->rawColumns(['stock','ajuste'])
                 ->make(true);
         }
 
