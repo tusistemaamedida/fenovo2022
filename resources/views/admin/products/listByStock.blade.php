@@ -93,9 +93,7 @@
             {data: 'stock_r', class:'text-center', orderable: true, searchable: false},
             {data: 'stock_f', orderable: false, searchable: true},
             {data: 'stock', orderable: true},
-            @can('products.create')
-            {data: 'ajuste', class:'text-center', orderable: false, searchable: false},
-            @endcan
+            {data: 'ajuste', class:'text-center', orderable: false, searchable: false}
         ]
     });
 
