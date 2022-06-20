@@ -16,7 +16,7 @@
 
 @section('content')
 
-<div class="d-flex flex-column-fluid">
+<div class="d-flex flex-column-fluid mt-5">
     <div class="container-fluid addproduct-main">
 
         <div class="row">
@@ -50,17 +50,17 @@
                             <div class="col-xs-12 col-md-6">
                                 <ul class="nav nav-pills mb-3" id="pills-tab1" role="tablist">
                                     <li class="nav-item mr-2">
-                                        <a class="nav-link btn-light active shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="true">
+                                        <a class="nav-link btn-dark active shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="true">
                                             Precios
                                         </a>
                                     </li>
                                     <li class="nav-item mr-2" id="nav-item-precios">
-                                        <a class="nav-link btn-light shadow-none" id="detalle-tab-basic" data-toggle="pill" href="#detalle" role="tab" aria-controls="detalle" aria-selected="false">
+                                        <a class="nav-link btn-dark shadow-none" id="detalle-tab-basic" data-toggle="pill" href="#detalle" role="tab" aria-controls="detalle" aria-selected="false">
                                             Detalles
                                         </a>
                                     </li>
                                     <li class="nav-item mr-2" id="nav-item-imagenes">
-                                        <a class="nav-link btn-light shadow-none" id="imagenes-tab-basic" data-toggle="pill" href="#imagenes" role="tab" aria-controls="imagenes" aria-selected="false">
+                                        <a class="nav-link btn-dark shadow-none" id="imagenes-tab-basic" data-toggle="pill" href="#imagenes" role="tab" aria-controls="imagenes" aria-selected="false">
                                             Imágenes
                                         </a>
                                     </li>

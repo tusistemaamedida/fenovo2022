@@ -18,55 +18,54 @@
                                         </h4>
                                     </div>
                                     <div class="icons d-flex">
-                                        
+
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card card-body gutter-b bg-white border-0" data-aos="fade-up">
+                    <div class="card card-body gutter-b bg-white border-0">
                         <div class="row">
-                            <div class="col-2">
-                                
+                            <div class="col-9">
+
                             </div>
-                            <div class="col-2">
-                                
-                            </div>
-                            <div class="col-8">
+                            <div class="col-3">
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="basic-addon1"><i class=" fa fa-search"></i></span>
+                                        <span class="input-group-text" id="basic-addon1">
+                                            Buscar  &nbsp; <i class=" fa fa-search"></i>
+                                        </span>
                                     </div>
-                                    <input type="text" class="form-control" @keyup ="buscarRegistro" >
+                                    <input id="buscarProducto" name="buscarProducto" v-model="txtProducto" type="text" class="form-control" @keyup ="buscarRegistro">
                                 </div>
                             </div>
-                        </div>
+                        </div> 
+
                         <div class="row">
-                            <div class="col-12">
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-striped" id="tablaProductos">
+                            <div class="col-12">                                
+                                <div class="table-responsive" >
+                                    <table class="table table-hover table-striped text-center" id="tablaProductos">
                                         <thead>
                                             <tr>
-                                                <th>Id</th>
+                                                <th>CodFenovo</th>
                                                 <th>Producto</th>
-                                                <th></th>
-                                                <th></th>
-                                                <th>&nbsp;</th>
+                                                <th>Stock</th>
+                                                <th>Unidad</th>
+                                                <th>Proveedor</th>
+                                                <th>Costo</th>
+                                                <th>Ver</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr v-for="producto in productos">
-                                                <td> @{{ producto.id }}</td>
-                                                <td> @{{ producto.name }}</td>
-                                                <td></td>
-                                                <td></td>
-                                                <td> 
-                                                    <a href="javascript:void(0)" class="btn btn-light btn-sm"
-                                                        @click.prevent="editarProducto(producto)">Editar
-                                                    </a>
-                                                </td>
-                                                
+                                        <tbody>                                    
+                                            <tr v-for="producto in productos" :key="producto.id">
+                                                <td> @{{ producto.cod_fenovo }}</td>
+                                                <td class=" text-left"> @{{ producto.name }}</td>
+                                                <td> @{{ producto.stock }}</td>
+                                                <td> @{{ producto.unit_type }}</td>
+                                                <td> @{{ producto.proveedor }}</td>
+                                                <td> @{{ producto.costfenovo }}</td>
+                                                <td> <a :href="`${producto.link}`"><i class="fa fa-edit"></i></a></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -82,5 +81,6 @@
 @endsection
 
 @section('js')
-    <script></script>
+    <script>
+    </script>
 @endsection

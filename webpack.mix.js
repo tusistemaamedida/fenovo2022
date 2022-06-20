@@ -16,4 +16,6 @@ mix.scripts([
     'resources/js/axios.js',
     'resources/js/aos-min.js',
     'resources/js/app.js',
+    'resources/js/modules/localidades.js',
+    'resources/js/modules/productos.js',
 ], 'public/js/app.js').css('resources/css/aos-min.css', 'public/css/app.css');

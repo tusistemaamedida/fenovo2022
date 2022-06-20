@@ -1,4 +1,4 @@
-var app = Vue.createApp({
+var appLocalidad = Vue.createApp({
 
     data() {
         return {
@@ -33,7 +33,7 @@ var app = Vue.createApp({
             this.getLocalidades(this.pagina);
         },
         buscarRegistro: function(){
-            console.log('llega');
+            
         },
         // Crear DataTable
         crearTabla: function () {
@@ -106,4 +106,4 @@ var app = Vue.createApp({
     }
 })
 
-app.mount("#app-localidades");
+appLocalidad.mount("#app-localidades");
