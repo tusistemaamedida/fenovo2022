@@ -43,31 +43,29 @@
                         </div> 
 
                         <div class="row">
-                            <div class="col-12">                                
-                                <div class="table-responsive" >
+                            <div class="col-12">                              
+                                <div class="table-responsive" data-aos="fade-up">
                                     <table class="table table-hover table-striped text-center" id="tablaProductos">
                                         <thead>
                                             <tr>
                                                 <th>CodFenovo</th>
                                                 <th>Producto</th>
-                                                <th>Stock</th>
-                                                <th>Unidad</th>
                                                 <th>Proveedor</th>
                                                 <th>Costo</th>
-                                                <th>Ver</th>
                                             </tr>
                                         </thead>
                                         <tbody>                                    
                                             <tr v-for="producto in productos" :key="producto.id">
                                                 <td> @{{ producto.cod_fenovo }}</td>
-                                                <td class=" text-left"> @{{ producto.name }}</td>
-                                                <td> @{{ producto.stock }}</td>
-                                                <td> @{{ producto.unit_type }}</td>
+                                                <td class=" text-left"> 
+                                                    <a :href="`${producto.link}`">
+                                                        @{{ producto.name }}
+                                                    </a>
+                                                </td>
                                                 <td> @{{ producto.proveedor }}</td>
                                                 <td> @{{ producto.costfenovo }}</td>
-                                                <td> <a :href="`${producto.link}`"><i class="fa fa-edit"></i></a></td>
                                             </tr>
-                                        </tbody>
+                                        </tbody>                                        
                                     </table>
                                 </div>
                             </div>
