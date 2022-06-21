@@ -7,6 +7,7 @@
                     <label class="text-body">Movimiento</label>
                     <fieldset class="form-group mb-3">
                         <select class="js-example-basic-single js-states form-control bg-transparent" name="to_type" id="to_type">
+                            <option value="">Seleccione tipo de salida</option>
                             <option value="VENTA" @if(isset($tipo) && $tipo=='VENTA' ) selected @endif>Venta</option>
                             @if (\Auth::user()->rol() == 'admin' || \Auth::user()->rol() == 'superadmin')
                             <option value="TRASLADO" @if(isset($tipo) && $tipo=='TRASLADO' ) selected @endif>Traslado</option>
