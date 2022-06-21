@@ -110,12 +110,12 @@ class InvoiceController extends Controller
             foreach ($productos as $producto) {
                 $objProduct             = new stdClass();
                 $objProduct->bultos     = $producto->bultos;
-                $objProduct->cod_fenovo = $producto->product->cod_fenovo;
+                $objProduct->cod_fenovo = ($cyo)?'* '.$producto->product->cod_fenovo:$producto->product->cod_fenovo;
                 $objProduct->cant       = $producto->bultos * $producto->unit_package;
                 $objProduct->iva        = number_format($producto->tasiva, 2, ',', '.');
                 $objProduct->unit_price = $producto->unit_price;
                 $objProduct->total      = number_format($producto->bultos * $producto->unit_price * $producto->unit_package, 2, ',', '.');
-                $objProduct->name       = $producto->product->name;
+                $objProduct->name       =  $producto->product->name;
                 $objProduct->unity      = $producto->product->unit_type;
                 $objProduct->class      = '';
                 array_push($array_productos, $objProduct);
@@ -130,6 +130,20 @@ class InvoiceController extends Controller
                 $objProduct->unit_price = $movement->flete;
                 $objProduct->total      = number_format($movement->flete, 2, ',', '.');
                 $objProduct->name       = 'FLETE';
+                $objProduct->unity      = ' ';
+                $objProduct->class      = '';
+                array_push($array_productos, $objProduct);
+            }
+
+            if ($cyo) {
+                $objProduct             = new stdClass();
+                $objProduct->bultos     = 0;
+                $objProduct->cod_fenovo = '';
+                $objProduct->cant       = 0;
+                $objProduct->iva        = 0;
+                $objProduct->unit_price = 0;
+                $objProduct->total      = 0;
+                $objProduct->name       = '(*) Productos por cuenta y orden de '.$invoice->client_name;
                 $objProduct->unity      = ' ';
                 $objProduct->class      = '';
                 array_push($array_productos, $objProduct);
@@ -170,7 +184,7 @@ class InvoiceController extends Controller
             $voucherType = VoucherType::where('afip_id', $invoice->cbte_tipo)->first();
 
             $path = 'facturas/'.$invoice->voucher_number;
-            $pdf = PDF::loadView('print.invoice', compact('titulo', 'invoice', 'array_productos', 'alicuotas_array', 'voucherType', 'qr_url', 'paginas', 'total_lineas'));
+            $pdf = PDF::loadView('print.invoice', compact('titulo','cyo', 'invoice', 'array_productos', 'alicuotas_array', 'voucherType', 'qr_url', 'paginas', 'total_lineas'));
             $link = Storage::disk('spaces-do')->put($path , $pdf->output(),'public');
             $url = Storage::disk('spaces-do')->url($path);
             return $url;
