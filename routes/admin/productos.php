@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('productos', [ProductController::class, 'list'])->name('products.list');
 
+Route::get('productos/index', [ProductController::class, 'index'])->name('products.index');
+
 Route::get('productos/add', [ProductController::class, 'add'])->middleware('can:products.create')->name('product.add');
 Route::post('productos/store', [ProductController::class, 'store'])->name('product.store');
 
@@ -47,3 +49,6 @@ Route::post('producto/ajustar-stock', [ProductController::class, 'ajustarStock']
 
 Route::get('producto/historial/{id?}', [ProductController::class, 'historial'])->middleware('can:products.edit')->name('product.historial');
 Route::get('producto/print-historial', [ProductController::class, 'printHistorial'])->middleware('can:products.edit')->name('product.printHistorial');
+
+Route::get('stock-de-productos', [ProductController::class, 'listByStocks'])->name('products.by.stocks');
+Route::post('producto/ajustar-por-stock', [ProductController::class, 'ajustarByStock'])->name('ajustar.by.stock');

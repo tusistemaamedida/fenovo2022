@@ -16,7 +16,7 @@
 
 @section('content')
 
-<div class="d-flex flex-column-fluid">
+<div class="d-flex flex-column-fluid mt-5">
     <div class="container-fluid addproduct-main">
 
         <div class="row">

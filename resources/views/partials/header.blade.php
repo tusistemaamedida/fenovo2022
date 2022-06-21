@@ -19,6 +19,10 @@
                             <span class="text-black-50"> Lista de productos </span>
                         </a>
 
+                        <a class="dropdown-item" href="{{ route('products.index') }}">
+                            <span class="text-black-50"> Productos precios </span>
+                        </a>
+
                         <a class="dropdown-item" href="{{ route('products.compararStock') }}">
                             <span class="text-black-50">Comparar stocks</span>
                         </a>

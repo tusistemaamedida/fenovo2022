@@ -146,21 +146,36 @@ class SalidasController extends Controller
                     return $this->origenDataCiudad($explode[0], $explode[1]);
                 })
                 ->addColumn('items', function ($pendiente) {
-                    $count = count(SessionProduct::query()->where('list_id', $pendiente->list_id)->get());
-                    return '<span class="badge badge-primary">' . $count . '</span>';
+                    return '<span class="badge badge-primary">' . $pendiente->total . '</span>';
                 })
                 ->addColumn('destroy', function ($pendiente) {
-                    $ruta = "borrarPendiente('" . $pendiente->list_id . "','" . route('salidas.pendiente.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                    if (is_null($pendiente->pausado)) {
+                        $ruta = "borrarPendiente('" . $pendiente->list_id . "','" . route('salidas.pendiente.destroy') . "')";
+                        return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                    }else{
+                        return '';
+                    }
                 })
-
+                ->addColumn('pausar', function ($pendiente) {
+                    $pausado = (!is_null($pendiente->pausado))? '<label style="color:red;font-size:9px">Pausado</label>':'';
+                    $action = "pausarSalida('".$pendiente->list_id."','".$pendiente->pausado."')";
+                    return '<a href="javascript:void(0)" onclick="' . $action . '" > <i class="fa fa-retweet" aria-hidden="true"></i> '.$pausado.' </a>';
+                })
                 ->addColumn('edit', function ($pendiente) {
-                    return '<a href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
+                    if (is_null($pendiente->pausado)) {
+                        return '<a href="' . route('salidas.pendiente.show', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
+                    }else{
+                        return '';
+                    }
                 })
                 ->addColumn('print', function ($pendiente) {
-                    return '<a target="_blank" href="' . route('salidas.pendiente.print', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-print"></i> </a>';
+                    if (is_null($pendiente->pausado)) {
+                        return '<a target="_blank" href="' . route('salidas.pendiente.print', ['list_id' => $pendiente->list_id]) . '"> <i class="fa fa-print"></i> </a>';
+                    }else{
+                        return '';
+                    }
                 })
-                ->rawColumns(['actualizacion', 'items', 'destino', 'edit', 'destroy', 'print'])
+                ->rawColumns(['actualizacion', 'items', 'destino', 'edit', 'destroy', 'print','pausar'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.pendientes');
@@ -715,6 +730,10 @@ class SalidasController extends Controller
             $product_id          = $request->input('product_id');
             $unit_type           = $request->input('unit_type');
 
+            if (!$to || $to_type == '') {
+                return new JsonResponse(['msj' => 'Ingrese el tipo de movimiento.', 'type' => 'error', 'index' => 'to_type']);
+            }
+
             if (!$to) {
                 return new JsonResponse(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
             }
@@ -1065,6 +1084,21 @@ class SalidasController extends Controller
         return new JsonResponse(
             [
                 'msj'  => 'Eliminado ... ',
+                'type' => 'success',
+            ]
+        );
+    }
+
+    public function cambiarPausaSalida(Request $request){
+        $productos_en_session = SessionProduct::where('list_id', $request->list_id)->where('pausado', $request->id_pausado)->get();
+        $id_pausado = rand(1111111111,9999999999);
+        foreach ($productos_en_session as $ps) {
+            $ps->pausado = (is_null($ps->pausado))?$id_pausado:null;
+            $ps->save();
+        }
+        return new JsonResponse(
+            [
+                'msj'  => 'Se cambio el pausado a la salida. ',
                 'type' => 'success',
             ]
         );
