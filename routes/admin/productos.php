@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('productos', [ProductController::class, 'list'])->name('products.list');
 
+Route::get('productos/index', [ProductController::class, 'index'])->name('products.index');
+
 Route::get('productos/add', [ProductController::class, 'add'])->middleware('can:products.create')->name('product.add');
 Route::post('productos/store', [ProductController::class, 'store'])->name('product.store');
 

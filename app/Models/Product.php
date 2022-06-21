@@ -171,9 +171,34 @@ class Product extends Model
 
     public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
     {
+
         return $this->stock_f + $this->stock_r + $this->stock_cyo;
-        /*  $stock = 0.0;
+       /*  $stock = 0.0;
+
+        $stock = 0.0;
         // Buscar el ultimo movimiento
+        $movement_product = DB::table('movements as t1')
+            ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
+            ->where('t2.product_id', $this->id)
+            ->where('t2.entidad_id', $entidad_id)
+            ->where('t2.entidad_tipo', $entidad_tipo)
+            ->when($unit_package, function ($q, $unit_package) {
+                $q->where('t2.unit_package', $unit_package);
+            })
+            ->orderBy('t1.date', 'desc')
+            ->orderBy('t2.id', 'desc')
+            ->first();
+
+        if ($movement_product) {
+            $stock = ($this->unit_type == 'K') ? (float)$movement_product->balance : (int)$movement_product->balance;
+        }
+
+        return $stock;*/
+    }
+
+    /* public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
+    {
+        $stock = 0.0;
         $movement_product = MovementProduct::where('product_id', $this->id)
             ->where('entidad_id', $entidad_id)
             ->where('entidad_tipo', $entidad_tipo)
@@ -188,8 +213,8 @@ class Product extends Model
             $stock = ($this->unit_type == 'K') ? (float)$movement_product->balance : (int)$movement_product->balance;
         }
 
-        return $stock; */
-    }
+        return $stock;
+    } */
 
     public function stockEnSession($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
     {

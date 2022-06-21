@@ -116,25 +116,9 @@ class ProductController extends Controller
         return view('admin.products.list');
     }
 
-    public function listByStocks(Request $request)
+    public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $productos = $this->productRepository->all()->where('active', '=', 1);
-
-            return Datatables::of($productos)
-                ->addIndexColumn()
-                ->addColumn('stock', function ($product) {
-                    return $product->stockReal();
-                })
-                ->addColumn('ajuste', function ($producto) {
-                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
-                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
-                })
-                ->rawColumns(['stock', 'ajuste'])
-                ->make(true);
-        }
-
-        return view('admin.products.listByStock');
+        return view('admin.products.index');
     }
 
     public function historial(Request $request)

@@ -16,16 +16,22 @@
 @endsection
 
 @section('content')
-    <div class="row mt-5">
-        <div class="col-lg-12 col-xl-12">
-            <div class="card card-custom gutter-b bg-white border-0">
-                <div class="row">
-                    <div class="col-xs-12 col-md-6">
-                        <div class="card-header align-items-center  border-0">
-                            <div class="card-title mb-0">
-                                <h4 class="card-label mb-0 font-weight-bold text-body">
-                                    Editar Producto - <small>{{ $product->cod_fenovo }} :: {{ $product->name }}</small>
-                                </h4>
+
+<div class="d-flex flex-column-fluid mt-5">
+    <div class="container-fluid addproduct-main">
+
+        <div class="row">
+            <div class="col-lg-12 col-xl-12">
+                <div class="card card-custom gutter-b bg-white border-0">
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="card-header align-items-center  border-0">
+                                <div class="card-title mb-0">
+                                    <h4 class="card-label mb-0 font-weight-bold text-body">
+                                        Editar Producto - <small>{{ $product->cod_fenovo }} :: {{ $product->name }}</small>
+                                    </h4>
+                                </div>
                             </div>
                         </div>
                     </div>

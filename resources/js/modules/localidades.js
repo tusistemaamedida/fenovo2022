@@ -1,12 +1,8 @@
-const URL_SERVER = APP_URL;
-
-
-var app = Vue.createApp({
+var appLocalidad = Vue.createApp({
 
     data() {
         return {
             pagina:1,
-            txtLocalidad : '',
             localidades: [],
             errors: [],
             localidad: {
@@ -18,27 +14,26 @@ var app = Vue.createApp({
         }
     },
     created() {
-        this.getLocalidades();
+        this.getLocalidades(this.pagina);
     },
     methods: {
         // Obtener localidades
-        getLocalidades: function () {
-            const urlLocalidades = URL_SERVER + `/getLocalidades?page=${this.pagina}&localidad=${this.txtLocalidad}`;
+        getLocalidades: function (pagina) {
+            const urlLocalidades = URL_SERVER + `/getLocalidades?page=${pagina}`;
             axios.get(urlLocalidades).then(response => {
                 this.localidades = response.data.data
             })
         },
         siguienteRegistro: function(){
             this.pagina ++;
-            this.getLocalidades();
+            this.getLocalidades(this.pagina);
         },
         anteriorRegistro: function(){
             if(this.pagina > 1) this.pagina --;
-            this.getLocalidades();
+            this.getLocalidades(this.pagina);
         },
         buscarRegistro: function(){
-            console.log(this.txtLocalidad);
-            this.getLocalidades()
+            
         },
         // Crear DataTable
         crearTabla: function () {
@@ -99,7 +94,7 @@ var app = Vue.createApp({
                     this.errors = error.response.data
                 });
         },
-        // Borrar
+        // Borrar 
         destroyLocalidad: async function (id) {
             if (!confirm('Confirma eliminar ?')) return
             const urlDestroy = URL_SERVER + '/destroyLocalidad/' + id;
@@ -111,4 +106,4 @@ var app = Vue.createApp({
     }
 })
 
-app.mount("#app-localidades");
+appLocalidad.mount("#app-localidades");
