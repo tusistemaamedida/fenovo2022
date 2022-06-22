@@ -23,6 +23,8 @@
                         </div>
                     </div>
 
+                    
+
                     <div class="card card-body gutter-b bg-white border-0">
                         <div class="row">
                             <div class="col-9"> 
@@ -38,6 +40,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-12">
                                 <div class="table-responsive">
@@ -53,15 +56,15 @@
                                         </thead>
                                         <tbody>
                                             <tr v-for="(localidad,index) in localidades.data" :key="index">
-                                                <td class="w-25"> {{ localidad.nombre }}</td>
-                                                <td> {{ localidad.departamento }}</td>
-                                                <td> {{ localidad.provincia }} </td>
-                                                <td> 
+                                                <td style=" width: 50%;"> {{ localidad.nombre }}</td>
+                                                <td style=" width: 20%;"> {{ localidad.departamento }}</td>
+                                                <td style=" width: 20%;"> {{ localidad.provincia }} </td>
+                                                <td style=" width: 5%;"> 
                                                     <a href="javascript:void(0)" @click.prevent="editarLocalidad(localidad)">
                                                         Editar
                                                     </a>
                                                 </td>
-                                                <td> 
+                                                <td style=" width: 5%;"> 
                                                     <a href="javascript:void(0)" @click.prevent="destroyLocalidad(localidad.id)">
                                                         Borrar 
                                                     </a> 
@@ -72,10 +75,15 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="nav d-flex justify-content-center">
-                            <pagination :data="localidades" @pagination-change-page="getLocalidades"></pagination>                                                
-                        </div>                        
+
+                        <div class="row">
+                            <div class="col-12 "> 
+                                <div class="table-responsive">
+                                    <pagination :data="localidades" @pagination-change-page="getLocalidades">
+                                    </pagination>
+                                </div>                                       
+                            </div>
+                        </div>
                         
                     </div>
                 </div>
