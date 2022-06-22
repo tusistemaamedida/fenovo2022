@@ -1,9 +1,12 @@
 import axios from 'axios';
 import { createApp } from 'vue'
-
-import Productos from './components/Productos'
-import Localidades from './components/Localidades'
 import Pagination from 'laravel-vue-pagination'
+
+// Productos
+import Productos from './components/productos/Productos'
+
+// Localidades
+import Localidades from './components/localidades/Localidades'
 
 
 

@@ -40,13 +40,13 @@
                         <div class="row">
                             <div class="col-12">                                 
                                 <div class="table-responsive">
-                                    <table class="table table-hover" id="tablaProductos">
+                                    <table class="table table-hover table-condensed" id="tablaProductos">
                                         <thead>
                                             <tr>
-                                                <th>CodFenovo</th>
-                                                <th class="w-25">Producto</th>
-                                                <th class="w-25">Proveedor</th>
-                                                <th>Costo</th>
+                                                <th  style=" width: 10%;" >CodFenovo</th>
+                                                <th  style=" width: 50%;" >Producto</th>
+                                                <th  style=" width: 30%;" >Proveedor</th>
+                                                <th  style=" width: 10%;" >Costo</th>
                                             </tr>
                                         </thead>
                                         <tbody>                                    
@@ -60,17 +60,22 @@
                                                 <td> {{ producto.proveedor }}</td>
                                                 <td> {{ producto.costfenovo }}</td>
                                             </tr>
-                                        </tbody>                                        
+                                        </tbody>                                         
                                     </table>                                   
                                 </div>
                             </div>
                         </div>
+
                         <div class="row">
-                            <div class="col-12 align-content-center">
-                                <pagination :data="productos" @pagination-change-page="getProductos" ></pagination>
+                            <div class="col-12 "> 
+                                <div class="table-responsive">
+                                    <div class="nav d-flex justify-content-center">
+                                        <pagination :data="productos" @pagination-change-page="getProductos" ></pagination>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
+                        
                     </div>
                 </div>
             </div>
@@ -83,15 +88,14 @@ export default {
    data() {
         return {
             page: 1,
-            pageInfo:null,
             txtProducto: '',
             productos: {},
         }
     },
     mounted() {
         this.txtProducto = (localStorage.txtProducto)?localStorage.txtProducto:'';
-        jQuery("#buscarProducto").focus();
-            jQuery(function () {
+        jQuery(function () {
+            jQuery("#buscarProducto").focus();
         })
         this.getProductos();
     },
