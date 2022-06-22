@@ -28,13 +28,13 @@ class OrdenConsolidadaViewExport implements FromView
             $destino    = Movement::find($movimiento->id)->To($movimiento->type, true);
             $destino_id = ($destino->cod_fenovo) ? $destino->cod_fenovo : 'CLI_' . $destino->id;
 
-            if ($movimiento->invoice) {
-                $explodes = explode('-', $movimiento->invoice->voucher_number);
+            if ($movimiento->invoice_fenovo()) {
+                $explodes = explode('-', $movimiento->invoice_fenovo()->voucher_number);
                 $ptoVta   = str_pad((int)$explodes[0], 4, '0', STR_PAD_LEFT);
             }
 
-            if ($movimiento->invoice) {
-                $importe = $movimiento->invoice->imp_neto;
+            if ($movimiento->invoice_fenovo()) {
+                $importe = $movimiento->invoice_fenovo()->imp_neto;
             } else {
                 $importe = '0.0';
             }
@@ -49,7 +49,7 @@ class OrdenConsolidadaViewExport implements FromView
             /* 8  */ $objMovimiento->bultos     = MovementProduct::whereMovementId($movimiento->id)->where('egress', '>', 0)->sum('bultos');
             /* 9  */ $objMovimiento->flete      = ($movimiento->hasFlete()) ? $movimiento->getFlete()->neto105 + $movimiento->getFlete()->neto21 : '0.0';
             /* 10 */ $objMovimiento->neto       = $importe;
-            /* 11 */ $objMovimiento->factura    = ($movimiento->invoice) ? $ptoVta . '-' . $explodes[1] : '0.0';
+            /* 11 */ $objMovimiento->factura    = ($movimiento->invoice_fenovo()) ? $ptoVta . '-' . $explodes[1] : '0.0';
             /* 12 */ $objMovimiento->panamaneto = ($movimiento->getPanama()) ? $movimiento->getPanama()->neto105 + $movimiento->getPanama()->neto21 : '0.0';
             /* 13 */ $objMovimiento->panama1    = ($movimiento->hasPanama()) ? $movimiento->getPanama()->orden : '0.0';
             /* 14 */ $objMovimiento->panama2    = ($movimiento->hasFlete()) ? $movimiento->getFlete()->orden : '0.0';

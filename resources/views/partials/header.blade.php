@@ -27,7 +27,7 @@
                             <span class="text-black-50">Comparar stocks</span>
                         </a>
                         <a class="dropdown-item" href="{{ route('ingresos.ajustarStockIndex') }}">
-                            <span class="text-black-50">Ajustes de stocks depósitos</span>
+                            <span class="text-black-50">Ajustes de stocks entre depósitos</span>
                         </a>
 
                         <a class="dropdown-item" href="{{ url('oferta') }}" title="Oferta de precios">
@@ -174,7 +174,7 @@
             <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
                 <li class="nav-item" title="Opciones del usuario">
                     <a href="{{ route('users.editProfile') }}" class="nav-link">
-                        [ <i class="fa fa-user "></i> {{ ucfirst(Auth::user()->username) }} ]
+                        <small> [ <i class="fa fa-user "></i> {{ ucfirst(Auth::user()->username) }} ] </small>
                     </a>
                 </li>
             </ul>

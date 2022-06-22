@@ -80,10 +80,10 @@ class IngresosController extends Controller
         if ($request->ajax()) {
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $arrTypes = ['COMPRA'];
-                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
+                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->limit(100);
             } else {
                 $arrTypes = ['VENTA', 'TRASLADO'];
-                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
+                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->limit(100);
             }
             return Datatables::of($movement)
                 ->addIndexColumn()
@@ -236,6 +236,7 @@ class IngresosController extends Controller
                 ]);
 
                 $p = Product::where('id', $movimiento['product_id'])->first();
+
                 if ($movimiento['cyo']) {
                     $p->stock_cyo = $p->stock_cyo + $movimiento['entry'];
                 } elseif ($movimiento['invoice']) {
@@ -329,7 +330,7 @@ class IngresosController extends Controller
                     return  $movement->voucher_number;
                 })
                 ->addColumn('accion', function ($movement) {
-                    return ($movement->status == 'FINISHED') 
+                    return ($movement->status == 'FINISHED')
                     ?'<a href="' . route('ingresos.ajustarStockDepositos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>'
                     :'<a href="' . route('ingresos.ajustarStockDepositos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
                 })

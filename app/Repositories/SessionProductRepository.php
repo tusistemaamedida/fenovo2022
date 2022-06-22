@@ -29,10 +29,11 @@ class SessionProductRepository extends BaseRepository
         return $this->newQuery()->where('id', $id)->delete();
     }
 
-    public function getCantidadTotalDeBultosByListId($product_id, $unit_package = null, $list_id)
+    public function getCantidadTotalDeBultosByListId($product_id, $unit_package = null, $list_id, $circuito)
     {
         return $this->newQuery()->where('product_id', $product_id)
                                 ->where('list_id', $list_id)
+                                ->where('circuito',$circuito)
                                 ->when($unit_package, function ($q, $unit_package) {
                                     $q->where('unit_package', $unit_package);
                                 })
@@ -57,6 +58,7 @@ class SessionProductRepository extends BaseRepository
                 'unit_package' => $data['unit_package'],
                 'store_id'     => $data['store_id'],
                 'list_id'      => $data['list_id'],
+                'circuito'     => $data['circuito'],
                 'pausado'      => null
             ],
             $data

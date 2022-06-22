@@ -68,7 +68,8 @@ class SessionProduct extends Model
         'costo_fenovo',
         'neto',
         'nro_pedido',
-        'pausado'
+        'pausado',
+        'circuito'
     ];
 
     public function producto()

@@ -15,6 +15,7 @@ use App\Repositories\InvoicesRepository;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use stdClass;
+use Storage;
 use Yajra\DataTables\Facades\DataTables;
 
 class InvoiceController extends Controller
@@ -76,11 +77,12 @@ class InvoiceController extends Controller
         return view('admin.invoice.list');
     }
 
-    public function generateInvoicePdf($movement_id)
+    public function generateInvoicePdf($movement_id,$pto_vta,$cyo)
     {
         $titulo          = 'FACTURA ELECTRÓNICA';
         $array_productos = $alicuotas_array = [];
-        $invoice         = $this->invoiceRepository->getByMovement($movement_id);
+        $invoice         = $this->invoiceRepository->getByMovement($movement_id,$pto_vta);
+
         if (!is_null($invoice->cae)) {
             $movement = Movement::where('id', $movement_id)->firstOrFail();
             if ($movement->type == 'DEVOLUCION' || $movement->type == 'DEVOLUCIONCLIENTE') {
@@ -89,19 +91,36 @@ class InvoiceController extends Controller
             if ($movement->type == 'DEBITO' || $movement->type == 'DEBITOCLIENTE') {
                 $titulo = 'NOTA DÉBITO';
             }
-            $productos = MovementProduct::where('movement_id', $movement_id)->where('invoice', 1)->where('egress', '>', 0)->with('product')->get();
+
+            if($cyo){
+                $productos = MovementProduct::where('movement_id', $movement_id)
+                                            ->where('circuito','CyO')
+                                            ->where('invoice', 1)
+                                            ->where('egress', '>', 0)
+                                            ->with('product')
+                                            ->get();
+            }else{
+                $productos = MovementProduct::where('movement_id', $movement_id)
+                                            ->where('circuito',"!=",'CyO')
+                                            ->where('invoice', 1)
+                                            ->where('egress', '>', 0)
+                                            ->with('product')
+                                            ->get();
+            }
+            $proveedor_nombre = '';
             foreach ($productos as $producto) {
                 $objProduct             = new stdClass();
                 $objProduct->bultos     = $producto->bultos;
-                $objProduct->cod_fenovo = $producto->product->cod_fenovo;
+                $objProduct->cod_fenovo = ($cyo)?'* '.$producto->product->cod_fenovo:$producto->product->cod_fenovo;
                 $objProduct->cant       = $producto->bultos * $producto->unit_package;
                 $objProduct->iva        = number_format($producto->tasiva, 2, ',', '.');
                 $objProduct->unit_price = $producto->unit_price;
                 $objProduct->total      = number_format($producto->bultos * $producto->unit_price * $producto->unit_package, 2, ',', '.');
-                $objProduct->name       = $producto->product->name;
+                $objProduct->name       =  $producto->product->name;
                 $objProduct->unity      = $producto->product->unit_type;
                 $objProduct->class      = '';
                 array_push($array_productos, $objProduct);
+                $proveedor_nombre = ($cyo)?$producto->product->proveedor->name:'';
             }
 
             if (!is_null($movement->flete) && $movement->flete > 0 && $movement->flete_invoice) {
@@ -113,6 +132,20 @@ class InvoiceController extends Controller
                 $objProduct->unit_price = $movement->flete;
                 $objProduct->total      = number_format($movement->flete, 2, ',', '.');
                 $objProduct->name       = 'FLETE';
+                $objProduct->unity      = ' ';
+                $objProduct->class      = '';
+                array_push($array_productos, $objProduct);
+            }
+
+            if ($cyo) {
+                $objProduct             = new stdClass();
+                $objProduct->bultos     = 0;
+                $objProduct->cod_fenovo = '';
+                $objProduct->cant       = 0;
+                $objProduct->iva        = 0;
+                $objProduct->unit_price = 0;
+                $objProduct->total      = 0;
+                $objProduct->name       = '(*) Productos por cuenta y orden de '.$proveedor_nombre;
                 $objProduct->unity      = ' ';
                 $objProduct->class      = '';
                 array_push($array_productos, $objProduct);
@@ -152,36 +185,86 @@ class InvoiceController extends Controller
             $qr_url      = 'images/' . $invoice->voucher_number . '.svg';
             $voucherType = VoucherType::where('afip_id', $invoice->cbte_tipo)->first();
 
-            $pdf = PDF::loadView('print.invoice', compact('titulo', 'invoice', 'array_productos', 'alicuotas_array', 'voucherType', 'qr_url', 'paginas', 'total_lineas'));
-            return $pdf->stream('invoice.pdf');
+            $path = 'facturas/'.$invoice->voucher_number;
+            $pdf = PDF::loadView('print.invoice', compact('titulo','cyo', 'invoice', 'array_productos', 'alicuotas_array', 'voucherType', 'qr_url', 'paginas', 'total_lineas'));
+            $link = Storage::disk('spaces-do')->put($path , $pdf->output(),'public');
+            $url = Storage::disk('spaces-do')->url($path);
+            return $url;
+            //return $pdf->stream('invoice.pdf');
         }
     }
 
     public function create($movement_id)
     {
         try {
-            $movement = Movement::where('id', $movement_id)->with('movement_salida_products')->firstOrFail();
+            // Inicio creacion del invoice con punto de vta fenovo
+                $movement = Movement::where('id', $movement_id)->with('salida_products_no_cyo')->firstOrFail();
+                $movement->products = $movement->salida_products_no_cyo;
 
-            $result  = $this->createVoucher($movement);
-            $invoice = $this->invoiceRepository->getByMovement($movement_id);
-            if ($result['status']) {
-                if (isset($invoice)) {
-                    $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
-                    $orden = (isset($inv)) ? $inv->orden + 1 : 1;
-                    $this->invoiceRepository->fill($invoice->id, [
-                        'error'      => null,
-                        'orden'      => $orden,
-                        'cae'        => $result['response_afip']['CAE'],
-                        'expiration' => $result['response_afip']['CAEFchVto'],
-                    ]);
+                if(isset($movement->products) && count($movement->products)){
+                    $result  = $this->createVoucher($movement,$this->pto_vta);
+                    $invoice = $this->invoiceRepository->getByMovement($movement_id,$this->pto_vta);
+
+                    if ($result['status']) {
+                        if (isset($invoice)) {
+                            $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
+                            $orden = (isset($inv)) ? $inv->orden + 1 : 1;
+                            $this->invoiceRepository->fill($invoice->id, [
+                                'error'      => null,
+                                'orden'      => $orden,
+                                'cae'        => $result['response_afip']['CAE'],
+                                'expiration' => $result['response_afip']['CAEFchVto'],
+                            ]);
+                            $cyo = 0;
+                            $url_factura = $this->generateInvoicePdf($movement_id,$this->pto_vta,$cyo);
+                            $this->invoiceRepository->fill($invoice->id, [
+                                'url'        => $url_factura,
+                                'cyo'        => $cyo
+                            ]);
+                        }
+                    }elseif (isset($invoice)) {
+                        $this->invoiceRepository->fill($invoice->id, ['error' => $result['error']]);
+                    }
                 }
+            // fin de creacion del invoice con punto de vta fenovo
 
-                return redirect()->back()->withInput();
-            }
-            if (isset($invoice)) {
-                $this->invoiceRepository->fill($invoice->id, ['error' => $result['error']]);
-            }
-            return $result['error'];
+            // Inicio creacion del invoice cta y orden
+                $movement = Movement::where('id', $movement_id)->with('salida_products_cyo')->firstOrFail();
+                if(isset($movement->salida_products_cyo) && count($movement->salida_products_cyo)){
+                    $movements = $movement->salida_products_cyo->groupBy('punto_venta');
+                    $invoice_cyo = null;
+                    foreach ($movements as $m) {
+                        $productos = $m;
+                        $punto_venta = $m[0]->punto_venta;
+                        $movement->products = $productos;
+
+                        $result  = $this->createVoucher($movement,$punto_venta);
+                        $invoice_cyo = $this->invoiceRepository->getByMovement($movement_id,$punto_venta);
+                        if ($result['status']) {
+                            if (isset($invoice_cyo)) {
+                                $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
+                                $orden = (isset($inv)) ? $inv->orden + 1 : 1;
+                                $this->invoiceRepository->fill($invoice_cyo->id, [
+                                    'error'      => null,
+                                    'orden'      => $orden,
+                                    'cae'        => $result['response_afip']['CAE'],
+                                    'expiration' => $result['response_afip']['CAEFchVto'],
+                                ]);
+
+                                $cyo = 1;
+                                $url_factura = $this->generateInvoicePdf($movement_id,$punto_venta,$cyo);
+                                $this->invoiceRepository->fill($invoice_cyo->id, [
+                                    'url'        => $url_factura,
+                                    'cyo'        => $cyo
+                                ]);
+                            }
+                        }elseif (isset($invoice_cyo)) {
+                            $this->invoiceRepository->fill($invoice_cyo->id, ['error' => $result['error']]);
+                        }
+                    }
+                }
+                return redirect()->route('salidas.index');
+            // Fin creacion del invoice cta y orden
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -207,9 +290,9 @@ class InvoiceController extends Controller
         }
     }
 
-    private function createVoucher($movement)
+    private function createVoucher($movement,$pto_vta = false)
     {
-        $data_invoice = $this->dataInvoice($movement);
+        $data_invoice = $this->dataInvoice($movement,$pto_vta);
 
         if ($data_invoice['status']) {
             try {
@@ -223,7 +306,7 @@ class InvoiceController extends Controller
                 $more_data->jurisdiccion       = $this->getJurisdiccion($data_invoice['client']->state);
                 $more_data->client_cuit        = $data_invoice['client']->cuit;
                 $more_data->client_iva_type    = $this->get_iva_type($data_invoice['client']->iva_type);
-                $more_data->voucher_number     = str_pad($this->pto_vta, 4, '0', STR_PAD_LEFT) . '-' . str_pad($data_invoice['numero_de_factura'], 8, '0', STR_PAD_LEFT);
+                $more_data->voucher_number     = str_pad($pto_vta, 4, '0', STR_PAD_LEFT) . '-' . str_pad($data_invoice['numero_de_factura'], 8, '0', STR_PAD_LEFT);
                 $more_data->iibb               = $data_invoice['iibb'];
                 $more_data->costo_fenovo_total = $data_invoice['costo_fenovo_total'];
 
@@ -244,7 +327,7 @@ class InvoiceController extends Controller
         return ['status' => false,  'error' => $data_invoice['error']];
     }
 
-    private function dataInvoice($movement)
+    private function dataInvoice($movement,$pto_vta = false)
     {
         try {
             $tipo_movimiento = $movement->type;
@@ -254,7 +337,7 @@ class InvoiceController extends Controller
                 $last_voucher         = 0;
                 $fecha_servicio_desde = $fecha_servicio_hasta = $fecha_vencimiento_pago = 0;
                 $concepto             = $this->concepto_afip;
-                $punto_de_venta       = $this->pto_vta;
+                $punto_de_venta       = ($pto_vta)?$pto_vta:$this->pto_vta;
                 $tipo_de_factura      = $this->voucherType($this->client->iva_type, $tipo_movimiento);
                 $tipo_de_documento    = $this->document_type;
                 $numero_de_documento  = $this->client->cuit;
@@ -345,7 +428,7 @@ class InvoiceController extends Controller
 
     private function importes($movement)
     {
-        $products           = $movement->movement_salida_products;
+        $products           = $movement->products;
         $gravado            = 0;
         $costo_fenovo_total = 0;
         $iva                = 0;

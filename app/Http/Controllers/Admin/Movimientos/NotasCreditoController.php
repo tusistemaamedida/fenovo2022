@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use App\Models\Movement;
 
 use App\Models\MovementProduct;
+use App\Models\Product;
 use App\Models\Store;
 use App\Repositories\InvoicesRepository;
 use App\Repositories\SessionProductRepository;
@@ -41,10 +42,7 @@ class NotasCreditoController extends Controller
                     return $movement->origenData($movement->type);
                 })
                 ->addColumn('comprobante_nc', function ($movement) {
-                    if (isset($movement->invoice)) {
-                        return $movement->invoice->voucher_number;
-                    }
-                    return '--';
+                    return ($movement->invoice_fenovo()) ? $movement->invoice_fenovo()->voucher_number : '--';
                 })
                 ->editColumn('date', function ($movement) {
                     return date('Y-m-d', strtotime($movement->date));
@@ -60,7 +58,7 @@ class NotasCreditoController extends Controller
                 })
 
                 ->addColumn('nc', function ($movement) {
-                    if ($movement->invoice && !is_null($movement->invoice->cae)) {
+                    if ($movement->invoice_fenovo() && !is_null($movement->invoice_fenovo()->cae)) {
                         $link = '<a target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
                     } else {
                         $ruta = "'" . route('create.invoice', ['movment_id' => $movement->id]) . "'";
@@ -77,9 +75,9 @@ class NotasCreditoController extends Controller
 
     public function add()
     {
-        $storesNaves = Store::where('store_type','N')->get(); //Los depositos los tenemos como N = Nave
+        $storesNaves = Store::where('store_type', 'N')->get(); //Los depositos los tenemos como N = Nave
         $this->sessionProductRepository->deleteDevoluciones();
-        return view('admin.movimientos.notas-credito.add',compact('storesNaves'));
+        return view('admin.movimientos.notas-credito.add', compact('storesNaves'));
     }
 
     public function show(Request $request)
@@ -130,38 +128,35 @@ class NotasCreditoController extends Controller
     {
         try {
             if ($request->input('voucher_number') != '' || !is_null($request->input('voucher_number'))) {
-                $list_id = $request->input('session_list_id');
-                $explode = explode('_', $list_id);
-                $deposito = (int) $request->input('deposito');
+                $list_id  = $request->input('session_list_id');
+                $explode  = explode('_', $list_id);
+                $deposito = (int)$request->input('deposito');
 
                 $from  = \Auth::user()->store_active;
                 $count = Movement::where('from', $from)->whereIn('type', ['DEVOLUCION', 'DEVOLUCIONCLIENTE'])->count();
                 $orden = ($count) ? $count + 1 : 1;
 
-                $store = Store::where('id',$explode[1])->first();
+                $store = Store::where('id', $explode[1])->first();
                 $label = '';
-                if($store){
-                    $label .= $store->razon_social .' '.$store->description;
+                if ($store) {
+                    $label .= $store->razon_social . ' ' . $store->description;
                 }
-                $insert_data['observacion']    = 'NC a '.$label;
+                $insert_data['observacion']    = 'NC a ' . $label;
                 $insert_data['type']           = $explode[0];
-                $insert_data['to']             = $explode[1];// $explode[1]; Se cambio a deposito reclamos
+                $insert_data['to']             = $explode[1]; // $explode[1]; Se cambio a deposito reclamos
                 $insert_data['date']           = now();
                 $insert_data['from']           = $from;
                 $insert_data['orden']          = $orden;
                 $insert_data['status']         = 'FINISHED';
                 $insert_data['voucher_number'] = $request->input('voucher_number');
+                $movement                      = Movement::create($insert_data);
 
-                $movement = Movement::create($insert_data);
-                //$invoice              = Invoice::where('voucher_number', $request->input('voucher_number'))->first();
-                //$movement_relacionado = Movement::where('id', $invoice->movement_id)->first();
                 $session_products = $this->sessionProductRepository->getByListId($list_id);
                 $entidad_tipo     = parent::getEntidadTipo($insert_data['type']);
 
                 foreach ($session_products as $product) {
                     $cantidad = ($product->producto->unit_type == 'K') ? $product->producto->unit_weight * $product->unit_package * $product->quantity : $product->unit_package * $product->quantity;
 
-                    //if($insert_data['type'] != 'DEVOLUCIONCLIENTE'){
                     // busco el balance del producto y el TO del movimento de salida para restarle la cantidad devuelta
                     $latest = MovementProduct::all()
                         ->where('entidad_id', $movement->to)
@@ -171,9 +166,6 @@ class NotasCreditoController extends Controller
                         ->first();
 
                     $balance = ($latest) ? $latest->balance - $cantidad : $cantidad;
-                    //}else{
-                    //   $balance =  $cantidad;
-                    //}
 
                     MovementProduct::firstOrCreate([
                         'entidad_id'     => $movement->to,
@@ -190,13 +182,22 @@ class NotasCreditoController extends Controller
                             'balance'    => $balance,
                         ]);
 
-                    $latest = MovementProduct::all()
+                    // Revisar si la DEVOLUCION se dirige DEPOSITO NAVE
+                    if ($deposito == 1) {
+                        $producto = Product::find($product->producto->id);
+                        $producto->stock_f += $cantidad;
+                        $producto->save();
+                        $balance = $product->producto->stockReal() + $cantidad;
+                    } else {
+                        // A otros :: Depósito Reclamos
+                        $latest = MovementProduct::all()
                         ->where('entidad_id', $deposito)
                         ->where('entidad_tipo', 'S')
                         ->where('product_id', $product->product_id)
                         ->sortByDesc('id')->first();
+                        $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
+                    }
 
-                    $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
                     MovementProduct::firstOrCreate([
                         'entidad_id'     => $deposito,
                         'entidad_tipo'   => 'S',

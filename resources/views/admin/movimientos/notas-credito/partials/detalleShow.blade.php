@@ -35,7 +35,7 @@
 
             @endforeach
             <tr>
-                <th colspan="7"><br></th>
+                <th colspan="8"><br></th>
             </tr>
             <tr class=" bg-info text-white">
                 <th>TOTALES</th>
