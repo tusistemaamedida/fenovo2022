@@ -92,7 +92,6 @@ class ProductController extends Controller
                     return $product->proveedor->name;
                 })
                 ->addColumn('historial', function ($producto) {
-                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
                     return '<a href="' . route('product.historial', ['id' => $producto->id]) . '"> <i class="fa fa-list" aria-hidden="true"></i> </a>';
                 })
                 ->addColumn('ajuste', function ($producto) {
