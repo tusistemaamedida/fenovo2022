@@ -2,17 +2,23 @@ var appProducto = Vue.createApp({
 
     data() {
         return {
-            pagina:1,
-            cargando:null,
+            pagina: 1,
+            cargando: null,
             txtProducto: '',
             productos: [],
         }
     },
     mounted() {
-        this.getProductos();
-        jQuery(function() {
-            jQuery("#buscarProducto").focus();
+        this.txtProducto = (localStorage.txtProducto)?localStorage.txtProducto:'';
+        jQuery("#buscarProducto").focus();
+            jQuery(function () {
         })
+        this.getProductos();
+    },
+    watch: {
+        txtProducto(newProducto) {
+            localStorage.txtProducto = newProducto;
+        }
     },
     methods: {
         // Obtener productos
@@ -26,10 +32,11 @@ var appProducto = Vue.createApp({
             })
         },
         // Buscar productos
-        buscarRegistro: function(){
+        buscarRegistro: function () {
+            localStorage.setItem('txtProducto', this.txtProducto);
             this.getProductos()
         },
-        
+
     }
 })
 
