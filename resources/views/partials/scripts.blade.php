@@ -1,5 +1,6 @@
 @auth
 
+<script src="{{ asset('/js/app.js') }}"></script>
     <script src="{{ asset('assets/js/plugin.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/js/popper.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap4.5.0.min.js') }}"></script>
@@ -33,7 +34,6 @@
     <script src="{{ asset('assets/api/select2/select2.min.js') }}"></script>
     <script src="{{ asset('assets/js/scripts.js') }}"></script>
 
-
     <script>
         jQuery.ajaxSetup({
             headers: {
@@ -66,7 +66,5 @@
 
         AOS.init();
     </script>
-
-    <script src="{{ asset('/js/app.js') }}"></script>
 
 @endauth

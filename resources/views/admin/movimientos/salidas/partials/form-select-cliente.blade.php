@@ -20,7 +20,7 @@
                 <div class="col-md-3">
                     <label class="text-body">Cliente/Tienda</label>
                     <fieldset class="form-group mb-3">
-                        <select class="js-states form-control bg-transparent" name="to" id="to">
+                        <select class="js-example-basic-single js-states form-control bg-transparent" name="to" id="to">
                             @if(isset($destino)) <option value="{{$destino->id}}">{{$destinoName}}</option>@endif
                         </select>
                     </fieldset>
@@ -29,7 +29,7 @@
                 <div class="col-md-4">
                     <label class="text-body">Seleccionar producto</label>
                     <fieldset class="form-group mb-3 d-flex">
-                        <select class="js-states form-control bg-transparent" name="product_search" id="product_search" autofocus> </select>
+                        <select class="js-example-basic-single js-states form-control bg-transparent" name="product_search" id="product_search" autofocus> </select>
                     </fieldset>
                 </div>
 

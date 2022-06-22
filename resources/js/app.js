@@ -19,4 +19,4 @@ app.component('localidades', Localidades)
 
 app.component('Pagination', Pagination)
 
-app.mount('#app'); 
+app.mount('#app');
