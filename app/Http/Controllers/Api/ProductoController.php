@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\SessionOferta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use stdClass;
 
 class ProductoController extends Controller
@@ -19,9 +22,8 @@ class ProductoController extends Controller
             ->where('t1.name', 'like', '%' . $request->name . '%')
             ->orWhere('t3.name', 'like', '%' . $request->name . '%')
             ->orWhere('t1.cod_fenovo', 'like', '%' . $request->codfenovo . '%')
-            ->orderBy('t1.id', 'ASC')
-            ->limit(10)
-            ->get();
+            ->orderBy('t1.name', 'ASC')
+            ->get(10);
 
         $arrProductos = [];
 
@@ -41,6 +43,15 @@ class ProductoController extends Controller
             array_push($arrProductos, $objProducto);
         }
 
-        return $arrProductos;
+        $data = $this->paginate($arrProductos, 10);
+
+        return $data;
+    }
+
+    public function paginate($items, $perPage = 5, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }
