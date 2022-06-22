@@ -1,6 +1,6 @@
 @auth
 
-
+    <script src="{{ asset('/js/app.js') }}"></script>
     <script src="{{ asset('assets/js/plugin.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/js/popper.js') }}"></script>
     <script src="{{ asset('assets/js/bootstrap4.5.0.min.js') }}"></script>
