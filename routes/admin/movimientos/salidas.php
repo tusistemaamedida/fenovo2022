@@ -40,7 +40,7 @@ Route::get('imprimir-papers/', [SalidasController::class, 'printPanama'])->name(
 Route::get('imprimir-flete/', [SalidasController::class, 'printPanamaFlete'])->name('print.panama.felete');
 Route::get('total-del-movimiento', [SalidasController::class, 'getTotalMovement'])->name('get.total.movement');
 
-Route::get('actualizar-costos', [SalidasController::class, 'updateCostos'])->name('create.panamas');
+Route::get('actualizar-stock-factura', [SalidasController::class, 'updateStockFactura'])->name('update.stock.factura');
 
 Route::get('update-jurisdiccion', [SalidasController::class, 'updateJurisdiccion']);
 Route::post('salidas-pendiente-cambiar-pausa', [SalidasController::class, 'cambiarPausaSalida'])->name('cambiar.pausa.salida');

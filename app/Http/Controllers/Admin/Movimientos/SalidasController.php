@@ -1178,13 +1178,12 @@ class SalidasController extends Controller
         );
     }
 
-    public function updateCostos()
-    {
-        /* $productos = Product::all();
+    public function updateStockFactura(){
+        $productos = Product::all();
         foreach ($productos as $p) {
-            $p->stock_f = $p->stockReal();
+            $p->stock_f = $p->stockParaActualizacion();
             $p->save();
-        } */
+        }
     }
 
     public function updateStock($cod_fenovo)
