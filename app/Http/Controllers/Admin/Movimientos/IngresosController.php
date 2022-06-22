@@ -80,10 +80,10 @@ class IngresosController extends Controller
         if ($request->ajax()) {
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
                 $arrTypes = ['COMPRA'];
-                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
+                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->limit(100);
             } else {
                 $arrTypes = ['VENTA', 'TRASLADO'];
-                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
+                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->limit(100);
             }
             return Datatables::of($movement)
                 ->addIndexColumn()
