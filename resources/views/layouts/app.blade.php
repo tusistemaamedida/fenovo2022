@@ -7,14 +7,12 @@
 
 <body id="tc_body" class="@auth aside-fixed aside-minimize @endauth">
 
-    @auth
-        <div id="app">
-            @include('partials.header')
-            <div class="container-fluid">
-                <div id="loader" class="lds-dual-ring hidden overlay"></div>
-                @yield('content')
-            </div>
-        </div>
+    @auth        
+        @include('partials.header')
+        <div class="container-fluid">
+            <div id="loader" class="lds-dual-ring hidden overlay"></div>
+            @yield('content')
+        </div>        
     @endauth
 
     @guest
