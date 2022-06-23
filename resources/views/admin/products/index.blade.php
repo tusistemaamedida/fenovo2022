@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <productos></productos>
+    <div id="app-productos">
+        <productos></productos>
+    </div>
 @endsection
 

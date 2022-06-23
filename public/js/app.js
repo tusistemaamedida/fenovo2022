@@ -23316,36 +23316,32 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
-/* harmony import */ var laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! laravel-vue-pagination */ "./node_modules/laravel-vue-pagination/dist/laravel-vue-pagination.es.js");
-/* harmony import */ var _components_productos_Productos__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/productos/Productos */ "./resources/js/components/productos/Productos.vue");
-/* harmony import */ var _components_localidades_Localidades__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/localidades/Localidades */ "./resources/js/components/localidades/Localidades.vue");
-
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! laravel-vue-pagination */ "./node_modules/laravel-vue-pagination/dist/laravel-vue-pagination.es.js");
+/* harmony import */ var _components_productos_Productos__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/productos/Productos */ "./resources/js/components/productos/Productos.vue");
+/* harmony import */ var _components_localidades_Localidades__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/localidades/Localidades */ "./resources/js/components/localidades/Localidades.vue");
 
 
 window.jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 window.$ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.Aos = __webpack_require__(/*! aos */ "./node_modules/aos/dist/aos.js");
 window.toastr = __webpack_require__(/*! toastr */ "./node_modules/toastr/toastr.js");
 window.Popper = __webpack_require__(/*! @popperjs/core */ "./node_modules/@popperjs/core/lib/index.js");
-
-__webpack_require__(/*! select2 */ "./node_modules/select2/dist/js/select2.js");
-
-__webpack_require__(/*! datatables.net-bs4 */ "./node_modules/datatables.net-bs4/js/dataTables.bootstrap4.js"); // Componentes
+window.dataTable = __webpack_require__(/*! datatables.net-bs4 */ "./node_modules/datatables.net-bs4/js/dataTables.bootstrap4.js");
+window.Select2 = __webpack_require__(/*! select2 */ "./node_modules/select2/dist/js/select2.js"); // Componentes
 
 
 
-
-window.axios = (axios__WEBPACK_IMPORTED_MODULE_0___default());
-var app_productos = (0,vue__WEBPACK_IMPORTED_MODULE_1__.createApp)({});
-var app_localidades = (0,vue__WEBPACK_IMPORTED_MODULE_1__.createApp)({});
-app_productos.component('productos', _components_productos_Productos__WEBPACK_IMPORTED_MODULE_3__["default"]);
-app_productos.component('Pagination', laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_2__["default"]);
+window.axios = axios;
+var app = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)({});
+var app_productos = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)({});
+var app_localidades = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)({});
+app_productos.component('productos', _components_productos_Productos__WEBPACK_IMPORTED_MODULE_2__["default"]);
+app_productos.component('Pagination', laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_1__["default"]);
 app_productos.mount('#app-productos');
-app_localidades.component('localidades', _components_localidades_Localidades__WEBPACK_IMPORTED_MODULE_4__["default"]);
-app_localidades.component('Pagination', laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_2__["default"]);
+app_localidades.component('localidades', _components_localidades_Localidades__WEBPACK_IMPORTED_MODULE_3__["default"]);
+app_localidades.component('Pagination', laravel_vue_pagination__WEBPACK_IMPORTED_MODULE_1__["default"]);
 app_localidades.mount('#app-localidades');
 
 /***/ }),
@@ -50302,6 +50298,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/sass/toastr.scss":
+/*!************************************!*\
+  !*** ./resources/sass/toastr.scss ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./node_modules/process/browser.js":
 /*!*****************************************!*\
   !*** ./node_modules/process/browser.js ***!
@@ -57630,18 +57639,6 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -57691,7 +57688,8 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			"/js/app": 0,
-/******/ 			"css/app": 0
+/******/ 			"css/app": 0,
+/******/ 			"css/toastr": 0
 /******/ 		};
 /******/ 		
 /******/ 		// no chunk on demand loading
@@ -57741,8 +57739,9 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/js/app.js")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/sass/app.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/toastr"], () => (__webpack_require__("./resources/js/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/app","css/toastr"], () => (__webpack_require__("./resources/sass/app.scss")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app","css/toastr"], () => (__webpack_require__("./resources/sass/toastr.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

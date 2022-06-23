@@ -49,7 +49,7 @@
                 <div class="card card-custom gutter-b bg-white border-0">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="productTable" class=" table table-hover dataTable table-condensed display yajra-datatable" role="grid">
+                            <table id="productTable" class=" table table-hover table-condensed yajra-datatable" role="grid">
                                 <thead class="text-body">
                                     <tr class="bg-light ">
                                         <td>Codigo</td>

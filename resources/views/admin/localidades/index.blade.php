@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <localidades></localidades>
+    <div id="app-localidades">
+        <localidades></localidades>
+    </div>
 @endsection

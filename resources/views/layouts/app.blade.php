@@ -5,8 +5,7 @@
 
 @yield('css')
 
-<body id="tc_body" class="@auth aside-fixed aside-minimize @endauth">
-
+<body>
     @auth        
         @include('partials.header')
         <div class="container-fluid">
