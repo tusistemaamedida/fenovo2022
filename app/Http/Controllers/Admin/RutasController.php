@@ -40,11 +40,11 @@ class RutasController extends Controller
                     return $ruta->nombres_transportistas();
                 })
                 ->addColumn('edit', function ($ruta) {
-                    return '<a class="dropdown-item" href="' . route('rutas.edit', ['id' => $ruta->id]) . '"> <i class="fa fa-edit"></i> </a>';
+                    return '<a href="' . route('rutas.edit', ['id' => $ruta->id]) . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($ruta) {
                     $ruta = 'destroy(' . $ruta->id . ",'" . route('rutas.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
                 ->rawColumns(['ruta', 'localidad', 'transportistas', 'edit', 'destroy'])
                 ->make(true);
