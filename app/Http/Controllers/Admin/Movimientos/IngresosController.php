@@ -329,6 +329,10 @@ class IngresosController extends Controller
                     return  $movement->voucher_number;
                 })
                 ->addColumn('accion', function ($movement) {
+
+
+
+                    
                     return ($movement->status == 'FINISHED') 
                     ?'<a href="' . route('ingresos.ajustarStockDepositos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>'
                     :'<a href="' . route('ingresos.ajustarStockDepositos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';

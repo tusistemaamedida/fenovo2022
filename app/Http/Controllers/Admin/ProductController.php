@@ -35,7 +35,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -71,16 +70,13 @@ class ProductController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $productos = $this->productRepository->all()->where('active', '=', 1);
+            $productos = Product::where('active', '=', 1)->orderBy('cod_fenovo')->get();
 
             return Datatables::of($productos)
                 ->addIndexColumn()
 
                 ->addColumn('stock', function ($product) {
                     return $product->stockReal(null, Auth::user()->store_active);
-                })
-                ->addColumn('stockEnSession', function ($product) {
-                    return $product->stockEnSession(null, Auth::user()->store_active);
                 })
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();
@@ -92,12 +88,7 @@ class ProductController extends Controller
                     return $product->proveedor->name;
                 })
                 ->addColumn('historial', function ($producto) {
-                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
                     return '<a href="' . route('product.historial', ['id' => $producto->id]) . '"> <i class="fa fa-list" aria-hidden="true"></i> </a>';
-                })
-                ->addColumn('ajuste', function ($producto) {
-                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
-                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
                 ->addColumn('editar', function ($producto) {
                     $oferta = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
@@ -110,7 +101,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'borrar', 'editar', 'ajuste', 'costo', 'historial', 'stockEnSession'])
+                ->rawColumns(['stock', 'borrar', 'editar', 'costo', 'historial'])
                 ->make(true);
         }
 
@@ -312,6 +303,130 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
+    }
+
+    public function getStockDetail(Request $request)
+    {
+        try {
+            $voucher        = ($request->voucher) ? $request->voucher : 0;
+            $origen         = ($request->origen) ? $request->origen : 'Ajuste manual';
+            $product        = $this->productRepository->getByIdWith($request->id);
+            $presentaciones = explode('|', $product->unit_package);
+            $stock          = $product->stockReal();
+
+            $stock_presentaciones = [];
+
+            for ($i = 0; $i < count($presentaciones); $i++) {
+                $bultos                                   = 0;
+                $presentacion                             = ($presentaciones[$i] == 0) ? 1 : $presentaciones[$i];
+                $stock_presentaciones[$i]['presentacion'] = $presentacion;
+                $stock_presentaciones[$i]['unit_weight']  = $product->unit_weight;
+            }
+
+            return  view(
+                'admin.products.ajustar-stock',
+                compact('product', 'origen', 'voucher', 'presentaciones', 'stock', 'stock_presentaciones')
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function ajustarStockMenu(Request $request)
+    {
+        return view('admin.products.ajustar-stock');
+    }
+
+    public function ajustarStockStore(Request $request)
+    {
+        try {
+            $product  = Product::find($request->product_id);
+            $cantidad = $request->cantidad;
+            $voucher  = $request->voucher;
+            $origen   = $request->origen;
+
+            switch ($request->tipo) {
+                case 'F':
+                    $product->stock_f = ($request->operacion == 'suma') ? $product->stock_f + $cantidad : $product->stock_f - $cantidad;
+                    break;
+                    case 'R':
+                        $product->stock_r = ($request->operacion == 'suma') ? $product->stock_r + $cantidad : $product->stock_r - $cantidad;
+                        break;
+                        case 'CyO':
+                            $product->stock_cyo = ($request->operacion == 'suma') ? $product->stock_cyo + $cantidad : $product->stock_cyo - $cantidad;
+                            break;
+                        }
+            $product->save();
+            $stock = $product->stockReal();
+
+            $from  = \Auth::user()->store_active;
+            $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();
+            $orden = ($count) ? $count + 1 : 1;
+
+            // Inserta movimiento de Ajuste
+            $insert_data                   = [];
+            $insert_data['type']           = 'AJUSTE';
+            $insert_data['to']             = Auth::user()->store_active;
+            $insert_data['date']           = now();
+            $insert_data['from']           = Auth::user()->store_active;
+            $insert_data['status']         = 'FINISHED';
+            $insert_data['orden']          = $orden;
+            $insert_data['voucher_number'] = time();
+            $insert_data['flete']          = 0;
+            $insert_data['user_id']        = Auth::user()->id;
+            $insert_data['observacion']    = $request->observacion;
+            $movement                      = Movement::create($insert_data);
+
+            // Inserta el Detalle del Ajuste
+            $latest['movement_id']  = $movement->id;
+            $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
+            $latest['entidad_tipo'] = 'S';
+            $latest['unit_package'] = 0;
+            $latest['unit_type']    = $product->unit_type;
+            $latest['product_id']   = $request->product_id;
+            $latest['entry']        = ($request->operacion == 'suma') ? $cantidad : 0;
+            $latest['egress']       = ($request->operacion == 'resta') ? $cantidad : 0;
+            $latest['bultos']       = $request->bultos;
+            $latest['balance']      = $stock;
+            MovementProduct::create($latest);
+
+            //
+            $presentaciones       = explode('|', $product->unit_package);
+            $stock_presentaciones = [];
+
+            for ($i = 0; $i < count($presentaciones); $i++) {
+                $bultos                                   = 0;
+                $presentacion                             = ($presentaciones[$i] == 0) ? 1 : $presentaciones[$i];
+                $stock_presentaciones[$i]['presentacion'] = $presentacion;
+                $stock_presentaciones[$i]['unit_weight']  = $product->unit_weight;
+            }
+            //
+            return new JsonResponse([
+                'html' => view(
+                    'admin.products.ajustar-stock-detail',
+                    compact('product', 'origen', 'voucher', 'presentaciones', 'stock', 'stock_presentaciones')
+                )->render(),
+                'type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+    public function buscarProductos(Request $request)
+    {
+        $term        = $request->term ?: '';
+        $valid_names = [];
+        $products    = $this->productRepository->search($term);
+
+        foreach ($products as $product) {
+            $valid_names[] = [
+                'id'   => $product->id,
+                'text' => $product->cod_fenovo . ' ' . $product->name,
+            ];
+        }
+
+        return  new JsonResponse($valid_names);
     }
 
     public function edit(Request $request)
