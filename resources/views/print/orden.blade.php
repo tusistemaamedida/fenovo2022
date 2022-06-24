@@ -40,27 +40,30 @@
 
 <table class="table table-borderless" style="font-size:10px">
     <tr>
-        <td colspan="3"><br></td>
+        <td colspan="4"><br></td>
     </tr>
     <tr>
-        <td>Destino : (<strong> {{ str_pad($destino->cod_fenovo, 4, '0', STR_PAD_LEFT) }} </strong> ) - {{ $destino->razon_social}} - <strong> {{ $destino->cuit}} </strong> </td>
-        <td>Items <strong> {{ count($array_productos) }}</strong> </td>
-        <td></td>
+        <td>DESTINO</td>
+        <td><strong> {{ $destino->description }}</strong> </td>
+        <td>{{ str_pad($destino->cod_fenovo, 4, '0', STR_PAD_LEFT) }} - {{ $destino->cuit}} </td>
+        <td>ITEMS <strong> {{ count($array_productos) }}</strong> </td>
     </tr>
     <tr>
-        <td colspan="3">Dirección : <strong> {{ $destino->address }} / {{ $destino->city }}</strong></td>
+        <td>DIRECCION</td>
+        <td colspan="3"><strong> {{ $destino->address }} </strong> - {{ $destino->city }} ( {{ $destino->state }} ) </td>
     </tr>
     <tr>
-        <td colspan="3">DETALLE DE LA ORDEN Nro <strong> {{ str_pad($orden, 8, '0', STR_PAD_LEFT) }} </strong></td>
+        <td>ORDEN NRO</td>
+        <td colspan=3"><strong> {{ str_pad($orden, 8, '0', STR_PAD_LEFT) }} </strong></td>
     </tr>
 </table>
 
 
 <table style="width: 100%; font-size:10px">
     <tr>
-        <td>Bultos</td>
-        <td>Kgrs</td>
-        <td>Unidades</td>
+        <td class=" text-center">Bultos</td>
+        <td class=" text-center">Kgrs</td>
+        <td class=" text-center">Unidades</td>
         <td class="w-25 text-left">Nombre del producto</td>
         <td>Presentación</td>
         <td>Unidad</td>
@@ -78,9 +81,9 @@
     @endphp
 
     <tr>
-        <td>{{ (int)$session_product->quantity}}</td>
-        <td>{{ (float)$session_product->unit_weight * (float)$session_product->unit_package * (float)$session_product->quantity }} </td>
-        <td>{{ $session_product->unit_package * $session_product->quantity }} </td>
+        <td class=" text-center">{{ (int)$session_product->quantity}}</td>
+        <td class=" text-center">{{ (float)$session_product->unit_weight * (float)$session_product->unit_package * (float)$session_product->quantity }} </td>
+        <td class=" text-center">{{ $session_product->unit_package * $session_product->quantity }} </td>
         <td style="text-align: left">{{$session_product->name}}</td>
         <td>{{$session_product->unit_package}}</td>
         <td>{{$session_product->unit_type}}</td>
@@ -92,9 +95,9 @@
         <th colspan="6"><br></th>
     </tr>
     <tr class=" bg-info text-white">
-        <th> {{ number_format($total_bultos,2) }}</th>
-        <th> {{ number_format($total_kgrs,2) }} </th>
-        <th> </th>
+        <th class=" text-center"> {{ number_format($total_bultos,2) }}</th>
+        <th class=" text-center"> {{ number_format($total_kgrs,2) }} </th>
+        <th class=" text-center"> </th>
         <th></th>
         <th></th>
         <th></th>

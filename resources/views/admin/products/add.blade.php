@@ -31,17 +31,17 @@
                     <div class="card-body">
                         <ul class="nav nav-pills mb-3" id="pills-tab1" role="tablist">
                             <li class="nav-item mr-2">
-                                <a class="nav-link btn-light active shadow-none" id="detalle-tab-basic" data-toggle="pill" href="#detalle" role="tab" aria-controls="detalle" aria-selected="true">
+                                <a class="nav-link bg-dark active shadow-none" id="detalle-tab-basic" data-toggle="pill" href="#detalle" role="tab" aria-controls="detalle" aria-selected="true">
                                     Detalles
                                 </a>
                             </li>
                             <li class="nav-item mr-2" id="nav-item-precios">
-                                <a class="nav-link btn-light shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="false">
+                                <a class="nav-link bg-dark shadow-none" id="precios-tab-basic" data-toggle="pill" href="#precios" role="tab" aria-controls="precios" aria-selected="false">
                                     Precios
                                 </a>
                             </li>
                             <li class="nav-item mr-2" id="nav-item-imagenes">
-                                <a class="nav-link btn-light shadow-none" id="imagenes-tab-basic" data-toggle="pill" href="#imagenes" role="tab" aria-controls="imagenes" aria-selected="false">
+                                <a class="nav-link bg-dark shadow-none" id="imagenes-tab-basic" data-toggle="pill" href="#imagenes" role="tab" aria-controls="imagenes" aria-selected="false">
                                     Imágenes
                                 </a>
                             </li>

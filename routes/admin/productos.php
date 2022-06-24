@@ -44,13 +44,17 @@ Route::get('productos-presentaciones/exportar', [ProductController::class, 'expo
 Route::get('productos-descuentos/exportar', [ProductController::class, 'exportDescuentosToCsv'])->name('products.exportDescuentosCSV');
 
 Route::get('producto/ajuste-stock', [ProductController::class, 'getDataStock'])->name('getData.stock');
+
 Route::post('producto/ajustar-stock', [ProductController::class, 'ajustarStock'])->name('ajustar.stock');
 Route::get('producto/ajustar/stock', [ProductController::class, 'ajustarStockMenu'])->name('ajustar.stock.opcion');
 Route::get('producto/ajustar/detail', [ProductController::class, 'getStockDetail'])->name('getData.stock.detail');
 Route::post('producto/ajustar/stock/store', [ProductController::class, 'ajustarStockStore'])->name('ajustar.stock.store');
 Route::get('producto/buscar', [ProductController::class, 'buscarProductos'])->name('productos.buscar.nombre');
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
 
 Route::get('producto/historial/{id?}', [ProductController::class, 'historial'])->middleware('can:products.edit')->name('product.historial');
 Route::get('producto/print-historial', [ProductController::class, 'printHistorial'])->middleware('can:products.edit')->name('product.printHistorial');

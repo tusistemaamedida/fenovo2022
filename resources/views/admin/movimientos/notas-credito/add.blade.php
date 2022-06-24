@@ -374,21 +374,13 @@
             let valido = true;
 
             jQuery('.calculate').each(function() {
-                if (isNaN(parseFloat(jQuery(this).val()))) {
-                    valido = false;
-                }
+                let valor = parseFloat(jQuery(this).val());
+                let presentacion_input = jQuery(this).attr("id").split('_');
+                let unit_type = jQuery("#unit_type").val();
+                let presentacion = presentacion_input[1];
+                total = (unit_type == 'K') ? total + (valor * presentacion * unit_weight) : total + (valor * presentacion);
             });
-
-            if (valido) {
-                jQuery('.calculate').each(function() {
-                    let valor = parseFloat(jQuery(this).val());
-                    let presentacion = jQuery(this).attr("id");
-                    total = total + (valor * presentacion * unit_weight);
-                });
-            }
-            jQuery("#envio_total").html('');
-            jQuery("#envio_total").html(total);
-            jQuery("#kg_totales").val(total);
+            total = total.toFixed(2);
         }
     </script>
 @endsection

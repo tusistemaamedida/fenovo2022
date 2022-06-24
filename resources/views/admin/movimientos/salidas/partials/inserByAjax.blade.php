@@ -43,14 +43,21 @@
             </thead>
             <tbody id="in-box">
                 @for ($i = 0; $i < count($stock_presentaciones); $i++) <tr>
-
                     @if($i == 0)
                     <input type="hidden" id="input_focus" value="unidades_{{$stock_presentaciones[$i]['presentacion']}}">
                     @endif
 
                     <td>{{$stock_presentaciones[$i]['presentacion']}}</td>
                     <td class="text-center">
-                        <input type="text" name="unidades_{{$stock_presentaciones[$i]['presentacion']}}" id="unidades_{{$stock_presentaciones[$i]['presentacion']}}" class="form-control calculate text-center" {{-- @if($stock_total==0) disabled @endif --}} max="{{$stock_presentaciones[$i]['bultos']}}" value="0" autocomplete="off" onclick="this.select()" onkeyup="sumar(this,event)">
+                        <input type="text"
+                               name="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
+                               id="unidades_{{$stock_presentaciones[$i]['presentacion']}}"
+                               class="form-control calculate text-center"
+                               max="{{$stock_presentaciones[$i]['bultos']}}"
+                               value="0"
+                               autocomplete="off"
+                               onclick="this.select()"
+                               onkeyup="sumar(this,event)">
                     </td>
                     </tr>
                     @endfor

@@ -10,7 +10,7 @@
                 <div class="card-header align-items-center  border-0">
                     <div class="card-title mb-0">
                         <h4 class="card-label mb-0 font-weight-bold text-body">
-                            Ajustar de stock de producto
+                            Ajustar de stock
                         </h4>
                     </div>
                 </div>
@@ -29,14 +29,37 @@
 @section('js')
     @parent
     <script>
+<<<<<<< HEAD
         toastr.options.positionClass = 'toast-bottom-right';
 
+=======
+
+        (function(){
+
+        })
+
+        toastr.options.positionClass = 'toast-bottom-right';
+
+        const VerOperacion = (value) => {
+            jQuery("#txtOperacion").html(value.toUpperCase());
+            if(value == 'resta'){
+                jQuery("#txtOperacion").addClass('text-danger').removeClass('text-success')
+            }else{
+                jQuery("#txtOperacion").removeClass('text-danger').addClass('text-success')
+            }
+        }
+
+>>>>>>> master
         const sumar = (objeto) => {
 
             const unit_weight = parseFloat(document.getElementById("unit_weight").value);
             let total = 0;
             let bultos = 0;
+<<<<<<< HEAD
             let observacion = 'Ajuste presentaciones : ';
+=======
+            let observacion = 'Ajuste ' + jQuery("#origen").val() + ' compra Nro ' + jQuery("#voucher").val();
+>>>>>>> master
             let valido = true;
 
             jQuery('.calculate').each(function() {
@@ -54,10 +77,13 @@
                     let unit_type = jQuery("#unit_type").val();
                     let presentacion = presentacion_input[1];
 
+<<<<<<< HEAD
                     if (valor > 0) {
                         observacion += valor + ' x ' + presentacion + ', ';
                     }
 
+=======
+>>>>>>> master
                     bultos = bultos + valor;
                     total = (unit_type == 'K') ? total + (valor * presentacion * unit_weight) : total + (valor *
                         presentacion);

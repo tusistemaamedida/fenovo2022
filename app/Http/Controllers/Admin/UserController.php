@@ -161,11 +161,11 @@ class UserController extends Controller
             $this->userRepository->update($request->input('user_id'), $data);
 
             // Actualizar user tienda
-            DB::connection('tienda')->table('users')
-                ->where('email', $request->email)
-                ->update([
-                    'tienda_id' => $data['store_active'],
-                ]);
+            // DB::connection('tienda')->table('users')
+            //     ->where('email', $request->email)
+            //     ->update([
+            //         'tienda_id' => $data['store_active'],
+            //     ]);
 
             $user = $this->userRepository->getOne($request->user_id);
             $role = $this->roleRepository->getOne($request->rol_id);

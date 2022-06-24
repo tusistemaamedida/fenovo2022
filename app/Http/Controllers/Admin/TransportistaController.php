@@ -28,11 +28,11 @@ class TransportistaController extends Controller
                 })
                 ->addColumn('edit', function ($transportista) {
                     $ruta = 'edit(' . $transportista->id . ",'" . route('transportistas.edit') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($transportista) {
                     $transportista = 'destroy(' . $transportista->id . ",'" . route('transportistas.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $transportista . '"> <i class="fa fa-trash"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $transportista . '"> <i class="fa fa-trash"></i> </a>';
                 })
                 ->rawColumns(['transportista', 'edit', 'destroy'])
                 ->make(true);

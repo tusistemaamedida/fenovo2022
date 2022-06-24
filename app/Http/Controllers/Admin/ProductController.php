@@ -70,16 +70,13 @@ class ProductController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $productos = $this->productRepository->all()->where('active', '=', 1);
+            $productos = Product::where('active', '=', 1)->orderBy('cod_fenovo')->get();
 
             return Datatables::of($productos)
                 ->addIndexColumn()
 
                 ->addColumn('stock', function ($product) {
                     return $product->stockReal(null, Auth::user()->store_active);
-                })
-                ->addColumn('stockEnSession', function ($product) {
-                    return $product->stockEnSession(null, Auth::user()->store_active);
                 })
                 ->addColumn('senasa', function ($product) {
                     return $product->senasa();
@@ -93,10 +90,13 @@ class ProductController extends Controller
                 ->addColumn('historial', function ($producto) {
                     return '<a href="' . route('product.historial', ['id' => $producto->id]) . '"> <i class="fa fa-list" aria-hidden="true"></i> </a>';
                 })
+<<<<<<< HEAD
                 ->addColumn('ajuste', function ($producto) {
                     $ruta = route('getData.stock.detail', ['id' => $producto->id]);
                     return '<a href="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
+=======
+>>>>>>> master
                 ->addColumn('editar', function ($producto) {
                     $oferta = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
                     $ruta   = ($oferta)
@@ -108,7 +108,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'borrar', 'editar', 'ajuste', 'costo', 'historial', 'stockEnSession'])
+                ->rawColumns(['stock', 'borrar', 'editar', 'costo', 'historial'])
                 ->make(true);
         }
 
@@ -329,6 +329,7 @@ class ProductController extends Controller
         }
     }
 
+<<<<<<< HEAD
     public function ajustarByStock(Request $request)
     {
         try {
@@ -367,6 +368,13 @@ class ProductController extends Controller
     public function getStockDetail(Request $request)
     {
         try {
+=======
+    public function getStockDetail(Request $request)
+    {
+        try {
+            $voucher        = ($request->voucher) ? $request->voucher : 0;
+            $origen         = ($request->origen) ? $request->origen : 'Ajuste manual';
+>>>>>>> master
             $product        = $this->productRepository->getByIdWith($request->id);
             $presentaciones = explode('|', $product->unit_package);
             $stock          = $product->stockReal();
@@ -382,18 +390,37 @@ class ProductController extends Controller
 
             return  view(
                 'admin.products.ajustar-stock',
+<<<<<<< HEAD
                 compact('product', 'presentaciones', 'stock', 'stock_presentaciones')
+=======
+                compact('product', 'origen', 'voucher', 'presentaciones', 'stock', 'stock_presentaciones')
+>>>>>>> master
             );
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
+<<<<<<< HEAD
     public function ajustarStockStore(Request $request)
     {
         try {
             $product = Product::find($request->product_id);
             $cantidad = $request->cantidad;
+=======
+    public function ajustarStockMenu(Request $request)
+    {
+        return view('admin.products.ajustar-stock');
+    }
+
+    public function ajustarStockStore(Request $request)
+    {
+        try {
+            $product  = Product::find($request->product_id);
+            $cantidad = $request->cantidad;
+            $voucher  = $request->voucher;
+            $origen   = $request->origen;
+>>>>>>> master
 
             switch ($request->tipo) {
                 case 'F':
@@ -441,7 +468,11 @@ class ProductController extends Controller
             MovementProduct::create($latest);
 
             //
+<<<<<<< HEAD
             $presentaciones = explode('|', $product->unit_package);
+=======
+            $presentaciones       = explode('|', $product->unit_package);
+>>>>>>> master
             $stock_presentaciones = [];
 
             for ($i = 0; $i < count($presentaciones); $i++) {
@@ -452,13 +483,25 @@ class ProductController extends Controller
             }
             //
             return new JsonResponse([
+<<<<<<< HEAD
                 'html'=> view('admin.products.ajustar-stock-detail', compact('product', 'presentaciones', 'stock', 'stock_presentaciones'))->render(),
                 'type' => 'success'
+=======
+                'html' => view(
+                    'admin.products.ajustar-stock-detail',
+                    compact('product', 'origen', 'voucher', 'presentaciones', 'stock', 'stock_presentaciones')
+                )->render(),
+                'type' => 'success',
+>>>>>>> master
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     public function buscarProductos(Request $request)
     {
         $term        = $request->term ?: '';
