@@ -29,10 +29,8 @@
 @section('js')
     @parent
     <script>
-<<<<<<< HEAD
         toastr.options.positionClass = 'toast-bottom-right';
 
-=======
 
         (function(){
 
@@ -49,17 +47,12 @@
             }
         }
 
->>>>>>> master
         const sumar = (objeto) => {
 
             const unit_weight = parseFloat(document.getElementById("unit_weight").value);
             let total = 0;
             let bultos = 0;
-<<<<<<< HEAD
-            let observacion = 'Ajuste presentaciones : ';
-=======
-            let observacion = 'Ajuste ' + jQuery("#origen").val() + ' compra Nro ' + jQuery("#voucher").val();
->>>>>>> master
+            let observacion = jQuery("#origen").val() + ' compra Nro ' + jQuery("#voucher").val();
             let valido = true;
 
             jQuery('.calculate').each(function() {
@@ -77,13 +70,6 @@
                     let unit_type = jQuery("#unit_type").val();
                     let presentacion = presentacion_input[1];
 
-<<<<<<< HEAD
-                    if (valor > 0) {
-                        observacion += valor + ' x ' + presentacion + ', ';
-                    }
-
-=======
->>>>>>> master
                     bultos = bultos + valor;
                     total = (unit_type == 'K') ? total + (valor * presentacion * unit_weight) : total + (valor *
                         presentacion);
@@ -115,7 +101,7 @@
                 success: function(data) {
                     if (data['type'] = 'success') {
                         jQuery("#info-stock").html(data['html']);
-                        toastr.error(data['msj'], 'Ajustado');
+                        toastr.info(data['msj'], 'Stock ha sido ajustado');
                     } else {
                         toastr.error(data['msj'], 'Verifique');
                     }
