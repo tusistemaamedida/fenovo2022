@@ -89,6 +89,9 @@ class ProductController extends Controller
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
                 })
+                ->addColumn('ajuste', function ($producto) {
+                    return '<a href="' . route('getData.stock.detail', ['id' => $producto->id]) . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
+                })
                 ->addColumn('historial', function ($producto) {
                     return '<a href="' . route('product.historial', ['id' => $producto->id]) . '"> <i class="fa fa-list" aria-hidden="true"></i> </a>';
                 })
@@ -103,7 +106,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a class="confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'borrar', 'editar', 'costo', 'historial'])
+                ->rawColumns(['stock', 'borrar', 'editar', 'costo', 'ajuste', 'historial'])
                 ->make(true);
         }
 

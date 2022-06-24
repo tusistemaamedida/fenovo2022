@@ -13,16 +13,19 @@ class ProductoController extends Controller
 {
     public function getProductos(Request $request)
     {
-        $productos = DB::table('products as t1')
+
+        return $productos = DB::table('products as t1')
             ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
             ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
-            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't1.active', 't2.costfenovo', 't3.name as proveedor'])
-            ->where('t1.name', 'like', '%' . $request->name . '%')
-            ->orWhere('t3.name', 'like', '%' . $request->name . '%')
-            ->orWhere('t1.cod_fenovo', 'like', '%' . $request->codfenovo . '%')
+            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't1.active', 't2.costfenovo', 't3.name as proveedor',
+                DB::raw('CONCAT(t1.cod_fenovo, " ", t1.name," ",t3.name) as textoBuscar')
+            ])
+            ->where('t1.active', '=', 1)
             ->orderBy('t1.id', 'ASC')
             ->limit(5)
             ->get();
+
+        
 
         $arrProductos = [];
 

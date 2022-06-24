@@ -99,7 +99,7 @@
                 success: function(data) {
                     if (data['type'] = 'success') {
                         jQuery("#info-stock").html(data['html']);
-                        toastr.error(data['msj'], 'Ajustado');
+                        toastr.info(data['msj'], 'Stock ha sido ajustado');
                     } else {
                         toastr.error(data['msj'], 'Verifique');
                     }

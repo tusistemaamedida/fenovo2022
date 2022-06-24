@@ -53,6 +53,7 @@
                                         <td>Costo</td>
                                         <td>Proveedor</td>
                                         <td>Historial</td>
+                                        <td>Ajuste</td>
                                         <td>Editar</td>
                                         <td>Borrar</td>
                                     </tr>
@@ -86,6 +87,7 @@
             {data: 'costo', orderable: false, searchable: false},
             {data: 'proveedor', orderable: false},
             {data: 'historial', class:'text-center', orderable: false, searchable: false},
+            {data: 'ajuste', class:'text-center', orderable: false, searchable: false},
             {data: 'editar', class:'text-center', orderable: false, searchable: false},
             {data: 'borrar', class:'text-center', orderable: false, searchable: false},
         ]
