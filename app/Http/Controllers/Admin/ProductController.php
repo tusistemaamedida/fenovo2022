@@ -345,7 +345,9 @@ class ProductController extends Controller
     public function ajustarStockStore(Request $request)
     {
         try {
-            $product  = Product::find($request->product_id);
+            $product = Product::find($request->product_id);
+            $stock   = $product->stockReal();
+
             $cantidad = $request->cantidad;
             $voucher  = $request->voucher;
             $origen   = $request->origen;
@@ -354,15 +356,16 @@ class ProductController extends Controller
                 case 'F':
                     $product->stock_f = ($request->operacion == 'suma') ? $product->stock_f + $cantidad : $product->stock_f - $cantidad;
                     break;
-                    case 'R':
-                        $product->stock_r = ($request->operacion == 'suma') ? $product->stock_r + $cantidad : $product->stock_r - $cantidad;
-                        break;
-                        case 'CyO':
-                            $product->stock_cyo = ($request->operacion == 'suma') ? $product->stock_cyo + $cantidad : $product->stock_cyo - $cantidad;
-                            break;
-                        }
+                case 'R':
+                    $product->stock_r = ($request->operacion == 'suma') ? $product->stock_r + $cantidad : $product->stock_r - $cantidad;
+                    break;
+                case 'CyO':
+                    $product->stock_cyo = ($request->operacion == 'suma') ? $product->stock_cyo + $cantidad : $product->stock_cyo - $cantidad;
+                    break;
+            }
+
             $product->save();
-            $stock = $product->stockReal();
+            $stock = ($request->operacion == 'suma') ? $stock + $cantidad : $stock - $cantidad;
 
             $from  = \Auth::user()->store_active;
             $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();

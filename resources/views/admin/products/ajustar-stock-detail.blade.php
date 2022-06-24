@@ -95,7 +95,7 @@
                 <tr>
                     <td>Observaciones / comentarios del ajuste</td>
                     <th>
-                        <input type="text" name="observacion" id="observacion" class="form-control" readonly>
+                        <input type="text" name="observacion" id="observacion" class="form-control border-danger bg-white">
                     </th>
                 </tr>
                 <tr>
@@ -104,14 +104,14 @@
                         <ul class=" list-unstyled">
                             <li>
                                 <label class="form-check-label m-2">
-                                    <input class="form-check-input"  onclick="VerOperacion(this.value)" type="radio" name="operacion" value="resta" checked>
-                                    RESTA
+                                    <input class="form-check-input"  onclick="VerOperacion(this.value)" type="radio" name="operacion" value="suma" checked>
+                                    SUMA
                                 </label>
                             </li>
                             <li>
                                 <label class="form-check-label m-2">
-                                    <input class="form-check-input"  onclick="VerOperacion(this.value)" type="radio" name="operacion" value="suma">
-                                    SUMA
+                                    <input class="form-check-input"  onclick="VerOperacion(this.value)" type="radio" name="operacion" value="resta">
+                                    RESTA
                                 </label>
                             </li>
                         </ul>

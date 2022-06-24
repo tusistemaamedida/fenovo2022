@@ -18,7 +18,7 @@ class ProductoController extends Controller
             ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
             ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
             ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't1.active', 't2.costfenovo', 't3.name as proveedor',
-                DB::raw('CONCAT(t1.cod_fenovo, " ", t1.name," ",t3.name) as textoBuscar')
+                DB::raw('CONCAT(t1.cod_fenovo, " ", t1.name," ",t3.name) where like '.$request->name.'%')
             ])
             ->where('t1.active', '=', 1)
             ->orderBy('t1.id', 'ASC')

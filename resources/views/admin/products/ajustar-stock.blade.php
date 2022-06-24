@@ -50,7 +50,7 @@
             const unit_weight = parseFloat(document.getElementById("unit_weight").value);
             let total = 0;
             let bultos = 0;
-            let observacion = 'Ajuste ' + jQuery("#origen").val() + ' compra Nro ' + jQuery("#voucher").val();
+            let observacion = jQuery("#origen").val() + ' compra Nro ' + jQuery("#voucher").val();
             let valido = true;
 
             jQuery('.calculate').each(function() {
