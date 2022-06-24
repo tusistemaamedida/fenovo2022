@@ -415,6 +415,7 @@
                     jQuery('#loader').removeClass('hidden');
                 },
                 success: function(data) {
+                    jQuery("#btnCloseSalida").attr('disabled',false);
                     if (data['type'] == 'error') {
                         toastr.error(data['msj'], 'ERROR');
                         jQuery("#divAlertStock").html('');
@@ -430,6 +431,7 @@
                 error: function(data) {},
                 complete: function() {
                     jQuery('#loader').addClass('hidden');
+                    jQuery("#btnCloseSalida").attr('disabled',false);
                 }
             });
         })

@@ -12,6 +12,7 @@ use App\Models\MovementProduct;
 use App\Models\OfertaStore;
 use App\Models\Panamas;
 use App\Models\Product;
+use App\Models\ProductStore;
 use App\Models\SessionOferta;
 use App\Models\SessionProduct;
 use App\Models\Store;
@@ -1031,16 +1032,31 @@ class SalidasController extends Controller
                 ]);
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
-                    $latest = MovementProduct::query()
-                        ->select('balance')
-                        ->where('entidad_id', $insert_data['to'])
-                        ->where('entidad_tipo', $entidad_tipo)
-                        ->where('product_id', $product->product_id)
-                        ->orderBy('id', 'desc')
-                        ->limit(1)
-                        ->first();
+                    $prod_store = ProductStore::where('product_id',$product->product_id)->where('store_id',$insert_data['to'])->first();
 
-                    $balance = ($latest) ? $latest->balance + $cant_total : $cant_total;
+                    $balance = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo + $cant_total : $cant_total;
+                    if($prod_store){
+                        if($product->circuito == 'F'){
+                            $prod_store->stock_f += $cant_total;
+                        }elseif($product->circuito == 'R'){
+                            $prod_store->stock_r += $cant_total;
+                        }elseif($product->circuito == 'CyO'){
+                            $prod_store->stock_cyo += $cant_total;
+                        }
+                        $prod_store->save();
+                    }else{
+                        $data_prod_store['product_id'] = $product->product_id;
+                        $data_prod_store['store_id'] = $insert_data['to'];
+                        if($product->circuito == 'F'){
+                            $data_prod_store['stock_f']= $cant_total;
+                        }elseif($product->circuito == 'R'){
+                            $data_prod_store['stock_r']= $cant_total;
+                        }elseif($product->circuito == 'CyO'){
+                            $data_prod_store['stock_cyo']= $cant_total;
+                        }
+                        ProductStore::create($data_prod_store);
+                    }
+
                     MovementProduct::updateOrCreate([
                         'entidad_id'      => $insert_data['to'],
                         'entidad_tipo'    => $entidad_tipo,
