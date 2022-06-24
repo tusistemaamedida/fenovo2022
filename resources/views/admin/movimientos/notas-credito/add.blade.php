@@ -356,9 +356,12 @@
         if(valido){
             jQuery('.calculate').each(function() {
                 let valor = parseFloat(jQuery(this).val());
-                let presentacion = jQuery(this).attr("id");
-                total = total + (valor*presentacion*unit_weight);
+                let presentacion_input = jQuery(this).attr("id").split('_');
+                let unit_type = jQuery("#unit_type").val();
+                let presentacion = presentacion_input[1];
+                total = (unit_type == 'K') ? total + (valor * presentacion * unit_weight) : total + (valor * presentacion);
             });
+            total = total.toFixed(2);
         }
         jQuery("#envio_total").html('');
         jQuery("#envio_total").html(total);
