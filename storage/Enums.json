@@ -1,4 +1,15 @@
 {
+  "ajustes": [
+    {
+      "type": "CONTABLE"
+    },
+    {
+      "type": "AJUSTE"
+    },    
+    {
+      "type": "DEVOLUCION"
+    }
+  ],
   "movimientos": [
     {
       "type": "COMPRA"

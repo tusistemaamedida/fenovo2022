@@ -2,18 +2,19 @@
     <div class="row mb-3">
         <div class="col-6">
             <h4 class=" card-title mb-0">
-                {{ $product->cod_fenovo }} <span class=" font-weight-bold text-danger"> {{ $product->name }} </span>
+                {{ $product->cod_fenovo }} <span class="text-primary"> {{ $product->name }} </span>
+            </h4>
+        </div>
+        <div class="col-2">
+            <input type="hidden" name="stockActual" id="stockActual" value="{{ $stock }}">
+            <h4 class=" card-title mb-0">Stock actual <span class=" text-primary"> {{ $stock }} </span> </h4>
+        </div>
+        <div class="col-2 text-center">
+            <h4 class=" card-title mb-0">Peso <span class=" text-primary"> {{ $product->unit_weight }} </span> Kgrs
             </h4>
         </div>
         <div class="col-2 text-center">
-            <h4 class=" card-title mb-0">Stock total <span class=" text-danger"> {{ $stock }} </span> </h4>
-        </div>
-        <div class="col-2 text-center">
-            <h4 class=" card-title mb-0">Peso <span class=" text-danger"> {{ $product->unit_weight }} </span> Kgrs
-            </h4>
-        </div>
-        <div class="col-2 text-center">
-            <h4 class=" card-title mb-0">Unidad medida <span class=" text-danger"> {{ $product->unit_type }} </span>
+            <h4 class=" card-title mb-0">Unidad medida <span class=" text-primary"> {{ $product->unit_type }} </span>
             </h4>
         </div>
     </div>
@@ -81,7 +82,7 @@
                         <td class="text-center">
                             <input type="text" name="unidades_{{ $stock_presentaciones[$i]['presentacion'] }}"
                                 id="unidades_{{ $stock_presentaciones[$i]['presentacion'] }}"
-                                class="form-control calculate text-center bg-white border-danger" value="0"
+                                class="form-control calculate text-center bg-white border-primary font-weight-bolder" value="0"
                                 onkeyup="sumar(this)">
                         </td>
                     </tr>
@@ -90,134 +91,72 @@
                 <tr>
                     <td>Observaciones / comentarios del ajuste</td>
                     <th>
-                        <input type="text" name="observacion" id="observacion" class="form-control bg-white">
+                        <input type="text" name="observacion" id="observacion" class="form-control bg-white border-primary">
                     </th>
                 </tr>
-                <tr>
-                    <th>
 
-                    </th>
-                    <th class=" text-center">
-                        <a href="javascript:ajustar()" id="btnAplicar" class="btn btn-block btn-danger"
-                            title="Ajustar stock ">
-                            Ajustar stock
-                        </a>
-                    </th>
-                </tr>
                 <tr>
-                    <td colspan="2"><br></td>
-                </tr>
-                <tr>
-                    <td>OPERACION </td>
+                    <td>Tipo ajuste</td>
                     <th>
-                        <div class="row">
-                            <div class="col-6 text-center">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="radio" name="operacion" checked value="suma"> SUMA
-                                </label>
-                            </div>
-                            <div class="col-6 text-center">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="radio" name="operacion" value="resta">RESTA
-                                </label>
-                            </div>
+                        @foreach ($ajustes as $ajuste)
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="radioAjuste{{ $ajuste['type'] }}" name="ajuste" class="custom-control-input" onclick="VerAjuste(this.value)" value="{{ $ajuste['type'] }}" @if( $loop->first) checked @endif>
+                            <label class="custom-control-label" for="radioAjuste{{ $ajuste['type'] }}"> {{ $ajuste['type'] }}</label>
+                        </div>
+                        @endforeach
+                    </th>
+                </tr>
+                <tr>
+                    <td>Operación </td>
+                    <th>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="radioOperacion1" name="operacion" class="custom-control-input" onclick="VerOperacion(this.value)" value="suma" checked>
+                            <label class="custom-control-label" for="radioOperacion1">SUMAR</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="radioOperacion2" name="operacion" class="custom-control-input" onclick="VerOperacion(this.value)" value="resta">
+                            <label class="custom-control-label" for="radioOperacion2">RESTAR</label>
                         </div>
                     </th>
                 </tr>
                 <tr>
-                    <td>TIPO</td>
+                    <td>Tipo de stock a ajustar</td>
                     <th>
-                        <div class="row">
-                            <div class="col-4 text-center">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="radio" name="tipo" checked
-                                        value="F">
-                                    Factura
-                                </label>
-                            </div>
-                            <div class="col-4 text-center">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="radio" name="tipo" value="R">
-                                    Remito
-                                </label>
-                            </div>
-                            <div class="col-4 text-center">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="radio" name="tipo" value="CyO">
-                                    Cta-Orden
-                                </label>
-                            </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="radioTipo1" name="tipo" class="custom-control-input" onclick="VerTipo(this.value)" value="F" checked>
+                            <label class="custom-control-label" for="radioTipo1">FACTURADO</label>
                         </div>
-
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="radioTipo2" name="tipo" class="custom-control-input" onclick="VerTipo(this.value)" value="R">
+                            <label class="custom-control-label" for="radioTipo2">REMITO</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="radioTipo3" name="tipo" class="custom-control-input" onclick="VerTipo(this.value)" value="CyO">
+                            <label class="custom-control-label" for="radioTipo3">CTA y ORDEN</label>
+                        </div>                        
                     </th>
-                </tr>
-                <tr>
-                    <td colspan="2"><br></td>
-                </tr>
-                <tr class=" bg-light">
-                    <th>
-                        CANTIDAD AJUSTAR
-                    </th>
-                    <th class=" text-center">
-                        <input type="hidden" name="cantidad" id="cantidad">
-                        <h4> <span id="txtCantidad" class="text-danger"> 0 </span> {{ $product->unit_type }} </h4>
-                    </th>
-                </tr>
-                <tr>
-                    <td>OPERACION </td>
-                    <td>
-                        <ul class=" list-unstyled">
-                            <li>
-                                <label class="form-check-label m-2">
-                                    <input class="form-check-input"  onclick="VerOperacion(this.value)" type="radio" name="operacion" value="suma" checked>
-                                    SUMA
-                                </label>
-                            </li>
-                            <li>
-                                <label class="form-check-label m-2">
-                                    <input class="form-check-input"  onclick="VerOperacion(this.value)" type="radio" name="operacion" value="resta">
-                                    RESTA
-                                </label>
-                            </li>
-                        </ul>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td>TIPO</td>
-                    <td>
-                        <ul class=" list-unstyled">
-                            <li>
-                                <label class="form-check-label m-2">
-                                    <input class="form-check-input" type="radio" name="tipo" checked value="F"> FACTURA
-                                </label>
-                            </li>
-                            <li>
-                                <label class="form-check-label m-2">
-                                    <input class="form-check-input" type="radio" name="tipo" value="R"> REMITO
-                                </label>
-                            </li>
-                            <li>
-                                <label class="form-check-label m-2">
-                                    <input class="form-check-input" type="radio" name="tipo" value="CyO">
-                                    CTAyOrden
-                                </label>
-                            </li>
-                        </ul>
-                    </td>
                 </tr>
                 <tr>
                     <th>
-                        <input type="hidden" name="cantidad" id="cantidad">
-                        <h4> <span id="txtOperacion" class="text-danger"> </span> <span id="txtCantidad" class="font-weight-bolder"> 0 </span> {{ $product->unit_type }} </h4>
+                        <input type="hidden" name="cantidad" id="cantidad" value="0">
                     </th>
                     <th class=" text-center">
-                        <a href="javascript:ajustar()" id="btnAplicar" class="btn btn-block btn-danger" title="Ajustar stock "> Ajustar stock
-                        </a>
+                        <a href="javascript:ajustar()" id="btnAplicar" class="btn btn-block btn-dark" title="Ajustar stock "> Ajustar </a>
                     </th>
                 </tr>
-
             </table>
         </div>
+
+        <div class="col-xs-12 col-md-6">            
+        </div>
+
+        <div class="col-xs-12 col-md-3">
+            <h4>Stock ajustado <span id="txtAjustado" class=" text-danger">  </span> </h4>
+        </div>          
+        
+        <div class="col-xs-12 col-md-3">
+            <h4>Cantidad a ajustar <span id="txtCantidad" class= "text-primary font-weight-bold"> 0 </span> </h4> 
+        </div>
+
     </div>
 </form>

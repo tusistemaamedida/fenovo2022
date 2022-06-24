@@ -15,11 +15,11 @@
 		<link href="{{asset('assets/api/datatable/jquery.dataTables.min.css')}}" rel="stylesheet" type="text/css" />
 		<link href="{{asset('assets/css/dataTables.bootstrap4.min.css')}}" rel="stylesheet" type="text/css" />
 		
-		{{-- <link href="{{asset('assets/css/fixedHeader.bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
-		<link href="{{asset('assets/css/toastr.min.css')}}" rel="stylesheet" type="text/css" />
-		<link href="{{asset('assets/css/toastr.min.css')}}" rel="stylesheet" type="text/css">
-		<link href="{{asset('assets/css/aos-min.css')}}" rel="stylesheet" type="text/css">--}}
+		{{-- <link href="{{asset('assets/css/fixedHeader.bootstrap.min.css')}}" rel="stylesheet" type="text/css" /> --}}
 		
+		{{-- <link href="{{asset('assets/css/aos-min.css')}}" rel="stylesheet" type="text/css">--}}
+		
+		<link href="{{asset('assets/css/toastr.min.css')}}" rel="stylesheet" type="text/css" />
 		<link href="{{asset('assets/css/ymz_box.css')}}" rel="stylesheet" type="text/css" />
 		<link href="{{asset('assets/api/select2/select2.min.css')}}" rel="stylesheet" /> 
 		<link href="{{asset('assets/css/loading.css')}}" rel="stylesheet" >

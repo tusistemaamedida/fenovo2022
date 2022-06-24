@@ -31,20 +31,34 @@
     <script>
         toastr.options.positionClass = 'toast-bottom-right';
 
-
-        (function(){
-
+        $(document).ready(function() {
+            jQuery("#txtAjustado").html($("#stockActual").val());
         })
 
-        toastr.options.positionClass = 'toast-bottom-right';
+        const Actualizar = () => {
+
+            let total = jQuery("#cantidad").val();
+
+            let valorActual = ($("input[name='operacion']:checked").val() == 'suma') ?
+                parseFloat($("#stockActual").val()) + parseFloat(total) :
+                parseFloat($("#stockActual").val()) - parseFloat(total);
+
+            jQuery("#txtAjustado").html(valorActual);
+        }
 
         const VerOperacion = (value) => {
             jQuery("#txtOperacion").html(value.toUpperCase());
-            if(value == 'resta'){
-                jQuery("#txtOperacion").addClass('text-danger').removeClass('text-success')
-            }else{
-                jQuery("#txtOperacion").removeClass('text-danger').addClass('text-success')
-            }
+            Actualizar()
+        }
+
+        const VerTipo = (value) => {
+            jQuery("#txtTipo").html(value.toUpperCase());
+            Actualizar()
+        }
+
+        const VerAjuste = (value) => {
+            jQuery("#txtAjuste").html(value.toUpperCase());
+            Actualizar()
         }
 
         const sumar = (objeto) => {
@@ -52,7 +66,7 @@
             const unit_weight = parseFloat(document.getElementById("unit_weight").value);
             let total = 0;
             let bultos = 0;
-            let observacion = jQuery("#origen").val() + ' compra Nro ' + jQuery("#voucher").val();
+            let observacion = jQuery("#observacion").val();
             let valido = true;
 
             jQuery('.calculate').each(function() {
@@ -80,38 +94,58 @@
             jQuery("#txtCantidad").html(total);
             jQuery("#cantidad").val(total);
             jQuery("#bultos").val(bultos);
-            jQuery("#observacion").val(observacion);
 
+            Actualizar()
         }
 
         const ajustar = () => {
 
             if (jQuery('#cantidad').val() <= 0) {
-                toastr.error('La cantidad de <strong>bultos debe ser superior a 0 </strong>', "Ajuste");
+                toastr.error('La cantidad de <strong>bultos debe ser superior a 0 </strong>', "Cantidad");
+                jQuery('#cantidad').select()
                 return false
             }
-            var url = "{{ route('ajustar.stock.store') }}";
-            jQuery.ajax({
-                url: url,
-                type: 'POST',
-                data: jQuery("#ajuste-stock").serialize(),
-                beforeSend: function() {
-                    jQuery('#loader').removeClass('hidden');
+
+            if (jQuery('#observacion').val() == '') {
+                toastr.error('Ingrese un comentario, por favor', "Observaciones");
+                jQuery('#observacion').select()
+                return false
+            }
+
+            ymz.jq_confirm({
+                title: 'Ajuste',
+                text: "Confirma el ajuste ?",
+                no_btn: "Cancelar",
+                yes_btn: "Confirma",
+                no_fn: function() {
+                    return false;
                 },
-                success: function(data) {
-                    if (data['type'] = 'success') {
-                        jQuery("#info-stock").html(data['html']);
-                        toastr.info(data['msj'], 'Stock ha sido ajustado');
-                    } else {
-                        toastr.error(data['msj'], 'Verifique');
-                    }
-                    jQuery('#loader').addClass('hidden');
-                },
-                error: function(data) {},
-                complete: function() {
-                    jQuery('#loader').addClass('hidden');
+                yes_fn: function() {
+
+                    var url = "{{ route('ajustar.stock.store') }}";
+                    jQuery.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: jQuery("#ajuste-stock").serialize(),
+                        beforeSend: function() {
+                            jQuery('#loader').removeClass('hidden');
+                        },
+                        success: function(data) {
+                            if (data['type'] = 'success') {
+                                jQuery("#info-stock").html(data['html']);
+                                toastr.info(data['msj'], 'Stock ha sido ajustado');
+                            } else {
+                                toastr.error(data['msj'], 'Verifique');
+                            }
+                            jQuery('#loader').addClass('hidden');
+                        },
+                        error: function(data) {},
+                        complete: function() {
+                            jQuery('#loader').addClass('hidden');
+                        }
+                    });
                 }
-            });
+            })
         }
     </script>
 @endsection

@@ -23,6 +23,7 @@ use App\Models\SessionOferta;
 use App\Models\SessionPrices;
 use App\Repositories\AlicuotaTypeRepository;
 
+use App\Repositories\EnumRepository;
 use App\Repositories\ProducDescuentoRepository;
 use App\Repositories\ProductCategoryRepository;
 use App\Repositories\ProductPriceRepository;
@@ -56,7 +57,8 @@ class ProductController extends Controller
         ProducDescuentoRepository $productDescuentoRepository,
         ProveedorRepository $proveedorRepository,
         SenasaDefinitionRepository $senasaDefinitionRepository,
-        AlicuotaTypeRepository $alicuotaTypeRepository
+        AlicuotaTypeRepository $alicuotaTypeRepository,
+        EnumRepository $enumRepository
     ) {
         $this->productRepository          = $productRepository;
         $this->productPriceRepository     = $productPriceRepository;
@@ -65,6 +67,7 @@ class ProductController extends Controller
         $this->productDescuentoRepository = $productDescuentoRepository;
         $this->proveedorRepository        = $proveedorRepository;
         $this->senasaDefinitionRepository = $senasaDefinitionRepository;
+        $this->enumRepository             = $enumRepository;
     }
 
     public function list(Request $request)
@@ -127,7 +130,7 @@ class ProductController extends Controller
                     $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
-                ->rawColumns(['stock','ajuste'])
+                ->rawColumns(['stock', 'ajuste'])
                 ->make(true);
         }
 
@@ -327,14 +330,18 @@ class ProductController extends Controller
         }
     }
 
+    public function ajustarStockMenu(Request $request)
+    {
+        return view('admin.products.ajustar-stock');
+    }
+
     public function getStockDetail(Request $request)
     {
         try {
-            $voucher        = ($request->voucher) ? $request->voucher : 0;
-            $origen         = ($request->origen) ? $request->origen : 'Ajuste manual';
             $product        = $this->productRepository->getByIdWith($request->id);
             $presentaciones = explode('|', $product->unit_package);
             $stock          = $product->stockReal();
+            $ajustes        = $this->enumRepository->getType('ajustes');
 
             $stock_presentaciones = [];
 
@@ -347,16 +354,11 @@ class ProductController extends Controller
 
             return  view(
                 'admin.products.ajustar-stock',
-                compact('product', 'origen', 'voucher', 'presentaciones', 'stock', 'stock_presentaciones')
+                compact('product', 'presentaciones', 'stock', 'stock_presentaciones', 'ajustes')
             );
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
-    }
-
-    public function ajustarStockMenu(Request $request)
-    {
-        return view('admin.products.ajustar-stock');
     }
 
     public function ajustarStockStore(Request $request)
@@ -366,8 +368,6 @@ class ProductController extends Controller
             $stock   = $product->stockReal();
 
             $cantidad = $request->cantidad;
-            $voucher  = $request->voucher;
-            $origen   = $request->origen;
 
             switch ($request->tipo) {
                 case 'F':
@@ -416,6 +416,7 @@ class ProductController extends Controller
             MovementProduct::create($latest);
 
             //
+            $ajustes              = $this->enumRepository->getType('ajustes');
             $presentaciones       = explode('|', $product->unit_package);
             $stock_presentaciones = [];
 
@@ -429,7 +430,7 @@ class ProductController extends Controller
             return new JsonResponse([
                 'html' => view(
                     'admin.products.ajustar-stock-detail',
-                    compact('product', 'origen', 'voucher', 'presentaciones', 'stock', 'stock_presentaciones')
+                    compact('product', 'presentaciones', 'stock', 'stock_presentaciones', 'ajustes')
                 )->render(),
                 'type' => 'success',
             ]);
