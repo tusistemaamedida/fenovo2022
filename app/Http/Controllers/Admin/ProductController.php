@@ -90,13 +90,6 @@ class ProductController extends Controller
                 ->addColumn('historial', function ($producto) {
                     return '<a href="' . route('product.historial', ['id' => $producto->id]) . '"> <i class="fa fa-list" aria-hidden="true"></i> </a>';
                 })
-<<<<<<< HEAD
-                ->addColumn('ajuste', function ($producto) {
-                    $ruta = route('getData.stock.detail', ['id' => $producto->id]);
-                    return '<a href="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
-                })
-=======
->>>>>>> master
                 ->addColumn('editar', function ($producto) {
                     $oferta = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
                     $ruta   = ($oferta)
@@ -329,52 +322,11 @@ class ProductController extends Controller
         }
     }
 
-<<<<<<< HEAD
-    public function ajustarByStock(Request $request)
-    {
-        try {
-            $valida = false;
-            $data   = $request->except('_token', 'product_id', 'user_id', 'observacion');
-
-            if (!isset($data['stock_f'])) {
-                return new JsonResponse(['msj' => 'Complete el porcentaje.', 'type' => 'error']);
-            }
-
-            if ($data['stock_f'] < 0 || $data['stock_f'] > 100) {
-                return new JsonResponse(['msj' => 'El porcentaje debe ser mayor a 0 menor a 100.', 'type' => 'error']);
-            }
-
-            $producto         = Product::where('id', $request->product_id)->first();
-            $balance_producto = $producto->stock_f + $producto->stock_r;
-            $porc_blanco      = $data['stock_f'];
-
-            $stock_b                              = (int)(($porc_blanco * $balance_producto) / 100);
-            $producto->stock_f                    = $stock_b;
-            $producto->stock_r                    = $balance_producto - $stock_b;
-            $producto->coeficiente_relacion_stock = $porc_blanco;
-            $producto->save();
-
-            return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
-        } catch (\Exception $e) {
-            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
-        }
-    }
-
-    public function ajustarStockMenu(Request $request)
-    {
-        return view('admin.products.ajustar-stock');
-    }
-
-    public function getStockDetail(Request $request)
-    {
-        try {
-=======
     public function getStockDetail(Request $request)
     {
         try {
             $voucher        = ($request->voucher) ? $request->voucher : 0;
             $origen         = ($request->origen) ? $request->origen : 'Ajuste manual';
->>>>>>> master
             $product        = $this->productRepository->getByIdWith($request->id);
             $presentaciones = explode('|', $product->unit_package);
             $stock          = $product->stockReal();
@@ -390,24 +342,13 @@ class ProductController extends Controller
 
             return  view(
                 'admin.products.ajustar-stock',
-<<<<<<< HEAD
-                compact('product', 'presentaciones', 'stock', 'stock_presentaciones')
-=======
                 compact('product', 'origen', 'voucher', 'presentaciones', 'stock', 'stock_presentaciones')
->>>>>>> master
             );
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
-<<<<<<< HEAD
-    public function ajustarStockStore(Request $request)
-    {
-        try {
-            $product = Product::find($request->product_id);
-            $cantidad = $request->cantidad;
-=======
     public function ajustarStockMenu(Request $request)
     {
         return view('admin.products.ajustar-stock');
@@ -420,7 +361,6 @@ class ProductController extends Controller
             $cantidad = $request->cantidad;
             $voucher  = $request->voucher;
             $origen   = $request->origen;
->>>>>>> master
 
             switch ($request->tipo) {
                 case 'F':
@@ -468,11 +408,7 @@ class ProductController extends Controller
             MovementProduct::create($latest);
 
             //
-<<<<<<< HEAD
-            $presentaciones = explode('|', $product->unit_package);
-=======
             $presentaciones       = explode('|', $product->unit_package);
->>>>>>> master
             $stock_presentaciones = [];
 
             for ($i = 0; $i < count($presentaciones); $i++) {
@@ -483,25 +419,16 @@ class ProductController extends Controller
             }
             //
             return new JsonResponse([
-<<<<<<< HEAD
-                'html'=> view('admin.products.ajustar-stock-detail', compact('product', 'presentaciones', 'stock', 'stock_presentaciones'))->render(),
-                'type' => 'success'
-=======
                 'html' => view(
                     'admin.products.ajustar-stock-detail',
                     compact('product', 'origen', 'voucher', 'presentaciones', 'stock', 'stock_presentaciones')
                 )->render(),
                 'type' => 'success',
->>>>>>> master
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> master
     public function buscarProductos(Request $request)
     {
         $term        = $request->term ?: '';

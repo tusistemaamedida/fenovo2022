@@ -209,6 +209,10 @@ class IngresosController extends Controller
             $movement_new           = Movement::create($data);
 
             $hoy = Carbon::parse(now())->format('Y-m-d');
+            $circuito = '';
+            if($movement_temp->subtype == 'FACTURA') $circuito = 'F';
+            if($movement_temp->subtype == 'REMITO') $circuito = 'R';
+            if($movement_temp->subtype == 'CYO') $circuito = 'CyO';
 
             // Recorro el arreglo y voy guardando
             foreach ($movement_temp->movement_ingreso_products as $movimiento) {
@@ -228,7 +232,7 @@ class IngresosController extends Controller
                     'cost_fenovo'  => $movimiento['cost_fenovo'],
                     'unit_price'   => $movimiento['unit_price'],
                     'invoice'      => $movimiento['invoice'],
-                    'cyo'          => $movimiento['cyo'],
+                    'circuito'     => $circuito,
                     'bultos'       => $movimiento['bultos'],
                     'entry'        => $movimiento['entry'],
                     'egress'       => $movimiento['egress'],
