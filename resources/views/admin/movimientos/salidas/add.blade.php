@@ -300,8 +300,7 @@
                         let presentacion_input = jQuery(this).attr("id").split('_');
                         let unit_type = jQuery("#unit_type").val();
                         let presentacion = presentacion_input[1];
-                        total = (unit_type == 'K') ? total + (valor * presentacion * unit_weight) : total + (valor *
-                            presentacion);
+                        total = (unit_type == 'K') ? total + (valor * presentacion * unit_weight) : total + (valor * presentacion);
                     });
                     total = total.toFixed(2);
                 }
