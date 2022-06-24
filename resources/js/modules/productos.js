@@ -9,10 +9,8 @@ var appProducto = Vue.createApp({
         }
     },
     mounted() {
-        this.txtProducto = (localStorage.txtProducto)?localStorage.txtProducto:'';
+        this.txtProducto = (localStorage.txtProducto) ? localStorage.txtProducto : '';
         jQuery("#buscarProducto").focus();
-            jQuery(function () {
-        })
         this.getProductos();
     },
     watch: {
@@ -36,6 +34,19 @@ var appProducto = Vue.createApp({
             localStorage.setItem('txtProducto', this.txtProducto);
             this.getProductos()
         },
+        // Borrar producto
+        destroyProducto: async function (producto) {
+
+            if (!confirm('Confirma eliminar ?')) return
+            const urlDestroy = URL_SERVER + '/productos/destroy';
+            await axios.post(urlDestroy, { id:producto.id })
+                .then(response => {
+                    this.getProductos();
+                    toastr.info('Ok', 'Eliminado');
+                }).catch(function (error) {
+                    alert('something went wrong ', error)
+                });
+        }
 
     }
 })

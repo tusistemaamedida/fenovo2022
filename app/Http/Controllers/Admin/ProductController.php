@@ -69,6 +69,8 @@ class ProductController extends Controller
 
     public function list(Request $request)
     {
+        // return Product::find(1)->stockReal(null, 1);
+
         if ($request->ajax()) {
             $productos = Product::where('active', '=', 1)->orderBy('cod_fenovo')->get();
 

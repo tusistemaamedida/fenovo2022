@@ -14,8 +14,6 @@
                             </h4>
                         </div>
                         <div class="icons d-flex">
-                            @can('products.create')
-
                             <a href="{{ route('products.compararStock') }}" class="mt-1 mr-3">
                                 Comparar stocks
                             </a>
@@ -34,8 +32,7 @@
 
                             <a href="{{route('product.add')}}" title="Agregar un producto ">
                                 <i class="fa fa-2x fa-plus-circle text-primary"></i>
-                            </a>
-                            @endcan
+                            </a>                            
                         </div>
                     </div>
                 </div>
