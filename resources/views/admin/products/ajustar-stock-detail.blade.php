@@ -1,23 +1,4 @@
 <form method="POST" id="ajuste-stock">
-    <div class="row mb-3">
-        <div class="col-6">
-            <h4 class=" card-title mb-0">
-                {{ $product->cod_fenovo }} <span class="text-primary"> {{ $product->name }} </span>
-            </h4>
-        </div>
-        <div class="col-2">
-            <input type="hidden" name="stockActual" id="stockActual" value="{{ $stock }}">
-            <h4 class=" card-title mb-0">Stock actual <span class=" text-primary"> {{ $stock }} </span> </h4>
-        </div>
-        <div class="col-2 text-center">
-            <h4 class=" card-title mb-0">Peso <span class=" text-primary"> {{ $product->unit_weight }} </span> Kgrs
-            </h4>
-        </div>
-        <div class="col-2 text-center">
-            <h4 class=" card-title mb-0">Unidad medida <span class=" text-primary"> {{ $product->unit_type }} </span>
-            </h4>
-        </div>
-    </div>
     <div class="row">
         <div class="col-xs-12 col-md-6">
             <table class="table">
@@ -30,27 +11,15 @@
                 </tr>
                 <tr>
                     <td>FACTURADO</td>
-                    <th class="text-center">{{ $product->stock_f }}</th>
+                    <th class="text-center">{{ number_format($product->stock_f,0) }}</th>
                 </tr>
                 <tr>
                     <td>REMITO</td>
-                    <th class="text-center">{{ $product->stock_r }}</th>
+                    <th class="text-center">{{ number_format($product->stock_r,0) }}</th>
                 </tr>
                 <tr>
                     <td>CTA y ORDEN</td>
-                    <th class="text-center">{{ $product->stock_cyo }}</th>
-                </tr>
-                <tr>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                </tr>
-                <tr>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                </tr>
-                <tr>
-                    <td>#Id interno <span class=" font-weight-bold"> {{ $product->id }} </span> </td>
-                    <td>&nbsp;</td>
+                    <th class="text-center">{{ number_format($product->stock_cyo,0) }}</th>
                 </tr>
             </table>
         </div>
@@ -136,27 +105,48 @@
                         </div>                        
                     </th>
                 </tr>
+                <input type="hidden" name="stockAjustado" id="stockAjustado" value="0">
+                <tr>
+                    <th colspan="2">
+                        <br>
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        <input type="hidden" name="stockActual" id="stockActual" value="{{ $stock }}">
+                        <h4>Stock actual</h4>
+                    </th>
+                    <th class=" text-center">
+                        <h4 class=" text-primary"> {{ $stock }} </h4>
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        <h4>Cantidad ajustar </h4>
+                    </th>
+                    <th class=" text-center">
+                        <h4><span id="txtCantidad" class= "text-danger"> 0 </span></h4>
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        <h4>Stock ajustado<h4>
+                    </th>
+                    <th class=" text-center">
+                        <h4><span id="txtAjustado" class=" text-primary">  </span></h4>
+                    </th>
+                </tr>
                 <tr>
                     <th>
                         <input type="hidden" name="cantidad" id="cantidad" value="0">
                     </th>
                     <th class=" text-center">
-                        <a href="javascript:ajustar()" id="btnAplicar" class="btn btn-block btn-dark" title="Ajustar stock "> Ajustar </a>
+                        <a href="javascript:ajustar()" id="btnAplicar" class="btn btn-dark"> 
+                            Aplicar ajuste
+                        </a>
                     </th>
                 </tr>
             </table>
         </div>
 
-        <div class="col-xs-12 col-md-6">            
-        </div>
-
-        <div class="col-xs-12 col-md-3">
-            <h4>Stock ajustado <span id="txtAjustado" class=" text-danger">  </span> </h4>
-        </div>          
-        
-        <div class="col-xs-12 col-md-3">
-            <h4>Cantidad a ajustar <span id="txtCantidad" class= "text-primary font-weight-bold"> 0 </span> </h4> 
-        </div>
-
-    </div>
 </form>

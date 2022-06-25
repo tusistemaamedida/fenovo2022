@@ -36,6 +36,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -364,9 +365,11 @@ class ProductController extends Controller
     public function ajustarStockStore(Request $request)
     {
         try {
-            $product = Product::find($request->product_id);
-            $stock   = $product->stockReal();
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
 
+            $product  = Product::find($request->product_id);
+            $stock    = $request->stockAjustado;
             $cantidad = $request->cantidad;
 
             switch ($request->tipo) {
@@ -380,9 +383,7 @@ class ProductController extends Controller
                     $product->stock_cyo = ($request->operacion == 'suma') ? $product->stock_cyo + $cantidad : $product->stock_cyo - $cantidad;
                     break;
             }
-
             $product->save();
-            $stock = ($request->operacion == 'suma') ? $stock + $cantidad : $stock - $cantidad;
 
             $from  = \Auth::user()->store_active;
             $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();
@@ -407,6 +408,7 @@ class ProductController extends Controller
             $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
             $latest['entidad_tipo'] = 'S';
             $latest['unit_package'] = 0;
+            $latest['circuito'] = $request->tipo;
             $latest['unit_type']    = $product->unit_type;
             $latest['product_id']   = $request->product_id;
             $latest['entry']        = ($request->operacion == 'suma') ? $cantidad : 0;
@@ -414,6 +416,9 @@ class ProductController extends Controller
             $latest['bultos']       = $request->bultos;
             $latest['balance']      = $stock;
             MovementProduct::create($latest);
+
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
 
             //
             $ajustes              = $this->enumRepository->getType('ajustes');
@@ -435,6 +440,8 @@ class ProductController extends Controller
                 'type' => 'success',
             ]);
         } catch (\Exception $e) {
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }

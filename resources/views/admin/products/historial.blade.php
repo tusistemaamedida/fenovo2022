@@ -39,7 +39,7 @@
                                             <th>Observacion</th>
                                             <th>Presentacion</th>
                                             <th>Bultos</th>
-                                            <th>C.</th>
+                                            <th>Circuito</th>
                                             <th>Ingreso</th>
                                             <th>Salida</th>
                                             <th>Saldo</th>

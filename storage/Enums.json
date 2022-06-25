@@ -4,10 +4,10 @@
       "type": "CONTABLE"
     },
     {
-      "type": "AJUSTE"
+      "type": "STOCK"
     },    
     {
-      "type": "DEVOLUCION"
+      "type": "CRUCE"
     }
   ],
   "movimientos": [

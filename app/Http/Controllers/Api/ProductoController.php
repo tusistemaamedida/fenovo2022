@@ -17,17 +17,15 @@ class ProductoController extends Controller
     public function getProductos(Request $request)
     {
 
-        return $productos = DB::table('products as t1')
+        $productos = DB::table('products as t1')
             ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
             ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
-            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't2.costfenovo', 't3.name as proveedor'])
+            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor', 't1.active'])
             ->where('t1.name', 'like', '%' . $request->name . '%')
             ->orWhere('t3.name', 'like', '%' . $request->name . '%')
             ->orWhere('t1.cod_fenovo', 'like', '%' . $request->codfenovo . '%')
             ->orderBy('t1.name', 'ASC')
-            ->get(10);
-
-        
+            ->get(10);        
 
         $arrProductos = [];
 

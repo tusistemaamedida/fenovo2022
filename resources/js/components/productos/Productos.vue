@@ -43,22 +43,30 @@
                                     <table class="table table-hover table-condensed" id="tablaProductos">
                                         <thead>
                                             <tr>
-                                                <th  style=" width: 10%;" >CodFenovo</th>
-                                                <th  style=" width: 50%;" >Producto</th>
-                                                <th  style=" width: 30%;" >Proveedor</th>
-                                                <th  style=" width: 10%;" >Costo</th>
+                                                <th>CodFenovo</th>
+                                                <th>Producto</th>
+                                                <th>Unidad</th>
+                                                <th>Proveedor</th>
+                                                <th>Costo</th>
+                                                <th>Historial</th>
                                             </tr>
                                         </thead>
                                         <tbody>                                    
                                             <tr v-for="producto in productos.data" :key="producto.id">
                                                 <td> {{ producto.cod_fenovo }}</td>
                                                 <td class="text-left"> 
-                                                    <a :href="`${producto.link}`" class=" text-primary">
+                                                    <a :href="`${producto.linkOferta}`" class=" text-primary">
                                                        {{ producto.name }}
                                                     </a>
                                                 </td>
+                                                <td> {{ producto.unit_type }}</td>
                                                 <td> {{ producto.proveedor }}</td>
                                                 <td> {{ producto.costfenovo }}</td>
+                                                <td class="text-left"> 
+                                                    <a :href="`${producto.linkHistorial}`" class=" text-primary">
+                                                       <i class="fa fa-list" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
                                             </tr>
                                         </tbody>                                         
                                     </table>                                   
