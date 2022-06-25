@@ -22,19 +22,21 @@ use App\Models\Proveedor;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
 use App\Repositories\AlicuotaTypeRepository;
-
+use App\Repositories\EnumRepository;
 use App\Repositories\ProducDescuentoRepository;
 use App\Repositories\ProductCategoryRepository;
 use App\Repositories\ProductPriceRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProveedorRepository;
 use App\Repositories\SenasaDefinitionRepository;
+
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -48,6 +50,7 @@ class ProductController extends Controller
     private $proveedorRepository;
     private $senasaDefinitionRepository;
     private $productImport;
+    private $enumRepository;
 
     public function __construct(
         ProductRepository $productRepository,
@@ -55,6 +58,7 @@ class ProductController extends Controller
         ProductCategoryRepository $productCategoryRepository,
         ProducDescuentoRepository $productDescuentoRepository,
         ProveedorRepository $proveedorRepository,
+        EnumRepository $enumRepository,
         SenasaDefinitionRepository $senasaDefinitionRepository,
         AlicuotaTypeRepository $alicuotaTypeRepository
     ) {
@@ -64,6 +68,7 @@ class ProductController extends Controller
         $this->productCategoryRepository  = $productCategoryRepository;
         $this->productDescuentoRepository = $productDescuentoRepository;
         $this->proveedorRepository        = $proveedorRepository;
+        $this->enumRepository             = $enumRepository;
         $this->senasaDefinitionRepository = $senasaDefinitionRepository;
     }
 
@@ -310,14 +315,18 @@ class ProductController extends Controller
         }
     }
 
+    public function ajustarStockMenu(Request $request)
+    {
+        return view('admin.products.ajustar-stock');
+    }
+
     public function getStockDetail(Request $request)
     {
         try {
-            $voucher        = ($request->voucher) ? $request->voucher : 0;
-            $origen         = ($request->origen) ? $request->origen : 'Ajuste manual';
             $product        = $this->productRepository->getByIdWith($request->id);
             $presentaciones = explode('|', $product->unit_package);
             $stock          = $product->stockReal();
+            $ajustes        = $this->enumRepository->getType('ajustes');
 
             $stock_presentaciones = [];
 
@@ -330,27 +339,22 @@ class ProductController extends Controller
 
             return  view(
                 'admin.products.ajustar-stock',
-                compact('product', 'origen', 'voucher', 'presentaciones', 'stock', 'stock_presentaciones')
+                compact('product', 'presentaciones', 'stock', 'stock_presentaciones', 'ajustes')
             );
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 
-    public function ajustarStockMenu(Request $request)
-    {
-        return view('admin.products.ajustar-stock');
-    }
-
     public function ajustarStockStore(Request $request)
     {
         try {
-            $product = Product::find($request->product_id);
-            $stock   = $product->stockReal();
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
 
+            $product  = Product::find($request->product_id);
+            $stock    = $request->stockAjustado;
             $cantidad = $request->cantidad;
-            $voucher  = $request->voucher;
-            $origen   = $request->origen;
 
             switch ($request->tipo) {
                 case 'F':
@@ -363,9 +367,7 @@ class ProductController extends Controller
                     $product->stock_cyo = ($request->operacion == 'suma') ? $product->stock_cyo + $cantidad : $product->stock_cyo - $cantidad;
                     break;
             }
-
             $product->save();
-            $stock = ($request->operacion == 'suma') ? $stock + $cantidad : $stock - $cantidad;
 
             $from  = \Auth::user()->store_active;
             $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();
@@ -390,6 +392,7 @@ class ProductController extends Controller
             $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
             $latest['entidad_tipo'] = 'S';
             $latest['unit_package'] = 0;
+            $latest['circuito']     = $request->tipo;
             $latest['unit_type']    = $product->unit_type;
             $latest['product_id']   = $request->product_id;
             $latest['entry']        = ($request->operacion == 'suma') ? $cantidad : 0;
@@ -398,7 +401,11 @@ class ProductController extends Controller
             $latest['balance']      = $stock;
             MovementProduct::create($latest);
 
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
+
             //
+            $ajustes              = $this->enumRepository->getType('ajustes');
             $presentaciones       = explode('|', $product->unit_package);
             $stock_presentaciones = [];
 
@@ -412,11 +419,13 @@ class ProductController extends Controller
             return new JsonResponse([
                 'html' => view(
                     'admin.products.ajustar-stock-detail',
-                    compact('product', 'origen', 'voucher', 'presentaciones', 'stock', 'stock_presentaciones')
+                    compact('product', 'presentaciones', 'stock', 'stock_presentaciones', 'ajustes')
                 )->render(),
                 'type' => 'success',
             ]);
         } catch (\Exception $e) {
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }

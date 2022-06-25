@@ -1,4 +1,15 @@
 {
+  "ajustes": [
+    {
+      "type": "CONTABLE"
+    },
+    {
+      "type": "STOCK"
+    },    
+    {
+      "type": "CRUCE"
+    }
+  ],
   "movimientos": [
     {
       "type": "COMPRA"
