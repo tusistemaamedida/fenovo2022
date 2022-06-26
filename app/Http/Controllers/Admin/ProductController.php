@@ -22,7 +22,6 @@ use App\Models\Proveedor;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
 use App\Repositories\AlicuotaTypeRepository;
-
 use App\Repositories\EnumRepository;
 use App\Repositories\ProducDescuentoRepository;
 use App\Repositories\ProductCategoryRepository;
@@ -30,6 +29,7 @@ use App\Repositories\ProductPriceRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProveedorRepository;
 use App\Repositories\SenasaDefinitionRepository;
+
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -50,6 +50,7 @@ class ProductController extends Controller
     private $proveedorRepository;
     private $senasaDefinitionRepository;
     private $productImport;
+    private $enumRepository;
 
     public function __construct(
         ProductRepository $productRepository,
@@ -57,9 +58,9 @@ class ProductController extends Controller
         ProductCategoryRepository $productCategoryRepository,
         ProducDescuentoRepository $productDescuentoRepository,
         ProveedorRepository $proveedorRepository,
+        EnumRepository $enumRepository,
         SenasaDefinitionRepository $senasaDefinitionRepository,
-        AlicuotaTypeRepository $alicuotaTypeRepository,
-        EnumRepository $enumRepository
+        AlicuotaTypeRepository $alicuotaTypeRepository
     ) {
         $this->productRepository          = $productRepository;
         $this->productPriceRepository     = $productPriceRepository;
@@ -67,6 +68,7 @@ class ProductController extends Controller
         $this->productCategoryRepository  = $productCategoryRepository;
         $this->productDescuentoRepository = $productDescuentoRepository;
         $this->proveedorRepository        = $proveedorRepository;
+        $this->enumRepository             = $enumRepository;
         $this->senasaDefinitionRepository = $senasaDefinitionRepository;
         $this->enumRepository             = $enumRepository;
     }
@@ -408,7 +410,7 @@ class ProductController extends Controller
             $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
             $latest['entidad_tipo'] = 'S';
             $latest['unit_package'] = 0;
-            $latest['circuito'] = $request->tipo;
+            $latest['circuito']     = $request->tipo;
             $latest['unit_type']    = $product->unit_type;
             $latest['product_id']   = $request->product_id;
             $latest['entry']        = ($request->operacion == 'suma') ? $cantidad : 0;

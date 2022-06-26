@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Traits\OriginDataTrait;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -59,15 +60,19 @@ class MovementsViewExport implements FromView
         // Actualizo los movimientos como exportados
         Movement::whereExported(0)->whereIn('type', $arrTipos)->update(['exported' => 1]);
 
+        // Tomo los movimientos de 15 dias atras
+        $fecha = Carbon::now()->subDays(15)->toDateTimeString();
+
         // Obtener los Movimientos exportables
         $movimientos = DB::table('movements as t1')
             ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
             ->join('products as t3', 't2.product_id', '=', 't3.id')
             ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
-            ->select('t1.id', 't2.id as movement_products_id', 't2.unit_price', 't2.cost_fenovo', 't2.exported_number', 't1.type', 't1.date', 't1.to', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad', 't2.unit_package')
+            ->select('t1.id', 't1.created_at', 't2.id as movement_products_id', 't2.unit_price', 't2.cost_fenovo', 't2.exported_number', 't1.type', 't1.date', 't1.to', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad', 't2.unit_package')
             ->whereIn('t1.type', $arrTipos)
             ->where('t2.entidad_tipo', '!=', 'C')
             ->where('t2.exported_number', '>', 0)
+            ->whereDate('t1.created_at', '>', $fecha)
             ->orderBy('t2.exported_number', 'asc')
             ->get();
 
