@@ -7,8 +7,7 @@
     <div class="card card-custom gutter-b bg-white border-0 mt-5">
         <div class="row mt-5 ml-3">
             <div class="col-xs-12 col-md-5">
-                <h4> Ajustar stock {{ $product->cod_fenovo }} <span class="text-primary"> {{ $product->name }} </span>
-                </h4>
+                <h4> Ajustar stock {{ $product->cod_fenovo }} <span class="text-primary"> {{ $product->name }} </span>  </h4>
             </div>
             <div class="col-xs-12 col-md-1 text-center">
                 <h4>#ID {{ $product->id }} </h4>
@@ -20,13 +19,13 @@
             <div class="col-xs-12 col-md-2">
                 <h4>u.m. <span class=" text-primary"> {{ $product->unit_type }} </span> </h4>
             </div>
-            <div class="col-xs-12 col-md-1">
+            <div class="col-xs-12 col-md-1">                
             </div>
             <div class="col-xs-12 col-md-1">
-                <a href="{{ route('product.historial', ['id' => $product->id]) }}">
+                <a href="{{ route('product.historial', ['id' => $product->id]) }}"> 
                     <i class="fa fa-list" aria-hidden="true"></i> Historial
                 </a>
-            </div>
+            </div>  
         </div>
 
         <div class="row m-3">
@@ -42,17 +41,17 @@
     <script>
         toastr.options.positionClass = 'toast-bottom-right';
 
-        jQuery(document).ready(function() {
-            jQuery("#txtAjustado").html(jQuery("#stockActual").val());
+        $(document).ready(function() {
+            jQuery("#txtAjustado").html($("#stockActual").val());
         })
 
         const Actualizar = () => {
 
             let total = jQuery("#cantidad").val();
 
-            let valorActual = (jQuery("input[name='operacion']:checked").val() == 'suma') ?
-                parseInt(jQuery("#stockActual").val()) + parseInt(total) :
-                parseInt(jQuery("#stockActual").val()) - parseInt(total);
+            let valorActual = ($("input[name='operacion']:checked").val() == 'suma') ?
+                parseInt($("#stockActual").val()) + parseInt(total) :
+                parseInt($("#stockActual").val()) - parseInt(total);
 
             jQuery("#stockAjustado").val(valorActual)
             jQuery("#txtAjustado").html(valorActual);
@@ -97,8 +96,7 @@
                     let presentacion = presentacion_input[1];
 
                     bultos = bultos + valor;
-                    total = (unit_type == 'K') ? total + (valor * presentacion * unit_weight) : total + (valor *
-                        presentacion);
+                    total = (unit_type == 'K') ? total + (valor * presentacion * unit_weight) : total + (valor * presentacion);
                 });
                 total = total.toFixed(2);
             }

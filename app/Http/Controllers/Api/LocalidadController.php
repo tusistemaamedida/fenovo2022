@@ -11,7 +11,7 @@ class LocalidadController extends Controller
 {
     public function getLocalidades(Request $request)
     {
-        return Localidad::orderBy('nombre')->paginate(5);
+        return Localidad::buscarNombre($request->name)->orderBy('nombre')->paginate(10);
     }
 
     public function storeLocalidad(LocalidadRequest $request)

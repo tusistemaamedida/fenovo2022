@@ -329,6 +329,7 @@ namespace App\Models{
  * @property Carbon|null $updated_at
  * @package App\Models
  * @property int|null $orden
+ * @property int|null $jurisdiccion
  * @property string|null $tributos
  * @property string|null $costo_fenovo_total
  * @property-read \App\Models\VoucherType|null $tipoFactura
@@ -364,6 +365,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereImpTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereImpTrib($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereIvas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereJurisdiccion($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereMonCotiz($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereMonId($value)
@@ -409,6 +411,7 @@ namespace App\Models{
  * @property string|null $provincia
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Ruta[] $rutas
  * @property-read int|null $rutas_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Localidad buscarNombre($nombre)
  * @method static \Illuminate\Database\Eloquent\Builder|Localidad newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Localidad newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Localidad query()
@@ -464,7 +467,8 @@ namespace App\Models{
  * @property int|null $exported
  * @property int|null $user_id
  * @property string|null $observacion
- * @property-read \App\Models\Invoice|null $invoice
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoice
+ * @property-read int|null $invoice_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $movement_ingreso_products
  * @property-read int|null $movement_ingreso_products_count
  * @property-read int|null $movement_products_count
@@ -472,6 +476,10 @@ namespace App\Models{
  * @property-read int|null $movement_salida_products_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $panamas
  * @property-read int|null $panamas_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $salida_products_cyo
+ * @property-read int|null $salida_products_cyo_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $salida_products_no_cyo
+ * @property-read int|null $salida_products_no_cyo_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Senasa[] $senasa
  * @property-read int|null $senasa_count
  * @method static \Illuminate\Database\Eloquent\Builder|Movement newModelQuery()
@@ -514,7 +522,9 @@ namespace App\Models{
  * @property string|null $unit_type
  * @property int|null $bultos
  * @property bool|null $invoice
- * @property bool|null $cyo Cta y Orden
+ * @property bool|null $cyo
+ * @property string|null $circuito Cta y Orden
+ * @property int|null $punto_venta
  * @property int|null $iibb
  * @property float|null $entry
  * @property float|null $egress
@@ -529,6 +539,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct query()
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereBalance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereBultos($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereCircuito($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereCostFenovo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereCyo($value)
@@ -542,6 +553,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereInvoice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereMovementId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct wherePuntoVenta($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereTasiva($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereUnitPackage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|MovementProduct whereUnitPrice($value)
@@ -722,6 +734,107 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Pedido
+ *
+ * @property int $id
+ * @property \Illuminate\Support\Carbon|null $date
+ * @property string|null $from
+ * @property string|null $status
+ * @property string|null $voucher_number
+ * @property int|null $user_id
+ * @property int|null $movement_id
+ * @property string|null $observacion
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\PedidoProductos[] $productos
+ * @property-read int|null $productos_count
+ * @property-read \App\Models\Store|null $store
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido whereFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido whereMovementId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido whereObservacion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Pedido whereVoucherNumber($value)
+ */
+	class Pedido extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\PedidoEstados
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $pedido_id
+ * @property string $estado
+ * @property \Illuminate\Support\Carbon $fecha
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoEstados newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoEstados newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoEstados query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoEstados whereEstado($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoEstados whereFecha($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoEstados whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoEstados wherePedidoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoEstados whereUserId($value)
+ */
+	class PedidoEstados extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\PedidoProductos
+ *
+ * @property int $id
+ * @property int|null $pedido_id
+ * @property int|null $entidad_id
+ * @property string|null $entidad_tipo
+ * @property int|null $product_id
+ * @property string|null $tasiva
+ * @property string|null $unit_price
+ * @property string|null $cost_fenovo
+ * @property float|null $unit_package
+ * @property string|null $unit_type
+ * @property int|null $bultos
+ * @property int|null $bultos_enviados
+ * @property int|null $bultos_pendientes
+ * @property bool|null $invoice
+ * @property int|null $iibb
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Product|null $product
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereBultos($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereBultosEnviados($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereBultosPendientes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereCostFenovo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereEntidadId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereEntidadTipo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereIibb($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereInvoice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos wherePedidoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereTasiva($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereUnitPackage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereUnitPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereUnitType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PedidoProductos whereUpdatedAt($value)
+ */
+	class PedidoProductos extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Permission
  *
  * @property int $id
@@ -763,6 +876,7 @@ namespace App\Models{
  * @property string|null $stock_f
  * @property string|null $stock_r
  * @property string|null $stock_cyo
+ * @property string|null $coeficiente_relacion_stock Este % indica la cantidad facturado el resto remito
  * @property int|null $stock_sem_min
  * @property int|null $stock_sem_max
  * @property float|null $hight
@@ -811,6 +925,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereCodDescuento($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereCodFenovo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereCodProveedor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereCoeficienteRelacionStock($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereCurrency($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereDescription($value)
@@ -1073,6 +1188,7 @@ namespace App\Models{
  * @package App\Models
  * @property string|null $firstname
  * @property string|null $lastname
+ * @property int $punto_venta
  * @property-read int|null $products_count
  * @method static \Illuminate\Database\Eloquent\Builder|Proveedor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Proveedor newQuery()
@@ -1087,6 +1203,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Proveedor whereIvaType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Proveedor whereLastname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Proveedor whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Proveedor wherePuntoVenta($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Proveedor whereResponsable($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Proveedor whereState($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Proveedor whereTelephone($value)
@@ -1447,10 +1564,14 @@ namespace App\Models{
  * @property string|null $neto
  * @property string|null $costo_fenovo
  * @property int|null $iibb
+ * @property string|null $nro_pedido
+ * @property string|null $pausado
+ * @property string|null $circuito
  * @property-read \App\Models\Product|null $producto
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereCircuito($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereCostoFenovo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereId($value)
@@ -1458,6 +1579,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereInvoice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereListId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereNeto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereNroPedido($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct wherePausado($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereProductId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereQuantity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct whereStoreId($value)
@@ -1539,8 +1662,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Customer[] $customers
  * @property-read int|null $customers_count
  * @property-read \App\Models\Region|null $region
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $users
- * @property-read int|null $users_count
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Store newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Store newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Store query()

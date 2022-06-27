@@ -24,4 +24,11 @@ class Localidad extends Model
     {
         return $this->belongsToMany(Ruta::class, RutaLocalidad::class);
     }
+
+    public function scopeBuscarNombre($query, $nombre)
+    {
+        if ($nombre) {
+            return $query->orWhere('nombre', 'like', $nombre . '%');
+        }
+    }
 }
