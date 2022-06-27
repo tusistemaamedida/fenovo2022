@@ -88,8 +88,8 @@
                     title="@if ($nroPedidos > 0) Tiene {{ $nroPedidos }} pedido pendientes @else Lista de pedidos @endif ">
                     <a href="{{ route('pedidos.index') }}" class="nav-link mt-2">
                         @if ($nroPedidos > 0)
-                            <i class="fas fa-list text-primary"></i> <span
-                                class="text-primary">{{ $nroPedidos }}</span>
+                            <i class="fas fa-list text-warning"></i> <span
+                                class="text-warning">{{ $nroPedidos }}</span>
                         @else
                             <i class="fas fa-list"></i>
                         @endif
