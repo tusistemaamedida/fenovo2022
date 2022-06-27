@@ -69,7 +69,7 @@ class SalidasController extends Controller
         if ($request->ajax()) {
 
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-            $movement = Movement::whereIn('type', $arrTypes)->orderBy('date','DESC')->orderBy('id','DESC')->limit(100);
+            $movement = Movement::where('to',\Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date','DESC')->orderBy('id','DESC')->limit(100);
 
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
@@ -623,8 +623,9 @@ class SalidasController extends Controller
     public function getSessionProducts(Request $request)
     {
         try {
-            $session_products      = $this->sessionProductRepository->getByListId($request->input('list_id'));
-            $mostrar_check_invoice = !(str_contains($request->input('list_id'), 'DEVOLUCION_') || str_contains($request->input('list_id'), 'DEBITO_'));
+            $list_id = $request->input('list_id').'_'.\Auth::user()->store_active;
+            $session_products      = $this->sessionProductRepository->getByListId($list_id);
+            $mostrar_check_invoice = !(str_contains($list_id, 'DEVOLUCION_') || str_contains($list_id, 'DEBITO_'));
             return new JsonResponse([
                 'type' => 'success',
                 'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products', 'mostrar_check_invoice'))->render(),
@@ -637,8 +638,9 @@ class SalidasController extends Controller
     public function getFleteSessionProducts(Request $request)
     {
         try {
+            $list_id = $request->input('list_id').'_'.\Auth::user()->store_active;
             $total = $request->input('total_from_session');
-            $km    = $this->sessionProductRepository->getFlete($request->input('list_id'));
+            $km    = $this->sessionProductRepository->getFlete($list_id);
             if ($km) {
                 $fleteSetting = FleteSetting::where('hasta', '>=', $km)->orderBy('hasta', 'ASC')->first();
                 $porcentaje   = $fleteSetting->porcentaje;
@@ -671,7 +673,7 @@ class SalidasController extends Controller
         try {
             if ($request->has('id') && $request->input('id') != '') {
                 $product    = $this->productRepository->getById($request->input('id'));
-                $list_id    = $request->input('list_id');
+                $list_id    = $request->input('list_id').'_'.\Auth::user()->store_active;
                 $devolucion = str_contains($list_id, 'DEVOLUCION_');
                 $debito     = str_contains($list_id, 'DEBITO_');
 
@@ -813,7 +815,7 @@ class SalidasController extends Controller
 
             $insert_data['unit_type']    = $unit_type;
             $insert_data['costo_fenovo'] = $prices->costfenovo;
-            $insert_data['list_id']      = $to_type . '_' . $to;
+            $insert_data['list_id']      = $to_type . '_' . $to.'_'.Auth::user()->store_active;
             $insert_data['store_id']     = Auth::user()->store_active;
             $insert_data['invoice']      = true;
             $insert_data['iibb']         = $product->iibb;
@@ -902,7 +904,7 @@ class SalidasController extends Controller
             $from = 1;
             DB::beginTransaction();
             Schema::disableForeignKeyConstraints();
-            $list_id = $request->input('session_list_id');
+            $list_id = $request->input('session_list_id').'_'.\Auth::user()->store_active;
             $explode = explode('_', $list_id);
             $session_products = $this->sessionProductRepository->getByListId($list_id);
 
