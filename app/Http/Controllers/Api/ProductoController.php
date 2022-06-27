@@ -16,16 +16,16 @@ class ProductoController extends Controller
 {
     public function getProductos(Request $request)
     {
+        $txtProducto = $request->txtProducto;
 
-        $productos = DB::table('products as t1')
+        $productos = DB::table('products as t1')->where('t1.active',1)
             ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
             ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
-            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor', 't1.active'])
-            ->where('t1.name', 'like', '%' . $request->name . '%')
-            ->orWhere('t3.name', 'like', '%' . $request->name . '%')
-            ->orWhere('t1.cod_fenovo', 'like', '%' . $request->codfenovo . '%')
+            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor'])
+            ->selectRaw('CONCAT(t1.cod_fenovo," ", t1.name," ", t3.name) as txtProducto')
+            ->having('txtProducto', 'LIKE', "%$txtProducto%")
             ->orderBy('t1.name', 'ASC')
-            ->get(10);        
+            ->get(10);                    
 
         $arrProductos = [];
 
@@ -39,10 +39,9 @@ class ProductoController extends Controller
             $objProducto->unit_type  = $producto->unit_type;
             $objProducto->proveedor  = $producto->proveedor;
             $objProducto->costfenovo = $producto->costfenovo;
-            $objProducto->active     = $producto->active;
 
             // Ofertas
-            $oferta            = SessionOferta::doesntHave('stores')->whereProductId($producto->id)->first();
+            $oferta            = SessionOferta::doesntHave('stores')->select('id')->whereProductId($producto->id)->first();
             $objProducto->linkOferta = ($oferta)
                 ? route('product.edit', ['id' => $producto->id, 'oferta_id' => $oferta->id, 'fecha_oferta' => $oferta->id]) . '#precios'
                 : route('product.edit', ['id' => $producto->id]);
@@ -56,7 +55,7 @@ class ProductoController extends Controller
             array_push($arrProductos, $objProducto);
         }
 
-        $data = $this->paginate($arrProductos, 10);
+        $data = $this->paginate($arrProductos, 20);
 
         return $data;
     }
