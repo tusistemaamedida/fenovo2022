@@ -18,7 +18,7 @@ Route::post('ingresos/update-ingreso', [IngresosController::class, 'updateIngres
 Route::get('ingresos/edit-producto', [IngresosController::class, 'editProduct'])->name('ingresos.editProduct');
 Route::post('ingresos/update-producto', [IngresosController::class, 'updateProduct'])->name('ingresos.updateProduct');
 
-Route::get('ingresos/show', [IngresosController::class, 'show'])->middleware('can:ingresos.check')->name('ingresos.show');
+Route::get('ingresos/show', [IngresosController::class, 'show'])->name('ingresos.show');
 Route::post('ingresos/update', [IngresosController::class, 'update'])->name('ingresos.update');
 Route::post('ingresos/destroy', [IngresosController::class, 'destroy'])->name('ingresos.destroy');
 Route::post('ingresos/destroyTemp', [IngresosController::class, 'destroyTemp'])->name('ingresos.destroyTemp');
