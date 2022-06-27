@@ -81,6 +81,7 @@ class ProductController extends Controller
             ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
             ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
             ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor'])
+            ->orderBy('t1.cod_fenovo')
             ->get();
 
 
