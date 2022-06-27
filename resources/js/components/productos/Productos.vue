@@ -40,15 +40,15 @@
                         <div class="row">
                             <div class="col-12">                                 
                                 <div class="table-responsive">
-                                    <table class="table table-hover table-condensed" id="tablaProductos">
+                                    <table class="table table-hover table-condensed text-center" id="tablaProductos">
                                         <thead>
                                             <tr>
-                                                <th>CodFenovo</th>
-                                                <th>Producto</th>
-                                                <th>Unidad</th>
-                                                <th>Proveedor</th>
-                                                <th>Costo</th>
-                                                <th>Historial</th>
+                                                <th style=" width: 3%;">CodFenovo</th>
+                                                <th style=" width: 30%;">Producto</th>
+                                                <th style=" width: 3%;">Unidad</th>
+                                                <th style=" width: 40%;">Proveedor</th>
+                                                <th style=" width: 10%;">Costo</th>
+                                                <th style=" width: 3%;">Historial</th>
                                             </tr>
                                         </thead>
                                         <tbody>                                    
@@ -62,7 +62,7 @@
                                                 <td> {{ producto.unit_type }}</td>
                                                 <td> {{ producto.proveedor }}</td>
                                                 <td> {{ producto.costfenovo }}</td>
-                                                <td class="text-left"> 
+                                                <td> 
                                                     <a :href="`${producto.linkHistorial}`" class=" text-primary">
                                                        <i class="fa fa-list" aria-hidden="true"></i>
                                                     </a>
@@ -101,7 +101,6 @@ export default {
         }
     },
     mounted() {
-        this.txtProducto = (localStorage.txtProducto)?localStorage.txtProducto:'';
         jQuery(function () {
             jQuery("#buscarProducto").focus();
         })
@@ -115,16 +114,16 @@ export default {
     methods: {
         // Obtener productos
         getProductos(page=1) {
-            let txtBuscar = this.txtProducto;
-            const urlProductos = APP_URL + `/getProductos?page=${page}&codfenovo=${txtBuscar}&name=${txtBuscar}`;
+            this.txtProducto = (localStorage.txtProducto)?localStorage.txtProducto:'';
+            const urlProductos = APP_URL + `/getProductos?page=${page}&txtProducto=${this.txtProducto}`;
             axios.get(urlProductos).then(response => {
                 this.productos = response.data
             })
         },
         // Buscar productos
         buscarRegistro: function () {
-            localStorage.setItem('txtProducto', this.txtProducto);
             this.getProductos()
+            localStorage.setItem('txtProducto', this.txtProducto);
         },
 
     }

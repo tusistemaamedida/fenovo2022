@@ -1,6 +1,3 @@
-import { createApp, defineAsyncComponent } from 'vue'
-import Pagination from 'laravel-vue-pagination'
-
 window.jQuery = require('jquery');
 window.$ = require('jquery');
 window.axios = require('axios');
@@ -10,6 +7,8 @@ window.Popper = require('@popperjs/core');
 window.dataTable = require('datatables.net-bs4');
 window.Select2 =  require('select2');
 
+import { createApp, defineAsyncComponent } from 'vue'
+import Pagination from 'laravel-vue-pagination'
 
 // Componentes
 import Productos from './components/productos/Productos'
