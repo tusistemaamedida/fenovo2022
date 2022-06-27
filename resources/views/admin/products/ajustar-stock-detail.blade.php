@@ -1,6 +1,6 @@
 <form method="POST" id="ajuste-stock">
     <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-xs-12 col-md-4">
             <table class="table">
                 <tr>
                     <td colspan="2"><br></td>
@@ -24,7 +24,7 @@
             </table>
         </div>
 
-        <div class="col-xs-12 col-md-6">
+        <div class="col-xs-12 col-md-8">
 
             <input type="hidden" name="product_id" id="product_id" value="{{ $product->id }}">
             <input type="hidden" name="unit_type" id="unit_type" value="{{ $product->unit_type }}">
