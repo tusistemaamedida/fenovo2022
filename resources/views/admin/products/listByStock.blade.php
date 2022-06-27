@@ -14,6 +14,7 @@
                             </h4>
                         </div>
                         <div class="icons d-flex">
+                            @can('products.create')
                             <a href="{{ route('products.by.stocks') }}" class="mt-1 mr-3">
                                 Stocks (F,R,CyO)
                             </a>
@@ -36,7 +37,8 @@
 
                             <a href="{{route('product.add')}}" title="Agregar un producto ">
                                 <i class="fa fa-2x fa-plus-circle text-primary"></i>
-                            </a>                            
+                            </a>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -47,19 +49,17 @@
                 <div class="card card-custom gutter-b bg-white border-0">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="productTable" class=" table table-hover dataTable table-condensed yajra-datatable" role="grid">
+                            <table id="productTable" class=" table table-hover dataTable table-condensed display yajra-datatable" role="grid">
                                 <thead class="text-body">
                                     <tr class="bg-light ">
                                         <td>Codigo</td>
                                         <td>Producto</td>
-                                        <td>Stock</td>
                                         <td>Unidad</td>
-                                        <td>Costo</td>
-                                        <td>Proveedor</td>
-                                        <td>Historial</td>
-                                        <td>Ajuste</td>
-                                        <td>Editar</td>
-                                        <td>Borrar</td>
+                                        <td>CyO</td>
+                                        <td>Remito</td>
+                                        <td>Factura</td>
+                                        <td>Total</td>
+                                        <td>Ajustar Stock</td>
                                     </tr>
                                 </thead>
                                 <tbody class="kt-table-tbody text-dark">
@@ -82,18 +82,16 @@
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
         autoWidth: false,
-        ajax: "{{ route('products.list') }}",
+        ajax: "{{ route('products.by.stocks') }}",
         columns: [
             {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},
-            {data: 'stock', class:'text-center', orderable: false, searchable: false},
             {data: 'unit_type',class:'text-center', orderable: false, searchable: false},
-            {data: 'costo', orderable: false, searchable: false},
-            {data: 'proveedor', orderable: false},
-            {data: 'historial', class:'text-center', orderable: false, searchable: false},
-            {data: 'ajuste', class:'text-center', orderable: false, searchable: false},
-            {data: 'editar', class:'text-center', orderable: false, searchable: false},
-            {data: 'borrar', class:'text-center', orderable: false, searchable: false},
+            {data: 'stock_cyo', class:'text-center', orderable: true, searchable: false},
+            {data: 'stock_r', class:'text-center', orderable: true, searchable: false},
+            {data: 'stock_f', orderable: false, searchable: true},
+            {data: 'stock', orderable: true},
+            {data: 'ajuste', class:'text-center', orderable: false, searchable: false}
         ]
     });
 
@@ -102,7 +100,7 @@
         jQuery.ajax({
             url: route,
             type: 'GET',
-            data: { id },
+            data: { id, 'discriminado':true },
             success: function (data) {
                 if (data['type'] == 'success') {
                     jQuery("#insertByAjax").html(data['html']);
@@ -121,7 +119,7 @@
     }
 
     const ajustarStock = () =>{
-        var url ="{{ route('ajustar.stock') }}";
+        var url ="{{ route('ajustar.by.stock') }}";
         jQuery.ajax({
             url:url,
             type:'POST',

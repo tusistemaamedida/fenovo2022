@@ -45,7 +45,7 @@
                     <div class="col-md-2 text-center">
                         <label class="text-dark">Número de NC</label>
                         <fieldset class="form-group mb-3">
-                            <strong>@if($movement->invoice){{ $movement->invoice->voucher_number }}@else -- @endif</strong>
+                            <strong>@if($movement->invoice_fenovo()){{ $movement->invoice_fenovo()->voucher_number }}@else -- @endif</strong>
                         </fieldset>
                     </div>
                     <div class="col-md-1 text-center">

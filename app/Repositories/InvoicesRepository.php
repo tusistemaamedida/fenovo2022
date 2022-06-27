@@ -10,7 +10,8 @@ class InvoicesRepository extends BaseRepository {
         return new Invoice();
     }
 
-    public function getByMovement($id){
+    public function getByMovement($id,$pto_vta = false){
+        if($pto_vta) return $this->newQuery()->where('movement_id',$id)->where('pto_vta',$pto_vta)->first();
         return $this->newQuery()->where('movement_id',$id)->first();
     }
 

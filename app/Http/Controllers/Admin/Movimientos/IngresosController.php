@@ -209,11 +209,15 @@ class IngresosController extends Controller
             $movement_new           = Movement::create($data);
 
             $hoy = Carbon::parse(now())->format('Y-m-d');
+            $circuito = '';
+            if($movement_temp->subtype == 'FACTURA') $circuito = 'F';
+            if($movement_temp->subtype == 'REMITO') $circuito = 'R';
+            if($movement_temp->subtype == 'CYO') $circuito = 'CyO';
 
             // Recorro el arreglo y voy guardando
             foreach ($movement_temp->movement_ingreso_products as $movimiento) {
                 $product               = Product::find($movimiento['product_id']);
-                $latest                = $product->stockReal(null, Auth::user()->store_active);
+                $latest                = $product->stockReal();
                 $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
                 $movimiento['balance'] = $balance;
 
@@ -228,7 +232,7 @@ class IngresosController extends Controller
                     'cost_fenovo'  => $movimiento['cost_fenovo'],
                     'unit_price'   => $movimiento['unit_price'],
                     'invoice'      => $movimiento['invoice'],
-                    'cyo'          => $movimiento['cyo'],
+                    'circuito'     => $circuito,
                     'bultos'       => $movimiento['bultos'],
                     'entry'        => $movimiento['entry'],
                     'egress'       => $movimiento['egress'],
@@ -332,8 +336,8 @@ class IngresosController extends Controller
 
 
 
-                    
-                    return ($movement->status == 'FINISHED') 
+
+                    return ($movement->status == 'FINISHED')
                     ?'<a href="' . route('ingresos.ajustarStockDepositos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>'
                     :'<a href="' . route('ingresos.ajustarStockDepositos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
                 })

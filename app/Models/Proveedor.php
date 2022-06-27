@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Proveedor
- * 
+ *
  * @property int $id
  * @property string|null $name
  * @property string|null $responsable
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $state
  * @property string|null $telephone
  * @property int $active
- * 
+ *
  * @property Collection|Product[] $products
  *
  * @package App\Models
@@ -47,7 +47,8 @@ class Proveedor extends Model
 		'city',
 		'state',
 		'telephone',
-		'active'
+		'active',
+        'punto_venta'
 	];
 
 	public function products()

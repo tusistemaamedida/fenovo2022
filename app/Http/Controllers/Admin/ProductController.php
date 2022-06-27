@@ -70,6 +70,7 @@ class ProductController extends Controller
         $this->proveedorRepository        = $proveedorRepository;
         $this->enumRepository             = $enumRepository;
         $this->senasaDefinitionRepository = $senasaDefinitionRepository;
+        $this->enumRepository             = $enumRepository;
     }
 
     public function list(Request $request)
@@ -118,6 +119,26 @@ class ProductController extends Controller
         return view('admin.products.list');
     }
 
+    public function listByStocks(Request $request)
+    {
+        if ($request->ajax()) {
+            $productos = $this->productRepository->all()->where('active', '=', 1);
+
+            return Datatables::of($productos)
+                ->addIndexColumn()
+                ->addColumn('stock', function ($product) {
+                    return $product->stockReal();
+                })
+                ->addColumn('ajuste', function ($producto) {
+                    $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
+                })
+                ->rawColumns(['stock', 'ajuste'])
+                ->make(true);
+        }
+
+        return view('admin.products.listByStock');
+    }
     public function index(Request $request)
     {
         return view('admin.products.index');
@@ -210,28 +231,25 @@ class ProductController extends Controller
             if ($product) {
                 $stock_presentaciones = [];
                 $presentaciones       = explode('|', $product->unit_package);
-                $stock_total          = $product->stockReal(null, \Auth::user()->store_active);
+                $stock_total          = $product->stockReal();
 
                 for ($i = 0; $i < count($presentaciones); $i++) {
                     $bultos                                   = 0;
                     $presentacion                             = ($presentaciones[$i] == 0) ? 1 : $presentaciones[$i];
-                    $stock                                    = $product->stockReal($presentacion, \Auth::user()->store_active);
                     $stock_presentaciones[$i]['presentacion'] = $presentacion;
                     $stock_presentaciones[$i]['unit_weight']  = $product->unit_weight;
-                    $stock_presentaciones[$i]['stock']        = $stock;
-                    // los bultos que hay disponibles se calcula dividiendo el balance por el peso del bulto
-                    $peso_por_bulto = $product->unit_weight * $presentacion;
-
-                    if ($stock) {
-                        $bultos = $stock / $peso_por_bulto;
-                    }
-                    $stock_presentaciones[$i]['bultos'] = (int)$bultos;
                 }
+            }
+
+            if ($request->has('discriminado') && $request->input('discriminado')) {
+                $view = 'admin.products.insertByAjaxStocks';
+            } else {
+                $view = 'admin.products.insertByAjax';
             }
 
             return new JsonResponse([
                 'type' => 'success',
-                'html' => view('admin.products.insertByAjax', compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total'))->render(),
+                'html' => view($view, compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total'))->render(),
             ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -429,7 +447,6 @@ class ProductController extends Controller
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
-
     public function buscarProductos(Request $request)
     {
         $term        = $request->term ?: '';

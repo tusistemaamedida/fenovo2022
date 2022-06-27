@@ -39,9 +39,10 @@
                                                     <th>Identificación</th>
                                                     <th>Productos cargados</th>
                                                     <th>Destino</th>
+                                                    <th>Cambiar pausa</th>
                                                     <th>Detalle</th>
-                                                    <th>Print</th>
-                                                    <th></th>
+                                                    <th>Imprimir</th>
+                                                    <th>Borrar</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -74,6 +75,7 @@
             {data: 'list_id'},
             {data: 'items', 'class':'text-center', searchable: false},
             {data: 'destino'},
+            {data: 'pausar', 'class':'text-center', searchable: false},
             {data: 'edit', 'class':'text-center', searchable: false},
             {data: 'print', 'class':'text-center', searchable: false},
             {data: 'destroy', 'class':'text-center', searchable: false},
@@ -108,7 +110,21 @@
         });
     };
 
-
+    function pausarSalida(list_id,id_pausado){
+        jQuery.ajax({
+            url: "{{route('cambiar.pausa.salida')}}",
+            type: 'POST',
+            dataType: 'json',
+            data: { list_id ,id_pausado},
+            success: function (data) {
+                if (data['type'] == 'success') {
+                    table.ajax.reload();
+                    toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
+                    toastr.info(data['msj']);
+                }
+            }
+        });
+    }
 </script>
 
 @endsection

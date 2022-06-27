@@ -39,6 +39,7 @@
                                             <th>Observacion</th>
                                             <th>Presentacion</th>
                                             <th>Bultos</th>
+                                            <th>Circuito</th>
                                             <th>Ingreso</th>
                                             <th>Salida</th>
                                             <th>Saldo</th>
@@ -74,6 +75,7 @@
             {data: 'observacion', 'class':'text-left', orderable: false, searchable: true},
             {data: 'unit_package', 'class':'text-center', orderable: false, searchable: false},
             {data: 'bultos', 'class':'text-center', orderable: false, searchable: false},
+            {data: 'circuito', 'class':'text-center', orderable: false, searchable: false},
             {data: 'entry', 'class':'text-center text-success', orderable: false, searchable: false},
             {data: 'egress', 'class':'text-center text-danger', orderable: false, searchable: false},
             {data: 'balance', 'class':'text-center', orderable: false, searchable: false},
