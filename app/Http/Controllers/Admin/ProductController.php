@@ -913,7 +913,7 @@ class ProductController extends Controller
     public function compararStock(Request $request)
     {
         if ($request->ajax()) {
-            $productos = $this->productRepository->all()->where('active', '=', 1);
+            $productos = Product::where('active', '=', 1)->limit(5);
 
             return Datatables::of($productos)
                 ->addIndexColumn()
@@ -922,7 +922,7 @@ class ProductController extends Controller
                     return $product->proveedor->name;
                 })
                 ->addColumn('stockInicioSemana', function ($product) {
-                    return $product->stockInicioSemana();
+                    return ($product->stockInicioSemana())?$product->stockInicioSemana()->balance:0;
                 })
                 ->addColumn('ingresoSemana', function ($product) {
                     return $product->ingresoSemana();

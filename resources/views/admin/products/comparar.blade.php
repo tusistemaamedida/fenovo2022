@@ -71,10 +71,10 @@
             {data: 'costo', orderable: false, searchable: false},
             {data: 'unit_type', orderable: false, searchable: false},
             {data: 'unit_package', orderable: false, searchable: false},
-            {data: 'stockInicioSemana','className': 'text-danger',  orderable: false, searchable: false},
-            {data: 'ingresoSemana', orderable: false, searchable: false},
-            {data: 'salidaSemana', orderable: false, searchable: false},
-            {data: 'stock', 'className': 'text-danger', orderable: false, searchable: false},
+            {data: 'stockInicioSemana', orderable: false, searchable: false},
+            {data: 'ingresoSemana', 'className': 'text-success', orderable: false, searchable: false},
+            {data: 'salidaSemana', 'className': 'text-danger', orderable: false, searchable: false},
+            {data: 'stock', 'className': 'font-weight-bolder', orderable: false, searchable: false},
         ]
     });
 </script>
