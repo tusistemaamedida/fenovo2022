@@ -256,15 +256,16 @@
         $subtotal = 0;
         @endphp
 
-        @for ($i = $init; $i < $to; $i++) @php $p=$array_productos[$i] @endphp <?php
-                            $subtotal += $p->unit_price * $p->cant;
-                        ?> <tr style="border-bottom: 0px;" height="10px">
-          <td style="font-size:11px;text-align: center;"><span class="{{$p->class}}">{{$p->bultos}}</span></td>
-          <td style="font-size:11px;text-align: right;"><span class="{{$p->class}}">{{$p->cant}} {{$p->unity}}</span></td>
-          <td style="font-size:11px;text-align: left;"><span class="{{$p->class}}"> <strong> {{$p->cod_fenovo}} </strong> - {{$p->name}} </span></td>
-          <td style="font-size:11px;text-align: center;"><span class="{{$p->class}}">{{$p->iva}}</span></td>
-          <td style="font-size:11px;text-align: right;"><span class="{{$p->class}}">{{number_format($p->unit_price, 2, ',', '.')}}</span></td>
-          <td style="font-size:11px;text-align: right;"><span class="{{$p->class}}">{{$p->total}}</span></td>
+        @for ($i = $init; $i < $to; $i++)
+        @php $p=$array_productos[$i] @endphp
+        <?php $subtotal += $p->unit_price * $p->cant; ?>
+          <tr style="border-bottom: 0px;" height="10px">
+          <td style="font-size:11px;text-align: center;"><span class="{{$p->class}}">@if($p->bultos > 0){{$p->bultos}}@endif</span></td>
+          <td style="font-size:11px;text-align: right;"><span class="{{$p->class}}"> @if($p->cant > 0)  {{$p->cant}} {{$p->unity}}@endif</span></td>
+          <td style="font-size:11px;text-align: left;"><span class="{{$p->class}}">  <strong> {{$p->cod_fenovo}} </strong> - {{$p->name}} </span></td>
+          <td style="font-size:11px;text-align: center;"><span class="{{$p->class}}">@if($p->iva > 0){{$p->iva}}@endif</span></td>
+          <td style="font-size:11px;text-align: right;"><span class="{{$p->class}}"> @if($p->unit_price > 0){{number_format($p->unit_price, 2, ',', '.')}}@endif</span></td>
+          <td style="font-size:11px;text-align: right;"><span class="{{$p->class}}"> @if($p->total > 0){{$p->total}}@endif</span></td>
           </tr>
 
           @endfor

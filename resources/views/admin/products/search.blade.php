@@ -1,6 +1,5 @@
 <fieldset class="form-group mb-3 d-flex">
-    <select class="js-example-basic-single js-states form-control bg-transparent" name="buscar_producto"
-        id="buscar_producto">
+    <select class="js-states form-control bg-transparent" name="buscar_producto" id="buscar_producto">
     </select>
 </fieldset>
 

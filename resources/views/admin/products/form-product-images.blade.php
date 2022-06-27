@@ -2,13 +2,13 @@
     <div id="filepicker" style="width: 100% !important">
         <!-- Button Bar -->
         <div class="button-bar" style="margin-bottom: 15px;">
-            <div class="btn btn-success fileinput">
+            <div class="btn btn-dark fileinput">
                 <i class="fa fa-upload"></i> Subir imágen
                 <input type="file" name="files[]" multiple id="btn-file">
             </div>
 
-            <button type="button" class="btn btn-danger delete-all">
-                <i class="fa fa-trash"></i> Eliminar todas
+            <button type="button" class="btn btn-light delete-all">
+                <i class="fa fa-trash text-danger"></i> Eliminar todas
             </button>
         </div>
 

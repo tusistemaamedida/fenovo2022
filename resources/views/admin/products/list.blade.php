@@ -14,7 +14,9 @@
                             </h4>
                         </div>
                         <div class="icons d-flex">
-                            @can('products.create')
+                            <a href="{{ route('products.by.stocks') }}" class="mt-1 mr-3">
+                                Stocks (F,R,CyO)
+                            </a>
 
                             <a href="{{ route('products.compararStock') }}" class="mt-1 mr-3">
                                 Comparar stocks
@@ -34,8 +36,7 @@
 
                             <a href="{{route('product.add')}}" title="Agregar un producto ">
                                 <i class="fa fa-2x fa-plus-circle text-primary"></i>
-                            </a>
-                            @endcan
+                            </a>                            
                         </div>
                     </div>
                 </div>
@@ -56,6 +57,7 @@
                                         <td>Costo</td>
                                         <td>Proveedor</td>
                                         <td>Historial</td>
+                                        <td>Ajuste</td>
                                         <td>Editar</td>
                                         <td>Borrar</td>
                                     </tr>
@@ -89,6 +91,7 @@
             {data: 'costo', orderable: false, searchable: false},
             {data: 'proveedor', orderable: false},
             {data: 'historial', class:'text-center', orderable: false, searchable: false},
+            {data: 'ajuste', class:'text-center', orderable: false, searchable: false},
             {data: 'editar', class:'text-center', orderable: false, searchable: false},
             {data: 'borrar', class:'text-center', orderable: false, searchable: false},
         ]

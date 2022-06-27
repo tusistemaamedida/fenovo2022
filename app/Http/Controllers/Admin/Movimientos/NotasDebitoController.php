@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
-use App\Models\Invoice;
 use App\Models\Movement;
 
 use App\Models\MovementProduct;
+use App\Models\Product;
 use App\Models\Store;
 use App\Repositories\InvoicesRepository;
 use App\Repositories\SessionProductRepository;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 use Yajra\DataTables\Facades\DataTables;
@@ -31,7 +30,7 @@ class NotasDebitoController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $arrTypes = ['DEBITO','DEBITOCLIENTE'];
+            $arrTypes = ['DEBITO', 'DEBITOCLIENTE'];
             $movement = Movement::all()->where('from', \Auth::user()->store_active)->whereIn('type', $arrTypes)->sortByDesc('created_at');
 
             return DataTables::of($movement)
@@ -40,10 +39,7 @@ class NotasDebitoController extends Controller
                     return $movement->origenData($movement->type);
                 })
                 ->addColumn('comprobante_nd', function ($movement) {
-                    if (isset($movement->invoice)) {
-                        return $movement->invoice->voucher_number;
-                    }
-                    return '--';
+                        return ($movement->invoice_fenovo())?$movement->invoice_fenovo()->voucher_number:'--';
                 })
                 ->editColumn('date', function ($movement) {
                     return date('Y-m-d', strtotime($movement->date));
@@ -56,7 +52,7 @@ class NotasDebitoController extends Controller
                 })
                 ->addColumn('acciones', function ($movement) {
                     $links = '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Ver Detalles de ND" href="' . route('nd.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>';
-                    if ($movement->invoice && !is_null($movement->invoice->cae)) {
+                    if ($movement->invoice_fenovo() && !is_null($movement->invoice_fenovo()->cae)) {
                         $links .= '<a class="flex-button" data-toggle="tooltip" data-placement="top" title="Descargar Nota Débito" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
                     } else {
                         $ruta = "'" . route('create.invoice', ['movment_id' => $movement->id]) . "'";
@@ -64,7 +60,7 @@ class NotasDebitoController extends Controller
                     }
                     return $links;
                 })
-                ->rawColumns(['origen', 'date', 'type', 'acciones', 'comprobante_nc'])
+                ->rawColumns(['origen', 'date', 'type', 'comprobante_nd', 'acciones'])
                 ->make(true);
         }
         return view('admin.movimientos.notas-debito.index');
@@ -80,13 +76,19 @@ class NotasDebitoController extends Controller
     {
         try {
             if ($request->input('voucher_number') != '' || !is_null($request->input('voucher_number'))) {
-                $list_id                       = $request->input('session_list_id');
-                $explode                       = explode('_', $list_id);
+                $list_id = $request->input('session_list_id');
+                $explode = explode('_', $list_id);
 
-                $from = \Auth::user()->store_active;
+                $from  = \Auth::user()->store_active;
                 $count = Movement::where('from', $from)->whereIn('type', ['DEBITO', 'DEBITOCLIENTE'])->count();
-                $orden = ($count)?$count+1:1;
+                $orden = ($count) ? $count + 1 : 1;
 
+                $store = Store::where('id', $explode[1])->first();
+                $label = '';
+                if ($store) {
+                    $label .= $store->razon_social . ' ' . $store->description;
+                }
+                $insert_data['observacion']    = 'ND a ' . $label;
                 $insert_data['type']           = $explode[0];
                 $insert_data['to']             = $explode[1];
                 $insert_data['date']           = now();
@@ -95,13 +97,13 @@ class NotasDebitoController extends Controller
                 $insert_data['status']         = 'FINISHED';
                 $insert_data['voucher_number'] = $request->input('voucher_number');
 
-                $movement             = Movement::create($insert_data);
-                $session_products     = $this->sessionProductRepository->getByListId($list_id);
-                $entidad_tipo         = parent::getEntidadTipo($insert_data['type']);
+                $movement         = Movement::create($insert_data);
+                $session_products = $this->sessionProductRepository->getByListId($list_id);
+                $entidad_tipo     = parent::getEntidadTipo($insert_data['type']);
 
                 foreach ($session_products as $product) {
                     $cantidad = ($product->producto->unit_type == 'K') ? $product->producto->unit_weight * $product->unit_package * $product->quantity : $product->unit_package * $product->quantity;
-                    $latest = MovementProduct::all()
+                    $latest   = MovementProduct::all()
                         ->where('entidad_id', $movement->to)
                         ->where('entidad_tipo', $entidad_tipo)
                         ->where('product_id', $product->product_id)
@@ -119,19 +121,28 @@ class NotasDebitoController extends Controller
                             'invoice'    => 1,
                             'unit_price' => $product->unit_price,
                             'tasiva'     => $product->tasiva,
-                            'entry'      => 0,
+                            'entry'      => $cantidad,
                             'bultos'     => $product->quantity,
-                            'egress'     => $cantidad,
+                            'egress'     => 0,
                             'balance'    => $balance,
                         ]);
 
-                    $latest = MovementProduct::all()
-                        ->where('entidad_id', \Auth::user()->store_active)
-                        ->where('entidad_tipo', 'S')
-                        ->where('product_id', $product->product_id)
-                        ->sortByDesc('id')->first();
+                    // Revisar si la NOTA DEBITO se realiza desde NAVE
+                    if (\Auth::user()->store_active == 1) {
+                        $producto = Product::find($product->producto->id);
+                        $producto->stock_f -= $cantidad;
+                        $producto->save();
+                        $balance = ($product->producto->stock_f + $product->producto->stock_r + $product->producto->stock_cyo) - $cantidad;
+                    } else {
+                        $latest = MovementProduct::all()
+                            ->where('entidad_id', \Auth::user()->store_active)
+                            ->where('entidad_tipo', 'S')
+                            ->where('product_id', $product->product_id)
+                            ->sortByDesc('id')->first();
 
-                    $balance = ($latest) ? $latest->balance - $cantidad : $cantidad;
+                        $balance = ($latest) ? $latest->balance - $cantidad : $cantidad;
+                    }
+
                     MovementProduct::firstOrCreate([
                         'entidad_id'     => \Auth::user()->store_active,
                         'entidad_tipo'   => 'S',
@@ -141,9 +152,9 @@ class NotasDebitoController extends Controller
                             'invoice'    => 1,
                             'unit_price' => $product->unit_price,
                             'tasiva'     => $product->tasiva,
-                            'entry'      => $cantidad,
+                            'entry'      => 0,
                             'bultos'     => $product->quantity,
-                            'egress'     => 0,
+                            'egress'     => $cantidad,
                             'balance'    => $balance,
                         ]);
                 }
