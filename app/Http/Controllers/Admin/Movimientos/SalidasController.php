@@ -100,7 +100,7 @@ class SalidasController extends Controller
                             }
                             return $urls;
                         }
-                        return ($movement->verifSiFactura()) ? '<a href="' . route('create.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>' : '';
+                        return ($movement->verifSiFactura()) ? '<a href="' . route('pre.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>' : '';
                     }
                 })
                 ->editColumn('updated_at', function ($movement) {

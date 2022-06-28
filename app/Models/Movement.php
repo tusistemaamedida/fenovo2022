@@ -63,6 +63,10 @@ class Movement extends Model
         return $this->hasMany(MovementProduct::class);
     }
 
+    public function products_egress(){
+        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0);
+    }
+
     public function movement_salida_products()
     {
         return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('circuito', '!=', 'CyO');

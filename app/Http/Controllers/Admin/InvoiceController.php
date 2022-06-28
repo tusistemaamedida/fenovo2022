@@ -77,6 +77,11 @@ class InvoiceController extends Controller
         return view('admin.invoice.list');
     }
 
+    public function previewCreateInvoice($movement_id){
+        $movement = Movement::where('id', $movement_id)->with('products_egress')->firstOrFail();
+        dd($movement);
+    }
+
     public function generateInvoicePdf($movement_id,$pto_vta,$cyo)
     {
         $titulo          = 'FACTURA ELECTRÓNICA';
