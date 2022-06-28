@@ -143,7 +143,6 @@
                     },
                     success: function(data) {
                         if (data['type'] == 'success') {
-
                             jQuery("#insertByAjax").html(data['html']);
                             jQuery('.editpopup').addClass('offcanvas-on');
                         } else if (data['type'] != 'clear') {

@@ -938,7 +938,7 @@ class SalidasController extends Controller
                 $insert_data['date']           = now();
                 $insert_data['from']           = $from;
                 $insert_data['orden']          = $orden;
-                $insert_data['status']         = 'FINISHED';
+                $insert_data['status']         = 'PENDING';
                 $insert_data['voucher_number'] = $request->input('voucher_number');
                 $insert_data['flete']          = $request->flete;
                 $insert_data['observacion']    = $request->observacion;
