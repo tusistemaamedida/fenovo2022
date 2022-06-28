@@ -17,10 +17,10 @@
                                     <th>IVA</th>
                                     <th>Subtotal</th>
                                     @if ($mostrar_check_invoice)
-                                    <th>Factura</th>
+                                        <th>Factura</th>
                                     @endif
-                                    <th>Edita</th>
-                                    <th></th>
+                                    <th>Editar</th>
+                                    <th>Quitar</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -111,7 +111,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td class="border-0  header-heading" scope="col"></td>
+                                    @if ($mostrar_check_invoice)<td class="border-0  header-heading" scope="col"></td>@endif
                                     <td></td>
                                     <td></td>
                                 </tr>
