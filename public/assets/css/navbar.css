@@ -23,7 +23,7 @@
     width: 100%;
     position: absolute;
     height: 100%;
-    background-color: #000;
+    background-color: #16b4df;
     clip-path: polygon(81% 0, 100% 0, 100% 50%, 100% 100%, 71% 100%);
     transition: 1s all;
 }
@@ -44,7 +44,7 @@
 }
 
 .navbar-red {
-    background-color: #1A3353;
+    background-color: #232e67 ;
     color: #fff;
 }
 

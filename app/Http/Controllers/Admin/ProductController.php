@@ -74,26 +74,27 @@ class ProductController extends Controller
     }
 
     public function list(Request $request)
-    {
-        // return Product::find(1)->stockReal(null, 1);
-
+    {   
         if ($request->ajax()) {
-            $productos = Product::where('active', '=', 1)->orderBy('cod_fenovo')->get();
+
+            $productos = DB::table('products as t1')->where('t1.active',1)
+            ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
+            ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
+            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor'])
+            ->orderBy('t1.cod_fenovo')
+            ->get();
+
 
             return Datatables::of($productos)
-                ->addIndexColumn()
 
-                ->addColumn('stock', function ($product) {
-                    return $product->stockReal(null, Auth::user()->store_active);
+                ->addColumn('stock', function ($producto) {
+                    return Product::find($producto->id)->stockReal(null, 1);
                 })
-                ->addColumn('senasa', function ($product) {
-                    return $product->senasa();
+                ->addColumn('costo', function ($producto) {
+                    return '$' . $producto->costfenovo;
                 })
-                ->addColumn('costo', function ($product) {
-                    return '$' . $product->product_price->costfenovo;
-                })
-                ->addColumn('proveedor', function ($product) {
-                    return $product->proveedor->name;
+                ->addColumn('proveedor', function ($producto) {
+                    return $producto->proveedor;
                 })
                 ->addColumn('ajuste', function ($producto) {
                     return '<a href="' . route('getData.stock.detail', ['id' => $producto->id]) . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
@@ -110,9 +111,9 @@ class ProductController extends Controller
                 })
                 ->addColumn('borrar', function ($producto) {
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
-                    return '<a class="confirm-delete" title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
+                    return '<a title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'borrar', 'editar', 'costo', 'ajuste', 'historial'])
+                ->rawColumns(['stock', 'costo', 'proveedor', 'ajuste', 'historial', 'borrar', 'editar'])
                 ->make(true);
         }
 
@@ -912,7 +913,7 @@ class ProductController extends Controller
     public function compararStock(Request $request)
     {
         if ($request->ajax()) {
-            $productos = $this->productRepository->all()->where('active', '=', 1);
+            $productos = Product::where('active', '=', 1)->limit(5);
 
             return Datatables::of($productos)
                 ->addIndexColumn()
@@ -921,7 +922,7 @@ class ProductController extends Controller
                     return $product->proveedor->name;
                 })
                 ->addColumn('stockInicioSemana', function ($product) {
-                    return $product->stockInicioSemana();
+                    return ($product->stockInicioSemana())?$product->stockInicioSemana()->balance:0;
                 })
                 ->addColumn('ingresoSemana', function ($product) {
                     return $product->ingresoSemana();

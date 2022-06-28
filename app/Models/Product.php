@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
@@ -75,7 +74,7 @@ class Product extends Model
         'senasa_id',
         'iibb',
         'active',
-        'coeficiente_relacion_stock'
+        'coeficiente_relacion_stock',
     ];
 
     public function product_category()
@@ -213,7 +212,7 @@ class Product extends Model
 
     public function stockEnSession($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
     {
-        $stock = 0.0;
+        $stock            = 0.0;
         $session_products = SessionProduct::where('product_id', $this->id)->where('store_id', $entidad_id)->get();
 
         foreach ($session_products as $session_product) {
@@ -229,41 +228,50 @@ class Product extends Model
 
     public function stockInicioSemana()
     {
-        $registro = MovementProduct::whereEntidadId(1)
+        $movimientos = MovementProduct::whereEntidadId(1)
             ->where('created_at', '>', Carbon::now()->subDays(7))
             ->whereProductId($this->id)
             ->orderBy('created_at')
-            ->first();
+            ->get();
 
-        return ($registro) ? number_format($registro->balance, 0, '', '') : 0;
+        if ($movimientos) {
+            foreach ($movimientos as $movimiento) {
+                if ($movimiento->balance != 0) {
+                    return $movimiento;
+                }
+            }
+        }
+
+        return null;
     }
 
     public function ingresoSemana()
     {
-        $suma = MovementProduct::whereEntidadId(1)
-            ->where('created_at', '>', Carbon::now()->subDays(7))
+        if ($this->stockInicioSemana()) {
+            $id = $this->stockInicioSemana()->id;
+            return MovementProduct::whereEntidadId(1)
             ->whereProductId($this->id)
-            ->orderBy('created_at')
-            ->get()->skip(1)->sum('entry');
-
-        return number_format($suma, 0, '', '');
+            ->where('id', '>', $id)
+            ->get()->sum('entry');
+        }
+        return null;
     }
 
     public function salidaSemana()
     {
-        $suma = MovementProduct::whereEntidadId(1)
-            ->where('created_at', '>', Carbon::now()->subDays(7))
+        if ($this->stockInicioSemana()) {
+            $id = $this->stockInicioSemana()->id;
+            return MovementProduct::whereEntidadId(1)
             ->whereProductId($this->id)
-            ->orderBy('created_at')
-            ->get()->skip(1)->sum('egress');
-
-        return number_format($suma, 0, '', '');
+            ->where('id', '>', $id)
+            ->get()->sum('egress');
+        }
+        return null;
     }
 
     public function stockFinSemana()
     {
-        $registro = MovementProduct::whereEntidadId(1)->whereProductId($this->id)->orderByDesc('id')->first();
-        return ($registro)?number_format($registro->balance, 0, '', ''):0;
+        return ($this->stockInicioSemana())?$this->stockInicioSemana()->balance + $this->ingresoSemana() - $this->salidaSemana():null;
     }
 
     public function scopeName($query, $name)

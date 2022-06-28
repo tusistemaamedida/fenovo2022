@@ -332,6 +332,8 @@ namespace App\Models{
  * @property int|null $jurisdiccion
  * @property string|null $tributos
  * @property string|null $costo_fenovo_total
+ * @property string|null $url
+ * @property int|null $cyo
  * @property-read \App\Models\VoucherType|null $tipoFactura
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice newQuery()
@@ -349,6 +351,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereConcepto($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereCostoFenovoTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereCyo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDocNro($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDocTipo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereError($value)
@@ -366,7 +369,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereImpTrib($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereIvas($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereJurisdiccion($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereMonCotiz($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereMonId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereMovementId($value)
@@ -374,6 +376,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice wherePtoVta($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereTributos($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereVoucherNumber($value)
  */
 	class Invoice extends \Eloquent {}
@@ -1167,6 +1170,17 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ProductPrice whereUpdatedAt($value)
  */
 	class ProductPrice extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\ProductStore
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore query()
+ */
+	class ProductStore extends \Eloquent {}
 }
 
 namespace App\Models{
