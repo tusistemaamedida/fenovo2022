@@ -56,7 +56,7 @@
     </fieldset>
 </div>
 
-
+<input type="hidden" name="store_id" id="store_id" value="1" />
 
 @if(isset($vehiculo))
 <div class="form-group">
