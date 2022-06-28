@@ -20,6 +20,7 @@ class Vehiculo extends Model
         'patente',
         'chofer',
         'transportista_id',
+        'store_id',
         'senasa',
         'active',
     ];
@@ -27,5 +28,10 @@ class Vehiculo extends Model
     public function transportista()
     {
         return $this->belongsTo(Transportista::class, 'transportista_id');
+    }
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
     }
 }

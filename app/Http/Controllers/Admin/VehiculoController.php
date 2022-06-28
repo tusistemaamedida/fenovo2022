@@ -24,7 +24,7 @@ class VehiculoController extends Controller
     {
         if ($request->ajax()) {
             if ($request->ajax()) {
-                $vehiculo = Vehiculo::where('active', 1)->get();
+                $vehiculo = Vehiculo::where('active', 1)->whereStoreId(1)->get();
 
                 return Datatables::of($vehiculo)
                     ->addIndexColumn()
