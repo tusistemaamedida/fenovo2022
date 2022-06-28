@@ -189,7 +189,7 @@ class Product extends Model
         return $stock;
     }
 
-    public function stockReal($unit_package = null, $entidad_id = 1, $entidad_tipo = 'S')
+    public function stockReal()
     {
         return $this->stock_f + $this->stock_r + $this->stock_cyo;
     }

@@ -30,10 +30,10 @@
     <script src="{{ asset('assets/api/datatable/moment.min.js') }}"></script>
     <script src="{{ asset('assets/api/datatable/datetime.js') }}"></script>
 
-   {{--  <script src="{{ asset('assets/js/aos-min.js') }}"></script>
+   {{--  <script src="{{ asset('assets/js/aos-min.js') }}"></script> --}}
     <script src="{{ asset('assets/js/sweetalert.js') }}"></script>
     <script src="{{ asset('assets/js/toastr.min.js') }}"></script>
-    <script src="{{ asset('assets/js/sweetalert1.js') }}"></script> --}}
+    <script src="{{ asset('assets/js/sweetalert1.js') }}"></script>
 
     <script src="{{ asset('assets/api/select2/select2.min.js') }}"></script>
 

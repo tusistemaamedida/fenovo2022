@@ -44,7 +44,7 @@ class ProductRepository extends BaseRepository
 
     public function search($term)
     {
-        return $this->newQuery()->select('id', 'name', 'barcode', 'cod_fenovo', 'unit_type')
+        return $this->newQuery()->select('id', 'name', 'barcode', 'cod_fenovo', 'unit_type','stock_f','stock_r','stock_cyo')
                     ->where('active', true)
                     ->where(function ($query) use ($term) {
                         $query->orWhere('name', 'LIKE', '%' . $term . '%')

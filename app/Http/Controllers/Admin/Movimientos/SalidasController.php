@@ -583,10 +583,11 @@ class SalidasController extends Controller
             $text_no_stock = '';
 
             if ($show_stock) {
-                $stock = $product->stock(null, Auth::user()->store_active);
+                $stock = $product->stock_f + $product->stock_r + $product->stock_cyo;
                 if (!$stock) {
-                    // $disabled      = 'disabled';
                     $text_no_stock = ' -- SIN STOCK --';
+                }else{
+                    $text_no_stock = '('. $stock .' '.$product->unit_type .')';
                 }
             }
 
@@ -1156,10 +1157,10 @@ class SalidasController extends Controller
     public function changeInvoiceProduct(Request $request)
     {
         try {
-            $listId                   = $request->input('list_id');
-            $session_product          = $this->sessionProductRepository->getByListIdAndProduct($listId, $request->input('product_id'));
-            $session_product->invoice = !$session_product->invoice;
-            $session_product->save();
+            $id          = $request->input('id');
+            $mp          = MovementProduct::where('id',$id)->where('product_id',$request->input('product_id'))->first();
+            $mp->invoice = !$mp->invoice;
+            $mp->save();
             return new JsonResponse(['msj' => 'Facturación cambiada', 'type' => 'success']);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -1288,6 +1289,26 @@ class SalidasController extends Controller
             default:
                 return null;
                 break;
+        }
+    }
+
+    public function previewCreateInvoice($movement_id){
+        return view('admin.movimientos.salidas.crear-invoice',compact('movement_id'));
+    }
+
+    public function cargarProductos(Request $request){
+        try {
+            $movement = Movement::where('id', $request->movement_id)->with('products_egress')->firstOrFail();
+            $m_productos = $movement->products_egress;
+            $movement_id = $movement->id;
+            $mostrar_check_invoice = !(str_contains($movement->type, 'DEVOLUCION') || str_contains($movement->type, 'DEBITO'));
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.movimientos.salidas.partials.table-pre-invoice-productos',
+                          compact('m_productos', 'mostrar_check_invoice','movement_id'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return  new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 }
