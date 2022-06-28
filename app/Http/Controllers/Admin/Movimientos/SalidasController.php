@@ -69,7 +69,7 @@ class SalidasController extends Controller
         if ($request->ajax()) {
 
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-            $movement = Movement::whereIn('type', $arrTypes)->orderBy('date','DESC')->orderBy('id','DESC')->limit(100);
+            $movement = Movement::whereIn('type', $arrTypes)->orderBy('date','DESC')->orderBy('id','DESC')->limit(100)->get();
 
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
@@ -981,7 +981,8 @@ class SalidasController extends Controller
 
             foreach ($session_products as $product) {
                 $cantidad = $product->quantity;
-                $cant_total = ($product->producto->unit_type == 'K') ? ($product->producto->unit_weight * $product->producto->unit_package * $cantidad) : ($product->producto->unit_package  * $cantidad);
+                $cant_total = ($product->producto->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $cantidad) : ($product->unit_package  * $cantidad);
+
                 $punto_venta = env('PTO_VTA_FENOVO',18);
                 if($product->circuito == 'F'){
                     $product->producto->stock_f -= $cant_total;
@@ -1003,7 +1004,7 @@ class SalidasController extends Controller
 
                 $balance = $product->producto->stockReal();
 
-                MovementProduct::updateOrCreate([
+                $movement_product_text = MovementProduct::updateOrCreate([
                     'entidad_id'      =>  1,
                     'entidad_tipo'    => 'S',
                     'movement_id'     => $movement->id,
@@ -1106,7 +1107,6 @@ class SalidasController extends Controller
             $data_panama['client_cuit']     = $cuit;
             $data_panama['client_iva_type'] = $iva_type;
             $data_panama['pto_vta']         = $pto_vta;
-
             if ($insert_panama) {
                 $orden += 1;
                 $data_panama['tipo']               = 'PAN';
