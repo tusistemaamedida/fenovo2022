@@ -4,6 +4,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="table-responsive">
+
                         <table class="table table-striped table-borderless table-condensed table-hover text-body yajra-datatable">
                             <thead>
                                 <tr class="bg-dark text-white ">
@@ -18,6 +19,8 @@
                                     <th>Subtotal</th>
                                     @if ($mostrar_check_invoice)
                                         <th>Factura</th>
+                                    @else
+                                        <th></th>    
                                     @endif
                                     <th>Editar</th>
                                     <th>Quitar</th>
@@ -111,7 +114,11 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    @if ($mostrar_check_invoice)<td class="border-0  header-heading" scope="col"></td>@endif
+                                    @if ($mostrar_check_invoice)
+                                        <td class="border-0  header-heading" scope="col"></td>
+                                    @else    
+                                        <td></td>
+                                    @endif
                                     <td></td>
                                     <td></td>
                                 </tr>
@@ -125,7 +132,11 @@
                                     <td></td>
                                     <td>${{number_format($total_iva, 2, ',', '');}}</td>
                                     <td>${{number_format($subtotal, 2, ',', '');}}</td>
-                                    @if ($mostrar_check_invoice)<td class="border-0  header-heading" scope="col"></td>@endif
+                                    @if ($mostrar_check_invoice)
+                                        <td class="border-0  header-heading" scope="col"></td>
+                                    @else    
+                                        <td></td>
+                                    @endif
                                     <td>
                                         <input type="hidden" name="subTotal" id="subTotal" value="{{ $subtotal +$total_iva }}">
                                     </td>
@@ -192,6 +203,7 @@
         ordering: true,
         columnDefs: [
             { orderable: false, targets: 0 },
+            { orderable: false, targets: 1 },
             { orderable: false, targets: 2 },
             { orderable: false, targets: 3 },
             { orderable: false, targets: 4 },
@@ -201,7 +213,6 @@
             { orderable: false, targets: 8 },
             { orderable: false, targets: 9 },
             { orderable: false, targets: 10 },
-            { orderable: false, targets: 11 },
         ],
         order: [[1, 'asc']],
         iDisplayLength: -1,
