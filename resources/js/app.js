@@ -4,7 +4,7 @@ window.axios = require('axios');
 window.Aos = require('aos');
 window.toastr = require('toastr');
 window.Popper = require('@popperjs/core');
-window.dataTable = require('datatables.net-bs4');
+/* window.dataTable = require('datatables.net-bs4'); */
 /* window.Select2 =  require('select2'); */
 
 import { createApp, defineAsyncComponent } from 'vue'

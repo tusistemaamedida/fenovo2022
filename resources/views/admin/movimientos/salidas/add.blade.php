@@ -434,30 +434,5 @@
                 }
             });
         })
-
-        function changeInvoice(list_id, product_id) {
-            jQuery.ajax({
-                url: "{{ route('change.invoice.product') }}",
-                type: 'POST',
-                data: {
-                    list_id,
-                    product_id
-                },
-                beforeSend: function() {
-                    jQuery('#loader').removeClass('hidden');
-                },
-                success: function(data) {
-                    if (data['type'] != 'success') {
-                        toastr.error(data['msj'], 'Verifique');
-                    }
-                    jQuery('#loader').addClass('hidden');
-                    cargarTablaProductos();
-                },
-                error: function(data) {},
-                complete: function() {
-                    jQuery('#loader').addClass('hidden');
-                }
-            });
-        }
     </script>
 @endsection
