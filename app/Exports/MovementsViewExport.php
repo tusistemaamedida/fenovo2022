@@ -32,7 +32,7 @@ class MovementsViewExport implements FromView
             ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
             ->join('products as t3', 't2.product_id', '=', 't3.id')
             ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
-            ->select('t1.id', 't2.id as movement_products_id', 't2.exported_number', 't1.type', 't1.date', 't1.to', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad', 't2.unit_package')
+            ->select('t1.id', 't2.id as movement_products_id', 't2.exported_number', 't1.type', 't1.date', 't1.to', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad', 't2.unit_package', 't2.circuito')
             ->whereIn('t1.type', $arrTipos)
             ->where('t2.entidad_tipo', '!=', 'C')
             ->where('t2.exported_number', '=', 0)
@@ -68,7 +68,7 @@ class MovementsViewExport implements FromView
             ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
             ->join('products as t3', 't2.product_id', '=', 't3.id')
             ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
-            ->select('t1.id', 't1.created_at', 't2.id as movement_products_id', 't2.unit_price', 't2.cost_fenovo', 't2.exported_number', 't1.type', 't1.date', 't1.to', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad', 't2.unit_package')
+            ->select('t1.id', 't1.created_at', 't2.id as movement_products_id', 't2.unit_price', 't2.cost_fenovo', 't2.exported_number', 't1.type', 't1.date', 't1.to', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad', 't2.unit_package', 't2.circuito')
             ->whereIn('t1.type', $arrTipos)
             ->where('t2.entidad_tipo', '!=', 'C')
             ->where('t2.exported_number', '>', 0)
@@ -100,7 +100,7 @@ class MovementsViewExport implements FromView
                     $objMovement->unidad      = $movement->unidad;
                     $objMovement->cosftk      = $movement->cost_fenovo;
                     $objMovement->cosven      = $movement->unit_price;
-
+                    $objMovement->circuito    = ($movement->circuito) ? $movement->circuito : 'F';
                 }
 
                 if ($movement->type == 'VENTACLIENTE') {
@@ -118,6 +118,7 @@ class MovementsViewExport implements FromView
                     $objMovement->unidad      = $movement->unidad;
                     $objMovement->cosftk      = $movement->cost_fenovo;
                     $objMovement->cosven      = $movement->unit_price;
+                    $objMovement->circuito    = ($movement->circuito) ? $movement->circuito : 'F';
                 }
             } else {
                 // Analizar las devoluciones
@@ -139,6 +140,7 @@ class MovementsViewExport implements FromView
                     $objMovement->unidad      = $movement->unidad;
                     $objMovement->cosftk      = $movement->cost_fenovo;
                     $objMovement->cosven      = $movement->unit_price;
+                    $objMovement->circuito    = ($movement->circuito) ? $movement->circuito : 'F';
                 }
             }
 

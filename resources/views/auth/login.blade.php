@@ -2,7 +2,7 @@
 
 
 @section('content')
-    <div class="container-fluid h-100" style=" background-color:#1a3353 ">
+    <div class="container-fluid h-100" style=" background-color:#232e67 ">
         <div class="row h-100 justify-content-center align-items-center">
             <div class="row">
                 <div class="col-xs-12">
