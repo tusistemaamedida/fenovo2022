@@ -237,7 +237,7 @@ class SalidasController extends Controller
     public function printOrden(Request $request)
     {
         $orden    = $request->id;
-        $movement = Movement::with(['movement_salida_products'])->whereId($orden)->first();
+        $movement = Movement::with('products_egress')->whereId($orden)->first();
 
         if ($movement) {
             if ($movement->type == 'TRASLADO') {
@@ -248,7 +248,7 @@ class SalidasController extends Controller
             }
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $array_productos = [];
-            $movimientos     = $movement->movement_salida_products;
+            $movimientos     = $movement->products_egress;
             foreach ($movimientos as $movimiento) {
                 if ($movimiento->invoice) {
                     $objProduct               = new stdClass();
@@ -938,7 +938,7 @@ class SalidasController extends Controller
                 $insert_data['date']           = now();
                 $insert_data['from']           = $from;
                 $insert_data['orden']          = $orden;
-                $insert_data['status']         = 'PENDING';
+                $insert_data['status']         = 'FINISHED';
                 $insert_data['voucher_number'] = $request->input('voucher_number');
                 $insert_data['flete']          = $request->flete;
                 $insert_data['observacion']    = $request->observacion;
@@ -1038,67 +1038,70 @@ class SalidasController extends Controller
                     }
 
                     for ($i=0; $i < count($quantities); $i++) {
-                        if($quantities[$i]['tipo'] == 'quantity_f'){
-                            $circuito = 'F';
-                            $egress = $cant_total_f;
-                            $quantity = $quantities[$i]['cant'];
+                        if($quantities[$i]['cant'] > 0){
                             $invoice = 1;
-                        }
-                        if($quantities[$i]['tipo'] == 'quantity_r'){
-                            $circuito = 'R';
-                            $egress = $cant_total_r;
-                            $quantity = $quantities[$i]['cant'];
-                            $invoice = 0;
-                        }
-                        if($quantities[$i]['tipo'] == 'quantity_cyo'){
-                            $circuito = 'CyO';
-                            $egress = $cant_total_cyo;
-                            $quantity = $quantities[$i]['cant'];
-                            $invoice = 1;
-                            $punto_venta = $product->producto->proveedor->punto_venta;
-                        }
-                        $countEgress += $egress;
-                        MovementProduct::create([
-                            'entidad_id'      =>  1,
-                            'entidad_tipo'    => 'S',
-                            'movement_id'     => $movement->id,
-                            'product_id'      => $product->product_id,
-                            'unit_package'    => $product->unit_package,
-                            'invoice'     => $invoice,
-                            'iibb'        => $product->iibb,
-                            'unit_price'  => ($invoice) ? $product->unit_price : $product->neto,
-                            'cost_fenovo' => $product->costo_fenovo,
-                            'tasiva'      => $product->tasiva,
-                            'unit_type'   => $product->unit_type,
-                            'entry'       => 0,
-                            'bultos'      => $quantity,
-                            'egress'      => $egress,
-                            'balance'     => $stock_inicial - $countEgress ,
-                            'punto_venta' => $punto_venta,
-                            'circuito'    => $circuito
-                        ]);
+                            if($quantities[$i]['tipo'] == 'quantity_f'){
+                                $circuito = 'F';
+                                $egress = $cant_total_f;
+                                $quantity = $quantities[$i]['cant'];
+                                $invoice = 1;
+                            }
+                            if($quantities[$i]['tipo'] == 'quantity_r'){
+                                $circuito = 'R';
+                                $egress = $cant_total_r;
+                                $quantity = $quantities[$i]['cant'];
+                                $invoice = 0;
+                            }
+                            if($quantities[$i]['tipo'] == 'quantity_cyo'){
+                                $circuito = 'CyO';
+                                $egress = $cant_total_cyo;
+                                $quantity = $quantities[$i]['cant'];
+                                $invoice = 1;
+                                $punto_venta = $product->producto->proveedor->punto_venta;
+                            }
+                            $countEgress += $egress;
+                            MovementProduct::create([
+                                'entidad_id'      =>  1,
+                                'entidad_tipo'    => 'S',
+                                'movement_id'     => $movement->id,
+                                'product_id'      => $product->product_id,
+                                'unit_package'    => $product->unit_package,
+                                'invoice'     => $invoice,
+                                'iibb'        => $product->iibb,
+                                'unit_price'  => ($invoice) ? $product->unit_price : $product->neto,
+                                'cost_fenovo' => $product->costo_fenovo,
+                                'tasiva'      => $product->tasiva,
+                                'unit_type'   => $product->unit_type,
+                                'entry'       => 0,
+                                'bultos'      => $quantity,
+                                'egress'      => $egress,
+                                'balance'     => $stock_inicial - $countEgress ,
+                                'punto_venta' => $punto_venta,
+                                'circuito'    => $circuito
+                            ]);
 
-                        MovementProduct::create([
-                            'entidad_id'      => $insert_data['to'],
-                            'entidad_tipo'    => $entidad_tipo,
-                            'movement_id'     => $movement->id,
-                            'product_id'      => $product->product_id,
-                            'unit_package'    => $product->unit_package,
-                            'invoice'     => $invoice,
-                            'bultos'      => $quantity,
-                            'cost_fenovo' => $product->costo_fenovo,
-                            'entry'       => $egress,
-                            'unit_price'  => ($invoice) ? $product->unit_price : $product->neto,
-                            'tasiva'      => $product->tasiva,
-                            'unit_type'   => $product->unit_type,
-                            'egress'      => 0,
-                            'balance'     => $stock_inicial_store + $countEgress ,
-                            'punto_venta' => $punto_venta,
-                            'circuito'    => $circuito
-                        ]);
+                            MovementProduct::create([
+                                'entidad_id'      => $insert_data['to'],
+                                'entidad_tipo'    => $entidad_tipo,
+                                'movement_id'     => $movement->id,
+                                'product_id'      => $product->product_id,
+                                'unit_package'    => $product->unit_package,
+                                'invoice'     => $invoice,
+                                'bultos'      => $quantity,
+                                'cost_fenovo' => $product->costo_fenovo,
+                                'entry'       => $egress,
+                                'unit_price'  => ($invoice) ? $product->unit_price : $product->neto,
+                                'tasiva'      => $product->tasiva,
+                                'unit_type'   => $product->unit_type,
+                                'egress'      => 0,
+                                'balance'     => $stock_inicial_store + $countEgress ,
+                                'punto_venta' => $punto_venta,
+                                'circuito'    => $circuito
+                            ]);
 
-                        if (!$invoice) {
-                            $insert_panama = true;
+                            if (!$invoice) {
+                                $insert_panama = true;
+                            }
                         }
                     }
                 }

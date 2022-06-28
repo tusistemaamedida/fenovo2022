@@ -17,11 +17,6 @@
                                     <th>P.U.</th>
                                     <th>IVA</th>
                                     <th>Subtotal</th>
-                                    @if ($mostrar_check_invoice)
-                                        <th>Factura</th>
-                                    @else
-                                        <th></th>    
-                                    @endif
                                     <th>Editar</th>
                                     <th>Quitar</th>
                                 </tr>
@@ -74,21 +69,6 @@
                                                 @endif
                                             </td>
                                             <td>${{ $subtotal_product_format }}</td>
-                                            @if ($mostrar_check_invoice)
-                                            <td class="text-center">
-                                                @if($session_product->circuito == 'R')
-                                                    <i class="fa fa-ban" style="color:red"></i>
-                                                @elseif($session_product->circuito == 'CyO')
-                                                    <i class="fa fa-check" style="color:green"></i>
-                                                @else
-                                                    <fieldset>
-                                                        <div class="checkbox">
-                                                            <input type="checkbox" class="checkbox-input" onclick="changeInvoice('{{$session_product->list_id}}',{{$session_product->producto->id}})" id="invoice-{{$session_product->producto->id}}" @if($session_product->invoice) checked="" @endif name="invoice-{{$session_product->producto->id}}">
-                                                        </div>
-                                                    </fieldset>
-                                                @endif
-                                            </td>
-                                            @endif
                                             <td class=" text-center">
                                                 <a href="javascript:void(0)" onclick="editarMovimiento('{{$session_product->id}}', '{{$session_product->quantity}}', '{{$session_product->producto->cod_fenovo}}')">
                                                     <i class=" fa fa-pencil-alt"></i>
@@ -114,11 +94,6 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    @if ($mostrar_check_invoice)
-                                        <td class="border-0  header-heading" scope="col"></td>
-                                    @else    
-                                        <td></td>
-                                    @endif
                                     <td></td>
                                     <td></td>
                                 </tr>
@@ -132,11 +107,6 @@
                                     <td></td>
                                     <td>${{number_format($total_iva, 2, ',', '');}}</td>
                                     <td>${{number_format($subtotal, 2, ',', '');}}</td>
-                                    @if ($mostrar_check_invoice)
-                                        <td class="border-0  header-heading" scope="col"></td>
-                                    @else    
-                                        <td></td>
-                                    @endif
                                     <td>
                                         <input type="hidden" name="subTotal" id="subTotal" value="{{ $subtotal +$total_iva }}">
                                     </td>
