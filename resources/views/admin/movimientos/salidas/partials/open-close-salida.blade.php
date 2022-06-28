@@ -1,5 +1,5 @@
 <div id="closeSalida" class="offcanvas offcanvas-right kt-color-panel p-5">
-    <form action="{{ route('guardar.salida') }}" method="POST" id="formGuardarSalida">
+    <form  id="formGuardarSalida">
         @csrf
 
         @if (isset($pedido))

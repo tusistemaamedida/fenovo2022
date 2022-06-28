@@ -79,13 +79,14 @@
                 },
                 {
                     data: 'destino',
-                    'class': 'text-left'
+                    'class': 'text-left',
+                    searchable: true
                 },
                 {
                     data: 'type',
                     'class': 'text-left',
                     orderable: false,
-                    searchable: false
+                    searchable: true
                 },
                 {
                     data: 'items'
