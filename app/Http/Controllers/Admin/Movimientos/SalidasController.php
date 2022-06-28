@@ -907,21 +907,14 @@ class SalidasController extends Controller
             $session_products = $this->sessionProductRepository->getByListId($list_id);
 
             foreach ($session_products as $product) {
-                $cantidad =  $product->quantity;
-                if($product->circuito == 'F'){
-                    $balance = $product->producto->stock_f;
-                }elseif($product->circuito == 'R'){
-                    $balance = $product->producto->stock_r;
-                }elseif($product->circuito == 'CyO'){
-                    $balance = $product->producto->stock_cyo;
-                }
-
+                $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
+                $balance  = $product->producto->stockReal(null, \Auth::user()->store_active);
                 if ($balance < $cantidad) {
                     $alert = '<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert"><i class="ace-icon fa fa-times"></i></button>';
                     $alert .= '<i class="ace-icon fa fa-ban"></i> COD-FENOVO <strong>';
-                    $alert .= $product->producto->cod_fenovo . '</strong> insuficiente. Imposible vender <strong>';
-                    $alert .= $cantidad . '</strong>, porque el stock actual es <strong>';
-                    $alert .= $balance . '</strong>' . $product->producto->unit_type . '</div>';
+                    $alert .= $product->producto->cod_fenovo .'</strong> insuficiente. Imposible vender <strong>';
+                    $alert .= $cantidad .'</strong>, porque el stock actual es <strong>';
+                    $alert .= $balance .'</strong>'. $product->producto->unit_type .'</div>';
 
                     return new JsonResponse(['msj' => 'Stock Insuficiente', 'type' => 'error', 'alert' => $alert]);
                 }
