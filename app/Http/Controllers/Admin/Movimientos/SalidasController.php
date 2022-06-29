@@ -968,7 +968,6 @@ class SalidasController extends Controller
                 $pto_vta       = $cuit       = $iva_type       = '';
                 $cliente       = null;
                 $insert_panama = false;
-                $countEgress = 0;
 
                 if ($explode[0] == 'VENTA' || $explode[0] == 'TRASLADO') {
                     $cliente = Store::where('id', $explode[1])->with('region')->first();
@@ -1038,6 +1037,7 @@ class SalidasController extends Controller
                         $ped_producto->save();
                     }
 
+                    $countEgress = 0;
                     for ($i=0; $i < count($quantities); $i++) {
                         if($quantities[$i]['cant'] > 0){
                             $invoice = 1;
