@@ -77,7 +77,7 @@ class InvoiceController extends Controller
         return view('admin.invoice.list');
     }
 
-    public function generateInvoicePdf($movement_id,$pto_vta,$cyo)
+    public function generateInvoicePdf($movement_id,$pto_vta = false,$cyo = false)
     {
         $titulo          = 'FACTURA ELECTRÓNICA';
         $array_productos = $alicuotas_array = [];
@@ -189,8 +189,8 @@ class InvoiceController extends Controller
             $pdf = PDF::loadView('print.invoice', compact('titulo','cyo', 'invoice', 'array_productos', 'alicuotas_array', 'voucherType', 'qr_url', 'paginas', 'total_lineas'));
             $link = Storage::disk('spaces-do')->put($path , $pdf->output(),'public');
             $url = Storage::disk('spaces-do')->url($path);
-            return $url;
-            //return $pdf->stream('invoice.pdf');
+            if($pto_vta) return $url;
+            return $pdf->stream('invoice.pdf');
         }
     }
 
