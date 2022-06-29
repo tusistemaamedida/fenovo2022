@@ -69,7 +69,7 @@ class SalidasController extends Controller
         if ($request->ajax()) {
 
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-            $movement = Movement::whereIn('type', $arrTypes)->orderBy('date','DESC')->orderBy('id','DESC')->limit(100)->get();
+            $movement = Movement::whereIn('type', $arrTypes)->orderBy('date','DESC')->orderBy('id','DESC')->limit(400)->get();
 
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
