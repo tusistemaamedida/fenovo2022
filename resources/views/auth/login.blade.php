@@ -38,16 +38,9 @@
                                 <div class="row mb-3">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <label for="password">Contraseña</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" placeholder="ingrese su clave aquí"
+                                        <input type="password" placeholder="ingrese su clave aquí"
                                                 class="form-control border-dark  @error('password') is-invalid @enderror"
                                                 name="password" required autocomplete="current-password" id="password">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text" id="basic-addon2">
-                                                    <span class="fa fa-eye show-t"></span>
-                                                </span>
-                                            </div>
-                                        </div>
                                         @error('email')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
