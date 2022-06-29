@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="row mt-5" data-aos="fade-down">
-        <div class=" offset-4 col-4">
+    <div class="row mt-5">
+        <div class="w-50 mx-auto">
             <div class=" card bg-dark text-white">
                 <div class="card-header">
                     <h4 class=" text-center">
@@ -10,10 +10,10 @@
                     </h4>
                 </div>
 
-                <form id="formData" autocomplete="off">
-                    @csrf
+                <div class="card-body">
 
-                    <div class="card-body">
+                    <form id="formData" autocomplete="off">
+                        @csrf                    
 
                         <input type="hidden" name="user_id" value="{{ $user->id }}" />
 
@@ -34,7 +34,6 @@
                                 autocomplete="off">
                         </div>
 
-
                         <div class="form-group m-4 mt-5">
                             <label>Nombre usuario</label>
                             <input type="text" name="username"
@@ -51,28 +50,24 @@
 
                         <div class="d-none">
                             <select class="rounded form-control bg-transparent" name="rol_id">
-                                {{-- @foreach ($roles as $rol)
-                        <option value="{{$rol->id}}" @if (isset($user) && isset($user->roles->pluck('id')[0]) && $rol->id == $user->roles->pluck('id')[0]) selected @endif>
-                        {{$rol->name}}
-                        </option>
-                        @endforeach --}}
+                                
                             </select>
                             <input type="checkbox" class="custom-control-input"
                                 @if (isset($user) && $user->active) checked="" @endif name="active" id="active" value='1'>
                         </div>
 
-                    </div>
-
-                    <div class="card-footer">
+                    
                         <div class="form-group m-4 mb-5">
                             <button type="button" class="btn btn-outline-light btn-actualizar btn-block"
                                 onclick="actualizar('{{ route('users.update') }}')">
                                 <i class="fa fa-save"></i> Actualizar
                             </button>
                         </div>
-                    </div>
+                    
+                    </form>
 
-                </form>
+                </div>
+
             </div>
         </div>
     </div>
