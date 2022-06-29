@@ -90,7 +90,7 @@ class SalidasController extends Controller
                 })
                 ->editColumn('factura_nro', function ($movement) {
                     if ($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE') {
-                        if ($movement->invoice && isset($movement->invoice->cae)) {
+                        if ($movement->invoice && isset($movement->invoice->cae) && !is_null($movement->invoice->cae)) {
                             return '<a class="text-primary" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> ' . $movement->invoice->voucher_number . ' </a>';
                         }
                         return ($movement->verifSiFactura()) ? '<a href="' . route('create.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>' : '';
