@@ -196,74 +196,28 @@ class InvoiceController extends Controller
     public function create($movement_id)
     {
         try {
-            // Inicio creacion del invoice con punto de vta fenovo
-                $movement = Movement::where('id', $movement_id)->with('salida_products_no_cyo')->firstOrFail();
-                $movement->products = $movement->salida_products_no_cyo;
+            $movement = Movement::where('id', $movement_id)->with('movement_salida_products')->firstOrFail();
 
-                if(isset($movement->products) && count($movement->products)){
-                    $result  = $this->createVoucher($movement,$this->pto_vta);
-                    $invoice = $this->invoiceRepository->getByMovement($movement_id,$this->pto_vta);
-
-                    if ($result['status']) {
-                        if (isset($invoice)) {
-                            $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
-                            $orden = (isset($inv)) ? $inv->orden + 1 : 1;
-                            $this->invoiceRepository->fill($invoice->id, [
-                                'error'      => null,
-                                'orden'      => $orden,
-                                'cae'        => $result['response_afip']['CAE'],
-                                'expiration' => $result['response_afip']['CAEFchVto'],
-                            ]);
-                            $cyo = 0;
-                            $url_factura = $this->generateInvoicePdf($movement_id,$this->pto_vta,$cyo);
-                            $this->invoiceRepository->fill($invoice->id, [
-                                'url'        => $url_factura,
-                                'cyo'        => $cyo
-                            ]);
-                        }
-                    }elseif (isset($invoice)) {
-                        $this->invoiceRepository->fill($invoice->id, ['error' => $result['error']]);
-                    }
+            $result  = $this->createVoucher($movement);
+            $invoice = $this->invoiceRepository->getByMovement($movement_id);
+            if ($result['status']) {
+                if (isset($invoice)) {
+                    $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
+                    $orden = (isset($inv)) ? $inv->orden + 1 : 1;
+                    $this->invoiceRepository->fill($invoice->id, [
+                        'error'      => null,
+                        'orden'      => $orden,
+                        'cae'        => $result['response_afip']['CAE'],
+                        'expiration' => $result['response_afip']['CAEFchVto'],
+                    ]);
                 }
-            // fin de creacion del invoice con punto de vta fenovo
 
-            // Inicio creacion del invoice cta y orden
-                $movement = Movement::where('id', $movement_id)->with('salida_products_cyo')->firstOrFail();
-                if(isset($movement->salida_products_cyo) && count($movement->salida_products_cyo)){
-                    $movements = $movement->salida_products_cyo->groupBy('punto_venta');
-                    $invoice_cyo = null;
-                    foreach ($movements as $m) {
-                        $productos = $m;
-                        $punto_venta = $m[0]->punto_venta;
-                        $movement->products = $productos;
-
-                        $result  = $this->createVoucher($movement,$punto_venta);
-                        $invoice_cyo = $this->invoiceRepository->getByMovement($movement_id,$punto_venta);
-                        if ($result['status']) {
-                            if (isset($invoice_cyo)) {
-                                $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
-                                $orden = (isset($inv)) ? $inv->orden + 1 : 1;
-                                $this->invoiceRepository->fill($invoice_cyo->id, [
-                                    'error'      => null,
-                                    'orden'      => $orden,
-                                    'cae'        => $result['response_afip']['CAE'],
-                                    'expiration' => $result['response_afip']['CAEFchVto'],
-                                ]);
-
-                                $cyo = 1;
-                                $url_factura = $this->generateInvoicePdf($movement_id,$punto_venta,$cyo);
-                                $this->invoiceRepository->fill($invoice_cyo->id, [
-                                    'url'        => $url_factura,
-                                    'cyo'        => $cyo
-                                ]);
-                            }
-                        }elseif (isset($invoice_cyo)) {
-                            $this->invoiceRepository->fill($invoice_cyo->id, ['error' => $result['error']]);
-                        }
-                    }
-                }
-                return redirect()->route('salidas.index');
-            // Fin creacion del invoice cta y orden
+                return redirect()->back()->withInput();
+            }
+            if (isset($invoice)) {
+                $this->invoiceRepository->fill($invoice->id, ['error' => $result['error']]);
+            }
+            return $result['error'];
         } catch (\Exception $e) {
             return $e->getMessage();
         }
