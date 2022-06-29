@@ -101,7 +101,6 @@ class InvoiceController extends Controller
                                             ->get();
             }else{
                 $productos = MovementProduct::where('movement_id', $movement_id)
-                                            ->where('circuito',"!=",'CyO')
                                             ->where('invoice', 1)
                                             ->where('egress', '>', 0)
                                             ->with('product')
