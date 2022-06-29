@@ -72,6 +72,7 @@ class Movement extends Model
         return $this->hasMany(MovementProduct::class)->where('entry', '>', 0);
     }
 
+
     public function totalKgrs()
     {
         $kgrs = 0;
