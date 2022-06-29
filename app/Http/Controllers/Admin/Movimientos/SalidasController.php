@@ -898,12 +898,13 @@ class SalidasController extends Controller
 
     public function storeSalida(Request $request)
     {
+        $from = Auth::user()->store_active;
         try {
-            $from = 1;
             DB::beginTransaction();
             Schema::disableForeignKeyConstraints();
             $list_id = $request->input('session_list_id');
             $explode = explode('_', $list_id);
+
             $session_products = $this->sessionProductRepository->getByListId($list_id);
 
             foreach ($session_products as $product) {
@@ -942,22 +943,7 @@ class SalidasController extends Controller
 
             $movement = Movement::create($insert_data);
 
-            if(count($explode) == 3){
-                $voucher_number = $explode[2];
-                $pedido = Pedido::where('voucher_number',$voucher_number)->first();
-                $pedido->movement_id = $movement->id;
-                $pedido->status = 'FINISHED';
-                $pedido->save();
-
-                PedidoEstados::create([
-                    'user_id'=> \Auth::user()->id,
-                    'pedido_id' => $pedido->id,
-                    'fecha'   => now(),
-                    'estado' => 'CERRADO',
-                ]);
-            }
-
-            $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
+            $enitidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
             $pto_vta       = $cuit       = $iva_type       = '';
             $cliente       = null;
@@ -980,116 +966,76 @@ class SalidasController extends Controller
             }
 
             foreach ($session_products as $product) {
-                $cantidad = $product->quantity;
-                $cant_total = ($product->producto->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $cantidad) : ($product->unit_package  * $cantidad);
+                $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
 
-                $punto_venta = env('PTO_VTA_FENOVO',18);
-                if($product->circuito == 'F'){
-                    $product->producto->stock_f -= $cant_total;
-                }elseif($product->circuito == 'R'){
-                    $product->producto->stock_r -= $cant_total;
-                }elseif($product->circuito == 'CyO'){
-                    $product->producto->stock_cyo -= $cant_total;
-                    $punto_venta = $product->producto->proveedor->punto_venta;
-                }
+                // resta del balance de la store fenovo porque es salida
+                $latest = MovementProduct::select('balance')
+                    ->where('entidad_id', $from)
+                    ->where('entidad_tipo', 'S')
+                    ->where('product_id', $product->product_id)
+                    ->orderBy('id','DESC')->first();
 
-                $product->producto->save();
-
-                if(isset($pedido)){
-                    $ped_producto = PedidoProductos::where('pedido_id',$pedido->id)->where('product_id',$product->product_id)->first();
-                    $ped_producto->bultos_enviados = $product->quantity;
-                    $ped_producto->bultos_pendientes = $ped_producto->bultos - $product->quantity;
-                    $ped_producto->save();
-                }
-
-                $balance = $product->producto->stockReal();
-
-                $movement_product_text = MovementProduct::updateOrCreate([
-                    'entidad_id'      =>  1,
+                $balance = ($latest) ? $latest->balance - $cantidad : 0;
+                MovementProduct::updateOrCreate([
+                    'entidad_id'      => $from,
                     'entidad_tipo'    => 'S',
                     'movement_id'     => $movement->id,
                     'product_id'      => $product->product_id,
-                    'unit_package'    => $product->unit_package,
-                    'circuito'        => $product->circuito,
-                ], [
-                    'invoice'     => $product->invoice,
-                    'iibb'        => $product->iibb,
-                    'unit_price'  => ($product->invoice) ? $product->unit_price : $product->neto,
-                    'cost_fenovo' => $product->costo_fenovo,
-                    'tasiva'      => $product->tasiva,
-                    'unit_type'   => $product->unit_type,
-                    'entry'       => 0,
-                    'bultos'      => $product->quantity,
-                    'egress'      => $cant_total,
-                    'balance'     => $balance,
-                    'punto_venta' => $punto_venta
-                ]);
+                    'unit_package'    => $product->unit_package, ], [
+                        'invoice'     => $product->invoice,
+                        'iibb'        => $product->iibb,
+                        'unit_price'  => ($product->invoice) ? $product->unit_price : $product->neto,
+                        'cost_fenovo' => $product->costo_fenovo,
+                        'tasiva'      => $product->tasiva,
+                        'unit_type'   => $product->unit_type,
+                        'entry'       => 0,
+                        'bultos'      => $product->quantity,
+                        'egress'      => $cantidad,
+                        'balance'     => $balance,
+                    ]);
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
-                    $prod_store = ProductStore::where('product_id',$product->product_id)->where('store_id',$insert_data['to'])->first();
+                    // Suma al balance de la store to
+                    $latest = MovementProduct::select('balance')
+                        ->where('entidad_id', $insert_data['to'])
+                        ->where('entidad_tipo', $enitidad_tipo)
+                        ->where('product_id', $product->product_id)
+                        ->orderBy('id','DESC')->first();
 
-                    $balance = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo + $cant_total : $cant_total;
-                    if($prod_store){
-                        if($product->circuito == 'F'){
-                            $prod_store->stock_f += $cant_total;
-                        }elseif($product->circuito == 'R'){
-                            $prod_store->stock_r += $cant_total;
-                        }elseif($product->circuito == 'CyO'){
-                            $prod_store->stock_cyo += $cant_total;
-                        }
-                        $prod_store->save();
-                    }else{
-                        $data_prod_store['product_id'] = $product->product_id;
-                        $data_prod_store['store_id'] = $insert_data['to'];
-                        if($product->circuito == 'F'){
-                            $data_prod_store['stock_f']= $cant_total;
-                        }elseif($product->circuito == 'R'){
-                            $data_prod_store['stock_r']= $cant_total;
-                        }elseif($product->circuito == 'CyO'){
-                            $data_prod_store['stock_cyo']= $cant_total;
-                        }
-                        ProductStore::create($data_prod_store);
-                    }
-
+                    $balance = ($latest) ? $latest->balance + $cantidad : $cantidad;
                     MovementProduct::updateOrCreate([
                         'entidad_id'      => $insert_data['to'],
-                        'entidad_tipo'    => $entidad_tipo,
+                        'entidad_tipo'    => $enitidad_tipo,
                         'movement_id'     => $movement->id,
                         'product_id'      => $product->product_id,
-                        'unit_package'    => $product->unit_package,
-                        'circuito'        => $product->circuito,
-                     ], [
+                        'unit_package'    => $product->unit_package, ], [
                             'invoice'     => $product->invoice,
                             'bultos'      => $product->quantity,
                             'cost_fenovo' => $product->costo_fenovo,
-                            'entry'       => $cant_total,
+                            'entry'       => $cantidad,
                             'unit_price'  => ($product->invoice) ? $product->unit_price : $product->neto,
                             'tasiva'      => $product->tasiva,
                             'unit_type'   => $product->unit_type,
                             'egress'      => 0,
                             'balance'     => $balance,
-                            'punto_venta' => $punto_venta
                         ]);
                 } else {
                     MovementProduct::updateOrCreate([
                         'entidad_id'      => $insert_data['to'],
-                        'entidad_tipo'    => $entidad_tipo,
+                        'entidad_tipo'    => $enitidad_tipo,
                         'movement_id'     => $movement->id,
                         'product_id'      => $product->product_id,
-                        'unit_package'    => $product->unit_package,
-                        'circuito'        => $product->circuito,
-                    ], [
-                        'invoice'     => $product->invoice,
-                        'bultos'      => $product->quantity,
-                        'cost_fenovo' => $product->costo_fenovo,
-                        'entry'       => $cant_total,
-                        'unit_price'  => ($product->invoice) ? $product->unit_price : $product->neto,
-                        'tasiva'      => $product->tasiva,
-                        'unit_type'   => $product->unit_type,
-                        'egress'      => 0,
-                        'balance'     => $balance,
-                        'punto_venta' => $punto_venta
-                    ]);
+                        'unit_package'    => $product->unit_package, ], [
+                            'invoice'     => $product->invoice,
+                            'bultos'      => $product->quantity,
+                            'cost_fenovo' => $product->costo_fenovo,
+                            'entry'       => $cantidad,
+                            'unit_price'  => ($product->invoice) ? $product->unit_price : $product->neto,
+                            'tasiva'      => $product->tasiva,
+                            'unit_type'   => $product->unit_type,
+                            'egress'      => 0,
+                            'balance'     => $balance,
+                        ]);
                 }
 
                 if (!$product->invoice) {
@@ -1107,6 +1053,7 @@ class SalidasController extends Controller
             $data_panama['client_cuit']     = $cuit;
             $data_panama['client_iva_type'] = $iva_type;
             $data_panama['pto_vta']         = $pto_vta;
+
             if ($insert_panama) {
                 $orden += 1;
                 $data_panama['tipo']               = 'PAN';
@@ -1195,12 +1142,12 @@ class SalidasController extends Controller
         }
     }
 
-    public function updateStock($cod_fenovo)
+    public function updateStock()
     {
         $products = Product::all();
 
         foreach ($products as $p) {
-            $movements_products = MovementProduct::where('movement_id', '>', 611)
+            $movements_products = MovementProduct::where('movement_id', '>', 1634)
                                         ->where('product_id', $p->id)
                                         ->where('entidad_id', 1)
                                         ->orderBy('id', 'ASC')
@@ -1217,7 +1164,7 @@ class SalidasController extends Controller
                 if ($i > 0) {
                     $bultos = $mp->bultos * $mp->unit_package;
 
-                    if ($mp->entry > 0 && $m->type != 'AJUSTE') {
+                    if ($mp->entry > 0) {
                         $new_balance  = $balance_orig + $bultos;
                         $balance_orig = $new_balance;
 
@@ -1225,7 +1172,7 @@ class SalidasController extends Controller
                             'balance' => $new_balance,
                             'entry'   => $bultos,
                         ]);
-                    } elseif ($mp->egress > 0 && $m->type != 'AJUSTE') {
+                    } elseif ($mp->egress > 0) {
                         $new_balance  = $balance_orig - $bultos;
                         $balance_orig = $new_balance;
 
@@ -1233,10 +1180,6 @@ class SalidasController extends Controller
                             'balance' => $new_balance,
                             'egress'  => $bultos,
                         ]);
-                    }
-
-                    if ($m->type == 'AJUSTE') {
-                        $m->delete();
                     }
                 }
             }
