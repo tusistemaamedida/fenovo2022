@@ -69,8 +69,21 @@ class Movement extends Model
 
     public function movement_salida_products()
     {
-        if($this->type === 'TRASLADO') return $this->hasMany(MovementProduct::class)->where('egress', '>', 0);
-       // return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('circuito', '!=', 'CyO');
+       return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('circuito', '!=', 'CyO');
+    }
+
+    public function group_products_egress(){
+        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)
+                     ->select(['*',DB::raw("SUM(bultos) as bultos")])
+                     ->groupBy('product_id');
+    }
+
+    public function group_movement_salida_products()
+    {
+       return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)
+                                                    ->where('circuito', '!=', 'CyO')
+                                                    ->select(['*',DB::raw("SUM(bultos) as bultos")])
+                                                    ->groupBy('product_id');
     }
 
     public function salida_products_no_cyo()

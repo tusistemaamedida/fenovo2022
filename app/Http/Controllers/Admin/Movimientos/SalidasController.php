@@ -203,8 +203,8 @@ class SalidasController extends Controller
     public function getTotalMovement(Request $request)
     {
         $total    = 0;
-        $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
-        $products = $movement->movement_salida_products;
+        $movement = Movement::query()->where('id', $request->input('movement_id'))->first();
+        $products = ($movement->type == 'TRASLADO') ? $movement->products_egress : $movement->movement_salida_products;
         foreach ($products as $product) {
             if ($product->invoice) {
                 $subtotal = $product->bultos * $product->unit_price * $product->unit_package;
@@ -237,7 +237,7 @@ class SalidasController extends Controller
     public function printOrden(Request $request)
     {
         $orden    = $request->id;
-        $movement = Movement::with('products_egress')->whereId($orden)->first();
+        $movement = Movement::whereId($orden)->first();
 
         if ($movement) {
             if ($movement->type == 'TRASLADO') {
@@ -248,7 +248,7 @@ class SalidasController extends Controller
             }
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $array_productos = [];
-            $movimientos     = $movement->products_egress;
+            $movimientos     =  ($movement->type == 'TRASLADO') ? $movement->group_products_egress : $movement->group_movement_salida_products;
             foreach ($movimientos as $movimiento) {
                 if ($movimiento->invoice) {
                     $objProduct               = new stdClass();
@@ -462,7 +462,7 @@ class SalidasController extends Controller
 
     public function printRemito(Request $request)
     {
-        $movement = Movement::query()->where('id', $request->input('movement_id'))->with('movement_salida_products')->first();
+        $movement = Movement::query()->where('id', $request->input('movement_id'))->first();
         if ($movement) {
             // Ver si es un traslado a base
             $mercaderia_en_transito = null;
@@ -477,7 +477,8 @@ class SalidasController extends Controller
             $fecha           = \Carbon\Carbon::parse($movement->created_at)->format('d/m/Y');
             $neto            = $request->input('neto');
             $array_productos = [];
-            $productos       = $movement->movement_salida_products;
+            $productos       = ($movement->type == 'TRASLADO') ? $movement->group_products_egress : $movement->group_movement_salida_products;
+
             foreach ($productos as $producto) {
                 if ($producto->invoice) {
                     $objProduct             = new stdClass();
