@@ -161,7 +161,11 @@
                                 </tr>
                                 <tr >
                                     <th colspan="2" class="border-0 font-size-h5 mb-0 font-size-bold text-dark" style="width: 100%">
-                                        <a href="{{route('create.invoice',['movment_id' => $movement_id])}}" type="button"  class="btn btn-primary" style="width: 100%">
+                                        <a href="{{route('create.invoice',['movment_id' => $movement_id])}}"
+                                           type="button" id="btn-crear-invoice"
+                                           class="btn btn-primary"
+                                           onclick="disableBtn()"
+                                           style="width: 100%">
                                             <i class="fa fa-save"></i> Guardar
                                         </a>
                                     </th>

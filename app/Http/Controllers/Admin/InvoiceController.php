@@ -317,7 +317,6 @@ class InvoiceController extends Controller
                 if ($this->check_type($movement->type)) {
                     $response_afip = $this->afip->ElectronicBilling->CreateVoucher($data_invoice['data']);
                 }
-
                 return ['status' => true, 'data_invoice' => $data_invoice, 'response_afip' => $response_afip];
             } catch (\Exception $e) {
                 return ['status' => false, 'data_invoice' => $data_invoice, 'error' => $e->getMessage()];

@@ -81,5 +81,9 @@
                 }
             });
         }
+        function disableBtn(){
+            jQuery("#btn-crear-invoice").attr('disabled',true);
+            jQuery('#loader').removeClass('hidden');
+        }
     </script>
 @endsection
