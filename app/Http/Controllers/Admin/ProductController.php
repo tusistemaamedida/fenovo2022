@@ -70,7 +70,6 @@ class ProductController extends Controller
         $this->proveedorRepository        = $proveedorRepository;
         $this->enumRepository             = $enumRepository;
         $this->senasaDefinitionRepository = $senasaDefinitionRepository;
-        $this->enumRepository             = $enumRepository;
     }
 
     public function list(Request $request)
@@ -448,6 +447,7 @@ class ProductController extends Controller
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
+    
     public function buscarProductos(Request $request)
     {
         $term        = $request->term ?: '';

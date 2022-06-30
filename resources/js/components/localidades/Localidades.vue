@@ -36,7 +36,7 @@
                                             Buscar  &nbsp; <i class=" fa fa-search"></i>
                                         </span>
                                     </div>
-                                    <input id="buscarLocalidad" name="buscarLocalidad" type="text" class="form-control" @keyup ="buscarRegistro" v-model="txtLocalidad">
+                                    <input id="buscarLocalidad" name="buscarLocalidad" type="text" class="form-control" @keyup ="buscarRegistro" v-model="txtLocalidad" autofocus>
                                 </div>
                             </div>
                         </div>
@@ -111,9 +111,6 @@ export default {
     },
     mounted() {
         this.txtLocalidad = (localStorage.txtLocalidad)?localStorage.txtLocalidad:'';
-        jQuery(function () {
-            jQuery("#buscarLocalidad").focus();
-        })
         this.getLocalidades();
     },
     watch: {

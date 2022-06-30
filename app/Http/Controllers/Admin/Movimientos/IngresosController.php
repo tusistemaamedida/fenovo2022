@@ -10,9 +10,10 @@ use App\Models\MovementTemp;
 use App\Models\Product;
 use App\Models\Proveedor;
 use App\Models\Store;
-
+use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProveedorRepository;
+
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -24,11 +25,13 @@ use Yajra\DataTables\Facades\DataTables;
 class IngresosController extends Controller
 {
     private $proveedorRepository;
+    private $enumRepository;
 
-    public function __construct(ProveedorRepository $proveedorRepository, ProductRepository $productRepository)
+    public function __construct(ProveedorRepository $proveedorRepository, ProductRepository $productRepository, EnumRepository $enumRepository)
     {
         $this->proveedorRepository = $proveedorRepository;
         $this->productRepository   = $productRepository;
+        $this->enumRepository      = $enumRepository;
     }
 
     public function index(Request $request)
@@ -208,11 +211,17 @@ class IngresosController extends Controller
             $data['flete_invoice']  = 0;
             $movement_new           = Movement::create($data);
 
-            $hoy = Carbon::parse(now())->format('Y-m-d');
+            $hoy      = Carbon::parse(now())->format('Y-m-d');
             $circuito = '';
-            if($movement_temp->subtype == 'FACTURA') $circuito = 'F';
-            if($movement_temp->subtype == 'REMITO') $circuito = 'R';
-            if($movement_temp->subtype == 'CYO') $circuito = 'CyO';
+            if ($movement_temp->subtype == 'FACTURA') {
+                $circuito = 'F';
+            }
+            if ($movement_temp->subtype == 'REMITO') {
+                $circuito = 'R';
+            }
+            if ($movement_temp->subtype == 'CYO') {
+                $circuito = 'CyO';
+            }
 
             // Recorro el arreglo y voy guardando
             foreach ($movement_temp->movement_ingreso_products as $movimiento) {
@@ -272,9 +281,10 @@ class IngresosController extends Controller
             ? MovementTemp::query()->where('id', $request->id)->with('movement_ingreso_products')->first()
             : Movement::query()->where('id', $request->id)->with('movement_ingreso_products')->first();
 
+        $ajustes        = $this->enumRepository->getType('ajustes');    
         $movimientos = $movement->movement_ingreso_products;
 
-        return view('admin.movimientos.ingresos.show', compact('movement', 'movimientos'));
+        return view('admin.movimientos.ingresos.show', compact('movement', 'movimientos', 'ajustes'));
     }
 
     public function destroy(Request $request)
@@ -333,13 +343,9 @@ class IngresosController extends Controller
                     return  $movement->voucher_number;
                 })
                 ->addColumn('accion', function ($movement) {
-
-
-
-
                     return ($movement->status == 'FINISHED')
-                    ?'<a href="' . route('ingresos.ajustarStockDepositos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>'
-                    :'<a href="' . route('ingresos.ajustarStockDepositos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
+                    ? '<a href="' . route('ingresos.ajustarStockDepositos.show', ['id' => $movement->id]) . '"> <i class="fa fa-eye"></i> </a>'
+                    : '<a href="' . route('ingresos.ajustarStockDepositos.edit', ['id' => $movement->id]) . '"> <i class="fa fa-pencil-alt"></i> </a>';
                 })
                 ->addColumn('borrar', function ($movement) {
                     $ruta = 'destroy(' . $movement->id . ",'" . route('ingresos.destroyTemp') . "')";
