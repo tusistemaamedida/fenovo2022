@@ -132,9 +132,24 @@ class Movement extends Model
         return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)->where('invoice', false);
     }
 
+    public function group_panamas()
+    {
+        return $this->hasMany(MovementProduct::class)
+                    ->where('egress', '>', 0)
+                    ->where('invoice', false)
+                    ->where('circuito', '!=', 'CyO')
+                    ->select(['*',DB::raw("SUM(bultos) as bultos")])
+                    ->groupBy('product_id');;
+    }
+
     public function verifSiFactura()
     {
         return MovementProduct::where('movement_id', $this->id)->where('invoice', true)->count();
+    }
+
+    public function verifSiCreatePanama()
+    {
+        return MovementProduct::where('movement_id', $this->id)->where('invoice', false)->count();
     }
 
     public function hasInvoices()
