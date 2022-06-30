@@ -1079,10 +1079,6 @@ class SalidasController extends Controller
                                 'punto_venta' => $punto_venta,
                                 'circuito'    => $circuito
                             ]);
-
-                            if (!$invoice) {
-                                $insert_panama = true;
-                            }
                         }
                     }
                 }
