@@ -37,13 +37,9 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $arrTypes = ['COMPRA'];
-                $movement = MovementTemp::whereIn('type', $arrTypes)->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
-            } else {
-                $arrTypes = ['VENTA', 'TRASLADO'];
-                $movement = MovementTemp::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
-            }
+            
+            $movement = MovementTemp::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
+            
             return Datatables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('origen', function ($movement) {
@@ -81,13 +77,9 @@ class IngresosController extends Controller
     public function indexCerradas(Request $request)
     {
         if ($request->ajax()) {
-            if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $arrTypes = ['COMPRA'];
-                $movement = Movement::whereIn('type', $arrTypes)->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
-            } else {
-                $arrTypes = ['VENTA', 'TRASLADO'];
-                $movement = Movement::where('to', Auth::user()->store_active)->whereIn('type', $arrTypes)->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
-            }
+            
+            $movement = Movement::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
+            
             return Datatables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('origen', function ($movement) {
