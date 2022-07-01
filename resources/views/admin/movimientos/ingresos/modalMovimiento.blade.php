@@ -16,13 +16,13 @@
         <input type="hidden" id="producto_id" name="producto_id" />
         <input type="hidden" id="bultos_anterior" name="bultos_anterior" />
         <input type="hidden" id="tipo" name="tipo" value="{{ $movement->subtype }}" />
+        <input type="hidden" id="unit_package" name="unit_package"/>
 
         <div class="row mt-5">
             <div class="col-12">
                 <label class="text-body">Bultos *</label>
                 <fieldset class="form-group">
-                    <input type="number" id="bultos_actual" name="bultos_actual" class="form-control text-center"
-                        autofocus />
+                    <input type="number" id="bultos_actual" name="bultos_actual" class="form-control text-center" autofocus />
                 </fieldset>
             </div>
         </div>

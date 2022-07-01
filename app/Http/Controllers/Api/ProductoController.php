@@ -24,7 +24,7 @@ class ProductoController extends Controller
             ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor'])
             ->selectRaw('CONCAT(t1.cod_fenovo," ", t1.name," ", t3.name) as txtProducto')
             ->having('txtProducto', 'LIKE', "%$txtProducto%")
-            ->orderBy('t1.name', 'ASC')
+            ->orderBy('t1.cod_fenovo', 'ASC')
             ->get(10);                    
 
         $arrProductos = [];

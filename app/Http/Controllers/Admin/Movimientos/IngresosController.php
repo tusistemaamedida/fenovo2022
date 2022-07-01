@@ -38,7 +38,7 @@ class IngresosController extends Controller
     {
         if ($request->ajax()) {
             $movement = MovementTemp::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
-            
+
             return Datatables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('origen', function ($movement) {
@@ -77,7 +77,7 @@ class IngresosController extends Controller
     {
         if ($request->ajax()) {
             $movement = Movement::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
-            
+
             return Datatables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('origen', function ($movement) {
@@ -105,7 +105,7 @@ class IngresosController extends Controller
     {
         if ($request->ajax()) {
             $movement = Movement::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('CHECKED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
-            
+
             return Datatables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('origen', function ($movement) {
@@ -293,7 +293,6 @@ class IngresosController extends Controller
         }
     }
 
-
     public function checkedCerrada(Request $request)
     {
         try {
@@ -301,7 +300,7 @@ class IngresosController extends Controller
             Schema::disableForeignKeyConstraints();
 
             // Obtengo los datos del movimiento
-            $movement = Movement::find($request->id);
+            $movement         = Movement::find($request->id);
             $movement->status = 'CHECKED';
             $movement->save();
 
@@ -316,8 +315,6 @@ class IngresosController extends Controller
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
-
-    
 
     public function show(Request $request)
     {
@@ -624,36 +621,39 @@ class IngresosController extends Controller
             DB::beginTransaction();
             Schema::disableForeignKeyConstraints();
 
-            $product  = Product::find($request->producto_id);
+            $product = Product::find($request->producto_id);
 
             if ($request->bultos_anterior < $request->bultos_actual) {
                 $operacion = 'suma';
-                $cantidad = $request->bultos_actual - $request->bultos_anterior;
+                $bultos    = ($request->bultos_actual - $request->bultos_anterior);
             } else {
-                $operacion  = 'resta';
-                $cantidad   = $request->bultos_anterior - $request->bultos_actual ;
+                $operacion = 'resta';
+                $bultos    = ($request->bultos_anterior - $request->bultos_actual);
             }
+
+            $cantidad = $bultos * $request->unit_package;
 
             switch ($request->tipo) {
                 case 'FACTURA':
                     $product->stock_f = ($operacion == 'suma') ? $product->stock_f + $cantidad : $product->stock_f - $cantidad;
+                    $circuito         = 'F';
                     break;
                 case 'REMITO':
                     $product->stock_r = ($operacion == 'suma') ? $product->stock_r + $cantidad : $product->stock_r - $cantidad;
+                    $circuito         = 'R';
                     break;
                 case 'CyO':
                     $product->stock_cyo = ($operacion == 'suma') ? $product->stock_cyo + $cantidad : $product->stock_cyo - $cantidad;
+                    $circuito           = 'CyO';
                     break;
             }
-            
 
-            $product->save();
             $stock = $product->stock_f + $product->stock_r + $product->stock_cyo;
+            $product->save();
 
             $from  = \Auth::user()->store_active;
             $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();
             $orden = ($count) ? $count + 1 : 1;
-
 
             // Inserta movimiento de Ajuste
             $insert_data                   = [];
@@ -674,12 +674,12 @@ class IngresosController extends Controller
             $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
             $latest['entidad_tipo'] = 'S';
             $latest['unit_package'] = 0;
-            $latest['circuito']     = $request->tipo;
+            $latest['circuito']     = $circuito;
             $latest['unit_type']    = $product->unit_type;
-            $latest['product_id']   = $request->product_id;
+            $latest['product_id']   = $request->producto_id;
             $latest['entry']        = ($operacion == 'suma') ? $cantidad : 0;
             $latest['egress']       = ($operacion == 'resta') ? $cantidad : 0;
-            $latest['bultos']       = $request->bultos;
+            $latest['bultos']       = $bultos;
             $latest['balance']      = $stock;
             MovementProduct::create($latest);
 
