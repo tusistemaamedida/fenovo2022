@@ -56,6 +56,9 @@
                         <a class="dropdown-item text-black-50" href="{{ route('ingresos.indexCerradas') }}">
                             Compras cerradas
                         </a>
+                        <a class="dropdown-item text-black-50" href="{{ route('ingresos.indexChequeadas') }}">
+                            Compras chequeadas
+                        </a>
                     </div>
                 </li>
 

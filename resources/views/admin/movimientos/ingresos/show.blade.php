@@ -51,6 +51,17 @@
                             {{ $movement->voucher_number }}
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-10">
+
+                        </div>
+                        <div class="col-2">
+                            <label class="text-dark font-size-bold">Cerrar</label>
+                            <button onclick="check_compra('{{ $movement->id }}')" class="btn btn-dark">
+                                <i class="f "></i>
+                            </button>                            
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card gutter-b bg-white border-0">
@@ -119,5 +130,22 @@
             const cerrarModal = () => {
                 jQuery('.movimientoPopup').removeClass('offcanvas-on');
             }
+
+            const check_compra = (id) => {
+
+                ymz.jq_confirm({
+                    title: 'Compra ',
+                    text: "Confirma que ha revisado la  compra ?",
+                    no_btn: "Cancelar",
+                    yes_btn: "Confirma",
+                    no_fn: function() {
+                        return false;
+                    },
+                    yes_fn: function() {
+                        let ruta = '{{ route('ingresos.checkedCerrada', ['id' => $movement->id]) }}';
+                        window.location = ruta;
+                    }
+                });
+            };
         </script>
     @endsection

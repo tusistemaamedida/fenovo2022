@@ -7,10 +7,13 @@ use Illuminate\Support\Facades\Route;
 // Ingresos
 Route::get('ingresos', [IngresosController::class, 'index'])->name('ingresos.index');
 Route::get('ingresos/cerradas', [IngresosController::class, 'indexCerradas'])->name('ingresos.indexCerradas');
+Route::get('ingresos/chequeadas', [IngresosController::class, 'indexChequeadas'])->name('ingresos.indexChequeadas');
 
 Route::get('ingresos/add', [IngresosController::class, 'add'])->name('ingresos.add');
 Route::post('ingresos/store', [IngresosController::class, 'store'])->name('ingresos.store');
 Route::get('ingresos/close', [IngresosController::class, 'close'])->name('ingresos.close');
+Route::get('ingresos/checked', [IngresosController::class, 'checkedCerrada'])->name('ingresos.checkedCerrada');
+
 Route::get('ingresos/edit', [IngresosController::class, 'edit'])->name('ingresos.edit');
 Route::get('ingresos/edit-ingreso', [IngresosController::class, 'editIngreso'])->name('ingresos.editIngreso');
 Route::post('ingresos/update-ingreso', [IngresosController::class, 'updateIngreso'])->name('ingresos.updateIngreso');

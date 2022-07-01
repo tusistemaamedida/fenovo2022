@@ -101,6 +101,34 @@ class IngresosController extends Controller
         return view('admin.movimientos.ingresos.indexCerradas');
     }
 
+    public function indexChequeadas(Request $request)
+    {
+        if ($request->ajax()) {
+            $movement = Movement::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('CHECKED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
+            
+            return Datatables::of($movement)
+                ->addIndexColumn()
+                ->addColumn('origen', function ($movement) {
+                    return $movement->origenData($movement->type);
+                })
+                ->editColumn('date', function ($movement) {
+                    return date('d-m-Y', strtotime($movement->date));
+                })
+                ->addColumn('items', function ($movement) {
+                    return '<span class="badge badge-primary">' . $movement->cantidad_ingresos() . '</span>';
+                })
+                ->addColumn('voucher', function ($movement) {
+                    return  $movement->voucher_number;
+                })
+                ->addColumn('show', function ($movement) {
+                    return '<a href="' . route('ingresos.show', ['id' => $movement->id, 'is_cerrada' => true]) . '"> <i class="fa fa-eye"></i> </a>';
+                })
+                ->rawColumns(['origen', 'date', 'items', 'voucher', 'show'])
+                ->make(true);
+        }
+        return view('admin.movimientos.ingresos.indexChequeadas');
+    }
+
     public function add()
     {
         $proveedores = Proveedor::orderBy('name')->pluck('name', 'id');
@@ -264,6 +292,32 @@ class IngresosController extends Controller
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
+
+
+    public function checkedCerrada(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
+
+            // Obtengo los datos del movimiento
+            $movement = Movement::find($request->id);
+            $movement->status = 'CHECKED';
+            $movement->save();
+
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
+
+            return redirect()->route('ingresos.indexCerradas');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
+            dd($e->getMessage());
+            return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
+        }
+    }
+
+    
 
     public function show(Request $request)
     {
