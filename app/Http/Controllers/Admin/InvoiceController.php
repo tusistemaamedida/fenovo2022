@@ -381,7 +381,7 @@ class InvoiceController extends Controller
 
     private function importes($movement)
     {
-        $products           = $movement->products;
+        $products           = $movement->movement_salida_products;
         $gravado            = 0;
         $costo_fenovo_total = 0;
         $iva                = 0;
