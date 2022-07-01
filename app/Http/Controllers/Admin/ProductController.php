@@ -73,7 +73,7 @@ class ProductController extends Controller
     }
 
     public function list(Request $request)
-    {   
+    {
         if ($request->ajax()) {
 
             $productos = DB::table('products as t1')->where('t1.active',1)
@@ -333,6 +333,37 @@ class ProductController extends Controller
         }
     }
 
+    public function ajustarByStock(Request $request)
+    {
+        try {
+            $valida = false;
+            $data   = $request->except('_token', 'product_id', 'user_id', 'observacion');
+
+            if (!isset($data['stock_f'])) {
+                return new JsonResponse(['msj' => 'Complete el porcentaje.', 'type' => 'error']);
+            }
+
+            if ($data['stock_f'] < 0 || $data['stock_f'] > 100) {
+                return new JsonResponse(['msj' => 'El porcentaje debe ser mayor a 0 menor a 100.', 'type' => 'error']);
+            }
+
+            $producto         = Product::where('id', $request->product_id)->first();
+            $balance_producto = $producto->stock_f + $producto->stock_r;
+            $porc_blanco      = $data['stock_f'];
+
+            $stock_b                              = (int)(($porc_blanco * $balance_producto) / 100);
+            $producto->stock_f                    = $stock_b;
+            $producto->stock_r                    = $balance_producto - $stock_b;
+            $producto->coeficiente_relacion_stock = $porc_blanco;
+            $producto->save();
+
+            return new JsonResponse(['msj' => 'Stock actualizado', 'type' => 'success']);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
+
     public function ajustarStockMenu(Request $request)
     {
         return view('admin.products.ajustar-stock');
@@ -447,7 +478,7 @@ class ProductController extends Controller
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
-    
+
     public function buscarProductos(Request $request)
     {
         $term        = $request->term ?: '';
