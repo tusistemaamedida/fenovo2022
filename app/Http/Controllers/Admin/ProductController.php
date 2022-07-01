@@ -126,14 +126,17 @@ class ProductController extends Controller
 
             return Datatables::of($productos)
                 ->addIndexColumn()
-                ->addColumn('stock', function ($product) {
-                    return $product->stockReal();
+                ->addColumn('stock', function ($producto) {
+                    return $producto->stockReal();
+                })
+                ->addColumn('proveedor', function ($producto) {
+                    return ($producto->proveedor)?$producto->proveedor->name:null;
                 })
                 ->addColumn('ajuste', function ($producto) {
                     $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
-                ->rawColumns(['stock', 'ajuste'])
+                ->rawColumns(['stock', 'ajuste', 'proveedor'])
                 ->make(true);
         }
 
