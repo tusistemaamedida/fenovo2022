@@ -35,6 +35,9 @@ Route::get('ingresos/movimientos/getMovements', [IngresosController::class, 'get
 Route::post('ingresos/check', [IngresosController::class, 'check'])->name('ingresos.check');
 Route::get('ingresos/ajustar/stockDepositos/close', [IngresosController::class, 'ajustarStockDepositosClose'])->name('ingresos.close.ajuste');
 
+// Ajustar Stock de las compras
+Route::post('ingresos/ajustar/item', [IngresosController::class, 'ajustarIngresoItem'])->name('ajustar.ingreso.item');
+
 
 // Detalle ingresos
 Route::get('detalle-ingresos/movimentos', [DetalleIngresosController::class, 'getMovements'])->name('detalle-movimiento.getMovements');
