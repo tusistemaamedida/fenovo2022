@@ -1142,12 +1142,16 @@ class SalidasController extends Controller
         }
     }
 
-    public function updateStock()
+    public function updateStock($code = false)
     {
-        $products = Product::all();
+        if($code){
+            $products = Product::where('cod_fenovo',$code)->get();
+        }else{
+            $products = Product::all();
+        }
 
         foreach ($products as $p) {
-            $movements_products = MovementProduct::where('movement_id', '>', 1632)
+            $movements_products = MovementProduct::where('movement_id', '>', 1613)
                                         ->where('product_id', $p->id)
                                         ->where('entidad_id', 1)
                                         ->orderBy('id', 'ASC')
