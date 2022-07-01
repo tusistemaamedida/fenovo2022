@@ -1140,7 +1140,7 @@ class SalidasController extends Controller
         $products = Product::all();
 
         foreach ($products as $p) {
-            $movements_products = MovementProduct::where('movement_id', '>', 1633)
+            $movements_products = MovementProduct::where('movement_id', '>', 1630)
                                         ->where('product_id', $p->id)
                                         ->where('entidad_id', 1)
                                         ->orderBy('id', 'ASC')
@@ -1154,7 +1154,7 @@ class SalidasController extends Controller
                     $balance_orig = $new_balance = $mp->balance;
                 }
 
-                if ($i > 0) {
+                //if ($i > 0) {
                     $bultos = $mp->bultos * $mp->unit_package;
 
                     if ($mp->entry > 0) {
@@ -1174,7 +1174,7 @@ class SalidasController extends Controller
                             'egress'  => $bultos,
                         ]);
                     }
-                }
+               // }
             }
         }
     }
