@@ -63,6 +63,21 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Coeficiente
+ *
+ * @property int $id
+ * @property int|null $coeficiente
+ * @method static \Illuminate\Database\Eloquent\Builder|Coeficiente newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Coeficiente newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Coeficiente query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Coeficiente whereCoeficiente($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Coeficiente whereId($value)
+ */
+	class Coeficiente extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * Class ConceptType
  *
  * @property int $id
@@ -470,6 +485,12 @@ namespace App\Models{
  * @property int|null $exported
  * @property int|null $user_id
  * @property string|null $observacion
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $group_movement_salida_products
+ * @property-read int|null $group_movement_salida_products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $group_panamas
+ * @property-read int|null $group_panamas_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $group_products_egress
+ * @property-read int|null $group_products_egress_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Invoice[] $invoice
  * @property-read int|null $invoice_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $movement_ingreso_products
@@ -479,6 +500,8 @@ namespace App\Models{
  * @property-read int|null $movement_salida_products_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $panamas
  * @property-read int|null $panamas_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $products_egress
+ * @property-read int|null $products_egress_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $salida_products_cyo
  * @property-read int|null $salida_products_cyo_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\MovementProduct[] $salida_products_no_cyo
@@ -1176,9 +1199,25 @@ namespace App\Models{
 /**
  * App\Models\ProductStore
  *
+ * @property int $id
+ * @property int|null $product_id
+ * @property int|null $store_id
+ * @property string|null $stock_f
+ * @property string|null $stock_r
+ * @property string|null $stock_cyo
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $created_at
  * @method static \Illuminate\Database\Eloquent\Builder|ProductStore newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductStore newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProductStore query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore whereStockCyo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore whereStockF($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore whereStockR($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore whereStoreId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductStore whereUpdatedAt($value)
  */
 	class ProductStore extends \Eloquent {}
 }
@@ -1344,6 +1383,7 @@ namespace App\Models{
  * @property string|null $fecha
  * @property string|null $hora
  * @package App\Models
+ * @property int|null $store_id
  * @property string|null $fecha_salida
  * @property string|null $hora_salida
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -1362,6 +1402,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Senasa whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Senasa wherePatenteNro($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Senasa wherePrecintos($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Senasa whereStoreId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Senasa whereUpdatedAt($value)
  */
 	class Senasa extends \Eloquent {}
@@ -1863,8 +1904,10 @@ namespace App\Models{
  * @property string|null $chofer
  * @property string|null $senasa
  * @property int|null $transportista_id
+ * @property int|null $store_id
  * @property int|null $active
  * @property int|null $propio
+ * @property-read \App\Models\Store|null $store
  * @property-read \App\Models\Transportista|null $transportista
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo newQuery()
@@ -1877,6 +1920,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo wherePatente($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo wherePropio($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo whereSenasa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo whereStoreId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo whereTipo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Vehiculo whereTransportistaId($value)
  */

@@ -12,12 +12,14 @@ use App\Http\Requests\Products\AddProduct;
 
 use App\Http\Requests\Products\CalculatePrices;
 use App\Imports\movementImport;
+use App\Models\Coeficiente;
 use App\Models\Movement;
 
 use App\Models\MovementProduct;
 use App\Models\Product;
 use App\Models\ProductDescuento;
 use App\Models\ProductPrice;
+use App\Models\ProductStore;
 use App\Models\Proveedor;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
@@ -75,14 +77,12 @@ class ProductController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-
-            $productos = DB::table('products as t1')->where('t1.active',1)
+            $productos = DB::table('products as t1')->where('t1.active', 1)
             ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
             ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
             ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor'])
             ->orderBy('t1.cod_fenovo')
             ->get();
-
 
             return Datatables::of($productos)
 
@@ -130,7 +130,7 @@ class ProductController extends Controller
                     return $producto->stockReal();
                 })
                 ->addColumn('proveedor', function ($producto) {
-                    return ($producto->proveedor)?$producto->proveedor->name:null;
+                    return ($producto->proveedor) ? $producto->proveedor->name : null;
                 })
                 ->addColumn('ajuste', function ($producto) {
                     $ruta = 'getDataStockProduct(' . $producto->id . ",'" . route('getData.stock') . "')";
@@ -365,7 +365,6 @@ class ProductController extends Controller
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
-
 
     public function ajustarStockMenu(Request $request)
     {
@@ -956,7 +955,7 @@ class ProductController extends Controller
                     return $product->proveedor->name;
                 })
                 ->addColumn('stockInicioSemana', function ($product) {
-                    return ($product->stockInicioSemana())?$product->stockInicioSemana()->balance:0;
+                    return ($product->stockInicioSemana()) ? $product->stockInicioSemana()->balance : 0;
                 })
                 ->addColumn('ingresoSemana', function ($product) {
                     return $product->ingresoSemana();
@@ -1139,5 +1138,36 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             throw new \Exception('comlista2 ' . $e->getMessage());
         }
+    }
+
+    public function distribuirNave()
+    {
+        $parametros = Coeficiente::all();
+
+        foreach ($parametros as $parametro) {
+            $producto                             = Product::find($parametro->id);
+            $stock                                = $producto->stock_f;
+            $producto->stock_f                    = $stock          * ($parametro->coeficiente / 100);
+            $producto->stock_r                    = $stock - $stock * ($parametro->coeficiente / 100);
+            $producto->coeficiente_relacion_stock = $parametro->coeficiente;
+            $producto->save();
+        }
+        return 'Completado la Distribucion stock en Nave';
+    }
+
+    public function distribuirBase()
+    {
+        $parametros = Coeficiente::all();
+
+        foreach ($parametros as $parametro) {
+
+            // Deposito Blas Parera Store_id = 11
+            $producto          = ProductStore::where('product_id', $parametro->id)->where('store_id', 11)->first();
+            $stock             = $producto->stock_f;
+            $producto->stock_f = $stock          * ($parametro->coeficiente / 100);
+            $producto->stock_r = $stock - $stock * ($parametro->coeficiente / 100);
+            $producto->save();
+        }
+        return 'Completado la Distribucion stock en Base';
     }
 }
