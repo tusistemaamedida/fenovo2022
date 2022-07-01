@@ -37,7 +37,6 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            
             $movement = MovementTemp::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
             
             return Datatables::of($movement)
@@ -77,7 +76,6 @@ class IngresosController extends Controller
     public function indexCerradas(Request $request)
     {
         if ($request->ajax()) {
-            
             $movement = Movement::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
             
             return Datatables::of($movement)
@@ -101,6 +99,34 @@ class IngresosController extends Controller
                 ->make(true);
         }
         return view('admin.movimientos.ingresos.indexCerradas');
+    }
+
+    public function indexChequeadas(Request $request)
+    {
+        if ($request->ajax()) {
+            $movement = Movement::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('CHECKED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
+            
+            return Datatables::of($movement)
+                ->addIndexColumn()
+                ->addColumn('origen', function ($movement) {
+                    return $movement->origenData($movement->type);
+                })
+                ->editColumn('date', function ($movement) {
+                    return date('d-m-Y', strtotime($movement->date));
+                })
+                ->addColumn('items', function ($movement) {
+                    return '<span class="badge badge-primary">' . $movement->cantidad_ingresos() . '</span>';
+                })
+                ->addColumn('voucher', function ($movement) {
+                    return  $movement->voucher_number;
+                })
+                ->addColumn('show', function ($movement) {
+                    return '<a href="' . route('ingresos.show', ['id' => $movement->id, 'is_cerrada' => true]) . '"> <i class="fa fa-eye"></i> </a>';
+                })
+                ->rawColumns(['origen', 'date', 'items', 'voucher', 'show'])
+                ->make(true);
+        }
+        return view('admin.movimientos.ingresos.indexChequeadas');
     }
 
     public function add()
@@ -267,13 +293,39 @@ class IngresosController extends Controller
         }
     }
 
+
+    public function checkedCerrada(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
+
+            // Obtengo los datos del movimiento
+            $movement = Movement::find($request->id);
+            $movement->status = 'CHECKED';
+            $movement->save();
+
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
+
+            return redirect()->route('ingresos.indexCerradas');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
+            dd($e->getMessage());
+            return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
+        }
+    }
+
+    
+
     public function show(Request $request)
     {
         $movement = (!$request->is_cerrada)
             ? MovementTemp::query()->where('id', $request->id)->with('movement_ingreso_products')->first()
             : Movement::query()->where('id', $request->id)->with('movement_ingreso_products')->first();
 
-        $ajustes        = $this->enumRepository->getType('ajustes');    
+        $ajustes     = $this->enumRepository->getType('ajustes');
         $movimientos = $movement->movement_ingreso_products;
 
         return view('admin.movimientos.ingresos.show', compact('movement', 'movimientos', 'ajustes'));
@@ -563,6 +615,86 @@ class IngresosController extends Controller
             Schema::enableForeignKeyConstraints();
             dd($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
+        }
+    }
+
+    public function ajustarIngresoItem(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
+
+            $product  = Product::find($request->producto_id);
+
+            if ($request->bultos_anterior < $request->bultos_actual) {
+                $operacion = 'suma';
+                $cantidad = $request->bultos_actual - $request->bultos_anterior;
+            } else {
+                $operacion  = 'resta';
+                $cantidad   = $request->bultos_anterior - $request->bultos_actual ;
+            }
+
+            switch ($request->tipo) {
+                case 'FACTURA':
+                    $product->stock_f = ($operacion == 'suma') ? $product->stock_f + $cantidad : $product->stock_f - $cantidad;
+                    break;
+                case 'REMITO':
+                    $product->stock_r = ($operacion == 'suma') ? $product->stock_r + $cantidad : $product->stock_r - $cantidad;
+                    break;
+                case 'CyO':
+                    $product->stock_cyo = ($operacion == 'suma') ? $product->stock_cyo + $cantidad : $product->stock_cyo - $cantidad;
+                    break;
+            }
+            
+
+            $product->save();
+            $stock = $product->stock_f + $product->stock_r + $product->stock_cyo;
+
+            $from  = \Auth::user()->store_active;
+            $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();
+            $orden = ($count) ? $count + 1 : 1;
+
+
+            // Inserta movimiento de Ajuste
+            $insert_data                   = [];
+            $insert_data['type']           = 'AJUSTE';
+            $insert_data['to']             = Auth::user()->store_active;
+            $insert_data['date']           = now();
+            $insert_data['from']           = Auth::user()->store_active;
+            $insert_data['status']         = 'FINISHED';
+            $insert_data['orden']          = $orden;
+            $insert_data['voucher_number'] = time();
+            $insert_data['flete']          = 0;
+            $insert_data['user_id']        = Auth::user()->id;
+            $insert_data['observacion']    = $request->observacion;
+            $movement                      = Movement::create($insert_data);
+
+            // Inserta el Detalle del Ajuste
+            $latest['movement_id']  = $movement->id;
+            $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
+            $latest['entidad_tipo'] = 'S';
+            $latest['unit_package'] = 0;
+            $latest['circuito']     = $request->tipo;
+            $latest['unit_type']    = $product->unit_type;
+            $latest['product_id']   = $request->product_id;
+            $latest['entry']        = ($operacion == 'suma') ? $cantidad : 0;
+            $latest['egress']       = ($operacion == 'resta') ? $cantidad : 0;
+            $latest['bultos']       = $request->bultos;
+            $latest['balance']      = $stock;
+            MovementProduct::create($latest);
+
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
+
+            //
+            return new JsonResponse([
+                'html' => view('admin.movimientos.ingresos.show-detalle', compact('movimientos'))->render(),
+                'type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }
     }
 }

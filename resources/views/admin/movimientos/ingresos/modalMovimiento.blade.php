@@ -1,9 +1,9 @@
 <div id="movimientoPopup" class="movimientoPopup offcanvas offcanvas-right kt-color-panel p-5">
-    <form id="formDataMovimiento">
+    <form id="formDataCompra">
         @csrf
         <div class="row">
             <div class="col-12 font-weight-bolder">
-                AJUSTAR 
+                AJUSTAR
             </div>
         </div>
         <div class="row mt-3">
@@ -14,14 +14,15 @@
 
         <input type="hidden" id="detalle_id" name="detalle_id" />
         <input type="hidden" id="producto_id" name="producto_id" />
-        <input type="hidden" id="detalle_bultos_anterior" name="detalle_bultos_anterior" />
+        <input type="hidden" id="bultos_anterior" name="bultos_anterior" />
+        <input type="hidden" id="tipo" name="tipo" value="{{ $movement->subtype }}" />
 
         <div class="row mt-5">
             <div class="col-12">
                 <label class="text-body">Bultos *</label>
                 <fieldset class="form-group">
-                    <input type="number" id="detalle_bultos_actual" name="detalle_bultos_actual"
-                        class="form-control text-center" autofocus />
+                    <input type="number" id="bultos_actual" name="bultos_actual" class="form-control text-center"
+                        autofocus />
                 </fieldset>
             </div>
         </div>
@@ -44,7 +45,8 @@
         <div class="row mt-5">
             <div class="col-12">
                 <label class="text-body">Observaciones / comentarios</label>
-                <input type="text" name="observacion" id="observacion" value="Ajuste contable " class="form-control bg-white border-primary">
+                <input type="text" name="observacion" id="observacion" value="Ajuste contable "
+                    class="form-control bg-white border-primary">
             </div>
         </div>
 
