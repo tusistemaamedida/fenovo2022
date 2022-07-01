@@ -44,6 +44,6 @@ Route::get('actualizar-stock-factura', [SalidasController::class, 'updateStockFa
 
 Route::get('update-jurisdiccion', [SalidasController::class, 'updateJurisdiccion']);
 Route::post('salidas-pendiente-cambiar-pausa', [SalidasController::class, 'cambiarPausaSalida'])->name('cambiar.pausa.salida');
-
+Route::get('actualizar-stock/{code?}', [SalidasController::class, 'updateStock'])->name('update.stock');
 //Route::get('update-stock', [SalidasController::class, 'updateStock'])->name('actualizar.temp.stock');
 Route::get('update-stock', [SalidasController::class, 'updateStock'])->name('actualizar.temp.stock');
