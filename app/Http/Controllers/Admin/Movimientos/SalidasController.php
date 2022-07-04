@@ -975,9 +975,9 @@ class SalidasController extends Controller
                     $stock_inicial  = $product->producto->stockReal();
                     $cantidad = $product->quantity;
                     $punto_venta = env('PTO_VTA_FENOVO',18);
-                    $unit_type    = $product->producto->unit_type;
+                    $unit_type    = $product->unit_type;
                     $unit_weight  = $product->producto->unit_weight;
-                    $unit_package = $product->producto->unit_package;
+                    $unit_package = $product->unit_package;
 
                     if(isset($quantities[0])){
                         $cant_total_f = ($unit_type == 'K') ? ($unit_weight * $unit_package * $quantities[0]['cant']) : ($unit_package  * $quantities[0]['cant']);
