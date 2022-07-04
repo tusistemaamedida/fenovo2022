@@ -966,6 +966,7 @@ class SalidasController extends Controller
                 $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
                 foreach ($session_products as $product) {
+                    $stock_inicial_store = 0;
                     $quantities = $this->getStockDividido($product);
                     $stock_inicial  = $product->producto->stockReal();
                     $cantidad = $product->quantity;
