@@ -55,8 +55,8 @@ class CabeEleExport implements FromView {
 
             $element->IDCAJA = null;
             $element->NROCOM = $invoice->orden;
-            $element->FECHA  = Carbon::parse($invoice->created_at)->format('d/m/Y');
-            $element->HORA   = Carbon::parse($invoice->created_at)->format('H:i');
+            $element->FECHA  = Carbon::parse($mov->created_at)->format('d/m/Y');
+            $element->HORA   = Carbon::parse($mov->created_at)->format('H:i');
 
             if($invoice->tipoFactura->afip_id == 3){
                 $tipo_factura = 'NCA';
