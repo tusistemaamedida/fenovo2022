@@ -221,12 +221,12 @@ class SalidasController extends Controller
 
     public function pendientePrint(Request $request)
     {
-        //Cod:: salpend001
+        $list_id = $request->list_id.'_'.\Auth::user()->store_active;
 
         $session_products = DB::table('session_products as t1')
             ->join('products as t2', 't1.product_id', '=', 't2.id')
             ->select('t1.id', 't2.cod_fenovo', 't2.name', 't2.cod_proveedor', 't1.quantity', 't2.unit_weight', 't1.unit_package', 't2.unit_type')
-            ->where('t1.list_id', '=', $request->list_id)
+            ->where('t1.list_id', '=', $list_id)
             ->orderBy('t2.cod_fenovo')
             ->get();
 
@@ -880,17 +880,20 @@ class SalidasController extends Controller
         $coef_f = ($ST > 0)?(int) round(($SF * 100) / $ST):0;
 
         $quantity =  $product->quantity;
-        $unit_type = $product->unit_type;
+        $unit_type    = $product->unit_type;
+        $unit_weight  = $producto->unit_weight;
+        $unit_package = $product->unit_package;
 
         if ($quantity > 0) {
 
-            $cant_total = ($unit_type == 'K') ? ($producto->unit_weight * $producto->unit_package * $quantity) : ($producto->unit_package  * $quantity);
+            $cant_total = ($unit_type == 'K') ? ($unit_weight * $unit_package * $quantity) : ($unit_package  * $quantity);
+
 
             // Primero debo buscar el stock en F Y R Luego buscar en CYO si ninguno de los tres llega a cubrir la cantidad solicitada
             // pero hay algo en stock debo tomar lo que hay
-            $total_r   = ($unit_type == 'K') ? ($SR   / ($producto->unit_weight * $producto->unit_package)) : ($SR  / $producto->unit_package);
-            $total_cyo = ($unit_type == 'K') ? ($SCYO / ($producto->unit_weight * $producto->unit_package)) : ($SCYO/ $producto->unit_package);
-            $total_f   = ($unit_type == 'K') ? ($SF   / ($producto->unit_weight * $producto->unit_package)) : ($SF  / $producto->unit_package);
+            $total_r   = ($unit_type == 'K') ? ($SR   / ($unit_weight * $unit_package)) : ($SR  / $unit_package);
+            $total_cyo = ($unit_type == 'K') ? ($SCYO / ($unit_weight * $unit_package)) : ($SCYO/ $unit_package);
+            $total_f   = ($unit_type == 'K') ? ($SF   / ($unit_weight * $unit_package)) : ($SF  / $unit_package);
 
             if($cant_total <= $ST){
                 $qty_f = round((($coef_f * $quantity) / 100),0,PHP_ROUND_HALF_UP);

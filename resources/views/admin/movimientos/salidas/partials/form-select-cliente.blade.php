@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="col-md-1 text-center">
-                    <button type="button" class="btn btn-dark" id="btnPrintCerrarSalida" style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
+                    <button type="button" class="btn btn-dark" id="btnPrintCerrarSalida"  style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
                         <i class="fa fa-print"></i>
                     </button>
                 </div>

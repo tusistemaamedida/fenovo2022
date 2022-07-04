@@ -387,7 +387,7 @@
             var to = jQuery("#to").val();
             var list_id = to_type + '_' + to;
             var url = "{{ route('salidas.pendiente.print', '') }}" + "?list_id=" + list_id;
-            window.location = url;
+            window.open(url, '_blank');
         })
 
         jQuery("#btnOpenCerrarSalida").click(function(e) {
