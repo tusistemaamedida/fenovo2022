@@ -82,6 +82,7 @@ class Movement extends Model
     {
        return $this->hasMany(MovementProduct::class)->where('egress', '>', 0)
                                                     ->where('circuito', '!=', 'CyO')
+                                                    ->where('invoice',true)
                                                     ->select(['*',DB::raw("SUM(bultos) as bultos")])
                                                     ->groupBy('product_id');
     }
