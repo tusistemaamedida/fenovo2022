@@ -49,6 +49,8 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
         require __DIR__ . '/admin/fletes.php';
         //
         require __DIR__ . '/admin/localidades.php';
+
+        require __DIR__ . '/admin/auxiliar.php';
     });
 });
 
