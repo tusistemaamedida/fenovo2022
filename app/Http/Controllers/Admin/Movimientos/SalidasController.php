@@ -99,8 +99,12 @@ class SalidasController extends Controller
                                 }
                             }
                             return $urls;
+                        }//
+                        if($movement->verifSiFactura() && !$movement->hasPanama()){
+                            return '<a href="' . route('pre.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>';
+                        }else{
+                            return '--';
                         }
-                        return ($movement->verifSiFactura()) ? '<a href="' . route('pre.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>' : '';
                     }
                 })
                 ->editColumn('updated_at', function ($movement) {
