@@ -42,7 +42,10 @@ class NotasCreditoController extends Controller
                     return $movement->origenData($movement->type);
                 })
                 ->addColumn('comprobante_nc', function ($movement) {
-                    return ($movement->invoice_fenovo()) ? $movement->invoice_fenovo()->voucher_number : '--';
+                    if (isset($movement->invoice)) {
+                        return $movement->invoice->voucher_number;
+                    }
+                    return '--';
                 })
                 ->editColumn('date', function ($movement) {
                     return date('Y-m-d', strtotime($movement->date));
@@ -58,7 +61,7 @@ class NotasCreditoController extends Controller
                 })
 
                 ->addColumn('nc', function ($movement) {
-                    if ($movement->invoice_fenovo() && !is_null($movement->invoice_fenovo()->cae)) {
+                    if ($movement->invoice && !is_null($movement->invoice->cae)) {
                         $link = '<a target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
                     } else {
                         $ruta = "'" . route('create.invoice', ['movment_id' => $movement->id]) . "'";
