@@ -1151,7 +1151,7 @@ class SalidasController extends Controller
         }
 
         foreach ($products as $p) {
-            $movements_products = MovementProduct::where('movement_id', '>', 1613)
+            $movements_products = MovementProduct::where('movement_id', '>', 1429)
                                         ->where('product_id', $p->id)
                                         ->where('entidad_id', 1)
                                         ->orderBy('id', 'ASC')
