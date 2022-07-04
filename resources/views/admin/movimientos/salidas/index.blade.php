@@ -33,7 +33,7 @@
                                             <thead>
                                                 <tr class="bg-dark text-white">
                                                     <td>#</td>
-                                                    <td style="width: 70px" ">Fecha</td>
+                                                    <td style="width: 70px" >Fecha</td>
                                                                 <td>Destino</td>
                                                                 <td>Tipo</td>
                                                                 <td>Item</td>
