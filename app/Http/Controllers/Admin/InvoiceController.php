@@ -197,70 +197,71 @@ class InvoiceController extends Controller
     {
         try {
             // Inicio creacion del invoice con punto de vta fenovo
-                $movement = Movement::where('id', $movement_id)->with('salida_products_no_cyo')->firstOrFail();
-                $movement->products = $movement->salida_products_no_cyo;
+            $movement = Movement::where('id', $movement_id)->with('salida_products_no_cyo')->firstOrFail();
+            $movement->products = $movement->salida_products_no_cyo;
+            if(isset($movement->products) && count($movement->products)){
+                $count = Panamas::orderBy('orden', 'DESC')->first();
+                $orden = (isset($count)) ? $count->orden : 1;
 
-                if(isset($movement->products) && count($movement->products)){
-                    $count = Panamas::orderBy('orden', 'DESC')->first();
-                    $orden = (isset($count)) ? $count->orden : 1;
+                $pto_vta       = $cuit = $iva_type = '';
+                $cliente       = null;
 
-                    $pto_vta       = $cuit = $iva_type = '';
-                    $cliente       = null;
+                if ($movement->type == 'VENTA' || $movement->type == 'TRASLADO') {
+                    $cliente = Store::where('id', $movement->to)->with('region')->first();
+                    $pto_vta = 'PVTA_' . str_pad($cliente->cod_fenovo, 3, '0', STR_PAD_LEFT);
+                } elseif ($movement->type == 'VENTACLIENTE') {
+                    $cliente = Customer::where('id', $movement->to)->with('store')->first();
+                    $pto_vta = 'CLI_' . str_pad($cliente->id, '0', 3, STR_PAD_LEFT);
+                }
 
-                    if ($movement->type == 'VENTA' || $movement->type == 'TRASLADO') {
-                        $cliente = Store::where('id', $movement->to)->with('region')->first();
-                        $pto_vta = 'PVTA_' . str_pad($cliente->cod_fenovo, 3, '0', STR_PAD_LEFT);
-                    } elseif ($movement->type == 'VENTACLIENTE') {
-                        $cliente = Customer::where('id', $movement->to)->with('store')->first();
-                        $pto_vta = 'CLI_' . str_pad($cliente->id, '0', 3, STR_PAD_LEFT);
-                    }
+                if ($cliente) {
+                    $cuit1    = substr($cliente->cuit, 0, 2);
+                    $cuit2    = substr($cliente->cuit, 2, 8);
+                    $cuit3    = substr($cliente->cuit, 10, 1);
+                    $cuit     = $cuit1 . '-' . $cuit2 . '-' . $cuit3;
+                    $iva_type = ($cliente->iva_type == 'RI') ? 'I' : $cliente->iva_type;
+                }
 
-                    if ($cliente) {
-                        $cuit1    = substr($cliente->cuit, 0, 2);
-                        $cuit2    = substr($cliente->cuit, 2, 8);
-                        $cuit3    = substr($cliente->cuit, 10, 1);
-                        $cuit     = $cuit1 . '-' . $cuit2 . '-' . $cuit3;
-                        $iva_type = ($cliente->iva_type == 'RI') ? 'I' : $cliente->iva_type;
-                    }
+                $data_panama                    = [];
+                $data_panama['movement_id']     = $movement->id;
+                $data_panama['client_name']     = ($cliente) ? $cliente->razon_social : '';
+                $data_panama['client_address']  = ($cliente) ? $cliente->address : '';
+                $data_panama['client_cuit']     = $cuit;
+                $data_panama['client_iva_type'] = $iva_type;
+                $data_panama['pto_vta']         = $pto_vta;
 
-                    $data_panama                    = [];
-                    $data_panama['movement_id']     = $movement->id;
-                    $data_panama['client_name']     = ($cliente) ? $cliente->razon_social : '';
-                    $data_panama['client_address']  = ($cliente) ? $cliente->address : '';
-                    $data_panama['client_cuit']     = $cuit;
-                    $data_panama['client_iva_type'] = $iva_type;
-                    $data_panama['pto_vta']         = $pto_vta;
+                if ($movement->verifSiCreatePanama()) {
+                    $orden += 1;
+                    $data_panama['tipo']               = 'PAN';
+                    $data_panama['orden']              = $orden;
+                    $data_panama['neto105']            = (is_null($movement->neto105(false))     || is_null($movement->neto105(false)->neto105)) ? '0.0' : $movement->neto105(false)->neto105;
+                    $data_panama['iva_neto105']        = (is_null($movement->neto105(false))     || is_null($movement->neto105(false)->neto_iva105)) ? '0.0' : $movement->neto105(false)->neto_iva105;
+                    $data_panama['neto21']             = (is_null($movement->neto21(false))      || is_null($movement->neto21(false)->neto21)) ? '0.0' : $movement->neto21(false)->neto21;
+                    $data_panama['iva_neto21']         = (is_null($movement->neto21(false))      || is_null($movement->neto21(false)->neto_iva21)) ? '0.0' : $movement->neto21(false)->neto_iva21;
+                    $data_panama['totalIibb']          = (is_null($movement->totalIibb(false))   || is_null($movement->totalIibb(false)->total_no_gravado)) ? '0.0' : $movement->totalIibb(false)->total_no_gravado;
+                    $data_panama['totalConIva']        = (is_null($movement->totalConIva(false)) || is_null($movement->totalConIva(false)->totalConIva)) ? '0.0' : $movement->totalConIva(false)->totalConIva;
+                    $data_panama['costo_fenovo_total'] = (is_null($movement->cosventa(false))    || is_null($movement->cosventa(false)->cost_venta)) ? '0.0' : $movement->cosventa(false)->cost_venta;
 
-                    if ($movement->verifSiCreatePanama()) {
-                        $orden += 1;
-                        $data_panama['tipo']               = 'PAN';
-                        $data_panama['orden']              = $orden;
-                        $data_panama['neto105']            = (is_null($movement->neto105(false))     || is_null($movement->neto105(false)->neto105)) ? '0.0' : $movement->neto105(false)->neto105;
-                        $data_panama['iva_neto105']        = (is_null($movement->neto105(false))     || is_null($movement->neto105(false)->neto_iva105)) ? '0.0' : $movement->neto105(false)->neto_iva105;
-                        $data_panama['neto21']             = (is_null($movement->neto21(false))      || is_null($movement->neto21(false)->neto21)) ? '0.0' : $movement->neto21(false)->neto21;
-                        $data_panama['iva_neto21']         = (is_null($movement->neto21(false))      || is_null($movement->neto21(false)->neto_iva21)) ? '0.0' : $movement->neto21(false)->neto_iva21;
-                        $data_panama['totalIibb']          = (is_null($movement->totalIibb(false))   || is_null($movement->totalIibb(false)->total_no_gravado)) ? '0.0' : $movement->totalIibb(false)->total_no_gravado;
-                        $data_panama['totalConIva']        = (is_null($movement->totalConIva(false)) || is_null($movement->totalConIva(false)->totalConIva)) ? '0.0' : $movement->totalConIva(false)->totalConIva;
-                        $data_panama['costo_fenovo_total'] = (is_null($movement->cosventa(false))    || is_null($movement->cosventa(false)->cost_venta)) ? '0.0' : $movement->cosventa(false)->cost_venta;
+                    Panamas::create($data_panama);
+                }
 
-                        Panamas::create($data_panama);
-                    }
+                if (!isset($movement->factura_flete) && $movement->flete > 0) {
+                    $data_panama['tipo']               = 'FLE';
+                    $data_panama['orden']              = $orden + 1;
+                    $data_panama['neto105']            = 0.0;
+                    $data_panama['iva_neto105']        = 0.0;
+                    $data_panama['neto21']             = $movement->flete;
+                    $data_panama['iva_neto21']         = $movement->flete * 0.21;
+                    $data_panama['totalIibb']          = 0.0;
+                    $data_panama['totalConIva']        = $movement->flete;
+                    $data_panama['costo_fenovo_total'] = 0.0;
 
-                    if (!isset($movement->factura_flete) && $movement->flete > 0) {
-                        $data_panama['tipo']               = 'FLE';
-                        $data_panama['orden']              = $orden + 1;
-                        $data_panama['neto105']            = 0.0;
-                        $data_panama['iva_neto105']        = 0.0;
-                        $data_panama['neto21']             = $movement->flete;
-                        $data_panama['iva_neto21']         = $movement->flete * 0.21;
-                        $data_panama['totalIibb']          = 0.0;
-                        $data_panama['totalConIva']        = $movement->flete;
-                        $data_panama['costo_fenovo_total'] = 0.0;
+                    Panamas::create($data_panama);
+                }
 
-                        Panamas::create($data_panama);
-                    }
-
+                if($movement->verifSiFactura()){
                     $result  = $this->createVoucher($movement,$this->pto_vta);
+
                     $invoice = $this->invoiceRepository->getByMovement($movement_id,$this->pto_vta);
 
                     if ($result['status']) {
@@ -284,50 +285,45 @@ class InvoiceController extends Controller
                         $this->invoiceRepository->fill($invoice->id, ['error' => $result['error']]);
                     }
                 }
+            }
             // fin de creacion del invoice con punto de vta fenovo
 
             // Inicio creacion del invoice cta y orden
-                $movement = Movement::where('id', $movement_id)->with('salida_products_cyo')->firstOrFail();
-                if(isset($movement->salida_products_cyo) && count($movement->salida_products_cyo)){
-                    $movements = $movement->salida_products_cyo->groupBy('punto_venta');
-                    $invoice_cyo = null;
-                    foreach ($movements as $m) {
-                        $productos = $m;
-                        $punto_venta = $m[0]->punto_venta;
-                        $movement->products = $productos;
+            $movement = Movement::where('id', $movement_id)->with('salida_products_cyo')->firstOrFail();
+            if(isset($movement->salida_products_cyo) && count($movement->salida_products_cyo)){
+                $movements = $movement->salida_products_cyo->groupBy('punto_venta');
+                $invoice_cyo = null;
+                foreach ($movements as $m) {
+                    $productos = $m;
+                    $punto_venta = $m[0]->punto_venta;
+                    $movement->products = $productos;
 
-                        $result  = $this->createVoucher($movement,$punto_venta);
-                        $invoice_cyo = $this->invoiceRepository->getByMovement($movement_id,$punto_venta);
-                        if ($result['status']) {
-                            if (isset($invoice_cyo)) {
-                                $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
-                                $orden = (isset($inv)) ? $inv->orden + 1 : 1;
-                                $this->invoiceRepository->fill($invoice_cyo->id, [
-                                    'error'      => null,
-                                    'orden'      => $orden,
-                                    'cae'        => $result['response_afip']['CAE'],
-                                    'expiration' => $result['response_afip']['CAEFchVto'],
-                                ]);
+                    $result  = $this->createVoucher($movement,$punto_venta);
+                    $invoice_cyo = $this->invoiceRepository->getByMovement($movement_id,$punto_venta);
+                    if ($result['status']) {
+                        if (isset($invoice_cyo)) {
+                            $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
+                            $orden = (isset($inv)) ? $inv->orden + 1 : 1;
+                            $this->invoiceRepository->fill($invoice_cyo->id, [
+                                'error'      => null,
+                                'orden'      => $orden,
+                                'cae'        => $result['response_afip']['CAE'],
+                                'expiration' => $result['response_afip']['CAEFchVto'],
+                            ]);
 
-                                $cyo = 1;
-                                $url_factura = $this->generateInvoicePdf($movement_id,$punto_venta,$cyo);
-                                $this->invoiceRepository->fill($invoice_cyo->id, [
-                                    'url'        => $url_factura,
-                                    'cyo'        => $cyo
-                                ]);
-                            }
-                        }elseif (isset($invoice_cyo)) {
-                            $this->invoiceRepository->fill($invoice_cyo->id, ['error' => $result['error']]);
+                            $cyo = 1;
+                            $url_factura = $this->generateInvoicePdf($movement_id,$punto_venta,$cyo);
+                            $this->invoiceRepository->fill($invoice_cyo->id, [
+                                'url'        => $url_factura,
+                                'cyo'        => $cyo
+                            ]);
                         }
+                    }elseif (isset($invoice_cyo)) {
+                        $this->invoiceRepository->fill($invoice_cyo->id, ['error' => $result['error']]);
                     }
                 }
-
-                return redirect()->back()->withInput();
             }
-            if (isset($invoice)) {
-                $this->invoiceRepository->fill($invoice->id, ['error' => $result['error']]);
-            }
-            return $result['error'];
+            return redirect()->route('salidas.index');
         } catch (\Exception $e) {
             return $e->getMessage();
         }
