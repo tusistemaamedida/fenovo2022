@@ -55,6 +55,7 @@
                                         <td>Codigo</td>
                                         <td>Producto</td>
                                         <td>Unidad</td>
+                                        <td>Proveedor</td>
                                         <td>CyO</td>
                                         <td>Remito</td>
                                         <td>Factura</td>
@@ -87,6 +88,7 @@
             {data: 'cod_fenovo', orderable: false},
             {data: 'name', orderable: false},
             {data: 'unit_type',class:'text-center', orderable: false, searchable: false},
+            {data: 'proveedor', orderable: false, searchable: true},
             {data: 'stock_cyo', class:'text-center', orderable: true, searchable: false},
             {data: 'stock_r', class:'text-center', orderable: true, searchable: false},
             {data: 'stock_f', orderable: false, searchable: true},

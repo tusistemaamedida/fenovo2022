@@ -58,3 +58,6 @@ Route::get('stock-de-productos', [ProductController::class, 'listByStocks'])->na
 Route::post('producto/ajustar-por-stock', [ProductController::class, 'ajustarByStock'])->name('ajustar.by.stock');
 
 Route::get('productos/importar/movimientos', [ProductController::class, 'importProductsMovement'])->name('products.importMovement');
+
+Route::get('producto/distribuir-nave', [ProductController::class, 'distribuirNave'])->name('productos.distribuir.nave');
+Route::get('producto/distribuir-base', [ProductController::class, 'distribuirBase'])->name('productos.distribuir.base');

@@ -7,10 +7,13 @@ use Illuminate\Support\Facades\Route;
 // Ingresos
 Route::get('ingresos', [IngresosController::class, 'index'])->name('ingresos.index');
 Route::get('ingresos/cerradas', [IngresosController::class, 'indexCerradas'])->name('ingresos.indexCerradas');
+Route::get('ingresos/chequeadas', [IngresosController::class, 'indexChequeadas'])->name('ingresos.indexChequeadas');
 
 Route::get('ingresos/add', [IngresosController::class, 'add'])->name('ingresos.add');
 Route::post('ingresos/store', [IngresosController::class, 'store'])->name('ingresos.store');
 Route::get('ingresos/close', [IngresosController::class, 'close'])->name('ingresos.close');
+Route::get('ingresos/checked', [IngresosController::class, 'checkedCerrada'])->name('ingresos.checkedCerrada');
+
 Route::get('ingresos/edit', [IngresosController::class, 'edit'])->name('ingresos.edit');
 Route::get('ingresos/edit-ingreso', [IngresosController::class, 'editIngreso'])->name('ingresos.editIngreso');
 Route::post('ingresos/update-ingreso', [IngresosController::class, 'updateIngreso'])->name('ingresos.updateIngreso');
@@ -34,6 +37,9 @@ Route::post('ingresos/ajustar/storeDetalle', [IngresosController::class, 'ajusta
 Route::get('ingresos/movimientos/getMovements', [IngresosController::class, 'getMovements'])->name('ingresos.getMovements');
 Route::post('ingresos/check', [IngresosController::class, 'check'])->name('ingresos.check');
 Route::get('ingresos/ajustar/stockDepositos/close', [IngresosController::class, 'ajustarStockDepositosClose'])->name('ingresos.close.ajuste');
+
+// Ajustar Stock de las compras
+Route::post('ingresos/ajustar/item', [IngresosController::class, 'ajustarIngresoItem'])->name('ajustar.ingreso.item');
 
 
 // Detalle ingresos

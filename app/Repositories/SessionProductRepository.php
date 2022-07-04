@@ -29,11 +29,13 @@ class SessionProductRepository extends BaseRepository
         return $this->newQuery()->where('id', $id)->delete();
     }
 
-    public function getCantidadTotalDeBultosByListId($product_id, $unit_package = null, $list_id, $circuito)
+    public function getCantidadTotalDeBultosByListId($product_id, $unit_package = null, $list_id, $circuito=false)
     {
         return $this->newQuery()->where('product_id', $product_id)
                                 ->where('list_id', $list_id)
-                                ->where('circuito',$circuito)
+                                ->when($circuito, function ($q, $circuito) {
+                                    $q->where('circuito', $circuito);
+                                })
                                 ->when($unit_package, function ($q, $unit_package) {
                                     $q->where('unit_package', $unit_package);
                                 })
@@ -72,19 +74,12 @@ class SessionProductRepository extends BaseRepository
 
     public function groupBy($group)
     {
-        if (\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin') {
-            return SessionProduct::select('*', DB::raw("COUNT(id) as total"))
+        return SessionProduct::select('*', DB::raw("COUNT(id) as total"))
+                                 ->where('store_id',\Auth::user()->store_active)
                                  ->where('list_id', 'not like', '%DEVOLUCION_%')
                                  ->orderBy('updated_at', 'DESC')
                                  ->groupBy('list_id','pausado')
                                  ->get();
-        }
-        return SessionProduct::select('*', DB::raw("COUNT(id) as total"))
-                              ->where('list_id', 'not like', '%DEVOLUCION_%')
-                              ->where('store_id', \Auth::user()->store_active)
-                              ->orderBy('updated_at', 'DESC')
-                              ->groupBy('list_id','pausado')
-                              ->get();
     }
 
     public function getFlete($list_id)

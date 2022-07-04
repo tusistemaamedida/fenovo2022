@@ -56,6 +56,9 @@
                         <a class="dropdown-item text-black-50" href="{{ route('ingresos.indexCerradas') }}">
                             Compras cerradas
                         </a>
+                        <a class="dropdown-item text-black-50" href="{{ route('ingresos.indexChequeadas') }}">
+                            Compras chequeadas
+                        </a>
                     </div>
                 </li>
 
@@ -76,10 +79,10 @@
                             Senasa
                         </a>
                         <a class="dropdown-item text-black-50" href="{{ route('nc.index') }}">
-                            Notas de <span class="text-primary">Crédito</span>
+                            Notas de <span class=" text-warning">Crédito</span>
                         </a>
                         <a class="dropdown-item text-black-50" href="{{ route('nd.index') }}">
-                            Notas de <span class="text-primary">Dédito</span>
+                            Notas de <span class="text-warning">Dédito</span>
                         </a>
                     </div>
                 </li>

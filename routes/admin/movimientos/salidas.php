@@ -25,7 +25,8 @@ Route::post('store-session-product', [SalidasController::class, 'storeSessionPro
 Route::post('store-session-product-item', [SalidasController::class, 'storeSessionProductItem'])->name('store.session.product.item');
 
 Route::post('guardar-salida', [SalidasController::class, 'storeSalida'])->name('guardar.salida');
-Route::post('cambiar-facturacion', [SalidasController::class, 'changeInvoiceProduct'])->name('change.invoice.product');
+/* Route::post('cambiar-facturacion', [SalidasController::class, 'changeInvoiceProduct'])->name('change.invoice.product'); */
+Route::post('cambiar-facturacion-de-produto', [SalidasController::class, 'changeInvoiceProduct'])->name('change.product.invoice');
 Route::get('get-presentaciones', [SalidasController::class, 'getPresentaciones'])->name('get.presentaciones');
 
 Route::post('imprimir-remito', [SalidasController::class, 'printRemito'])->name('print.remito');
@@ -44,6 +45,9 @@ Route::get('actualizar-stock-factura', [SalidasController::class, 'updateStockFa
 
 Route::get('update-jurisdiccion', [SalidasController::class, 'updateJurisdiccion']);
 Route::post('salidas-pendiente-cambiar-pausa', [SalidasController::class, 'cambiarPausaSalida'])->name('cambiar.pausa.salida');
+
 Route::get('actualizar-stock/{code?}', [SalidasController::class, 'updateStock'])->name('update.stock');
-//Route::get('update-stock', [SalidasController::class, 'updateStock'])->name('actualizar.temp.stock');
-Route::get('update-stock', [SalidasController::class, 'updateStock'])->name('actualizar.temp.stock');
+
+
+Route::get('pre-factura/{movment_id}', [SalidasController::class, 'previewCreateInvoice'])->name('pre.invoice');
+Route::get('get-productos-invoice', [SalidasController::class, 'cargarProductos'])->name('get.productos');

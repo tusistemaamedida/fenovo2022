@@ -51,6 +51,7 @@
                             {{ $movement->voucher_number }}
                         </div>
                     </div>
+
                 </div>
 
                 <div class="card gutter-b bg-white border-0">
@@ -62,8 +63,7 @@
                                         <div class="table-responsive">
                                             <table class=" table table-hover table-sm text-center">
                                                 <tr class=" bg-dark text-white">
-                                                    <th>#</th>
-                                                    <th>Cod fenovo</th>
+                                                    <th>Codigo</th>
                                                     <th>Producto</th>
                                                     <th>Medida</th>
                                                     <th>Kgrs</th>
@@ -72,6 +72,8 @@
                                                     <th>Bultos</th>
                                                     <th>$_Total</th>
                                                     <th>Unidades</th>
+                                                    <th>#</th>
+                                                    <th>Historial</th>
                                                 </tr>
 
                                                 @php
@@ -83,11 +85,6 @@
                                                         $total += $movimiento->cost_fenovo * $movimiento->unit_package * $movimiento->bultos;
                                                     @endphp
                                                     <tr>
-                                                        <td>
-                                                            <a href="{{ route('getData.stock.detail', ['id' => $movimiento->product->id, 'origen'=>$movement->origenData($movement->type),'voucher'=>$movement->voucher_number]) }}">
-                                                                <i class="fa fa-wrench" aria-hidden="true"></i>
-                                                            </a>
-                                                        </td>
                                                         <td> {{ $movimiento->product->cod_fenovo }} </td>
                                                         <td class=" text-left"> {{ $movimiento->product->name }}</td>
                                                         <td> {{ $movimiento->unit_type }} </td>
@@ -100,16 +97,32 @@
                                                         </td>
                                                         <td> {{ number_format($movimiento->unit_package * $movimiento->bultos, 0, '', '') }}
                                                         </td>
+                                                        <td>
+                                                            @if ($movement->status == 'FINISHED')
+                                                                <a href="javascript:void(0)"
+                                                                    onclick="editarMovimiento(
+                                                                            '{{ $movimiento->id }}', 
+                                                                            '{{ $movimiento->bultos }}', 
+                                                                            '{{ $movimiento->product->id }}',
+                                                                            '{{ $movimiento->product->cod_fenovo }}',
+                                                                            '{{ $movimiento->product->name }}',
+                                                                            '{{ $movimiento->unit_package }}'
+                                                                        )">
+                                                                    <i class=" fa fa-pencil-alt"></i>
+                                                                </a>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <a
+                                                                href="{{ route('product.historial', ['id' => $movimiento->product_id]) }}">
+                                                                <i class="fa fa-list" aria-hidden="true"></i>
+                                                            </a>
+                                                        </td>
                                                     </tr>
                                                 @endforeach
-                                                <tr>
-                                                    <th colspan="10">
-                                                        </hr>
-                                                    </th>
-                                                </tr>
+  
                                                 <tr class=" bg-dark text-black-50">
                                                     <th>Totales</th>
-                                                    <th></th>
                                                     <th></th>
                                                     <th></th>
                                                     <th>{{ number_format($movement->totalKgrs(), 2, ',', '.') }}</th>
@@ -118,6 +131,8 @@
                                                     <th> {{ $movimientos->sum('bultos') }} </th>
                                                     <th> {{ number_format($total, 2, ',', '.') }} </th>
                                                     <th></th>
+                                                    <th></th>
+                                                    <th></th>
                                                 </tr>
                                             </table>
                                         </div>
@@ -125,12 +140,97 @@
                                 @endisset
                             </div>
                         </div>
+
+                        <div class="row mt-3">
+                            <div class="col-10">
+
+                            </div>
+                            <div class="col-2 text-center">
+
+                                @if ($movement->status == 'FINISHED')
+                                    <button onclick="check_compra('{{ $movement->id }}')" class="btn btn btn-primary">
+                                        <i class="f "></i> Chequeada
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
             </div>
         </div>
+
+        @include('admin.movimientos.ingresos.modalMovimiento')
     @endsection
 
     @section('js')
+        <script>
+            const editarMovimiento = (detalleId, bultos, producto_id, cod_fenovo, nombre, unit_package) => {
+                jQuery("#detalle_id").val(detalleId);
+                jQuery("#bultos_anterior").val(bultos);
+                jQuery("#bultos_actual").val(bultos);
+                jQuery("#producto_id").val(producto_id);
+                jQuery("#unit_package").val(unit_package);
+                jQuery("#cod_fenovo").html(cod_fenovo);
+                jQuery("#nombre").html(nombre);
+                jQuery('.movimientoPopup').addClass('offcanvas-on');
+            }
+
+            const actualizarMovimiento = () => {
+
+                if (jQuery('#bultos_actual').val() == 0) {
+                    toastr.error('La cantidad <strong>no puede ser 0 </strong>', "Cantidad");
+                    jQuery('#bultos_actual').select()
+                    return
+                }
+                if (jQuery('#bultos_anterior').val() == jQuery('#bultos_actual').val()) {
+                    toastr.error('Ingrese una cantidad <strong>diferente al anteriormente registrada </strong>',
+                        "Cantidad");
+                    jQuery('#bultos_actual').select()
+                    return
+                }
+
+                let data = jQuery("#formDataCompra").serialize();
+
+                var url = "{{ route('ajustar.ingreso.item') }}";
+                jQuery.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: data,
+                    beforeSend: function() {
+                        jQuery('#loader').removeClass('hidden');
+                    },
+                    success: function(data) {
+                        jQuery('.movimientoPopup').removeClass('offcanvas-on');
+                        jQuery('#to').val(jQuery('#to').val()).trigger('change');
+                    },
+                    error: function(data) {},
+                    complete: function() {
+                        jQuery('#loader').addClass('hidden');
+                    }
+                });
+            }
+
+            const cerrarModal = () => {
+                jQuery('.movimientoPopup').removeClass('offcanvas-on');
+            }
+
+            const check_compra = (id) => {
+
+                ymz.jq_confirm({
+                    title: 'Compra ',
+                    text: "Confirma que chequeó la  compra ?",
+                    no_btn: "Cancelar",
+                    yes_btn: "Confirma",
+                    no_fn: function() {
+                        return false;
+                    },
+                    yes_fn: function() {
+                        let ruta = '{{ route('ingresos.checkedCerrada', ['id' => $movement->id]) }}';
+                        window.location = ruta;
+                    }
+                });
+            };
+        </script>
     @endsection

@@ -32,7 +32,7 @@
                                             Buscar  &nbsp; <i class=" fa fa-search"></i>
                                         </span>
                                     </div>
-                                    <input id="buscarProducto" name="buscarProducto" v-model="txtProducto" type="text" class="form-control" @keyup ="buscarRegistro">
+                                    <input id="buscarProducto" name="buscarProducto" v-model="txtProducto" type="text" class="form-control" @keyup ="buscarRegistro" autofocus>
                                 </div>
                             </div>
                         </div> 
@@ -101,9 +101,6 @@ export default {
         }
     },
     mounted() {
-        jQuery(function () {
-            jQuery("#buscarProducto").focus();
-        })
         this.getProductos();
     },
     watch: {
