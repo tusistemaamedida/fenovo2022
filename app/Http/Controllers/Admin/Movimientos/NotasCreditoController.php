@@ -32,18 +32,17 @@ class NotasCreditoController extends Controller
 
     public function index(Request $request)
     {
+        $arrTypes = ['DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $movement = Movement::where('from', \Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('created_at','DESC')->get();
         if ($request->ajax()) {
-            $arrTypes = ['DEVOLUCION', 'DEVOLUCIONCLIENTE'];
-            $movement = Movement::all()->where('from', \Auth::user()->store_active)->whereIn('type', $arrTypes)->sortByDesc('created_at');
-
             return DataTables::of($movement)
                 ->addIndexColumn()
                 ->addColumn('destino', function ($movement) {
                     return $movement->origenData($movement->type);
                 })
                 ->addColumn('comprobante_nc', function ($movement) {
-                    if (isset($movement->invoice)) {
-                        return $movement->invoice->voucher_number;
+                    if (!is_null($movement->invoice_fenovo())) {
+                        return $movement->invoice_fenovo()->voucher_number;
                     }
                     return '--';
                 })
@@ -61,7 +60,7 @@ class NotasCreditoController extends Controller
                 })
 
                 ->addColumn('nc', function ($movement) {
-                    if ($movement->invoice && !is_null($movement->invoice->cae)) {
+                    if ($movement->invoice_fenovo() && !is_null($movement->invoice_fenovo()->cae)) {
                         $link = '<a target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '"> <i class="fas fa-download"></i> </a>';
                     } else {
                         $ruta = "'" . route('create.invoice', ['movment_id' => $movement->id]) . "'";
