@@ -63,6 +63,21 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Base08
+ *
+ * @property int|null $cod_fenovo
+ * @property int|null $stock
+ * @method static \Illuminate\Database\Eloquent\Builder|Base08 newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Base08 newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Base08 query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Base08 whereCodFenovo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Base08 whereStock($value)
+ */
+	class Base08 extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Coeficiente
  *
  * @property int $id
