@@ -169,13 +169,12 @@ class NotasCreditoController extends Controller
                     $product->producto->save();
                     $balance = $stock_inicial - $cantidad;
 
-                    MovementProduct::firstOrCreate([
+                    MovementProduct::create([
                         'entidad_id'     => $movement->to,
                         'entidad_tipo'   => $entidad_tipo,
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
-                        'unit_package'   => $unit_package
-                    ], [
+                        'unit_package'   => $unit_package,
                         'invoice'    => 1,
                         'unit_price' => $product->unit_price,
                         'tasiva'     => $product->tasiva,
@@ -189,7 +188,7 @@ class NotasCreditoController extends Controller
 
                     // Revisar si la DEVOLUCION se dirige DEPOSITO NAVE
                     if ($deposito == 1) {
-                        $producto = Product::find($product->producto->id);
+                        $producto = Product::find($product->product_id);
                         $producto->stock_f += $cantidad;
                         $producto->save();
                         $balance = $product->producto->stockReal() + $cantidad;
@@ -210,22 +209,22 @@ class NotasCreditoController extends Controller
                         }
                     }
 
-                    MovementProduct::firstOrCreate([
+                    MovementProduct::create([
                         'entidad_id'     => $deposito,
                         'entidad_tipo'   => 'S',
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
-                        'unit_package'   => $product->unit_package, ], [
-                            'invoice'    => 1,
-                            'unit_price' => $product->unit_price,
-                            'tasiva'     => $product->tasiva,
-                            'entry'      => $cantidad,
-                            'bultos'     => $product->quantity,
-                            'egress'     => 0,
-                            'balance'    => $stock_inicial_store + $cantidad,
-                            'punto_venta' => env('PTO_VTA_FENOVO',18),
-                            'circuito'    => 'F'
-                        ]);
+                        'unit_package'   => $product->unit_package,
+                        'invoice'    => 1,
+                        'unit_price' => $product->unit_price,
+                        'tasiva'     => $product->tasiva,
+                        'entry'      => $cantidad,
+                        'bultos'     => $product->quantity,
+                        'egress'     => 0,
+                        'balance'    => $stock_inicial_store + $cantidad,
+                        'punto_venta' => env('PTO_VTA_FENOVO',18),
+                        'circuito'    => 'F'
+                    ]);
                 }
 
                 $this->sessionProductRepository->deleteList($list_id);
