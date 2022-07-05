@@ -1039,7 +1039,7 @@ class SalidasController extends Controller
                                 $circuito = 'R';
                                 $egress = $cant_total_r;
                                 $quantity = $quantities[$i]['cant'];
-                                $invoice = ($explode[0] == 'TRASLADO')?1:0;
+                                $invoice = ($explode[0] == 'TRASLADO' || $explode[0] == 'DEVOLUCION'|| $explode[0] == 'DEVOLUCIONCLIENTE')?1:0;
                             }
                             if($quantities[$i]['tipo'] == 'quantity_cyo'){
                                 $circuito = 'CyO';
