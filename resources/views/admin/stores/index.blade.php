@@ -43,6 +43,7 @@
                                                     <th>Cod Fenovo</th>
                                                     <th>Tipo tienda</th>
                                                     <th>Pto venta</th>
+                                                    <th>Comision</th>
                                                     <th>Nombre </th>
                                                     <th>Cuit</th>
                                                     <th></th>
@@ -78,6 +79,7 @@
             {data: 'cod_fenovo'},
             {data: 'store_type', 'class':'text-center font-weight-bolder',},
             {data: 'punto_venta', 'class':'text-center',},
+            {data: 'comision_distribucion', 'class':'text-center',},
             {data: 'description'},
             {data: 'cuit'},
             {data: 'edit', name: 'Editar', 'class':'text-center', orderable: false, searchable: false},
