@@ -13,17 +13,18 @@ class Store extends Model
     protected $table = 'stores';
 
     protected $casts = [
-        'cod_fenovo'          => 'int',
-        'region_id'           => 'int',
-        'storefather_id'      => 'int',
-        'billing_amount'      => 'float',
-        'lat'                 => 'float',
-        'lon'                 => 'float',
-        'delivery_percentage' => 'float',
-        'delivery_km'         => 'int',
-        'stock_capacity'      => 'int',
-        'online_sale'         => 'int',
-        'active'              => 'int',
+        'cod_fenovo'            => 'int',
+        'region_id'             => 'int',
+        'storefather_id'        => 'int',
+        'billing_amount'        => 'float',
+        'lat'                   => 'float',
+        'lon'                   => 'float',
+        'delivery_percentage'   => 'float',
+        'delivery_km'           => 'int',
+        'stock_capacity'        => 'int',
+        'online_sale'           => 'int',
+        'comision_distribucion' => 'float',
+        'active'                => 'int',
     ];
 
     protected $fillable = [
@@ -52,6 +53,7 @@ class Store extends Model
         'logistica_express',            // Ingresar porcentaje de flete logistica de distribucion desde la Base
         'punto_venta',                  // Punto de venta para la facturacion
         'habilitado_panama',            // Puede facturar en negro
+        'comision_distribucion',
         'active',
     ];
 
