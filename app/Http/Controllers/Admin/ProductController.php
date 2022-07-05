@@ -1181,7 +1181,7 @@ class ProductController extends Controller
                     'stock_cyo'      => 0,
                 ]);
             }
-            
+
             // Obtengo el Stock pasado por COIO
             $producto_stock  = Base08::whereCodFenovo($product->cod_fenovo)->first();
 
@@ -1199,17 +1199,17 @@ class ProductController extends Controller
 
 
             // Crear el movimiento ajuste
-            $movement = Movement::create([
+           /*  $movement = Movement::create([
                 'date'           => now(),
                 'type'           => 'AJUSTE',
                 'from'           => $store_id,
                 'to'             => $store_id,
                 'status'         => 'CREATED',
                 'voucher_number' => '00001',
-            ]);
+            ]); */
 
             // Crear el detalle
-            MovementProduct::create([
+          /*   MovementProduct::create([
                 'entidad_id'   => $store_id,
                 'entidad_tipo' => 'S',
                 'movement_id'  => $movement->id,
@@ -1221,7 +1221,7 @@ class ProductController extends Controller
                 'balance'      => $stock,
                 'unit_price'   => $producto->product_price->costfenovo,
                 'tasiva'       => $producto->product_price->tasiva,
-            ]);
+            ]); */
         }
 
         return "Completado la Distribucion stock en Store ". $store_id;
