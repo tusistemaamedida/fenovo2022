@@ -1160,7 +1160,7 @@ class ProductController extends Controller
     {
         // Deposito Blas Parera Store_id = 11
         $store_id= 11;
-
+        ProductStore::where('store_id', $store_id)->delete();
         $parametros = Coeficiente::all();
 
         foreach ($parametros as $parametro) {
@@ -1213,14 +1213,14 @@ class ProductController extends Controller
                 'entidad_id'   => $store_id,
                 'entidad_tipo' => 'S',
                 'movement_id'  => $movement->id,
-                'product_id'   => $producto->id,
-                'unit_package' => $producto->unit_package,
+                'product_id'   => $product->id,
+                'unit_package' => $product->unit_package,
                 'invoice'      => 1,
                 'entry'        => $stock,
                 'egress'       => 0,
                 'balance'      => $stock,
-                'unit_price'   => $producto->product_price->costfenovo,
-                'tasiva'       => $producto->product_price->tasiva,
+                'unit_price'   => $product->product_price->costfenovo,
+                'tasiva'       => $product->product_price->tasiva,
             ]);
         }
 
