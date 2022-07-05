@@ -329,6 +329,36 @@ class InvoiceController extends Controller
         }
     }
 
+    public function createNc($movement_id)
+    {
+        try {
+            $movement = Movement::where('id', $movement_id)->with('products_egress')->firstOrFail();
+
+            $result  = $this->createVoucher($movement,$this->pto_vta);
+            $invoice = $this->invoiceRepository->getByMovement($movement_id);
+            if ($result['status']) {
+                if (isset($invoice)) {
+                    $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
+                    $orden = (isset($inv)) ? $inv->orden + 1 : 1;
+                    $this->invoiceRepository->fill($invoice->id, [
+                        'error'      => null,
+                        'orden'      => $orden,
+                        'cae'        => $result['response_afip']['CAE'],
+                        'expiration' => $result['response_afip']['CAEFchVto'],
+                    ]);
+                }
+
+                return redirect()->back()->withInput();
+            }
+            if (isset($invoice)) {
+                $this->invoiceRepository->fill($invoice->id, ['error' => $result['error']]);
+            }
+            return $result['error'];
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     private function get_alicuota_value($iva_id)
     {
         switch ($iva_id) {
