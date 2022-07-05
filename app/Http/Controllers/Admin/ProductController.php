@@ -12,6 +12,7 @@ use App\Http\Requests\Products\AddProduct;
 
 use App\Http\Requests\Products\CalculatePrices;
 use App\Imports\movementImport;
+use App\Models\Base08;
 use App\Models\Coeficiente;
 use App\Models\Movement;
 
@@ -1157,17 +1158,72 @@ class ProductController extends Controller
 
     public function distribuirBase()
     {
+        // Deposito Blas Parera Store_id = 11
+        $store_id= 11;
+
         $parametros = Coeficiente::all();
 
         foreach ($parametros as $parametro) {
 
-            // Deposito Blas Parera Store_id = 11
-            $producto          = ProductStore::where('product_id', $parametro->id)->where('store_id', 11)->first();
-            $stock             = $producto->stock_f;
-            $producto->stock_f = $stock          * ($parametro->coeficiente / 100);
-            $producto->stock_r = $stock - $stock * ($parametro->coeficiente / 100);
-            $producto->save();
+            // Obtengo el Cod fenovo
+            $product  = Product::find($parametro->id);
+
+            // Reviso si esta en los stocks de las Stores
+            $producto = ProductStore::where('product_id', $parametro->id)->where('store_id', $store_id)->first();
+
+            // Si no esta definido la Store  y el producto, lo genero
+            if (!$producto) {
+                $producto = ProductStore::create([
+                    'product_id'     => $parametro->id,
+                    'store_id'       => $store_id,
+                    'stock_f'        => 0,
+                    'stock_r'        => 0,
+                    'stock_cyo'      => 0,
+                ]);
+            }
+            
+            // Obtengo el Stock pasado por COIO
+            $producto_stock  = Base08::whereCodFenovo($product->cod_fenovo)->first();
+
+            if ($producto_stock) {
+                $stock             = $producto_stock->stock;
+                $producto->stock_f = $stock          * ($parametro->coeficiente / 100);
+                $producto->stock_r = $stock - $stock * ($parametro->coeficiente / 100);
+                $producto->save();
+            } else {
+                $stock             = 0;
+                $producto->stock_f = 0;
+                $producto->stock_r = 0;
+                $producto->save();
+            }
+
+
+            // Crear el movimiento ajuste
+            $movement = Movement::create([
+                'date'           => now(),
+                'type'           => 'AJUSTE',
+                'from'           => $store_id,
+                'to'             => $store_id,
+                'status'         => 'CREATED',
+                'voucher_number' => '00001',
+            ]);
+
+            // Crear el detalle
+            MovementProduct::create([
+                'entidad_id'   => $store_id,
+                'entidad_tipo' => 'S',
+                'movement_id'  => $movement->id,
+                'product_id'   => $producto->id,
+                'unit_package' => $producto->unit_package,
+                'invoice'      => 1,
+                'entry'        => $stock,
+                'egress'       => 0,
+                'balance'      => $stock,
+                'unit_price'   => $producto->product_price->costfenovo,
+                'tasiva'       => $producto->product_price->tasiva,
+            ]);
         }
-        return 'Completado la Distribucion stock en Base';
+
+        return "Completado la Distribucion stock en Store ". $store_id;
     }
 }

@@ -16,6 +16,8 @@ use App\Repositories\SessionProductRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Yajra\DataTables\Facades\DataTables;
 
 class NotasCreditoController extends Controller
@@ -130,6 +132,8 @@ class NotasCreditoController extends Controller
     public function storeNotaCredito(Request $request)
     {
         try {
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
             if ($request->input('voucher_number') != '' || !is_null($request->input('voucher_number'))) {
                 $list_id  = $request->input('session_list_id');
                 $explode  = explode('_', $list_id);
@@ -164,18 +168,28 @@ class NotasCreditoController extends Controller
                     $unit_package = $product->unit_package;
                     $cantidad = ($unit_type == 'K') ? ($unit_weight * $unit_package * $product->quantity) : ($unit_package * $product->quantity);
 
-                    $stock_inicial  = $product->producto->stockReal();
-                    $product->producto->stock_f -= $cantidad;
-                    $product->producto->save();
-                    $balance = $stock_inicial - $cantidad;
+                    $prod_store = ProductStore::where('product_id',$product->product_id)->where('store_id',$movement->to)->first();
+                    $stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo:0;
 
-                    MovementProduct::firstOrCreate([
+                    if($prod_store){
+                        $prod_store->stock_f += $cantidad;
+                        $prod_store->save();
+                    }else{
+                        $data_prod_store['product_id'] = $product->product_id;
+                        $data_prod_store['store_id'] = $movement->to;
+                        $data_prod_store['stock_f']= $cantidad;
+                        $data_prod_store['stock_r']= 0;
+                        $data_prod_store['stock_cyo']= 0;
+                        ProductStore::create($data_prod_store);
+                    }
+                    $balance = (($stock_inicial_store - $cantidad)<0)?0:$stock_inicial_store - $cantidad;
+
+                    MovementProduct::create([
                         'entidad_id'     => $movement->to,
                         'entidad_tipo'   => $entidad_tipo,
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
-                        'unit_package'   => $unit_package
-                    ], [
+                        'unit_package'   => $unit_package,
                         'invoice'    => 1,
                         'unit_price' => $product->unit_price,
                         'tasiva'     => $product->tasiva,
@@ -189,17 +203,17 @@ class NotasCreditoController extends Controller
 
                     // Revisar si la DEVOLUCION se dirige DEPOSITO NAVE
                     if ($deposito == 1) {
-                        $producto = Product::find($product->producto->id);
-                        $producto->stock_f += $cantidad;
-                        $producto->save();
-                        $balance = $product->producto->stockReal() + $cantidad;
+                        $prod = Product::where('id',$product->product_id)->first();
+                        $balance_dep = $prod->stockReal() + $cantidad;
+                        $prod->stock_f += $cantidad;
+                        $prod->save();
                     } else {
                         // A otros :: Depósito Reclamos
-                        $prod_store = ProductStore::where('product_id',$product->product_id)->where('store_id',$deposito)->first();
-                        $stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo:0;
-                        if($prod_store){
-                            $prod_store->stock_f += $cantidad;
-                            $prod_store->save();
+                        $prod_dep = ProductStore::where('product_id',$product->product_id)->where('store_id',$deposito)->first();
+                        $stock_inicial_deposito = ($prod_dep) ? $prod_dep->stock_f + $prod_dep->stock_r + $prod_dep->stock_cyo:0;
+                        if($prod_dep){
+                            $prod_dep->stock_f += $cantidad;
+                            $prod_dep->save();
                         }else{
                             $data_prod_store['product_id'] = $product->product_id;
                             $data_prod_store['store_id'] = $deposito;
@@ -208,32 +222,38 @@ class NotasCreditoController extends Controller
                             $data_prod_store['stock_cyo']= 0;
                             ProductStore::create($data_prod_store);
                         }
+                        $balance_dep = $stock_inicial_deposito + $cantidad;
                     }
 
-                    MovementProduct::firstOrCreate([
+                    MovementProduct::create([
                         'entidad_id'     => $deposito,
                         'entidad_tipo'   => 'S',
                         'movement_id'    => $movement->id,
                         'product_id'     => $product->product_id,
-                        'unit_package'   => $product->unit_package, ], [
-                            'invoice'    => 1,
-                            'unit_price' => $product->unit_price,
-                            'tasiva'     => $product->tasiva,
-                            'entry'      => $cantidad,
-                            'bultos'     => $product->quantity,
-                            'egress'     => 0,
-                            'balance'    => $stock_inicial_store + $cantidad,
-                            'punto_venta' => env('PTO_VTA_FENOVO',18),
-                            'circuito'    => 'F'
-                        ]);
+                        'unit_package'   => $product->unit_package,
+                        'invoice'    => 1,
+                        'unit_price' => $product->unit_price,
+                        'tasiva'     => $product->tasiva,
+                        'entry'      => $cantidad,
+                        'bultos'     => $product->quantity,
+                        'egress'     => 0,
+                        'balance'    => $balance_dep,
+                        'punto_venta' => env('PTO_VTA_FENOVO',18),
+                        'circuito'    => 'F'
+                    ]);
                 }
 
                 $this->sessionProductRepository->deleteList($list_id);
+                DB::commit();
+                Schema::enableForeignKeyConstraints();
                 return redirect()->route('nc.index');
             }
             $request->session()->flash('error', 'No selecciono ninguna Factura');
             return redirect()->back()->withInput();
         } catch (\Exception $e) {
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
+            dd($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
