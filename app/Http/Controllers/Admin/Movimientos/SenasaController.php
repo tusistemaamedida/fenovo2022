@@ -128,7 +128,7 @@ class SenasaController extends Controller
 
     public function vincular(Request $request)
     {
-        $fecha      = Carbon::now()->subDays(15)->toDateTimeString();
+        $fecha      = Carbon::now()->subDays(10)->toDateTimeString();
         $senasa     = Senasa::find($request->id);
         $arrayTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
         $movements  = Movement::doesntHave('senasa')
