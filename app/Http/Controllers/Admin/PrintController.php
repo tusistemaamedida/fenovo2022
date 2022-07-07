@@ -119,7 +119,7 @@ class PrintController extends Controller
 
     public function exportMovimientosCsv(Request $request)
     {
-        // $arrTipos = ['VENTA', 'VENTACLIENTE', 'TRASLADO', 'DEVOLUCION', 'DEVOLUCIONCLIENTE'];
+        $arrTipos = ['VENTA', 'VENTACLIENTE'];
 
         // return $movimientos = DB::table('movements as t1')
         //     ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
