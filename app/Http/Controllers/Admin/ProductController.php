@@ -947,7 +947,7 @@ class ProductController extends Controller
     public function compararStock(Request $request)
     {
         if ($request->ajax()) {
-            $productos = Product::where('active', '=', 1)->limit(5);
+            $productos = Product::where('active', '=', 1)->get();
 
             return Datatables::of($productos)
                 ->addIndexColumn()

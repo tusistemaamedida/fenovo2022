@@ -113,7 +113,7 @@
                                 Retenciones y Percepciones ER
                             </div>
                         </div>
-                        <div class="row mb-5 ml-2 border-bottom-dark">
+                        <div class="row mb-5 ml-2 border-bottom-dark text-center">
                             <div class="col-2">
                                 <a onclick="javascript:printIIBB()" title="Exportar Ingresos Brutos"
                                     class="mt-1 mr-3">
@@ -122,6 +122,16 @@
                             </div>
                             <div class="col-2">
                                 <input type="month" id="iibbFecha" name="iibbFecha" value="{{ date('Y-m') }}" class="form-control">
+                            </div>
+
+                            <div class="col-2">
+                                <a onclick="javascript:printVENTAS()" title="Exportar Ventas"
+                                    class="mt-1 mr-3">
+                                    <i class=" fa fa-file-csv"></i> VENTAS
+                                </a>
+                            </div>
+                            <div class="col-2">
+                                <input type="month" id="ventasFecha" name="ventasFecha" value="{{ date('Y-m') }}" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -160,6 +170,14 @@
                 iibbAnio = iibbFecha[0];
                 iibbMes = iibbFecha[1];
                 let url = "{{ route('export.iibb', '') }}" + "?mes=" + iibbMes + "&anio=" + iibbAnio;
+                window.location = url;
+            }
+
+            const printVENTAS = ()=>{
+                let ventasFecha = jQuery("#ventasFecha").val().split('-');
+                ventasAnio = ventasFecha[0];
+                ventasMes = ventasFecha[1];
+                let url = "{{ route('export.ventas', '') }}" + "?mes=" + ventasMes + "&anio=" + ventasAnio;
                 window.location = url;
             }
         </script>

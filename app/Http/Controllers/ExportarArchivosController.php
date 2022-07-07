@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 
 use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 
 class ExportarArchivosController extends Controller
@@ -52,6 +53,26 @@ class ExportarArchivosController extends Controller
         fclose($txtFile);
 
         return response()->download(public_path($file));
+    }
+
+    public function exportVENTAS(Request $request)
+    {
+        $mes  = $request->mes;
+        $anio = $request->anio;
+
+        $arrTipos = ['VENTA', 'VENTACLIENTE'];
+
+        // Actualizo los Detalles de Movimientos como exportados
+        $movimientos = DB::table('movements as t1')
+            ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
+            ->join('products as t3', 't2.product_id', '=', 't3.id')
+            ->join('stores as t4', 't2.entidad_id', '=', 't4.id')
+            ->select('t1.id', 't2.id as movement_products_id', 't2.exported_number', 't1.type', 't1.date', 't1.to', 't1.from', 't4.cod_fenovo as cod_tienda', 't3.cod_fenovo as cod_producto', 't2.bultos', 't2.entry', 't2.egress', 't3.unit_type as unidad', 't2.unit_package', 't2.circuito')
+            ->whereIn('t1.type', $arrTipos)
+            ->where('t2.entidad_tipo', '!=', 'C')
+            ->where('t2.exported_number', '=', 0)
+            ->orderBy('t1.date')->orderBy('t1.id')->orderBy('t3.cod_fenovo')
+            ->get();
     }
 
     private function getImporteIva($ivas, $type_iva)
