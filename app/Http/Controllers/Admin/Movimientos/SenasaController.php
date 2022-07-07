@@ -12,6 +12,7 @@ use App\Repositories\SenasaRepository;
 use App\Repositories\VehiculoRepository;
 
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -127,11 +128,14 @@ class SenasaController extends Controller
 
     public function vincular(Request $request)
     {
+        $fecha      = Carbon::now()->subDays(10)->toDateTimeString();
         $senasa     = Senasa::find($request->id);
         $arrayTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
         $movements  = Movement::doesntHave('senasa')
             ->where('from', Auth::user()->store_active)
-            ->whereIn('type', $arrayTypes)->orderBy('id', 'desc')->limit(100)->get();
+            ->whereIn('type', $arrayTypes)->orderBy('id', 'desc')
+            ->whereDate('created_at', '>', $fecha)
+            ->get();
 
         return view('admin.movimientos.senasa.vincular', compact('senasa', 'movements'));
     }
@@ -157,10 +161,10 @@ class SenasaController extends Controller
 
         $movements = $request->get('movements');
         $senasa->movements()->sync($movements);
-        if($movements){
+        if ($movements) {
             foreach ($movements as $m) {
-                $panama = Panamas::where('movement_id',$m)->where('tipo','!=','PAN')->first();
-                if(isset($panama)){
+                $panama = Panamas::where('movement_id', $m)->where('tipo', '!=', 'PAN')->first();
+                if (isset($panama)) {
                     $panama->tipo = $tipo_flete;
                     $panama->save();
                 }

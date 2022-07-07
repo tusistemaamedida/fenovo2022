@@ -9,9 +9,9 @@
 
         {!! Form::hidden('id', $senasa->id) !!}
 
-        <div class="row mb-3">
+        <div class="row mt-5 mb-3">
             <div class="col-12">
-                <h3>Vincular habilitación con salidas</h3>
+                <h4>Vincular habilitación con salidas</h4>
             </div>
         </div>
 
@@ -46,48 +46,30 @@
             </div>
         </div>
 
-        <div class="row mt-5">
+        <div class="row mt-3">
             <div class="col-12">
 
                 <div class="table-datapos">
                     <div class="table-responsive">
-                        <table class=" table table-hover table-striped table-light text-center">
+                        <table class=" table table-hover table-striped table-light text-center yajra-datatable">
                             <thead>
                                 <tr class=" bg-dark text-white-50">
-                                    <td class="col-1">
-                                        Fecha
-                                    </td>
-                                    <td>
-                                        Destino
-                                    </td>
-                                    <td class="col-1">
-                                        Tipo movimiento
-                                    </td>
-                                    <td class="col-1">
-                                        Comprobante nro
-                                    </td>
-                                    <td class="col-1">
-                                        Vincular
-                                    </td>
+                                    <td>Fecha   </td>
+                                    <td>Destino </td>
+                                    <td>Tipo movimiento </td>
+                                    <td>Comprobante nro </td>
+                                    <td>Vincular </td>
                                 </tr>
                             </thead>
                             @foreach ($movements as $movement)
 
                             <tr>
 
-                                <td class="col-1">
-                                    {{ date('d-m-Y', strtotime($movement->date)) }}
-                                </td>
-                                <td class="col-1">                      
-                                    {{ $movement->origenData($movement->type);}}
-                                </td>
-                                <td class="col-1">
-                                    {{ $movement->type }}
-                                </td>
-                                <td class="col-1">
-                                    {{ $movement->voucher_number }}
-                                </td>
-                                <td class="col-1">
+                                <td> {{ date('d-m-Y', strtotime($movement->date)) }}  </td>
+                                <td class="text-left"> {{ $movement->origenData($movement->type);}}     </td>
+                                <td> {{ $movement->type }}                            </td>
+                                <td> {{ $movement->voucher_number }}                  </td>
+                                <td> 
                                     <label class="checkbox-inline" >
                                         {{ Form::checkbox('movements[]', $movement->id, null) }}
                                     </label>
@@ -116,4 +98,16 @@
 
 </div>
 
+@endsection
+
+@section('js')
+<script>
+
+    var dataTable = jQuery(".yajra-datatable").DataTable({
+        ordering: false,
+        scrollY: 300,
+        paging: false,
+    })
+
+</script>
 @endsection
