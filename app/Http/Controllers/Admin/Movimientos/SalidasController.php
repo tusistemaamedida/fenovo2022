@@ -89,7 +89,7 @@ class SalidasController extends Controller
                     return $movement->type;
                 })
                 ->editColumn('factura_nro', function ($movement) {
-                    if ($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE') {
+                    if ($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE' || $movement->type == 'TRASLADO') {
                         if(isset($movement->invoice) && count($movement->invoice)){
                             $urls = '';
                             foreach ($movement->invoice as $invoice) {
@@ -99,8 +99,8 @@ class SalidasController extends Controller
                                 }
                             }
                             return $urls;
-                        }//
-                        if($movement->verifSiFactura() || !$movement->hasPanama()){
+                        }
+                        if($movement->type != 'VENTACLIENTE' && $movement->status != 'FINISHED_AND_GENERATED_FACT'){
                             return '<a href="' . route('pre.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>';
                         }else{
                             return '--';
@@ -888,7 +888,6 @@ class SalidasController extends Controller
 
             $cant_total = ($unit_type == 'K') ? ($unit_weight * $unit_package * $quantity) : ($unit_package  * $quantity);
 
-
             // Primero debo buscar el stock en F Y R Luego buscar en CYO si ninguno de los tres llega a cubrir la cantidad solicitada
             // pero hay algo en stock debo tomar lo que hay
             $total_r   = ($unit_type == 'K') ? ($SR   / ($unit_weight * $unit_package)) : ($SR  / $unit_package);
@@ -1002,11 +1001,10 @@ class SalidasController extends Controller
                     if ($insert_data['type'] != 'VENTACLIENTE') {
                         $prod_store = ProductStore::where('product_id',$product->product_id)->where('store_id',$insert_data['to'])->first();
                         $stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo:0;
-
                         if($prod_store){
                             if(isset($quantities[0]))   $prod_store->stock_f += $cant_total_f;
                             if(isset($quantities[1]))   $prod_store->stock_r += $cant_total_r;
-                            if(isset($quantities[2])) $prod_store->stock_cyo += $cant_total_cyo;
+                            if(isset($quantities[2]))   $prod_store->stock_cyo += $cant_total_cyo;
                             $prod_store->save();
                         }else{
                             $data_prod_store['product_id'] = $product->product_id;
