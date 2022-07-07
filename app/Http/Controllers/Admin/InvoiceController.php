@@ -259,7 +259,7 @@ class InvoiceController extends Controller
                     Panamas::create($data_panama);
                 }
 
-                if($movement->verifSiFactura()){
+                if($movement->verifSiFactura() && $movement->type != 'TRASLADO'){
                     $result  = $this->createVoucher($movement,$this->pto_vta);
 
                     $invoice = $this->invoiceRepository->getByMovement($movement_id,$this->pto_vta);
@@ -288,41 +288,46 @@ class InvoiceController extends Controller
             }
             // fin de creacion del invoice con punto de vta fenovo
 
-            // Inicio creacion del invoice cta y orden
-            $movement = Movement::where('id', $movement_id)->with('salida_products_cyo')->firstOrFail();
-            if(isset($movement->salida_products_cyo) && count($movement->salida_products_cyo)){
-                $movements = $movement->salida_products_cyo->groupBy('punto_venta');
-                $invoice_cyo = null;
-                foreach ($movements as $m) {
-                    $productos = $m;
-                    $punto_venta = $m[0]->punto_venta;
-                    $movement->products = $productos;
+            if($movement->type != 'TRASLADO'){
+                // Inicio creacion del invoice cta y orden
+                $movement = Movement::where('id', $movement_id)->with('salida_products_cyo')->firstOrFail();
+                if(isset($movement->salida_products_cyo) && count($movement->salida_products_cyo)){
+                    $movements = $movement->salida_products_cyo->groupBy('punto_venta');
+                    $invoice_cyo = null;
+                    foreach ($movements as $m) {
+                        $productos = $m;
+                        $punto_venta = $m[0]->punto_venta;
+                        $movement->products = $productos;
 
-                    $result  = $this->createVoucher($movement,$punto_venta);
-                    $invoice_cyo = $this->invoiceRepository->getByMovement($movement_id,$punto_venta);
-                    if ($result['status']) {
-                        if (isset($invoice_cyo)) {
-                            $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
-                            $orden = (isset($inv)) ? $inv->orden + 1 : 1;
-                            $this->invoiceRepository->fill($invoice_cyo->id, [
-                                'error'      => null,
-                                'orden'      => $orden,
-                                'cae'        => $result['response_afip']['CAE'],
-                                'expiration' => $result['response_afip']['CAEFchVto'],
-                            ]);
+                        $result  = $this->createVoucher($movement,$punto_venta);
+                        $invoice_cyo = $this->invoiceRepository->getByMovement($movement_id,$punto_venta);
+                        if ($result['status']) {
+                            if (isset($invoice_cyo)) {
+                                $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
+                                $orden = (isset($inv)) ? $inv->orden + 1 : 1;
+                                $this->invoiceRepository->fill($invoice_cyo->id, [
+                                    'error'      => null,
+                                    'orden'      => $orden,
+                                    'cae'        => $result['response_afip']['CAE'],
+                                    'expiration' => $result['response_afip']['CAEFchVto'],
+                                ]);
 
-                            $cyo = 1;
-                            $url_factura = $this->generateInvoicePdf($movement_id,$punto_venta,$cyo);
-                            $this->invoiceRepository->fill($invoice_cyo->id, [
-                                'url'        => $url_factura,
-                                'cyo'        => $cyo
-                            ]);
+                                $cyo = 1;
+                                $url_factura = $this->generateInvoicePdf($movement_id,$punto_venta,$cyo);
+                                $this->invoiceRepository->fill($invoice_cyo->id, [
+                                    'url'        => $url_factura,
+                                    'cyo'        => $cyo
+                                ]);
+                            }
+                        }elseif (isset($invoice_cyo)) {
+                            $this->invoiceRepository->fill($invoice_cyo->id, ['error' => $result['error']]);
                         }
-                    }elseif (isset($invoice_cyo)) {
-                        $this->invoiceRepository->fill($invoice_cyo->id, ['error' => $result['error']]);
                     }
                 }
             }
+            $movement = Movement::where('id', $movement_id)->first();
+            $movement->status = 'FINISHED_AND_GENERATED_FACT';
+            $movement->save();
             return redirect()->route('salidas.index');
         } catch (\Exception $e) {
             return $e->getMessage();
