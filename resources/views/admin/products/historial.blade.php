@@ -32,7 +32,7 @@
                                 <table class=" table table-hover display dataTable yajra-datatable">
                                     <thead class="text-body">
                                         <tr class="bg-light">
-                                            <th>Mov-ID</th>
+                                            <th>#</th>
                                             <th>Fecha</th>
                                             <th>OrdenNro</th>
                                             <th>Tipo</th>
