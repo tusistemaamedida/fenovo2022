@@ -61,20 +61,23 @@ class MoviVentasViewExport implements FromView
 
             $objMovimiento = new stdClass();
 
-            /* 1  */ $objMovimiento->id           = str_pad($movimiento->id, 8, '0', STR_PAD_LEFT);
-            /* 1  */ $objMovimiento->type         = $movimiento->type;
-            /* 2  */ $objMovimiento->destino      = $destino;
-            /* 3  */ $objMovimiento->fecha        = date('d/m/Y', strtotime($movimiento->date));
-            /* 4  */ $objMovimiento->factura      = $movimiento->voucher_number;
-            /* 5  */ $objMovimiento->cod_fenovo   = $movimiento->cod_fenovo;
-            /* 6  */ $objMovimiento->producto     = $movimiento->name;
-            /* 7  */ $objMovimiento->unidad       = $movimiento->unit_type;
-            /* 8  */ $objMovimiento->precio_venta = $movimiento->precio_venta;
-            /* 9  */ $objMovimiento->precio_costo = $movimiento->precio_costo;
-            /* 10  */$objMovimiento->cantidad     = $movimiento->cantidad;
-            /* 11  */$objMovimiento->iva          = $movimiento->iva;
-            /* 12  */$objMovimiento->importeiva   = $this->getImporteIva($movimiento->precio_costo, $movimiento->iva, $movimiento->voucher_number);
-            /* 13  */$objMovimiento->importeBruto = $this->getImporteBruto($movimiento->precio_costo, $objMovimiento->importeiva);
+            $objMovimiento->id           = str_pad($movimiento->id, 8, '0', STR_PAD_LEFT);
+            $objMovimiento->type         = $movimiento->type;
+            $objMovimiento->destino      = $destino;
+            $objMovimiento->fecha        = date('d/m/Y', strtotime($movimiento->date));
+            $objMovimiento->factura      = $movimiento->voucher_number;
+            $objMovimiento->cod_fenovo   = $movimiento->cod_fenovo;
+            $objMovimiento->producto     = $movimiento->name;
+            $objMovimiento->unidad       = $movimiento->unit_type;
+            $objMovimiento->iva          = $movimiento->iva;
+            $objMovimiento->precio_venta = $movimiento->precio_venta;
+            $objMovimiento->importeiva   = $this->getImporteIva($movimiento->precio_costo, $movimiento->iva, $movimiento->voucher_number);
+            $objMovimiento->importeBruto = $this->getImporteBruto($movimiento->precio_costo, $objMovimiento->importeiva);
+            $objMovimiento->cantidad     = $movimiento->cantidad;
+            $objMovimiento->precio_costo = $movimiento->precio_costo;
+            $objMovimiento->venta_total  = $this->getVentaTotal($objMovimiento->precio_venta, $movimiento->cantidad);
+            $objMovimiento->costo_total  = $this->getCostoTotal($movimiento->precio_costo, $movimiento->cantidad);
+            $objMovimiento->utilidad_total  = json_decode($objMovimiento->venta_total)-json_decode($objMovimiento->costo_total);
 
             array_push($arrMovimientos, $objMovimiento);
         }
@@ -84,8 +87,8 @@ class MoviVentasViewExport implements FromView
 
     private function getImporteIva($importe, $iva, $voucher)
     {
-        if (strlen($voucher)==0) {
-            $iva = 0;
+        if (strlen($voucher) == 0) {
+            $iva = '0.0';
         } else {
             $iva = ($importe * json_decode($iva)) / 100;
         }
@@ -95,5 +98,15 @@ class MoviVentasViewExport implements FromView
     private function getImporteBruto($importe, $iva)
     {
         return json_decode($importe) + json_decode($iva);
+    }
+
+    private function getCostoTotal($importe, $cantidad)
+    {
+        return json_decode($importe) * json_decode($cantidad);
+    }
+
+    private function getVentaTotal($importe, $cantidad)
+    {
+        return json_decode($importe) * json_decode($cantidad);
     }
 }
