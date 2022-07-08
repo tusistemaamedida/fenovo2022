@@ -148,6 +148,17 @@
                                 <input type="month" id="ventasFecha" name="ventasFecha" value="{{ date('Y-m') }}" class="form-control">
                             </div>
                         </div>
+                        <div class="row mt-3 mb-4 font-weight-bolder">
+                            <div class="col-3">
+                                Productos
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <a href="{{ route('download.lista.mayorista.fenovo') }}" target="_blank" title="Descargar lista mayorista fenovo"
+                                class="mt-1 mr-3">
+                                <i class=" fa fa-file-csv"></i> Lista Mayorista Fenovo
+                            </a>
+                        </div>
                     </div>
 
                 </div>

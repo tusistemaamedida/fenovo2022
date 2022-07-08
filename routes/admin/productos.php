@@ -61,3 +61,4 @@ Route::get('productos/importar/movimientos', [ProductController::class, 'importP
 
 Route::get('producto/distribuir-nave', [ProductController::class, 'distribuirNave'])->name('productos.distribuir.nave');
 Route::get('producto/distribuir-base', [ProductController::class, 'distribuirBase'])->name('productos.distribuir.base');
+Route::get('descargar-lista-mayorista-fenovo', [ProductController::class, 'printListaMayoristaFenovo'])->name('download.lista.mayorista.fenovo');

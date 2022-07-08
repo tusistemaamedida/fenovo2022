@@ -6,6 +6,7 @@ use App\Exports\DescuentosViewExport;
 use App\Exports\PresentacionesViewExport;
 use App\Exports\ProductsViewExport;
 use App\Exports\ProductsViewExportStock;
+use App\Exports\ListaMayoristaFenovo;
 use App\Exports\ProductsViewHistorial;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\AddProduct;
@@ -1228,5 +1229,9 @@ class ProductController extends Controller
         }
 
         return "Completado la Distribucion stock en Store ". $store_id;
+    }
+
+    public function printListaMayoristaFenovo(Request $request){
+        return Excel::download(new ListaMayoristaFenovo(), 'lista-mayorista-fenovo-' . date('d-m-Y') . '.xlsx');
     }
 }
