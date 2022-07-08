@@ -30,10 +30,10 @@ class CustomerController extends Controller
     {
         if ($request->ajax()) {
             if (Auth::user()->rol() == 'superadmin' || Auth::user()->rol() == 'admin') {
-                $customer = Customer::where('active',true)->get();
+                $customer = Customer::where('active',true)->orderBy('razon_social')->get();
             } else {
                 $store_active = Auth::user()->store_active;
-                $customer = Customer::where('store_id', $store_active)->where('active',true)->get();
+                $customer = Customer::where('store_id', $store_active)->where('active',true)->orderBy('razon_social')->get();
             }
 
             return Datatables::of($customer)
@@ -46,11 +46,11 @@ class CustomerController extends Controller
                 })
                 ->addColumn('edit', function ($customer) {
                     $ruta = 'edit(' . $customer->id . ",'" . route('customers.edit') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-edit"></i> </a>';
                 })
                 ->addColumn('destroy', function ($customer) {
                     $ruta = 'destroy(' . $customer->id . ",'" . route('customers.destroy') . "')";
-                    return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                    return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
                 ->rawColumns(['tienda', 'inactivo', 'edit', 'destroy'])
                 ->make(true);
