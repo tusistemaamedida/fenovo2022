@@ -1162,10 +1162,10 @@ class SalidasController extends Controller
 
         foreach ($products as $p) {
             $movements_products = MovementProduct::where('movement_id', '>', 1429)
-                                        ->where('product_id', $p->id)
-                                        ->where('entidad_id', 1)
-                                        ->orderBy('id', 'ASC')
-                                        ->get();
+                ->where('product_id', $p->id)
+                ->where('entidad_id', 1)
+                ->orderBy('id', 'ASC')
+                ->get();
 
             for ($i = 0; $i < count($movements_products); $i++) {
                 $mp = $movements_products[$i];
@@ -1198,6 +1198,8 @@ class SalidasController extends Controller
                 }
             }
         }
+
+        return  new JsonResponse(['msj' => 'Stock actualizado']);
     }
 
     public function updateJurisdiccion(){

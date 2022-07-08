@@ -172,11 +172,14 @@ class ProductController extends Controller
                 ->addColumn('to', function ($movimiento) {
                     return $movimiento->movement->To($movimiento->movement->type);
                 })
+                ->addColumn('orden', function ($movimiento) {
+                    return $movimiento->movement->id;
+                })
                 ->addColumn('observacion', function ($movimiento) {
                     return $movimiento->movement->observacion;
                 })
 
-                ->rawColumns(['fecha', 'type', 'from', 'to', 'observacion'])
+                ->rawColumns(['fecha', 'type', 'from', 'to', 'orden', 'observacion'])
                 ->make(true);
         }
 
