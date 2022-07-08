@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
-
+use App\Models\Movement;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
+use stdClass;
 
 class ExportarArchivosController extends Controller
 {

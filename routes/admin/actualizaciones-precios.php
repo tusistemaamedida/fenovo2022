@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ActualizacionController;
+use App\Http\Controllers\Admin\PrintController;
 use App\Http\Controllers\ExportarArchivosController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,7 +18,7 @@ Route::get('actualizacion/exportar', [ActualizacionController::class, 'exportToC
 Route::get('actualizacion/exportarM1', [ActualizacionController::class, 'exportToCsvM1'])->name('actualizacion.exportCSVM1');
 Route::get('actualizacion/exportarM2', [ActualizacionController::class, 'exportToCsvM2'])->name('actualizacion.exportCSVM2');
 
-
 Route::get('exportar/cabe-ped', [ActualizacionController::class, 'exportCabePed'])->name('export.cabePed');
 Route::get('exportar/cabe-ele', [ActualizacionController::class, 'exportCabeEle'])->name('export.cabeEle');
 Route::get('exportar/ingresos-brutos', [ExportarArchivosController::class, 'exportIIBB'])->name('export.iibb');
+Route::get('exportar/ventas', [PrintController::class, 'exportMoviVentasCsv'])->name('export.ventas');

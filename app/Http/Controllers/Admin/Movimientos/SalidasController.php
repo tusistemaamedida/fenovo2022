@@ -557,7 +557,7 @@ class SalidasController extends Controller
     {
         $term        = $request->term ?: '';
         $valid_names = [];
-
+        
         $this->sessionProductRepository->deleteDevoluciones();
         $this->sessionProductRepository->deleteDebitos();
 
@@ -567,7 +567,11 @@ class SalidasController extends Controller
                 $valid_names[] = ['id' => $customer->id, 'text' => $customer->displayName()];
             }
         } else {
-            $stores = $this->storeRepository->search($term);
+
+            $is_base = ($request->to_type == 'TRASLADO')?TRUE:FALSE;
+
+            $stores = $this->storeRepository->search($term, $is_base);
+
             foreach ($stores as $store) {
                 $valid_names[] = ['id' => $store->id, 'text' => $store->displayName()];
             }
