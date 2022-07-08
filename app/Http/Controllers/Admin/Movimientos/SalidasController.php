@@ -100,7 +100,7 @@ class SalidasController extends Controller
                             }
                             return $urls;
                         }
-                        if($movement->type != 'VENTACLIENTE' && $movement->status != 'FINISHED_AND_GENERATED_FACT'){
+                        if($movement->status != 'FINISHED_AND_GENERATED_FACT'){
                             return '<a href="' . route('pre.invoice', ['movment_id' => $movement->id]) . '">Generar Factura </a>';
                         }else{
                             return '--';
@@ -557,7 +557,7 @@ class SalidasController extends Controller
     {
         $term        = $request->term ?: '';
         $valid_names = [];
-        
+
         $this->sessionProductRepository->deleteDevoluciones();
         $this->sessionProductRepository->deleteDebitos();
 
