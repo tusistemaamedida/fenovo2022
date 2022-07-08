@@ -141,7 +141,7 @@
                             <div class="col-2">
                                 <a onclick="javascript:printVENTAS()" title="Exportar Ventas"
                                     class="mt-1 mr-3">
-                                    <i class=" fa fa-file-csv"></i> VENTAS
+                                    <i class=" fa fa-file-csv"></i> Ventas
                                 </a>
                             </div>
                             <div class="col-2">
