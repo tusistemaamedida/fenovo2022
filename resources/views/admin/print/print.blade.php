@@ -26,7 +26,7 @@
                                 Exportación Diaria Fenovo
                             </div>
                         </div>
-                        <div class="row mb-5 ml-2 border-bottom-dark">
+                        <div class="row mb-2 ml-2 border-bottom-dark">
 
                             <div class="col-2">
                                 <a href="{{ route('movement.exportCSV') }}" title="Exportar movimientos " target="_blank"
@@ -71,7 +71,7 @@
 
                         </div>
 
-                        <div class="row mb-5 ml-2 border-bottom-dark">
+                        <div class="row mb-2 ml-2 border-bottom-dark">
                             <div class="col-2">
                                 <a href="{{ route('actualizacion.exportCSVM1') }}" class="mt-1 mr-3">
                                     <i class=" fa fa-file-csv"></i> Actualiz. precio lista 1
@@ -86,12 +86,12 @@
                     </div>
 
                     <div class="card card-body gutter-b bg-white border-0">
-                        <div class="row mt-3 mb-4 font-weight-bolder">
+                        <div class="row mb-2 font-weight-bolder">
                             <div class="col-12">
                                 Exportación CABE
                             </div>
                         </div>
-                        <div class="row mb-5 ml-2 border-bottom-dark">
+                        <div class="row mb-2 ml-2 border-bottom-dark">
                             <div class="col-2">
                                 <a href="{{ route('export.cabePed') }}" title="Exportar archivo CABE_PED"
                                     class="mt-1 mr-3">
@@ -108,12 +108,12 @@
                     </div>
 
                     <div class="card card-body gutter-b bg-white border-0">
-                        <div class="row mt-3 mb-4 font-weight-bolder">
+                        <div class="row mb-2 font-weight-bolder">
                             <div class="col-3">
                                 Retenciones y Percepciones ER
                             </div>
                         </div>
-                        <div class="row mb-5 ml-2 border-bottom-dark text-center">
+                        <div class="row mb-2 ml-2 border-bottom-dark text-center">
                             <div class="col-2">
                                 <a onclick="javascript:printIIBB()" title="Exportar Ingresos Brutos"
                                     class="mt-1 mr-3">
@@ -124,6 +124,20 @@
                                 <input type="month" id="iibbFecha" name="iibbFecha" value="{{ date('Y-m') }}" class="form-control">
                             </div>
 
+                            <div class="col-2">
+                                
+                            </div>
+                            <div class="col-2">
+                                
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 mb-4 font-weight-bolder">
+                            <div class="col-3">
+                                Ventas detalladas
+                            </div>
+                        </div>
+                        <div class="row mb-5 ml-2 border-bottom-dark text-center">
                             <div class="col-2">
                                 <a onclick="javascript:printVENTAS()" title="Exportar Ventas"
                                     class="mt-1 mr-3">
