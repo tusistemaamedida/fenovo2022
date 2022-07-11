@@ -53,15 +53,14 @@
 
 <table class="table table-condensed table-sm">
     <tr class="">
-    <tr class="">
         <th class="text-center">Bultos</th>
         <th class="text-center">Cantidad</th>
         <th style=" width: 30%; " class="text-center">Nombre</th>
-        <th style="float: left;text-align:left">Proveedor</th>
+        <th class="text-center">Proveedor</th>
         <th class="text-center">Presentación</th>
+        <th class="text-center">Peso_U</th>
         <th class="text-center">Unidad</th>
-    </tr>
-    </tr>
+    </tr>    
 
     @php
     $total_kgrs = 0;
@@ -77,19 +76,21 @@
         <td class="text-center">{{ (int)$session_product->quantity}}</td>
         <td class="text-center"> .............. </td>
         <td>{{$session_product->cod_fenovo}} {{$session_product->name}}</td>
-        <td style="float: left;text-align:left">{{$session_product->cod_proveedor }}</td>
+        <td>{{$session_product->cod_proveedor }}</td>
         <td class="text-center">{{$session_product->unit_package}}</td>
+        <td class="text-center">{{$session_product->unit_weight }}</td>
         <td class="text-center">{{$session_product->unit_type}}</td>
     </tr>
     @endforeach
 
     <tr>
-        <th colspan="5"><br></th>
+        <th colspan="7"><br></th>
     </tr>
     <tr class=" bg-info text-white">
         <th>{{ number_format($session_products->sum('quantity'),2) }} </th>
         <th>{{ $total_kgrs }} Kgrs</th>
         <th></th>
+        <th> </th>
         <th> </th>
         <th> </th>
         <th> </th>

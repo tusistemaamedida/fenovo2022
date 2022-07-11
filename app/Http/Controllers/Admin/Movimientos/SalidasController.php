@@ -221,6 +221,7 @@ class SalidasController extends Controller
             ->join('products as t2', 't1.product_id', '=', 't2.id')
             ->select('t1.id', 't2.cod_fenovo', 't2.name', 't2.cod_proveedor', 't1.quantity', 't2.unit_weight', 't1.unit_package', 't2.unit_type')
             ->where('t1.list_id', '=', $list_id)
+            ->whereNull('pausado')
             ->orderBy('t2.cod_fenovo')
             ->get();
 
