@@ -52,16 +52,14 @@
                 </div>
 
                 <div class="col-xs-12 col-md-2">
-                    <label class="text-dark">Tipo Store</label>
-                    <fieldset class="form-group border border-dark">
-                        <select class="rounded form-control border-dark" name="store_type" id="store_type">
-                            @foreach ($storeType as $storeT)
-                                <option value="{{ $storeT['type'] }}" @if (isset($store) && $storeT['type'] == $store->store_type) selected @endif>
-                                    {{ $storeT['name'] }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </fieldset>
+                    <label class="bg-dark text-white pl-2 pr-2 rounded">Tipo Store</label>
+                    <select class="rounded form-control" name="store_type" id="store_type">
+                        @foreach ($storeType as $storeT)
+                            <option value="{{ $storeT['type'] }}" @if (isset($store) && $storeT['type'] == $store->store_type) selected @endif>
+                                {{ $storeT['name'] }}
+                            </option>
+                        @endforeach
+                    </select>                    
                 </div>
             </div>
 
@@ -262,12 +260,22 @@
                         <label class="custom-control-label mr-1" for="habilitado_panama"></label>
                     </div>
                 </div>
+                <div class="col-3">
+                    <p>Recibe - traslados:</p>
+                    <div class="custom-control switch custom-switch custom-control-inline">
+                        <input type="checkbox" class="custom-control-input" id="recibe_traslado"
+                            name="recibe_traslado"
+                            @if (isset($store) && $store->recibe_traslado) checked="" @elseif(isset($store) && !$store->recibe_traslado) unchecked="" @else checked="" @endif
+                            value="1">
+                        <label class="custom-control-label mr-1" for="recibe_traslado"></label>
+                    </div>
+                </div>
 
             </div>
 
             <div class="row mt-3">
                 <div class="col-12 text-right">
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>
+                    <button type="submit" class="btn btn-dark"><i class="fa fa-save"></i>
                         Guardar
                     </button>
                 </div>
