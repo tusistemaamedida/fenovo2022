@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Exports\OrdenConsolidadaViewExport;
 use App\Http\Controllers\Controller;
-
+use App\Models\Coeficiente;
 use App\Models\Customer;
 use App\Models\FleteSetting;
 use App\Models\Movement;
@@ -1176,12 +1176,16 @@ class SalidasController extends Controller
         }
 
         foreach ($products as $p) {
+
+            // Obtengo los movimientos
             $movements_products = MovementProduct::where('movement_id', '>', 1429)
                 ->where('product_id', $p->id)
                 ->where('entidad_id', 1)
                 ->orderBy('id', 'ASC')
                 ->get();
 
+            
+                // Voy actualizando los stocks desde los mas viejos a los mas recientes    
             for ($i = 0; $i < count($movements_products); $i++) {
                 $mp = $movements_products[$i];
                 $m  = Movement::where('id', $mp->movement_id)->first();
@@ -1212,6 +1216,19 @@ class SalidasController extends Controller
                     }
                 }
             }
+
+             // Obtengo el Stock de los movimientos
+             $stock = MovementProduct::whereEntidadId(1)->whereProductId($p->id)->orderBy('id', 'DESC')->limit(1)->first()->balance;
+
+             // Obtengo el coeficiente de Stock
+             $parametro = Coeficiente::find($p->id);
+ 
+             // Reviso los stocks y actualizo
+             $producto = Product::find($p->id)->first();
+             $producto->stock_f = $stock          * ($parametro->coeficiente / 100);
+             $producto->stock_r = $stock - $stock * ($parametro->coeficiente / 100);
+             $producto->save();
+
         }
 
         return  new JsonResponse(['msj' => 'Stock actualizado']);
