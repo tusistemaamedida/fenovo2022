@@ -1218,7 +1218,7 @@ class SalidasController extends Controller
             $parametro = Coeficiente::find($p->id);
 
             // Reviso los stocks y actualizo
-            $producto          = Product::find($p->id)->first();
+            $producto          = Product::find($p->id);
             $producto->stock_f = $stock          * ($parametro->coeficiente / 100);
             $producto->stock_r = $stock - $stock * ($parametro->coeficiente / 100);
             $producto->save();
