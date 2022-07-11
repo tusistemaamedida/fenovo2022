@@ -42,6 +42,7 @@
                                                     <th>No</th>
                                                     <th>Cod Fenovo</th>
                                                     <th>Tipo tienda</th>
+                                                    <th>Recibe traslado</th>
                                                     <th>Pto venta</th>
                                                     <th>Comision</th>
                                                     <th>Nombre </th>
@@ -78,6 +79,7 @@
             {data: 'id', 'class':'text-center', orderable: false, searchable: false},
             {data: 'cod_fenovo'},
             {data: 'store_type', 'class':'text-center font-weight-bolder',},
+            {data: 'recibe', 'class':'text-center', orderable: false, searchable: false},
             {data: 'punto_venta', 'class':'text-center',},
             {data: 'comision_distribucion', 'class':'text-center',},
             {data: 'description'},

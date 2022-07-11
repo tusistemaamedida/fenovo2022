@@ -53,6 +53,7 @@ class Store extends Model
         'logistica_express',            // Ingresar porcentaje de flete logistica de distribucion desde la Base
         'punto_venta',                  // Punto de venta para la facturacion
         'habilitado_panama',            // Puede facturar en negro
+        'recibe_traslado',              // Puede facturar en negro
         'comision_distribucion',
         'active',
     ];
