@@ -39,6 +39,9 @@ class StoreController extends Controller
                 ->addColumn('inactivo', function ($store) {
                     return ($store->active == 0) ? '<i class="fa fa-check-circle text-danger"></i>' : null;
                 })
+                ->addColumn('recibe', function ($store) {
+                    return ($store->recibe_traslado == 1) ? '<i class="fa fa-check-circle text-dark"></i>' : null;
+                })
                 ->addColumn('edit', function ($store) {
                     return '<a href="' . route('stores.edit', ['id' => $store->id]) . '"> <i class="fa fa-edit"></i> </a>';
                 })
@@ -46,7 +49,7 @@ class StoreController extends Controller
                     $ruta = 'destroy(' . $store->id . ",'" . route('stores.destroy') . "')";
                     return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                 })
-                ->rawColumns(['cod_fenovo', 'inactivo', 'edit', 'destroy'])
+                ->rawColumns(['cod_fenovo', 'inactivo', 'recibe', 'edit', 'destroy'])
                 ->make(true);
         }
         return view('admin.stores.index');
@@ -69,6 +72,7 @@ class StoreController extends Controller
         $data['active'] = 1;
         $data['online_sale'] = ($request->has('online_sale')) ? 1 : 0;
         $data['habilitado_panama'] = ($request->has('habilitado_panama')) ? 1 : 0;
+        $data['recibe_traslado'] = ($request->has('recibe_traslado')) ? 1 : 0;
         $this->storeRepository->create($data);
         return redirect()->route('stores.index');
     }
@@ -90,6 +94,7 @@ class StoreController extends Controller
         $data['active']      = ($request->has('active')) ? 1 : 0;
         $data['online_sale'] = ($request->has('online_sale')) ? 1 : 0;
         $data['habilitado_panama'] = ($request->has('habilitado_panama')) ? 1 : 0;
+        $data['recibe_traslado'] = ($request->has('recibe_traslado')) ? 1 : 0;
         $this->storeRepository->update($request->input('store_id'), $data);
         return redirect()->route('stores.index');
     }
