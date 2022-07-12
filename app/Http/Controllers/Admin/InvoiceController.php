@@ -189,6 +189,8 @@ class InvoiceController extends Controller
             $link = Storage::disk('spaces-do')->put($path , $pdf->output(),'public');
             $url = Storage::disk('spaces-do')->url($path);
             if($pto_vta) return $url;
+            $invoice->url = $url;
+            $invoice->save();
             return $pdf->stream('invoice.pdf');
         }
     }
