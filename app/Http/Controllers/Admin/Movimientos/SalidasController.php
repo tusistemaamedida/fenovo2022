@@ -1138,10 +1138,18 @@ class SalidasController extends Controller
         );
     }
 
-    public function cambiarPausaSalida(Request $request)
-    {
+    public function cambiarPausaSalida(Request $request){
+        $existe_session_en_curso = SessionProduct::where('list_id', $request->list_id)->whereNull('pausado')->count();
         $productos_en_session = SessionProduct::where('list_id', $request->list_id)->where('pausado', $request->id_pausado)->get();
-        $id_pausado           = rand(1111111111, 9999999999);
+        if($existe_session_en_curso && !is_null($productos_en_session[0]->pausado)){
+            return new JsonResponse(
+                [
+                    'msj'  => 'Para cambiar la pausa debe cerrar o pausar la salida pendiente a la misma tienda de ésta. ',
+                    'type' => 'error',
+                ]
+            );
+        }
+        $id_pausado = rand(1111111111,9999999999);
         foreach ($productos_en_session as $ps) {
             $ps->pausado = (is_null($ps->pausado)) ? $id_pausado : null;
             $ps->save();
