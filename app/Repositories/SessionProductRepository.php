@@ -33,6 +33,7 @@ class SessionProductRepository extends BaseRepository
     {
         return $this->newQuery()->where('product_id', $product_id)
                                 ->where('list_id', $list_id)
+                                ->whereNull('pausado')
                                 ->when($circuito, function ($q, $circuito) {
                                     $q->where('circuito', $circuito);
                                 })
