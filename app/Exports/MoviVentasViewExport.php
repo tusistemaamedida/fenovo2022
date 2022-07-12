@@ -3,8 +3,6 @@
 namespace App\Exports;
 
 use App\Models\Movement;
-use App\Models\MovementProduct;
-use Faker\Core\Number;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -17,9 +15,9 @@ class MoviVentasViewExport implements FromView
 
     use Exportable;
 
-    public function __construct(String $mes, String $anio)
+    public function __construct(string $mes, string $anio)
     {
-        $this->mes = $mes;
+        $this->mes  = $mes;
         $this->anio = $anio;
     }
 
@@ -31,7 +29,7 @@ class MoviVentasViewExport implements FromView
         $arrTipos = ['VENTA', 'VENTACLIENTE'];
 
         $arrMovimientos = [];
-        
+
         $movimientos = DB::table('movements as t1')
             ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
             ->join('products as t3', 't2.product_id', '=', 't3.id')
@@ -58,41 +56,57 @@ class MoviVentasViewExport implements FromView
             ->get();
 
         foreach ($movimientos as $movimiento) {
-            $movement   = Movement::find($movimiento->id);
-            $destino    = $movement->origenData($movement->type);
+            $movement = Movement::find($movimiento->id);
+            $destino  = $movement->origenData($movement->type);
 
             $objMovimiento = new stdClass();
 
-            /* 1  */ $objMovimiento->id             = str_pad($movimiento->id, 8, '0', STR_PAD_LEFT);
-            /* 1  */ $objMovimiento->type           = $movimiento->type;
-            /* 2  */ $objMovimiento->destino        = $destino;
-            /* 3  */ $objMovimiento->fecha          = date('d/m/Y', strtotime($movimiento->date));
-            /* 4  */ $objMovimiento->factura        = $movimiento->voucher_number;
-            /* 5  */ $objMovimiento->cod_fenovo     = $movimiento->cod_fenovo;
-            /* 6  */ $objMovimiento->producto       = $movimiento->name;
-            /* 7  */ $objMovimiento->unidad         = $movimiento->unit_type;
-            /* 8  */ $objMovimiento->precio_venta   = $movimiento->precio_venta;
-            /* 9  */ $objMovimiento->precio_costo   = $movimiento->precio_costo;
-            /* 10  */$objMovimiento->cantidad       = $movimiento->cantidad;
-            /* 11  */$objMovimiento->iva            = $movimiento->iva;
-            /* 12  */$objMovimiento->importeiva     = $this->getImporteIva($movimiento->precio_costo, $movimiento->iva);
-            /* 13  */$objMovimiento->importeBruto   = $this->getImporteBruto($movimiento->precio_costo, $objMovimiento->importeiva);
-            
+            $objMovimiento->id           = str_pad($movimiento->id, 8, '0', STR_PAD_LEFT);
+            $objMovimiento->type         = $movimiento->type;
+            $objMovimiento->destino      = $destino;
+            $objMovimiento->fecha        = date('d/m/Y', strtotime($movimiento->date));
+            $objMovimiento->factura      = $movimiento->voucher_number;
+            $objMovimiento->cod_fenovo   = $movimiento->cod_fenovo;
+            $objMovimiento->producto     = $movimiento->name;
+            $objMovimiento->unidad       = $movimiento->unit_type;
+            $objMovimiento->iva          = $movimiento->iva;
+            $objMovimiento->precio_venta = $movimiento->precio_venta;
+            $objMovimiento->importeiva   = $this->getImporteIva($movimiento->precio_costo, $movimiento->iva, $movimiento->voucher_number);
+            $objMovimiento->importeBruto = $this->getImporteBruto($movimiento->precio_costo, $objMovimiento->importeiva);
+            $objMovimiento->cantidad     = $movimiento->cantidad;
+            $objMovimiento->precio_costo = $movimiento->precio_costo;
+            $objMovimiento->venta_total  = $this->getVentaTotal($objMovimiento->precio_venta, $movimiento->cantidad);
+            $objMovimiento->costo_total  = $this->getCostoTotal($movimiento->precio_costo, $movimiento->cantidad);
+            $objMovimiento->utilidad_total  = json_decode($objMovimiento->venta_total)-json_decode($objMovimiento->costo_total);
+
             array_push($arrMovimientos, $objMovimiento);
         }
 
         return view('exports.moviVentas', compact('arrMovimientos'));
     }
 
-
-    private function getImporteIva($importe, $iva)
+    private function getImporteIva($importe, $iva, $voucher)
     {
-        $iva = ($importe * json_decode($iva))/100;
+        if (strlen($voucher) == 0) {
+            $iva = '0.0';
+        } else {
+            $iva = ($importe * json_decode($iva)) / 100;
+        }
         return round($iva, 2);
     }
 
     private function getImporteBruto($importe, $iva)
     {
-        return (json_decode($importe) + json_decode($iva));
+        return json_decode($importe) + json_decode($iva);
+    }
+
+    private function getCostoTotal($importe, $cantidad)
+    {
+        return json_decode($importe) * json_decode($cantidad);
+    }
+
+    private function getVentaTotal($importe, $cantidad)
+    {
+        return json_decode($importe) * json_decode($cantidad);
     }
 }
