@@ -75,6 +75,7 @@ class MovementTemp extends Model
                 }
                 return $Proveedor->name;
             case 'VENTA':
+            case 'AJUSTE':
             case 'TRASLADO':
             case 'DEVOLUCION':
             case 'VENTACLIENTE':
@@ -95,6 +96,7 @@ class MovementTemp extends Model
             case 'COMPRA':
             case 'VENTA':
             case 'TRASLADO':
+            case 'AJUSTE':
             case 'DEVOLUCION':
                 $Store = Store::find($this->to);
                 if ($returnObject) {

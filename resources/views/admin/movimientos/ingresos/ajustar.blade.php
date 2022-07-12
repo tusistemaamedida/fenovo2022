@@ -118,8 +118,9 @@
 
 @section('js')
     <script>
-        jQuery("#tienda_ingreso").select2();
-        jQuery("#tienda_egreso").select2();
+
+        jQuery("#tienda_ingreso").val({{ $movement->to }}).select2();
+        jQuery("#tienda_egreso").val({{ $movement->from }}).select2();
 
         jQuery("#product_id").on('change', function() {
             const productId = jQuery("#product_id").val();
@@ -175,19 +176,8 @@
 
             const movement_id = jQuery("#movement_id").val();
             const unit_type = jQuery("#unit_type").val();
-            const store_id = 1;
-
-            let invoice = 0;
-            let cyo = 0;
-
-            // Definir subtype     
-            if (jQuery("#subtype").val() == 'FACTURA') {
-                invoice = 1;
-            } else {
-                if (jQuery("#subtype").val() == 'CYO') {
-                    cyo = 1;
-                }
-            }
+            const tienda_ingreso = jQuery("#tienda_ingreso").val();
+            const tienda_egreso = jQuery("#tienda_egreso").val();
 
             let arrMovimientos = [];
             jQuery('.calculate').each(function() {
@@ -206,14 +196,13 @@
 
                     if (entry > 0) {
                         let Movi = new Object();
+                        Movi.tiendaEgreso = tienda_egreso;
+                        Movi.tiendaIngreso = tienda_ingreso;
                         Movi.movement_id = movement_id;
-                        Movi.entidad_id = store_id;
                         Movi.entidad_tipo = entidad_tipo;
                         Movi.product_id = product_id;
                         Movi.unit_package = unit_package;
                         Movi.unit_type = unit_type;
-                        Movi.invoice = invoice;
-                        Movi.cyo = cyo;
                         Movi.bultos = valor;
                         Movi.entry = entry;
                         Movi.balance = 0;
@@ -316,7 +305,8 @@
                     return false;
                 },
                 yes_fn: function() {
-                    let url = `{{ route('ingresos.close.ajuste') }}?id=${id}&tiendaIngreso=${tiendaIngreso}&tiendaEgreso=${tiendaEgreso}`
+                    let url =
+                        `{{ route('ingresos.close.ajuste') }}?id=${id}&tiendaIngreso=${tiendaIngreso}&tiendaEgreso=${tiendaEgreso}`
                     window.location = url;
                 }
             });
