@@ -122,6 +122,10 @@
                     toastr.options = { "progressBar": true, "showDuration": "300", "timeOut": "1000" };
                     toastr.info(data['msj']);
                 }
+                if (data['type'] == 'error') {
+                    toastr.options = { "progressBar": true, "showDuration": "1300", "timeOut": "7000" };
+                    toastr.warning(data['msj']);
+                }
             }
         });
     }
