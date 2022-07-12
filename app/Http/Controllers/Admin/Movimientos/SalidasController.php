@@ -91,9 +91,12 @@ class SalidasController extends Controller
                         if (isset($movement->invoice) && count($movement->invoice)) {
                             $urls = '';
                             foreach ($movement->invoice as $invoice) {
-                                if (!is_null($invoice->cae)) {
+                                if (!is_null($invoice->cae) && !is_null($invoice->url)) {
                                     $number = ($invoice->cyo) ? 'CyO - ' . $invoice->voucher_number : $invoice->voucher_number;
                                     $urls .= '<a class="text-primary" title="Descargar factura" target="_blank" href="' . $invoice->url . '"> ' . $number . ' </a><br>';
+                                }elseif(!is_null($invoice->cae) && is_null($invoice->url)){
+                                    $number = ($invoice->cyo) ? 'CyO - ' . $invoice->voucher_number : $invoice->voucher_number;
+                                    $urls .= '<a class="text-primary" title="Descargar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '" ' . $number . ' </a><br>';
                                 }
                             }
                             return $urls;
