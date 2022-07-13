@@ -8,7 +8,7 @@
 
 <body>
     
-    <p>Hay una actualización {{ $novedad }}</p>
+    <p>Detalle :: {{ $novedad }}</p>
 
     <br>
 
