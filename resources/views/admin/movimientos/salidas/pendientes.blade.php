@@ -65,49 +65,50 @@
 
 @section('js')
     <script>
-        var table = jQuery('.yajra-datatable').DataTable({
-            @include('partials.table.setting'),
-            ordering: false,
-            ajax: "{{ route('salidas.pendientes') }}",
-            columns: [{
-                    data: 'actualizacion',
-                    'class': 'text-center',
-                    searchable: false
-                },
-                {
-                    data: 'list_id'
-                },
-                {
-                    data: 'items',
-                    'class': 'text-center',
-                    searchable: false
-                },
-                {
-                    data: 'destino'
-                },
-                {
-                    data: 'pausar',
-                    'class': 'text-center',
-                    searchable: false
-                },
-                {
-                    data: 'edit',
-                    'class': 'text-center',
-                    searchable: false
-                },
-                {
-                    data: 'print',
-                    'class': 'text-center',
-                    searchable: false
-                },
-                {
-                    data: 'destroy',
-                    'class': 'text-center',
-                    searchable: false
-                },
+        var table = jQuery('.yajra-datatable')
+            .DataTable({
+                @include('partials.table.setting'),
+                ordering: false,
+                ajax: "{{ route('salidas.pendientes') }}",
+                columns: [{
+                        data: 'actualizacion',
+                        'class': 'text-center',
+                        searchable: false
+                    },
+                    {
+                        data: 'list_id'
+                    },
+                    {
+                        data: 'items',
+                        'class': 'text-center',
+                        searchable: false
+                    },
+                    {
+                        data: 'destino'
+                    },
+                    {
+                        data: 'pausar',
+                        'class': 'text-center',
+                        searchable: false
+                    },
+                    {
+                        data: 'edit',
+                        'class': 'text-center',
+                        searchable: false
+                    },
+                    {
+                        data: 'print',
+                        'class': 'text-center',
+                        searchable: false
+                    },
+                    {
+                        data: 'destroy',
+                        'class': 'text-center',
+                        searchable: false
+                    },
 
-            ]
-        });
+                ]
+            });
 
         const motivoPendiente = (list_id) => {
             let route = '{{ route('salidas.pendienteMotivo') }}';
@@ -127,9 +128,8 @@
                         toastr.error(data['msj'], 'Verifique');
                     }
                 }
-            });
-            return
-        }
+            })
+        };
 
         const borrarPendiente = () => {
 

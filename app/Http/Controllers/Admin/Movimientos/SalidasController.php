@@ -70,7 +70,7 @@ class SalidasController extends Controller
     {
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-            $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->orderBy('id', 'DESC')->limit(100)->get();
+            $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->orderBy('id', 'DESC')->limit(200)->get();
 
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
@@ -94,9 +94,12 @@ class SalidasController extends Controller
                         if (isset($movement->invoice) && count($movement->invoice)) {
                             $urls = '';
                             foreach ($movement->invoice as $invoice) {
-                                if (!is_null($invoice->cae)) {
+                                if (!is_null($invoice->cae) && !is_null($invoice->url)) {
                                     $number = ($invoice->cyo) ? 'CyO - ' . $invoice->voucher_number : $invoice->voucher_number;
                                     $urls .= '<a class="text-primary" title="Descargar factura" target="_blank" href="' . $invoice->url . '"> ' . $number . ' </a><br>';
+                                }elseif(!is_null($invoice->cae) && is_null($invoice->url)){
+                                    $number = ($invoice->cyo) ? 'CyO - ' . $invoice->voucher_number : $invoice->voucher_number;
+                                    $urls .= '<a class="text-primary" title="Generar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '">' . $number . ' </a><br>';
                                 }
                             }
                             return $urls;
@@ -1165,7 +1168,7 @@ class SalidasController extends Controller
         $mensaje .= 'Motivo <<' . $request->motivo . '>> ';
         $mensaje .= ' Generado por ' . $user . ' desde  ' . $desde;
 
-        Mail::to('sistemas.ftk@gmail.com')->bcc('cachoalbornoz@gmail.com')->send(new NovedadMail($mensaje));
+        Mail::to('sistemas.ftk@gmail.com')->send(new NovedadMail($mensaje));
 
         SessionProduct::where('list_id', $request->list_id)->delete();
         return new JsonResponse(
@@ -1176,10 +1179,18 @@ class SalidasController extends Controller
         );
     }
 
-    public function cambiarPausaSalida(Request $request)
-    {
+    public function cambiarPausaSalida(Request $request){
+        $existe_session_en_curso = SessionProduct::where('list_id', $request->list_id)->whereNull('pausado')->count();
         $productos_en_session = SessionProduct::where('list_id', $request->list_id)->where('pausado', $request->id_pausado)->get();
-        $id_pausado           = rand(1111111111, 9999999999);
+        if($existe_session_en_curso && !is_null($productos_en_session[0]->pausado)){
+            return new JsonResponse(
+                [
+                    'msj'  => 'Para cambiar la pausa debe cerrar o pausar la salida pendiente a la misma tienda de ésta. ',
+                    'type' => 'error',
+                ]
+            );
+        }
+        $id_pausado = rand(1111111111,9999999999);
         foreach ($productos_en_session as $ps) {
             $ps->pausado = (is_null($ps->pausado)) ? $id_pausado : null;
             $ps->save();
