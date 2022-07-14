@@ -36,6 +36,8 @@ class CabeExport implements FromView {
                 $id_caja = $panama->tipo;
             }
 
+            $cip             = (is_null($panama->cip))?'8889':$panama->cip;
+
             $element->ID_CLI = $panama->pto_vta;
             $element->NOMCLI = $panama->client_name;
             $element->CUICLI = $panama->client_cuit;
@@ -44,7 +46,7 @@ class CabeExport implements FromView {
             $element->NROCOM = $panama->orden;
             $element->FECHA  = Carbon::parse($panama->created_at)->format('d/m/Y');
             $element->HORA   = Carbon::parse($panama->created_at)->format('H:i');
-            $element->FISCAL = '8889-' . str_pad($panama->orden, 8, '0', STR_PAD_LEFT);;
+            $element->FISCAL = $cip . '-' . str_pad($panama->orden, 8, '0', STR_PAD_LEFT);;
             $element->NETO_1 = $panama->neto105;
             $element->IVAA_1 = '0.0';//$panama->iva_neto105;
             $element->NETO_2 = $panama->neto21;

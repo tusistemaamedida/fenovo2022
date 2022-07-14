@@ -59,7 +59,7 @@
                                 {{ $storeT['name'] }}
                             </option>
                         @endforeach
-                    </select>                    
+                    </select>
                 </div>
             </div>
 
@@ -76,10 +76,16 @@
                         @if (isset($store)) value="{{ $store->razon_social }}" @else value="" @endif
                         class="form-control">
                 </div>
-                <div class="col-6">
+                <div class="col-4">
                     <label class="text-dark">Nombres de contacto</label>
                     <input type="text" id="responsable" name="responsable"
                         @if (isset($store)) value="{{ $store->responsable }}" @else value="" @endif
+                        class="form-control">
+                </div>
+                <div class="col-xs-12 col-md-2">
+                    <label class="text-dark">CIP</label>
+                    <input type="text" id="cip" name="cip"
+                        @if (isset($store)) value="{{ $store->cip }}" @else value="" @endif
                         class="form-control">
                 </div>
             </div>
@@ -161,7 +167,7 @@
                         class="form-control">
                 </div>
                 <div class="col-2">
-                    
+
                     <label class="text-dark">% Comisión Distribución</label>
                     <fieldset class="input-group form-group">
                         <input type="number" step="0.01" min="0" id="comision_distribucion" name="comision_distribucion"
@@ -172,7 +178,7 @@
                     </fieldset>
 
 
-                    
+
                 </div>
                 <div class="col-2">
                     &nbsp;
