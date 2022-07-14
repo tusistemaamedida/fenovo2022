@@ -22,8 +22,8 @@
                         <div class="col-md-3">
                             <label class="text-body">Proveedor</label>
                             <fieldset class="form-group mb-3">
-                                <input type="text" name="from" value="{{ $proveedor->name }}" class="form-control mb-3"
-                                    readonly>
+                                <input type="text" name="from" value="{{ $proveedor->name }}"
+                                    class="form-control mb-3" readonly>
                             </fieldset>
                         </div>
                         <div class="col-md-3">
@@ -72,16 +72,30 @@
                     </div>
 
                     <div class="row">
+                        <div class="col-12">
+                            <div class="form-group form-check">
+                                <label class="form-check-label" for="exampleCheck1">
+                                    <input type="checkbox" class="form-check-input" id="checkTiendas">
+                                    Es venta directa 
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-4">
-                            <select class="rounded form-control bg-transparent" id="tienda_destino" name="tienda_destino">
-                                <option value="">Seleccione la tienda destino ...</option>
-                                @foreach ($stores as $store)
-                                    <option value="{{ $store->id }}">
-                                        {{ str_pad($store->cod_fenovo, 3, '0', STR_PAD_LEFT) }} -
-                                        {{ $store->description }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div id="DivStore" class="d-none">
+                                <select class="rounded form-control bg-transparent" id="tienda_destino"
+                                    name="tienda_destino">
+                                    <option value="">Seleccione la tienda destino ...</option>
+                                    @foreach ($stores as $store)
+                                        <option value="{{ $store->id }}">
+                                            {{ str_pad($store->cod_fenovo, 3, '0', STR_PAD_LEFT) }} -
+                                            {{ $store->description }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -114,6 +128,10 @@
             jQuery("#tienda_destino").select2();
         });
 
+        jQuery("#checkTiendas").on('click', function(){
+            jQuery("#DivStore").toggle();
+        }) 
+    
         jQuery("#product_id").on('change', function() {
             const productId = jQuery("#product_id").val();
             jQuery.ajax({
@@ -232,7 +250,8 @@
                     let presentacion = presentacion_input[1];
                     let unit_package = presentacion;
                     let valor = parseFloat(jQuery(this).val());
-                    let entry = (unit_type == 'K') ? (valor * presentacion) * peso_unitario : (valor * presentacion);
+                    let entry = (unit_type == 'K') ? (valor * presentacion) * peso_unitario : (valor *
+                        presentacion);
                     let egress = 0;
                     let balance = 0;
                     let entidad_tipo = 'S';
