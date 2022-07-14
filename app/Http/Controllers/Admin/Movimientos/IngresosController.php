@@ -8,6 +8,7 @@ use App\Models\MovementProduct;
 use App\Models\MovementProductTemp;
 use App\Models\MovementTemp;
 use App\Models\Product;
+use App\Models\ProductStore;
 use App\Models\Proveedor;
 use App\Models\Store;
 use App\Repositories\EnumRepository;
@@ -362,9 +363,7 @@ class IngresosController extends Controller
     public function indexAjustarStock(Request $request)
     {
         if ($request->ajax()) {
-            $query1   = MovementTemp::whereType('AJUSTE')->orderBy('date', 'DESC')->get();
-            $query2   = Movement::whereType('AJUSTE')->whereColumn('from', '!=', 'to')->orderBy('date', 'DESC')->get();
-            $movement = $query1->merge($query2);
+            $movement = MovementTemp::whereType('AJUSTE')->orderBy('date', 'DESC')->get();
 
             return Datatables::of($movement)
                 ->addIndexColumn()
@@ -446,18 +445,22 @@ class IngresosController extends Controller
         try {
             $hoy = Carbon::parse(now())->format('Y-m-d');
 
-            foreach ($request->datos as $movimiento) {
-                $product               = Product::find($movimiento['product_id']);
-                $latest                = $product->stockReal(null, Auth::user()->store_active);
-                $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
-                $movimiento['balance'] = $balance;
+            foreach ($request->datos as $key => $movimiento) {
 
+                // Actualizo Origen y Destino del Ajuste
+                if ($key == 0) {
+                    $movement_temp       = MovementTemp::find($movimiento['movement_id']);
+                    $movement_temp->from = $movimiento['tiendaEgreso'];
+                    $movement_temp->to   = $movimiento['tiendaIngreso'];
+                    $movement_temp->save();
+                }
+
+                $product      = Product::find($movimiento['product_id']);
                 $costo_fenovo = 0;
                 $unit_price   = 0;
 
                 MovementProductTemp::firstOrCreate(
                     [
-                        'entidad_id'   => Auth::user()->store_active,
                         'movement_id'  => $movimiento['movement_id'],
                         'product_id'   => $movimiento['product_id'],
                         'tasiva'       => $product->product_price->tasiva,
@@ -465,8 +468,6 @@ class IngresosController extends Controller
                         'unit_price'   => $unit_price,
                         'unit_package' => $movimiento['unit_package'],
                         'unit_type'    => $movimiento['unit_type'],
-                        'invoice'      => $movimiento['invoice'],
-                        'cyo'          => $movimiento['cyo'],
                     ],
                     $movimiento
                 );
@@ -539,13 +540,22 @@ class IngresosController extends Controller
             // Recorro el arreglo y voy guardando
             foreach ($movement_temp->movement_products as $movimiento) {
                 $cantidad = $movimiento['entry'];
+                $latest   = 0;
 
                 // Ajustar tiendaEgreso
-                $product               = Product::find($movimiento['product_id']);
-                $latest                = $product->stockReal(null, $tiendaEgreso);
-                $balance               = $latest - $cantidad;
-                $movimiento['balance'] = $balance;
+                if ($tiendaEgreso == 1) {
+                    $product = Product::find($movimiento['product_id']);
+                    $latest  = $product->stockReal();
+                } else {
+                    $product = ProductStore::whereProductId($movimiento['product_id'])->whereStoreId($tiendaEgreso)->first();
+                    $latest  = $product->stock_f + $product->stock_r + $product->cyo;
+                }
 
+                // Actualizo el Stock
+                $product->stock_f = $product->stock_f - $cantidad;
+                $product->save();
+
+                // Ingreso el movimiento
                 MovementProduct::create([
                     'entidad_id'   => $tiendaEgreso,
                     'movement_id'  => $movement_new->id,
@@ -557,18 +567,26 @@ class IngresosController extends Controller
                     'cost_fenovo'  => $movimiento['cost_fenovo'],
                     'unit_price'   => $movimiento['unit_price'],
                     'invoice'      => $movimiento['invoice'],
+                    'circuito'     => 'F',
                     'cyo'          => $movimiento['cyo'],
                     'bultos'       => $movimiento['bultos'],
                     'entry'        => 0,
                     'egress'       => $cantidad,
-                    'balance'      => $movimiento['balance'],
+                    'balance'      => $latest - $cantidad,
                 ]);
 
                 // Ajustar tiendaIngreso
-                $product               = Product::find($movimiento['product_id']);
-                $latest                = $product->stockReal(null, $tiendaIngreso);
-                $balance               = ($latest) ? $latest + $cantidad : $cantidad;
-                $movimiento['balance'] = $balance;
+                if ($tiendaIngreso == 1) {
+                    $product = Product::find($movimiento['product_id']);
+                    $latest  = $product->stockReal();
+                } else {
+                    $product = ProductStore::whereProductId($movimiento['product_id'])->whereStoreId($tiendaIngreso)->first();
+                    $latest  = $product->stock_f + $product->stock_r + $product->cyo;
+                }
+
+                // Actualizo el Stock
+                $product->stock_f = $product->stock_f + $cantidad;
+                $product->save();
 
                 MovementProduct::create([
                     'entidad_id'   => $tiendaIngreso,
@@ -581,22 +599,13 @@ class IngresosController extends Controller
                     'cost_fenovo'  => $movimiento['cost_fenovo'],
                     'unit_price'   => $movimiento['unit_price'],
                     'invoice'      => $movimiento['invoice'],
+                    'circuito'     => 'F',
                     'cyo'          => $movimiento['cyo'],
                     'bultos'       => $movimiento['bultos'],
                     'entry'        => $cantidad,
                     'egress'       => 0,
-                    'balance'      => $movimiento['balance'],
+                    'balance'      => $latest + $cantidad,
                 ]);
-
-                $p = Product::where('id', $movimiento['product_id'])->first();
-                if ($movimiento['cyo']) {
-                    $p->stock_cyo = $p->stock_cyo + $cantidad;
-                } elseif ($movimiento['invoice']) {
-                    $p->stock_f = $p->stock_f + $cantidad;
-                } else {
-                    $p->stock_r = $p->stock_r + $cantidad;
-                }
-                $p->save();
             }
 
             // Elimino el Movimiento temporal

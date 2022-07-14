@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Exports\OrdenConsolidadaViewExport;
 use App\Http\Controllers\Controller;
+use App\Mail\NovedadMail;
 use App\Models\Coeficiente;
+use App\Models\Customer;
 use App\Models\FleteSetting;
 use App\Models\Invoice;
 use App\Models\Movement;
@@ -21,19 +23,20 @@ use App\Models\SessionProduct;
 use App\Models\Store;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
-use App\Repositories\ProductRepository;
 
+use App\Repositories\ProductRepository;
 use App\Repositories\SessionProductRepository;
 use App\Repositories\StoreRepository;
+
 use App\Traits\OriginDataTrait;
-
 use Barryvdh\DomPDF\Facade as PDF;
-use Carbon\Carbon;
 
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use PDFMerger;
@@ -160,8 +163,8 @@ class SalidasController extends Controller
                 })
                 ->addColumn('destroy', function ($pendiente) {
                     if (is_null($pendiente->pausado)) {
-                        $ruta = "borrarPendiente('" . $pendiente->list_id . "','" . route('salidas.pendiente.destroy') . "')";
-                        return '<a class="dropdown-item" href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                        $ruta = "motivoPendiente('" . $pendiente->list_id . "')";
+                        return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
                     }
                     return '';
                 })
@@ -1137,8 +1140,43 @@ class SalidasController extends Controller
         }
     }
 
+    public function pendienteMotivoDestroy(Request $request)
+    {
+        try {
+            $list_id = $request->list_id;
+            return new JsonResponse([
+                'type' => 'success',
+                'html' => view('admin.movimientos.salidas.insertByAjaxDestroy', compact('list_id'))->render(),
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
+    }
+
     public function pendienteDestroy(Request $request)
     {
+        // Quien origina la novedad
+        $user  = Auth::user()->name;
+        $desde = Store::find(Auth::user()->store_active)->description;
+
+        // Cantidad de Productos
+        $items = SessionProduct::where('list_id', $request->list_id)->count();
+
+        // Destino
+        $cadena = explode('_', $request->list_id);
+        if ($cadena[0] == 'VENTACLIENTE') {
+            $destino = Customer::find($cadena[1])->razon_social;
+        } else {
+            $tienda  = Store::find($cadena[1]);
+            $destino = str_pad($tienda->cod_fenovo, 3, 0, STR_PAD_LEFT) . ' - ' . $tienda->description;
+        }
+
+        $mensaje = 'Anulación de ' . $cadena[0] . ', con destino a ' . $destino . ' con ' . $items . ' producto/s cargados. ';
+        $mensaje .= 'Motivo <<' . $request->motivo . '>> ';
+        $mensaje .= ' Generado por ' . $user . ' desde  ' . $desde;
+
+        Mail::to('sistemas.ftk@gmail.com')->send(new NovedadMail($mensaje));
+
         SessionProduct::where('list_id', $request->list_id)->delete();
         return new JsonResponse(
             [

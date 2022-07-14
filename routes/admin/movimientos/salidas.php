@@ -10,6 +10,7 @@ Route::get('salidas/show', [SalidasController::class, 'show'])->name('salidas.sh
 
 Route::get('salidas-pendientes', [SalidasController::class, 'pendientes'])->name('salidas.pendientes');
 Route::get('salidas-pendiente/show', [SalidasController::class, 'pendienteShow'])->name('salidas.pendiente.show');
+Route::get('salidas-pendiente/motivo', [SalidasController::class, 'pendienteMotivoDestroy'])->name('salidas.pendienteMotivo');
 Route::post('salidas-pendiente/destroy', [SalidasController::class, 'pendienteDestroy'])->name('salidas.pendiente.destroy');
 Route::get('salidas-pendiente/print', [SalidasController::class, 'pendientePrint'])->name('salidas.pendiente.print');
 
