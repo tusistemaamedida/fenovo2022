@@ -52,7 +52,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-4">
                             <div class="row font-weight-bold">
                                 <div class="col-12"> Producto</div>
@@ -68,6 +68,20 @@
                             <div id="dataTemp">
                                 @include('admin.movimientos.ingresos.detalleTemp')
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4">
+                            <select class="rounded form-control bg-transparent" id="tienda_destino" name="tienda_destino">
+                                <option value="">Seleccione la tienda destino ...</option>
+                                @foreach ($stores as $store)
+                                    <option value="{{ $store->id }}">
+                                        {{ str_pad($store->cod_fenovo, 3, '0', STR_PAD_LEFT) }} -
+                                        {{ $store->description }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -94,10 +108,10 @@
 @section('js')
     <script>
         jQuery(document).ready(function() {
-            //jQuery("#product_id").select2('open');
             jQuery("#unit_package").select2({
                 tags: true
             })
+            jQuery("#tienda_destino").select2();
         });
 
         jQuery("#product_id").on('change', function() {

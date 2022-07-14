@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\Movement;
 use App\Models\MovementProduct;
+use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromView;
@@ -17,8 +18,13 @@ class OrdenConsolidadaViewExport implements FromView
 
     public function view(): View
     {
-        $arrTypes       = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-        $movimientos    = Movement::all()->whereIn('type', $arrTypes)->sortBy('id');
+        // Tipos de movimientos
+        $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
+
+        // Tomo los movimientos de 15 dias atras
+        $fecha = Carbon::now()->subDays(15)->toDateTimeString();
+
+        $movimientos    = Movement::all()->whereIn('type', $arrTypes)->where('created_at', '>', $fecha)->sortBy('id');
         $arrMovimientos = [];
 
         foreach ($movimientos as $movimiento) {
