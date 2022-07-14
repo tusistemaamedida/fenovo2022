@@ -7,6 +7,7 @@ use App\Exports\MoviVentasViewExport;
 use App\Exports\OrdenConsolidadaViewExport;
 use App\Http\Controllers\Controller;
 use App\Models\Movement;
+use App\Models\MovementProduct;
 use App\Repositories\CustomerRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -149,7 +150,7 @@ class PrintController extends Controller
         // $arrTipos = ['VENTA', 'VENTACLIENTE'];
 
         // $arrMovimientos = [];
-        
+
         // $movimientos = DB::table('movements as t1')
         //     ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
         //     ->join('products as t3', 't2.product_id', '=', 't3.id')
@@ -193,7 +194,7 @@ class PrintController extends Controller
         //     /* 9  */ $objMovimiento->precio_costo   = $movimiento->precio_costo;
         //     /* 10  */$objMovimiento->cantidad       = $movimiento->cantidad;
         //     /* 11  */$objMovimiento->iva            = $movimiento->iva;
-            
+
         //     array_push($arrMovimientos, $objMovimiento);
         // }
 

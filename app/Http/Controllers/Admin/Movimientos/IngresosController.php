@@ -147,9 +147,11 @@ class IngresosController extends Controller
     {
         $movement    = MovementTemp::find($request->id);
         $productos   = $this->productRepository->getByProveedorIdPluck($movement->from);
+        $stores      = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
         $proveedor   = Proveedor::find($movement->from);
         $movimientos = MovementProductTemp::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
-        return view('admin.movimientos.ingresos.edit', compact('movement', 'proveedor', 'productos', 'movimientos'));
+        return view('admin.movimientos.ingresos.edit', 
+            compact('movement', 'proveedor', 'productos', 'movimientos', 'stores'));
     }
 
     public function editIngreso(Request $request)
@@ -362,6 +364,7 @@ class IngresosController extends Controller
     }
     public function indexAjustarStock(Request $request)
     {
+
         if ($request->ajax()) {
             $movement = MovementTemp::whereType('AJUSTE')->orderBy('date', 'DESC')->get();
 
@@ -623,7 +626,6 @@ class IngresosController extends Controller
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
-
     public function ajustarIngresoItem(Request $request)
     {
         try {

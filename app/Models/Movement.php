@@ -124,8 +124,8 @@ class Movement extends Model
 
     public function invoice_fenovo()
     {
-        $pto_vta = env('PTO_VTA_FENOVO',18);
-        return $invoice   = $this->invoice->where('pto_vta', $pto_vta)->first();
+        $pto_vta = Store::find($this->from)->punto_venta;
+        return $this->invoice->where('pto_vta', $pto_vta)->first();
     }
 
     public function panamas()
