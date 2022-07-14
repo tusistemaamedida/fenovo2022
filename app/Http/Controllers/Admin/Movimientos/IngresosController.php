@@ -362,6 +362,7 @@ class IngresosController extends Controller
     }
     public function indexAjustarStock(Request $request)
     {
+
         if ($request->ajax()) {
             $movement = MovementTemp::whereType('AJUSTE')->orderBy('date', 'DESC')->get();
 
