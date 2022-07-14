@@ -202,7 +202,7 @@ class InvoiceController extends Controller
             $movement = Movement::where('id', $movement_id)->with('salida_products_no_cyo')->firstOrFail();
             $movement->products = $movement->salida_products_no_cyo;
             if(isset($movement->products) && count($movement->products)){
-                $count = Panamas::orderBy('orden', 'DESC')->first();
+                $count = Panamas::orderBy('orden', 'DESC')->where('emision_store',\Auth::user()->store_active)->first();
                 $orden = (isset($count)) ? $count->orden : 1;
 
                 $pto_vta       = $cuit = $iva_type = '';
@@ -231,6 +231,7 @@ class InvoiceController extends Controller
                 $data_panama['client_cuit']     = $cuit;
                 $data_panama['client_iva_type'] = $iva_type;
                 $data_panama['pto_vta']         = $pto_vta;
+                $data_panama['emision_store']   = \Auth::user()->store_active;
 
                 $store_from                     = Store::where('id', $movement->from)->first();
                 $data_panama['cip']             = (is_null($store_from->cip))?8889:$store_from->cip;

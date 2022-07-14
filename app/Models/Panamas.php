@@ -25,6 +25,7 @@ class Panamas extends Model
         'costo_fenovo_total',
         'orden',
         'tipo',
-        'created_at'
+        'created_at',
+        'emision_store'
 	];
 }
