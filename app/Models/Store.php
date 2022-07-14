@@ -25,6 +25,7 @@ class Store extends Model
         'online_sale'           => 'int',
         'comision_distribucion' => 'float',
         'active'                => 'int',
+        'cip'                   => 'int',
     ];
 
     protected $fillable = [
@@ -56,6 +57,7 @@ class Store extends Model
         'recibe_traslado',              // Puede facturar en negro
         'comision_distribucion',
         'active',
+        'cip',                         // codigo impresion panama
     ];
 
     public function region()

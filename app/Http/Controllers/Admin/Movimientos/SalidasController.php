@@ -442,8 +442,11 @@ class SalidasController extends Controller
             $orden = $movement->orden;
         }
 
+        $store_from = Store::where('id', $movement->from)->first();
+        $cip        = (is_null($store_from->cip))?'8889':$store_from->cip;
+
         if ($movement) {
-            $id_flete               = '8889-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
+            $id_flete               = $cip . '-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
             $destino                = $this->origenData($movement->type, $movement->to, true);
             $fecha                  = \Carbon\Carbon::parse($panama->created_at)->format('d/m/Y');
             $neto                   = 0;
@@ -506,8 +509,12 @@ class SalidasController extends Controller
         } else {
             $orden = $movement->orden;
         }
+
+        $store_from = Store::where('id', $movement->from)->first();
+        $cip        = (is_null($store_from->cip))?'8889':$store_from->cip;
+
         if ($movement) {
-            $id_panama       = '8889-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
+            $id_panama       = $cip .'-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, false);
             $fecha           = \Carbon\Carbon::parse($panama->created_at)->format('d/m/Y');
             $neto            = 0;

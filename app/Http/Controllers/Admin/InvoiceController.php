@@ -232,6 +232,9 @@ class InvoiceController extends Controller
                 $data_panama['client_iva_type'] = $iva_type;
                 $data_panama['pto_vta']         = $pto_vta;
 
+                $store_from                     = Store::where('id', $movement->from)->first();
+                $data_panama['cip']             = (is_null($store_from->cip))?8889:$store_from->cip;
+
                 if ($movement->verifSiCreatePanama()) {
                     $orden += 1;
                     $data_panama['tipo']               = 'PAN';

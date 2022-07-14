@@ -15,6 +15,7 @@ class Panamas extends Model
 		'client_cuit',
 		'client_iva_type',
 		'pto_vta',
+		'cip',
 		'neto105',
 		'iva_neto105',
 		'neto21',
