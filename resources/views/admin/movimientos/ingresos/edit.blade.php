@@ -73,18 +73,15 @@
 
                     <div class="row">
                         <div class="col-12">
-                            <div class="form-group form-check">
-                                <label class="form-check-label" for="exampleCheck1">
-                                    <input type="checkbox" class="form-check-input" id="checkTiendas">
-                                    Es venta directa 
-                                </label>
+                            <div class="form-group form-check">                                
+                                <input type="checkbox" class="form-check-input" id="checkTiendas" onclick="verDiv()"> Venta directa                                 
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-4">
-                            <div id="DivStore" class="d-none">
+                            <div id="divStore" class="d-none">
                                 <select class="rounded form-control bg-transparent" id="tienda_destino"
                                     name="tienda_destino">
                                     <option value="">Seleccione la tienda destino ...</option>
@@ -128,9 +125,13 @@
             jQuery("#tienda_destino").select2();
         });
 
-        jQuery("#checkTiendas").on('click', function(){
-            jQuery("#DivStore").toggle();
-        }) 
+        const verDiv = () => {
+            if(jQuery(this).is(":checked")) {
+                jQuery('#divStore').removeClass('d-none')
+            }else{
+                jQuery('#divStore').addClass('d-none')
+            }
+        }
     
         jQuery("#product_id").on('change', function() {
             const productId = jQuery("#product_id").val();
