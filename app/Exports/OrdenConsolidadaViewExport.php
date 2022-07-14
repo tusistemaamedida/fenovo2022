@@ -24,7 +24,7 @@ class OrdenConsolidadaViewExport implements FromView
         // Tomo los movimientos de 15 dias atras
         $fecha = Carbon::now()->subDays(15)->toDateTimeString();
 
-        $movimientos    = Movement::all()->whereIn('type', $arrTypes)->where('created_at', '>', $fecha)->sortBy('id');
+        $movimientos    = Movement::all()->whereIn('type', $arrTypes)->sortBy('id');
         $arrMovimientos = [];
 
         foreach ($movimientos as $movimiento) {
