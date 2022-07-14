@@ -23,7 +23,7 @@ class CabeExport implements FromView {
 
     public function view(): View{
         $arr_elementos = [];
-        $panamas = Panamas::orderBy('orden','ASC')->get();
+        $panamas = Panamas::orderBy('id','ASC')->get();
         $i = 0;
         foreach ($panamas as $panama) {
             $element         = new stdClass();
