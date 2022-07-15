@@ -50,6 +50,7 @@ class OrdenConsolidadaViewExport implements FromView
             $cip        = (is_null($store_from->cip)) ? '8889' : $store_from->cip;
 
             $panama1 = ($movimiento->hasPanama()) ? str_pad($cip, 4, '0', STR_PAD_LEFT) . '-' . str_pad($movimiento->getPanama()->orden, 7, '0', STR_PAD_LEFT) : '0.0';
+            $panama2 = ($movimiento->hasFlete()) ? str_pad($cip, 4, '0', STR_PAD_LEFT) . '-' . str_pad($movimiento->getFlete()->orden, 7, '0', STR_PAD_LEFT) : '0.0';
 
             /* 1  */ $objMovimiento->id         = str_pad($movimiento->id, 8, '0', STR_PAD_LEFT);
             /* 2  */ $objMovimiento->fecha      = date('d/m/Y', strtotime($movimiento->date));
@@ -64,7 +65,7 @@ class OrdenConsolidadaViewExport implements FromView
             /* 11 */ $objMovimiento->factura    = ($movimiento->invoice_fenovo()) ? $ptoVta . '-' . $explodes[1] : '0.0';
             /* 12 */ $objMovimiento->panamaneto = ($movimiento->getPanama()) ? $movimiento->getPanama()->neto105 + $movimiento->getPanama()->neto21 : '0.0';
             /* 13 */ $objMovimiento->panama1    = $panama1;
-            /* 14 */ $objMovimiento->panama2    = ($movimiento->hasFlete()) ? $movimiento->getFlete()->orden : '0.0';
+            /* 14 */ $objMovimiento->panama2    = $panama2;
             /* 15 */ $objMovimiento->franquicia = ($destino->cod_fenovo) ? 'franquicia' : 'no franquicia';
 
             array_push($arrMovimientos, $objMovimiento);
