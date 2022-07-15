@@ -39,7 +39,7 @@ class CabeExport implements FromView {
             $cip             = (is_null($panama->cip))?'8889':$panama->cip;
 
             $element->ID_CLI = $panama->pto_vta;
-            $element->NOMCLI = $panama->client_name;
+            $element->NOMCLI = str_replace ( ',', '', $panama->client_name);
             $element->CUICLI = $panama->client_cuit;
             $element->IVACLI = $panama->client_iva_type;
             $element->IDCAJA = $id_caja;

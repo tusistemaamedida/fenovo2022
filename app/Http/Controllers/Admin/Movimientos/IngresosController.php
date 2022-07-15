@@ -7,9 +7,11 @@ use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\MovementProductTemp;
 use App\Models\MovementTemp;
+use App\Models\OfertaStore;
 use App\Models\Product;
 use App\Models\ProductStore;
 use App\Models\Proveedor;
+use App\Models\SessionOferta;
 use App\Models\Store;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProductRepository;
@@ -147,11 +149,13 @@ class IngresosController extends Controller
     {
         $movement    = MovementTemp::find($request->id);
         $productos   = $this->productRepository->getByProveedorIdPluck($movement->from);
-        $stores      = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
+        $stores      = Store::orderBy('description', 'asc')->where('active', 1)->get();
         $proveedor   = Proveedor::find($movement->from);
         $movimientos = MovementProductTemp::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
-        return view('admin.movimientos.ingresos.edit', 
-            compact('movement', 'proveedor', 'productos', 'movimientos', 'stores'));
+        return view(
+            'admin.movimientos.ingresos.edit',
+            compact('movement', 'proveedor', 'productos', 'movimientos', 'stores')
+        );
     }
 
     public function editIngreso(Request $request)
@@ -206,6 +210,8 @@ class IngresosController extends Controller
 
     public function close(Request $request)
     {
+        $tienda = ($request->tienda != 0) ? $request->tienda : null;
+
         try {
             DB::beginTransaction();
             Schema::disableForeignKeyConstraints();
@@ -213,14 +219,13 @@ class IngresosController extends Controller
             // Obtengo los datos del movimiento
             $movement_temp = MovementTemp::where('id', $request->id)->with('movement_ingreso_products')->first();
 
-            $to    = Auth::user()->store_active;
-            $count = Movement::where('to', $to)->where('type', 'COMPRA')->count();
+            $count = Movement::where('to', 1)->where('type', 'COMPRA')->count();
             $orden = ($count) ? $count + 1 : 1;
 
-            // Guardo el nuevo movimiento
+            // Completo los datos del movimiento de COMPRA
             $data['type']           = 'COMPRA';
             $data['subtype']        = $movement_temp->subtype;
-            $data['to']             = $to;
+            $data['to']             = 1;
             $data['date']           = $movement_temp->date;
             $data['from']           = $movement_temp->from;
             $data['orden']          = $orden;
@@ -230,9 +235,8 @@ class IngresosController extends Controller
             $data['observacion']    = $movement_temp->observacion;
             $data['user_id']        = \Auth::user()->id;
             $data['flete_invoice']  = 0;
-            $movement_new           = Movement::create($data);
+            $movement_compra        = Movement::create($data);
 
-            $hoy      = Carbon::parse(now())->format('Y-m-d');
             $circuito = '';
             if ($movement_temp->subtype == 'FACTURA') {
                 $circuito = 'F';
@@ -244,16 +248,50 @@ class IngresosController extends Controller
                 $circuito = 'CyO';
             }
 
-            // Recorro el arreglo y voy guardando
-            foreach ($movement_temp->movement_ingreso_products as $movimiento) {
-                $product               = Product::find($movimiento['product_id']);
-                $latest                = $product->stockReal();
-                $balance               = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
-                $movimiento['balance'] = $balance;
+            // Generar la venta directa si viene el Id de Store
+            if ($tienda) {
 
+                // Obtengo el orden
+                $count = Movement::where('from', 1)->whereIn('type', ['VENTA'])->count();
+                $orden = ($count) ? $count + 1 : 1;
+
+                // Completo los datos del movimiento de VENTA
+                $insert_data['date']           = now();
+                $insert_data['type']           = 'VENTA';
+                $insert_data['from']           = 1;
+                $insert_data['to']             = $tienda;
+                $insert_data['orden']          = $orden;
+                $insert_data['status']         = 'FINISHED';
+                $insert_data['voucher_number'] = 1;
+                $insert_data['flete']          = 0;
+                $insert_data['observacion']    = 'VENTA DIRECTA';
+                $insert_data['user_id']        = \Auth::user()->id;
+                $insert_data['flete_invoice']  = 1;
+                //Guardo la VENTA
+                $movement_venta = Movement::create($insert_data);
+            }
+
+            // Considerar cada uno de los movimientos
+            foreach ($movement_temp->movement_ingreso_products as $movimiento) {
+
+                // Ajusto el STOCK DEL PRODUCTO luego de la compra
+                $product        = Product::find($movimiento['product_id']);
+                $latest         = $product->stockReal();
+                $balance_compra = ($latest) ? $latest + $movimiento['entry'] : $movimiento['entry'];
+                //
+                if ($movimiento['cyo']) {
+                    $product->stock_cyo = $product->stock_cyo + $movimiento['entry'];
+                } elseif ($movimiento['invoice']) {
+                    $product->stock_f = $product->stock_f + $movimiento['entry'];
+                } else {
+                    $product->stock_r = $product->stock_r + $movimiento['entry'];
+                }
+                $product->save();
+
+                // Registro el detalle de la compra
                 MovementProduct::create([
                     'entidad_id'   => Auth::user()->store_active,
-                    'movement_id'  => $movement_new->id,
+                    'movement_id'  => $movement_compra->id,
                     'entidad_tipo' => 'S',
                     'product_id'   => $movimiento['product_id'],
                     'unit_package' => $movimiento['unit_package'],
@@ -266,18 +304,109 @@ class IngresosController extends Controller
                     'bultos'       => $movimiento['bultos'],
                     'entry'        => $movimiento['entry'],
                     'egress'       => $movimiento['egress'],
-                    'balance'      => $movimiento['balance'],
+                    'balance'      => $balance_compra,
                 ]);
 
-                $p = Product::where('id', $movimiento['product_id'])->first();
-                if ($movimiento['cyo']) {
-                    $p->stock_cyo = $p->stock_cyo + $movimiento['entry'];
-                } elseif ($movimiento['invoice']) {
-                    $p->stock_f = $p->stock_f + $movimiento['entry'];
-                } else {
-                    $p->stock_r = $p->stock_r + $movimiento['entry'];
+                // Generar la venta directa si viene el Id de Store
+                if ($tienda) {
+
+                    // Ajusto STOCK DE NAVE - "RESTO ENTRADA"
+                    $product->stock_f = $product->stock_f - $movimiento['entry'];
+                    $product->save();
+                    $balance_nave = $product->stockReal();                    
+
+                    // Ajusto STOCK TIENDA DESTINO - "SUMO ENTRADA"
+                    $prod_store = ProductStore::where('product_id', $product->id)->where('store_id', $tienda)->first();
+
+                    if ($prod_store) {
+                        $prod_store->stock_f += $movimiento['entry'];
+                        $prod_store->save();
+                        //
+                        $balance_tienda = $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo;
+                    } else {
+                        $data_prod_store['product_id'] = $product->product_id;
+                        $data_prod_store['store_id']   = $tienda;
+                        $data_prod_store['stock_f']    = $movimiento['entry'];
+                        $data_prod_store['stock_r']    = 0;
+                        $data_prod_store['stock_cyo']  = 0;
+                        ProductStore::create($data_prod_store);
+                        //
+                        $balance_tienda = $movimiento['entry'];
+                    }
+
+                    $excepcion = false;
+
+                    // busco el producto en session oferta ordenados asc para tomar el primero
+                    $session_oferta = SessionOferta::where('fecha_desde', '<=', Carbon::parse(now())->format('Y-m-d'))
+                        ->where('product_id', $product->id)
+                        ->orderBy('fecha_hasta', 'ASC')
+                        ->first();
+
+                    if ($session_oferta) {
+                        // si existe una oferta busco si esa oferta es una excepcion
+                        $ofertaStore = OfertaStore::where('session_id', $session_oferta->id)->first();
+
+                        if ($ofertaStore) {
+                            // si la oferta esta en oferta_store es porque es una excepcion y solo se aplica a la store vinculada
+                            $excepcion = true;
+                            if ($ofertaStore->store_id == $tienda) {
+                                // si la store a la que envio esta en la oferta_store aplica la oferta
+                                $prices = $session_oferta;
+                            } else {
+                                // si la store a la que envio NO esta en la oferta_store NO s aplica la oferta
+                                $prices = $product->product_price;
+                            }
+                        } else {
+                            // como existe la oferta y no esta en oferta_store (excepcion) los precios son de la oferta
+                            $prices = $session_oferta;
+                        }
+                    } else {
+                        $prices = $product->product_price;
+                    }
+
+                    $invoice = 1;
+
+                    // Movimiento SALIDA FENOVO
+                    MovementProduct::create([
+                        'movement_id'  => $movement_venta->id,
+                        'entidad_id'   => 1,
+                        'entidad_tipo' => 'S',
+                        'product_id'   => $movimiento['product_id'],
+                        'unit_package' => $movimiento['unit_package'],
+                        'invoice'      => $invoice,
+                        'iibb'         => $product->iibb,
+                        'unit_price'   => $prices->plist0iva,       // 
+                        'cost_fenovo'  => $prices->costfenovo,
+                        'tasiva'       => $prices->tasiva,
+                        'unit_type'    => $movimiento['unit_type'],
+                        'entry'        => 0,
+                        'bultos'       => $movimiento['bultos'],
+                        'egress'       => $movimiento['entry'],
+                        'balance'      => $balance_nave,
+                        'punto_venta'  => 18,
+                        'circuito'     => 'F',
+                    ]);
+
+                    // MOVIMIENTO ENTRADA TIENDA DESTINO
+                    MovementProduct::create([
+                        'movement_id'  => $movement_venta->id,
+                        'entidad_id'   => $tienda,
+                        'entidad_tipo' => 'S',
+                        'product_id'   => $movimiento['product_id'],
+                        'unit_package' => $movimiento['unit_package'],
+                        'invoice'      => $invoice,
+                        'cost_fenovo'  => $prices->costfenovo,
+                        'unit_price'   => $prices->plist0iva,       // 
+                        'tasiva'       => $prices->tasiva,
+                        'unit_type'    => $product->unit_type,
+                        'bultos'       => $movimiento['bultos'],
+                        'entry'        => $movimiento['entry'],
+                        'egress'       => 0,
+                        'balance'      => $balance_tienda,
+                        'punto_venta'  => 18,
+                        'circuito'     => 'F',
+                    ]);
                 }
-                $p->save();
             }
 
             // Elimino el Movimiento temporal
@@ -291,7 +420,6 @@ class IngresosController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             Schema::enableForeignKeyConstraints();
-            dd($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
@@ -364,7 +492,6 @@ class IngresosController extends Controller
     }
     public function indexAjustarStock(Request $request)
     {
-
         if ($request->ajax()) {
             $movement = MovementTemp::whereType('AJUSTE')->orderBy('date', 'DESC')->get();
 
