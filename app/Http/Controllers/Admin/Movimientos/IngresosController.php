@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Movimientos;
 
 use App\Http\Controllers\Controller;
+use App\Models\FleteSetting;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\MovementProductTemp;
@@ -231,7 +232,7 @@ class IngresosController extends Controller
             $data['orden']          = $orden;
             $data['status']         = 'FINISHED';
             $data['voucher_number'] = $movement_temp->voucher_number;
-            $data['flete']          = $movement_temp->flete;
+            $data['flete']          = 0;
             $data['observacion']    = $movement_temp->observacion;
             $data['user_id']        = \Auth::user()->id;
             $data['flete_invoice']  = 0;
@@ -270,6 +271,8 @@ class IngresosController extends Controller
                 //Guardo la VENTA
                 $movement_venta = Movement::create($insert_data);
             }
+
+            $totalVta = 0;
 
             // Considerar cada uno de los movimientos
             foreach ($movement_temp->movement_ingreso_products as $movimiento) {
@@ -313,7 +316,7 @@ class IngresosController extends Controller
                     // Ajusto STOCK DE NAVE - "RESTO ENTRADA"
                     $product->stock_f = $product->stock_f - $movimiento['entry'];
                     $product->save();
-                    $balance_nave = $product->stockReal();                    
+                    $balance_nave = $product->stockReal();
 
                     // Ajusto STOCK TIENDA DESTINO - "SUMO ENTRADA"
                     $prod_store = ProductStore::where('product_id', $product->id)->where('store_id', $tienda)->first();
@@ -375,7 +378,7 @@ class IngresosController extends Controller
                         'unit_package' => $movimiento['unit_package'],
                         'invoice'      => $invoice,
                         'iibb'         => $product->iibb,
-                        'unit_price'   => $prices->plist0iva,       // 
+                        'unit_price'   => $prices->plist0neto,       //
                         'cost_fenovo'  => $prices->costfenovo,
                         'tasiva'       => $prices->tasiva,
                         'unit_type'    => $movimiento['unit_type'],
@@ -396,7 +399,7 @@ class IngresosController extends Controller
                         'unit_package' => $movimiento['unit_package'],
                         'invoice'      => $invoice,
                         'cost_fenovo'  => $prices->costfenovo,
-                        'unit_price'   => $prices->plist0iva,       // 
+                        'unit_price'   => $prices->plist0neto,       //
                         'tasiva'       => $prices->tasiva,
                         'unit_type'    => $product->unit_type,
                         'bultos'       => $movimiento['bultos'],
@@ -406,7 +409,29 @@ class IngresosController extends Controller
                         'punto_venta'  => 18,
                         'circuito'     => 'F',
                     ]);
+
+                    // Acumulo el total de ventas
+                    $totalVta += $prices->plist0neto * $movimiento['entry'];
                 }
+            }
+
+            if ($tienda) {
+                // Calculo de Flete // En caso de corresponder
+                $store = Store::find($tienda);
+                $km    = $store->delivery_km;
+                if ($km) {
+                    $fleteSetting = FleteSetting::where('hasta', '>=', $km)->orderBy('hasta', 'ASC')->first();
+                    $porcentaje   = $fleteSetting->porcentaje;
+                    $flete        = round((($porcentaje * $totalVta) / 100), 2);
+                } else {
+                    $flete      = 0;
+                    $porcentaje = 0;
+                }
+
+                // Actualizo valor del flete y guardo
+                
+                // $movement_venta->flete = $flete;
+                // $movement_venta->save();
             }
 
             // Elimino el Movimiento temporal
