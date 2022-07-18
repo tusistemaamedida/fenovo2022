@@ -127,8 +127,6 @@
 
         const verDiv = () => {
 
-            console.log('Ver div');
-
             if (jQuery('#checkTiendas').prop('checked')) {
                 jQuery('#divStore').show()
             } else {
