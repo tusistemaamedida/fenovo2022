@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\DescuentosViewExport;
+use App\Exports\ListaMayoristaFenovo;
 use App\Exports\PresentacionesViewExport;
 use App\Exports\ProductsViewExport;
 use App\Exports\ProductsViewExportStock;
-use App\Exports\ListaMayoristaFenovo;
 use App\Exports\ProductsViewHistorial;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\AddProduct;
@@ -379,7 +379,22 @@ class ProductController extends Controller
     public function getStockDetail(Request $request)
     {
         try {
-            $product        = $this->productRepository->getByIdWith($request->id);
+            $product = $this->productRepository->getByIdWith($request->id);
+            $hoy     = Carbon::parse(now())->format('Y-m-d');
+            $oferta  = DB::table('products as t1')->join('session_ofertas as t2', 't1.id', '=', 't2.product_id')->select('t2.plist0neto', 't2.costfenovo')
+                ->where('t1.id', $request->id)
+                ->where('t2.fecha_desde', '<=', $hoy)
+                ->where('t2.fecha_hasta', '>=', $hoy)
+                ->first();
+
+            if ($oferta) {
+                $unit_price  = $oferta->plist0neto;
+                $cost_fenovo = $oferta->costfenovo;
+            } else {
+                $unit_price  = $product->product_price->plist0neto;
+                $cost_fenovo = $product->product_price->costfenovo;
+            }
+
             $presentaciones = explode('|', $product->unit_package);
             $stock          = $product->stockReal();
             $ajustes        = $this->enumRepository->getType('ajustes');
@@ -395,7 +410,7 @@ class ProductController extends Controller
 
             return  view(
                 'admin.products.ajustar-stock',
-                compact('product', 'presentaciones', 'stock', 'stock_presentaciones', 'ajustes')
+                compact('product', 'presentaciones', 'stock', 'stock_presentaciones', 'ajustes', 'unit_price', 'cost_fenovo')
             );
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -408,33 +423,17 @@ class ProductController extends Controller
             DB::beginTransaction();
             Schema::disableForeignKeyConstraints();
 
-            $product  = Product::find($request->product_id);
-            $stock    = $request->stockAjustado;
-            $cantidad = $request->cantidad;
+            $primer_registro = $request->datos[0];
 
-            switch ($request->tipo) {
-                case 'F':
-                    $product->stock_f = ($request->operacion == 'suma') ? $product->stock_f + $cantidad : $product->stock_f - $cantidad;
-                    break;
-                case 'R':
-                    $product->stock_r = ($request->operacion == 'suma') ? $product->stock_r + $cantidad : $product->stock_r - $cantidad;
-                    break;
-                case 'CyO':
-                    $product->stock_cyo = ($request->operacion == 'suma') ? $product->stock_cyo + $cantidad : $product->stock_cyo - $cantidad;
-                    break;
-            }
-            $product->save();
-
-            $from  = \Auth::user()->store_active;
-            $count = Movement::where('from', $from)->where('type', 'AJUSTE')->count();
+            $count = Movement::where('from', 1)->where('type', 'AJUSTE')->count();
             $orden = ($count) ? $count + 1 : 1;
 
             // Inserta movimiento de Ajuste
             $insert_data                   = [];
             $insert_data['type']           = 'AJUSTE';
-            $insert_data['to']             = Auth::user()->store_active;
+            $insert_data['to']             = '64'; // Deposito Reclamos
             $insert_data['date']           = now();
-            $insert_data['from']           = Auth::user()->store_active;
+            $insert_data['from']           = 1;
             $insert_data['status']         = 'FINISHED';
             $insert_data['orden']          = $orden;
             $insert_data['voucher_number'] = time();
@@ -443,24 +442,125 @@ class ProductController extends Controller
             $insert_data['observacion']    = $request->observacion;
             $movement                      = Movement::create($insert_data);
 
-            // Inserta el Detalle del Ajuste
-            $latest['movement_id']  = $movement->id;
-            $latest['entidad_id']   = (Auth::user()->store_active) ? Auth::user()->store_active : 1;
-            $latest['entidad_tipo'] = 'S';
-            $latest['unit_package'] = 0;
-            $latest['circuito']     = $request->tipo;
-            $latest['unit_type']    = $product->unit_type;
-            $latest['product_id']   = $request->product_id;
-            $latest['entry']        = ($request->operacion == 'suma') ? $cantidad : 0;
-            $latest['egress']       = ($request->operacion == 'resta') ? $cantidad : 0;
-            $latest['bultos']       = $request->bultos;
-            $latest['balance']      = $stock;
-            MovementProduct::create($latest);
+            $product = Product::find($primer_registro['product_id']);
+
+            foreach ($request->datos as $registro) {
+
+                // Ajusto STOCK DE NAVE
+                switch ($registro['circuito']) {
+                    case 'F':
+                        $product->stock_f = ($registro['operacion'] == 'suma') ? $product->stock_f + $registro['cantidad'] : $product->stock_f - $registro['cantidad'];
+                        break;
+
+                    case 'R':
+                        $product->stock_r = ($registro['operacion'] == 'suma') ? $product->stock_r + $registro['cantidad'] : $product->stock_r - $registro['cantidad'];
+                        break;
+
+                    case 'CyO':
+                        $product->stock_cyo = ($registro['operacion'] == 'suma') ? $product->stock_cyo + $registro['cantidad'] : $product->stock_cyo - $registro['cantidad'];
+                        break;
+                }
+                $product->save();
+                $stock = $product->stockReal();
+
+                // Inserta el Detalle del Ajuste Nave
+                $latest['movement_id']  = $movement->id;
+                $latest['entidad_id']   = 1;
+                $latest['entidad_tipo'] = 'S';
+                $latest['product_id']   = $registro['product_id'];
+                $latest['tasiva']       = $registro['tasiva'];
+                $latest['unit_price']   = $registro['unit_price'];
+                $latest['cost_fenovo']  = $registro['cost_fenovo'];
+                $latest['unit_package'] = $registro['unit_package'];
+                $latest['circuito']     = $registro['circuito'];
+                $latest['unit_type']    = $registro['unit_type'];
+                $latest['entry']        = ($registro['operacion'] == 'suma') ? $registro['cantidad'] : 0;
+                $latest['egress']       = ($registro['operacion'] == 'resta') ? $registro['cantidad'] : 0;
+                $latest['bultos']       = $registro['bultos'];
+                $latest['balance']      = $stock;
+                MovementProduct::create($latest);
+
+                // Busco el productos en DEPOSTIVO RECLAMOS
+                $prod_store = ProductStore::where('product_id', $product->id)->where('store_id', 64)->first();
+
+                if ($prod_store) {
+                    switch ($registro['circuito']) {
+                        case 'F':
+                            $prod_store->stock_f = ($registro['operacion'] == 'resta') ? $prod_store->stock_f + $registro['cantidad'] : $prod_store->stock_f - $registro['cantidad'];
+                            break;
+
+                        case 'R':
+                            $prod_store->stock_r = ($registro['operacion'] == 'resta') ? $prod_store->stock_r + $registro['cantidad'] : $prod_store->stock_r - $registro['cantidad'];
+                            break;
+
+                        case 'CyO':
+                            $prod_store->stock_cyo = ($registro['operacion'] == 'resta') ? $prod_store->stock_cyo + $registro['cantidad'] : $prod_store->stock_cyo - $registro['cantidad'];
+                            break;
+                    }
+
+                    $prod_store->save();
+                    $balance_deposito = $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo;
+                    
+                } else {
+
+                    $data_prod_store['product_id'] = $product->id;
+                    $data_prod_store['store_id']   = 64;
+
+                    switch ($registro['circuito']) {
+                        case 'F':
+                            $data_prod_store['stock_f'] = ($registro['operacion'] == 'resta') ? $registro['cantidad'] : -$registro['cantidad'];
+                            break;
+
+                        case 'R':
+                            $data_prod_store['stock_r'] = ($registro['operacion'] == 'resta') ? $registro['cantidad'] : -$registro['cantidad'];
+                            break;
+
+                        case 'CyO':
+                            $data_prod_store['stock_cyo'] = ($registro['operacion'] == 'resta') ? $registro['cantidad'] : -$registro['cantidad'];
+                            break;
+                    }
+
+                    ProductStore::create($data_prod_store);
+                    $balance_deposito = $registro['cantidad'];
+                }
+
+                // Inserta el Detalle del Ajuste al Deposito
+                $latest['movement_id']  = $movement->id;
+                $latest['entidad_id']   = 64;  // Deposito Reclamos
+                $latest['entidad_tipo'] = 'S';
+                $latest['product_id']   = $registro['product_id'];
+                $latest['tasiva']       = $registro['tasiva'];
+                $latest['unit_price']   = $registro['unit_price'];
+                $latest['cost_fenovo']  = $registro['cost_fenovo'];
+                $latest['unit_package'] = $registro['unit_package'];
+                $latest['circuito']     = $registro['circuito'];
+                $latest['unit_type']    = $registro['unit_type'];
+                $latest['entry']        = ($registro['operacion'] == 'resta') ? $registro['cantidad'] : 0;
+                $latest['egress']       = ($registro['operacion'] == 'suma') ? $registro['cantidad'] : 0;
+                $latest['bultos']       = $registro['bultos'];
+                $latest['balance']      = $balance_deposito;
+                $movement               = MovementProduct::create($latest);
+            }
 
             DB::commit();
             Schema::enableForeignKeyConstraints();
 
             //
+            $hoy    = Carbon::parse(now())->format('Y-m-d');
+            $oferta = DB::table('products as t1')->join('session_ofertas as t2', 't1.id', '=', 't2.product_id')->select('t2.plist0neto', 't2.costfenovo')
+                ->where('t1.id', $request->id)
+                ->where('t2.fecha_desde', '<=', $hoy)
+                ->where('t2.fecha_hasta', '>=', $hoy)
+                ->first();
+
+            if ($oferta) {
+                $unit_price  = $oferta->plist0neto;
+                $cost_fenovo = $oferta->costfenovo;
+            } else {
+                $unit_price  = $product->product_price->plist0neto;
+                $cost_fenovo = $product->product_price->costfenovo;
+            }
+
             $ajustes              = $this->enumRepository->getType('ajustes');
             $presentaciones       = explode('|', $product->unit_package);
             $stock_presentaciones = [];
@@ -475,7 +575,7 @@ class ProductController extends Controller
             return new JsonResponse([
                 'html' => view(
                     'admin.products.ajustar-stock-detail',
-                    compact('product', 'presentaciones', 'stock', 'stock_presentaciones', 'ajustes')
+                    compact('product', 'presentaciones', 'stock', 'stock_presentaciones', 'ajustes', 'unit_price', 'cost_fenovo')
                 )->render(),
                 'type' => 'success',
             ]);
@@ -1163,14 +1263,14 @@ class ProductController extends Controller
     public function distribuirBase()
     {
         // Deposito Blas Parera Store_id = 11
-        $store_id= 11;
+        $store_id = 11;
         ProductStore::where('store_id', $store_id)->delete();
         $parametros = Coeficiente::all();
 
         foreach ($parametros as $parametro) {
 
             // Obtengo el Cod fenovo
-            $product  = Product::find($parametro->id);
+            $product = Product::find($parametro->id);
 
             // Reviso si esta en los stocks de las Stores
             $producto = ProductStore::where('product_id', $parametro->id)->where('store_id', $store_id)->first();
@@ -1178,16 +1278,16 @@ class ProductController extends Controller
             // Si no esta definido la Store  y el producto, lo genero
             if (!$producto) {
                 $producto = ProductStore::create([
-                    'product_id'     => $parametro->id,
-                    'store_id'       => $store_id,
-                    'stock_f'        => 0,
-                    'stock_r'        => 0,
-                    'stock_cyo'      => 0,
+                    'product_id' => $parametro->id,
+                    'store_id'   => $store_id,
+                    'stock_f'    => 0,
+                    'stock_r'    => 0,
+                    'stock_cyo'  => 0,
                 ]);
             }
 
             // Obtengo el Stock pasado por COIO
-            $producto_stock  = Base08::whereCodFenovo($product->cod_fenovo)->first();
+            $producto_stock = Base08::whereCodFenovo($product->cod_fenovo)->first();
 
             if ($producto_stock) {
                 $stock             = $producto_stock->stock;
@@ -1200,7 +1300,6 @@ class ProductController extends Controller
                 $producto->stock_r = 0;
                 $producto->save();
             }
-
 
             // Crear el movimiento ajuste
             $movement = Movement::create([
@@ -1228,10 +1327,11 @@ class ProductController extends Controller
             ]);
         }
 
-        return "Completado la Distribucion stock en Store ". $store_id;
+        return 'Completado la Distribucion stock en Store ' . $store_id;
     }
 
-    public function printListaMayoristaFenovo(Request $request){
+    public function printListaMayoristaFenovo(Request $request)
+    {
         return Excel::download(new ListaMayoristaFenovo(), 'lista-mayorista-fenovo-' . date('d-m-Y') . '.xlsx');
     }
 }
