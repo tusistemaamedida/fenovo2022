@@ -124,6 +124,46 @@
                 return false
             }
 
+            let product_id      = jQuery("#product_id").val();
+            let unit_price      = jQuery("#unit_price").val();
+            let cost_fenovo     = jQuery("#cost_fenovo").val();
+            let tasiva          = jQuery("#tasiva").val();
+            let unit_type       = jQuery("#unit_type").val();
+            let tipo_ajuste     = jQuery("input[name='tipo']:checked").val();
+            let operacion       = jQuery("input[name='operacion']:checked").val();
+            let peso_unitario   = jQuery("#unit_weight").val();
+
+            let arrMovimientos = [];
+            jQuery('.calculate').each(function() {
+                if (isNaN(parseFloat(jQuery(this).val()))) {
+                    valido = false;
+                } else {
+                    let presentacion_input = jQuery(this).attr("id").split('_');
+                    let presentacion = presentacion_input[1];
+                    let unit_package = presentacion;
+                    let bultos = parseFloat(jQuery(this).val());
+                    let cantidad = (unit_type == 'K') ? (bultos * presentacion) * peso_unitario : (bultos * presentacion);
+                    let egress = 0;
+                    let balance = 0;
+                    let entidad_tipo = 'S';
+
+                    if (cantidad > 0) {
+                        let Movi = new Object();
+                        Movi.operacion = operacion;
+                        Movi.product_id = product_id;
+                        Movi.cost_fenovo = cost_fenovo;
+                        Movi.unit_price = unit_price;
+                        Movi.tasiva = tasiva;
+                        Movi.unit_type = unit_type;
+                        Movi.circuito = tipo_ajuste;
+                        Movi.unit_package = unit_package;
+                        Movi.bultos = bultos;
+                        Movi.cantidad = cantidad;
+                        arrMovimientos.push(Movi);
+                    }
+                }
+            })
+
             ymz.jq_confirm({
                 title: 'Ajuste',
                 text: "Confirma el ajuste ?",
@@ -138,7 +178,9 @@
                     jQuery.ajax({
                         url: url,
                         type: 'POST',
-                        data: jQuery("#ajuste-stock").serialize(),
+                        data: {
+                            datos: arrMovimientos
+                        },
                         beforeSend: function() {
                             jQuery('#loader').removeClass('hidden');
                         },
