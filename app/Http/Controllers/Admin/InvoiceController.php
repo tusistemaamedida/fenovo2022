@@ -17,6 +17,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use stdClass;
 use Storage;
+use Session;
 use Yajra\DataTables\Facades\DataTables;
 
 class InvoiceController extends Controller
@@ -198,6 +199,7 @@ class InvoiceController extends Controller
     public function create($movement_id)
     {
         try {
+            $error = null;
             // Inicio creacion del invoice con punto de vta fenovo
             $movement = Movement::where('id', $movement_id)->with('salida_products_no_cyo')->firstOrFail();
             $movement->products = $movement->salida_products_no_cyo;
@@ -267,7 +269,6 @@ class InvoiceController extends Controller
 
                 if($movement->verifSiFactura() && $movement->type != 'TRASLADO'){
                     $result  = $this->createVoucher($movement,$this->pto_vta);
-
                     $invoice = $this->invoiceRepository->getByMovement($movement_id,$this->pto_vta);
 
                     if ($result['status']) {
@@ -288,7 +289,7 @@ class InvoiceController extends Controller
                             ]);
                         }
                     }elseif (isset($invoice)) {
-                        $this->invoiceRepository->fill($invoice->id, ['error' => $result['error']]);
+                        $error = json_encode($result['error']);
                     }
                 }
             }
@@ -326,14 +327,18 @@ class InvoiceController extends Controller
                                 ]);
                             }
                         }elseif (isset($invoice_cyo)) {
-                            $this->invoiceRepository->fill($invoice_cyo->id, ['error' => $result['error']]);
+                            $error = json_encode($result['error']);
                         }
                     }
                 }
             }
-            $movement = Movement::where('id', $movement_id)->first();
-            $movement->status = 'FINISHED_AND_GENERATED_FACT';
-            $movement->save();
+            if(is_null($error)){
+                $movement = Movement::where('id', $movement_id)->first();
+                $movement->status = 'FINISHED_AND_GENERATED_FACT';
+                $movement->save();
+            }else{
+                return view('error',compact($error));
+            }
             return redirect()->route('salidas.index');
         } catch (\Exception $e) {
             return $e->getMessage();
