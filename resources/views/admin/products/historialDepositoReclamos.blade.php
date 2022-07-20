@@ -33,15 +33,12 @@
                                             <td>Codigo</td>                                
                                             <td>Producto</td>                                
                                             <td>Circuito</td>                                
-                                            <td>Unidad</td>                                
-                                            <td>Iva</td>                                
+                                            <td>Unidad</td>                                                             
                                             <td>Pres</td>                                
                                             <td>Bultos</td>                                
                                             <td>Cant</td>                                
                                             <td>Costo</td>                                
-                                            <td>$CostoTotal</td>                                
-                                            <td>PrecioVta</td>                                
-                                            <td>$VentaTotal</td>                                
+                                            <td>Costo total</td>                                                                                        
                                             <td>Tipo</td>                                
                                             <td>Historial</td>          
                                             <td>Usuario</td>                      
@@ -75,14 +72,11 @@
             {data: 'producto', orderable: false, searchable: true},
             {data: 'circuito', 'class':'text-center', orderable: false, searchable: false},
             {data: 'unit_type', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'tasiva', 'class':'text-center', orderable: false, searchable: false},
             {data: 'unit_package', 'class':'text-center', orderable: false, searchable: false},
             {data: 'bultos', 'class':'text-center', orderable: false, searchable: false},
             {data: 'cantidad', 'class':'text-center', orderable: false, searchable: false},
             {data: 'cost_fenovo', 'class':'text-center', orderable: false, searchable: false},
             {data: 'costoTotal', 'class':'text-center font-weight-bolder', orderable: false, searchable: false},
-            {data: 'unit_price', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'ventaTotal', 'class':'text-center font-weight-bolder', orderable: false, searchable: false},
             {data: 'estado', 'class':'text-center font-weight-bolder', orderable: false, searchable: true},
             {data: 'historial', 'class':'text-center font-weight-bolder', orderable: false, searchable: true},
             {data: 'usuario', orderable: false, searchable: true},

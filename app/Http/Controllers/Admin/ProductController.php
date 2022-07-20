@@ -206,7 +206,7 @@ class ProductController extends Controller
                 ->selectRaw('t2.bultos * t2.unit_package as cantidad')    
                 ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.cost_fenovo,2) as costoTotal')    
                 ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.unit_price,2) as ventaTotal')    
-                ->selectRaw('IF(t2.entry > 0, "disminuyó", "aumentó") as estado')    
+                ->selectRaw('IF(t2.entry > 0, "salida", "entrada") as estado')    
                 ->where('t1.type', '=','AJUSTE')
                 ->where('t2.entidad_id', '=',64)
                 ->orderBy('t1.id', 'desc')
