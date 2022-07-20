@@ -187,6 +187,46 @@ class ProductController extends Controller
         return view('admin.products.historial', compact('producto'));
     }
 
+
+    public function ajusteHistoricoDeposito(Request $request)
+    {       
+
+        if ($request->ajax()) {
+
+            $movimientos = DB::table('movements as t1')
+                ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
+                ->join('products as t3', 't2.product_id', '=', 't3.id')
+                ->join('users as t4', 't1.user_id', '=', 't4.id')
+                ->select(
+                    't1.id', 't1.date', 
+                    't2.unit_price', 't2.cost_fenovo', 't2.tasiva', 't2.bultos', 't2.circuito', 
+                    't3.id as product_id', 't3.unit_type', 't3.unit_package', 't3.name as producto', 't3.cod_fenovo', 
+                    't4.name as usuario'
+                )
+                ->selectRaw('t2.bultos * t2.unit_package as cantidad')    
+                ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.cost_fenovo,2) as costoTotal')    
+                ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.unit_price,2) as ventaTotal')    
+                ->selectRaw('IF(t2.entry > 0, "disminuyó", "aumentó") as estado')    
+                ->where('t1.type', '=','AJUSTE')
+                ->where('t2.entidad_id', '=',64)
+                ->orderBy('t1.id', 'desc')
+                ->get();
+
+            return Datatables::of($movimientos)
+                ->addIndexColumn()
+                ->addColumn('fecha', function ($movimiento) {
+                    return date('d/m/Y', strtotime($movimiento->date));
+                })
+                ->addColumn('historial', function ($movimiento) {
+                    return '<a href="' . route('product.historial', ['id' => $movimiento->product_id]) . '"> <i class="fa fa-list" aria-hidden="true"></i> </a>';
+                })
+                ->rawColumns(['fecha', 'historial'])
+                ->make(true);
+        }
+
+        return view('admin.products.historialDepositoReclamos');
+    }
+
     public function printHistorial(Request $request)
     {
         $product = Product::find($request->id);
@@ -439,7 +479,7 @@ class ProductController extends Controller
             $insert_data['voucher_number'] = time();
             $insert_data['flete']          = 0;
             $insert_data['user_id']        = Auth::user()->id;
-            $insert_data['observacion']    = $request->observacion;
+            $insert_data['observacion']    = $primer_registro['observacion'];
             $movement                      = Movement::create($insert_data);
 
             $product = Product::find($primer_registro['product_id']);

@@ -132,6 +132,7 @@
             let tipo_ajuste     = jQuery("input[name='tipo']:checked").val();
             let operacion       = jQuery("input[name='operacion']:checked").val();
             let peso_unitario   = jQuery("#unit_weight").val();
+            let observacion     = jQuery('#observacion').val();
 
             let arrMovimientos = [];
             jQuery('.calculate').each(function() {
@@ -149,6 +150,8 @@
 
                     if (cantidad > 0) {
                         let Movi = new Object();
+
+                        Movi.observacion = observacion;
                         Movi.operacion = operacion;
                         Movi.product_id = product_id;
                         Movi.cost_fenovo = cost_fenovo;
