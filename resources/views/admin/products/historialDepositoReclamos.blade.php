@@ -39,6 +39,7 @@
                                             <td>Cant</td>                                
                                             <td>Costo</td>                                
                                             <td>Costo total</td>                                                                                        
+                                            <td>Venta total</td>                                                                                        
                                             <td>Tipo</td>                                
                                             <td>Historial</td>          
                                             <td>Usuario</td>                      
@@ -77,6 +78,7 @@
             {data: 'cantidad', 'class':'text-center', orderable: false, searchable: false},
             {data: 'cost_fenovo', 'class':'text-center', orderable: false, searchable: false},
             {data: 'costoTotal', 'class':'text-center font-weight-bolder', orderable: false, searchable: false},
+            {data: 'ventaTotal', 'class':'text-center font-weight-bolder', orderable: false, searchable: false},
             {data: 'estado', 'class':'text-center font-weight-bolder', orderable: false, searchable: true},
             {data: 'historial', 'class':'text-center font-weight-bolder', orderable: false, searchable: true},
             {data: 'usuario', orderable: false, searchable: true},
