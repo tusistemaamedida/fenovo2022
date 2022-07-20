@@ -134,7 +134,7 @@ class SalidasController extends Controller
                         : null;
                 })
                 ->addColumn('ordenpanama', function ($movement) {
-                    return ($movement->hasPanama())
+                    return ($movement->hasPanama() || isset($movement->panamas))
                         ? '<a title="Imprimir Orden panama"  href="' . route('print.ordenPanama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>'
                         : null;
                 })
@@ -986,7 +986,7 @@ class SalidasController extends Controller
             $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
             foreach ($session_products as $product) {
-                
+
                 $stock_inicial_store = 0;
                 $quantities          = $this->getStockDividido($product);
                 $stock_inicial       = $product->producto->stockReal();
