@@ -134,7 +134,7 @@ class SalidasController extends Controller
                         : null;
                 })
                 ->addColumn('ordenpanama', function ($movement) {
-                    return ($movement->hasPanama() || isset($movement->panamas))
+                    return ($movement->hasPanama() || count($movement->panamas))
                         ? '<a title="Imprimir Orden panama"  href="' . route('print.ordenPanama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>'
                         : null;
                 })
