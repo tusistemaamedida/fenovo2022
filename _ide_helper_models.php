@@ -739,6 +739,8 @@ namespace App\Models{
  * @property string|null $client_cuit
  * @property string|null $client_iva_type
  * @property string|null $pto_vta
+ * @property int|null $cip
+ * @property int|null $emision_store
  * @property string|null $neto105
  * @property string|null $iva_neto105
  * @property string|null $neto21
@@ -751,12 +753,14 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereCip($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereClientAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereClientCuit($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereClientIvaType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereClientName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereCostoFenovoTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereEmisionStore($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereIvaNeto105($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Panamas whereIvaNeto21($value)
@@ -1729,6 +1733,7 @@ namespace App\Models{
  * @property int|null $habilitado_panama
  * @property int|null $recibe_traslado
  * @property float|null $comision_distribucion
+ * @property int|null $cip Codigo Impresion Pananma
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Customer[] $customers
@@ -1741,6 +1746,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereBillingAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Store whereCip($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereCity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereCodFenovo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Store whereComisionDistribucion($value)

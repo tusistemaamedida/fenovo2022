@@ -233,10 +233,8 @@ class Product extends Model
     {
         if ($this->stockInicioSemana()) {
             $id = $this->stockInicioSemana()->id;
-            return MovementProduct::whereEntidadId(1)
-            ->whereProductId($this->id)
-            ->where('id', '>', $id)
-            ->get()->sum('entry');
+            $ingreso =  MovementProduct::whereEntidadId(1)->whereProductId($this->id)->where('id', '>', $id)->sum('entry');
+            return round($ingreso, 2);
         }
         return null;
     }
@@ -245,17 +243,15 @@ class Product extends Model
     {
         if ($this->stockInicioSemana()) {
             $id = $this->stockInicioSemana()->id;
-            return MovementProduct::whereEntidadId(1)
-            ->whereProductId($this->id)
-            ->where('id', '>', $id)
-            ->get()->sum('egress');
+            $salida = MovementProduct::whereEntidadId(1)->whereProductId($this->id)->where('id', '>', $id)->sum('egress');
+            return round($salida, 2);
         }
         return null;
     }
 
     public function stockFinSemana()
     {
-        return ($this->stockInicioSemana())?$this->stockInicioSemana()->balance + $this->ingresoSemana() - $this->salidaSemana():null;
+        return ($this->stockInicioSemana())? round($this->stockInicioSemana()->balance + $this->ingresoSemana() - $this->salidaSemana(),2):null;
     }
 
     public function scopeName($query, $name)
