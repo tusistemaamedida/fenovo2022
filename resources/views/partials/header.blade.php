@@ -19,8 +19,8 @@
                             <span class="text-black-50"> Lista de productos </span>
                         </a>
 
-                        <a class="dropdown-item" href="{{ route('products.index') }}">
-                            <span class="text-black-50"> Productos precios </span>
+                        <a class="dropdown-item" href="{{ route('productos.ajusteHistoricoDeposito') }}">
+                            <span class="text-black-50"> Lista de productos - Depósito reclamos </span>
                         </a>
 
                         <a class="dropdown-item" href="{{ route('products.compararStock') }}">

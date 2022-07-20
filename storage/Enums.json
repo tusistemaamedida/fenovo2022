@@ -1,13 +1,10 @@
 {
   "ajustes": [
     {
-      "type": "CONTABLE"
+      "type": "STOCK"
     },
     {
-      "type": "STOCK"
-    },    
-    {
-      "type": "CRUCE"
+      "type": "CONTABLE"
     }
   ],
   "movimientos": [

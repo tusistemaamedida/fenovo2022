@@ -50,6 +50,9 @@ Route::get('producto/ajustar/stock', [ProductController::class, 'ajustarStockMen
 Route::get('producto/ajustar/detail', [ProductController::class, 'getStockDetail'])->name('getData.stock.detail');
 Route::post('producto/ajustar/stock/store', [ProductController::class, 'ajustarStockStore'])->name('ajustar.stock.store');
 Route::get('producto/buscar', [ProductController::class, 'buscarProductos'])->name('productos.buscar.nombre');
+Route::get('producto/ajustes', [ProductController::class, 'ajusteHistoricoDeposito'])->name('productos.ajusteHistoricoDeposito');
+
+
 
 Route::get('producto/historial/{id?}', [ProductController::class, 'historial'])->middleware('can:products.edit')->name('product.historial');
 Route::get('producto/print-historial', [ProductController::class, 'printHistorial'])->middleware('can:products.edit')->name('product.printHistorial');
