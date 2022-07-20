@@ -237,8 +237,7 @@ class InvoiceController extends Controller
 
                 $store_from                     = Store::where('id', $movement->from)->first();
                 $data_panama['cip']             = (is_null($store_from->cip))?8889:$store_from->cip;
-
-                if ($movement->verifSiCreatePanama()) {
+                if ($movement->verifSiCreatePanama() && $movement->type != 'TRASLADO') {
                     $orden += 1;
                     $data_panama['tipo']               = 'PAN';
                     $data_panama['orden']              = $orden;
