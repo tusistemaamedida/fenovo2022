@@ -19,7 +19,6 @@ const add = (route) => {
 }
 
 const store = (route) => {
-    jQuery('.btn-guardar').prop('disabled', true);
     var elements = document.querySelectorAll('.is-invalid');
     var form = jQuery('#formData').serialize();
     jQuery.ajax({
@@ -41,7 +40,6 @@ const store = (route) => {
             } else {
                 toastr.error(data['msj'], 'Verifique');
             }
-            jQuery('.btn-guardar').prop('disabled', true);
         },
         error: function (data) {
             var lista_errores = "";
