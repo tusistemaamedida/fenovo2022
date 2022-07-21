@@ -63,5 +63,5 @@ Route::post('producto/ajustar-por-stock', [ProductController::class, 'ajustarByS
 Route::get('productos/importar/movimientos', [ProductController::class, 'importProductsMovement'])->name('products.importMovement');
 
 Route::get('producto/distribuir-nave', [ProductController::class, 'distribuirNave'])->name('productos.distribuir.nave');
-Route::get('producto/distribuir-base', [ProductController::class, 'distribuirBase'])->name('productos.distribuir.base');
+Route::get('producto/stockbase/{storeId?}', [ProductController::class, 'distribuirBase'])->name('productos.distribuir.base');
 Route::get('descargar-lista-mayorista-fenovo', [ProductController::class, 'printListaMayoristaFenovo'])->name('download.lista.mayorista.fenovo');

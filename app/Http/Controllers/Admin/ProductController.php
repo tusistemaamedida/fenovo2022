@@ -25,6 +25,7 @@ use App\Models\ProductStore;
 use App\Models\Proveedor;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
+use App\Models\Store;
 use App\Repositories\AlicuotaTypeRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProducDescuentoRepository;
@@ -1293,11 +1294,23 @@ class ProductController extends Controller
         return 'Completado la Distribucion stock en Nave';
     }
 
-    public function distribuirBase()
+    public function distribuirBase(Request $request)
     {
-        // Deposito Blas Parera Store_id = 11
-        $store_id = 11;
-        ProductStore::where('store_id', $store_id)->delete();
+        // 11 - Deposito Blas parera
+        // 59 - Deposito Reconquista
+        // 60 - Deposito Resistencia
+
+        if(!$request->storeId){
+            return 'Por favor ingrese ID de tienda tipo DEPOSITO';
+        }
+
+        $store = Store::find($request->storeId);
+
+        if(!$store){
+            return 'No existe ID tienda';
+        }
+
+        ProductStore::where('store_id', $request->storeId)->delete();
         $parametros = Coeficiente::all();
 
         foreach ($parametros as $parametro) {
@@ -1306,13 +1319,13 @@ class ProductController extends Controller
             $product = Product::find($parametro->id);
 
             // Reviso si esta en los stocks de las Stores
-            $producto = ProductStore::where('product_id', $parametro->id)->where('store_id', $store_id)->first();
+            $producto = ProductStore::where('product_id', $parametro->id)->where('store_id', $request->storeId)->first();
 
-            // Si no esta definido la Store  y el producto, lo genero
+            // Si no esta definido la Store y el producto, lo genero
             if (!$producto) {
                 $producto = ProductStore::create([
                     'product_id' => $parametro->id,
-                    'store_id'   => $store_id,
+                    'store_id'   => $request->storeId,
                     'stock_f'    => 0,
                     'stock_r'    => 0,
                     'stock_cyo'  => 0,
@@ -1326,41 +1339,40 @@ class ProductController extends Controller
                 $stock             = $producto_stock->stock;
                 $producto->stock_f = $stock          * ($parametro->coeficiente / 100);
                 $producto->stock_r = $stock - $stock * ($parametro->coeficiente / 100);
-                $producto->save();
             } else {
                 $stock             = 0;
                 $producto->stock_f = 0;
                 $producto->stock_r = 0;
-                $producto->save();
             }
+            $producto->save();
 
             // Crear el movimiento ajuste
             $movement = Movement::create([
                 'date'           => now(),
                 'type'           => 'AJUSTE',
-                'from'           => $store_id,
-                'to'             => $store_id,
+                'from'           => $request->storeId,
+                'to'             => $request->storeId,
                 'status'         => 'CREATED',
                 'voucher_number' => '00001',
             ]);
 
             // Crear el detalle
             MovementProduct::create([
-                'entidad_id'   => $store_id,
+                'entidad_id'   => $request->storeId,
                 'entidad_tipo' => 'S',
                 'movement_id'  => $movement->id,
                 'product_id'   => $product->id,
                 'unit_package' => $product->unit_package,
+                'unit_price'   => $product->product_price->costfenovo,
+                'tasiva'       => $product->product_price->tasiva,
                 'invoice'      => 1,
                 'entry'        => $stock,
                 'egress'       => 0,
                 'balance'      => $stock,
-                'unit_price'   => $product->product_price->costfenovo,
-                'tasiva'       => $product->product_price->tasiva,
             ]);
         }
 
-        return 'Completado la Distribucion stock en Store ' . $store_id;
+        return 'Completado la carga de Stock y distribucion de stocks en ' . $store->description;
     }
 
     public function printListaMayoristaFenovo(Request $request)
