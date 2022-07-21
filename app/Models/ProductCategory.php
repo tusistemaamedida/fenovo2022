@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class ProductCategory
- * 
+ *
  * @property int $id
  * @property string|null $name
  * @property string $active
- * 
+ *
  * @property Collection|Product[] $products
  *
  * @package App\Models
@@ -27,6 +27,7 @@ class ProductCategory extends Model
 
 	protected $fillable = [
 		'name',
+        'abrev',
 		'active'
 	];
 

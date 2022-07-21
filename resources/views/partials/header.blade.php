@@ -19,6 +19,10 @@
                             <span class="text-black-50"> Lista de productos </span>
                         </a>
 
+                        <a class="dropdown-item" href="{{ url('productos-no-congelados') }}">
+                            <span class="text-black-50"> Productos No congelados </span>
+                        </a>
+
                         <a class="dropdown-item" href="{{ route('productos.ajusteHistoricoDeposito') }}">
                             <span class="text-black-50"> Lista de productos - Depósito reclamos </span>
                         </a>
@@ -100,12 +104,19 @@
                     </a>
                 </li>
 
-                <li class="nav-item" title="Lista de franquicias">
-                    <a href="{{ url('tiendas') }}" class="nav-link mt-2">
-                        <span class="svg-icon nav-icon">
-                            <i class="fas fa-store"></i>
-                        </span>
+                <li class="nav-item dropdown mt-2" title="Salidas">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-store"></i>
                     </a>
+                    <div class="dropdown-menu bg-dark">
+                        <a class="dropdown-item text-black-50" href="{{ url('depositos') }}">
+                            Depositos
+                        </a>
+                        <a class="dropdown-item text-black-50" href="{{ url('tiendas') }}">
+                            Franquicias
+                        </a>
+                    </div>
                 </li>
 
                 <li class="nav-item" title="Clientes">

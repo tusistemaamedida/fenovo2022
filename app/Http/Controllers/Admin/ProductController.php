@@ -46,15 +46,15 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
 {
-    private $productRepository;
-    private $productPriceRepository;
-    private $alicuotaTypeRepository;
-    private $productCategoryRepository;
-    private $productDescuentoRepository;
-    private $proveedorRepository;
-    private $senasaDefinitionRepository;
-    private $productImport;
-    private $enumRepository;
+    protected $productRepository;
+    protected $productPriceRepository;
+    protected $alicuotaTypeRepository;
+    protected $productCategoryRepository;
+    protected $productDescuentoRepository;
+    protected $proveedorRepository;
+    protected $senasaDefinitionRepository;
+    protected $productImport;
+    protected $enumRepository;
 
     public function __construct(
         ProductRepository $productRepository,
@@ -79,12 +79,15 @@ class ProductController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $productos = DB::table('products as t1')->where('t1.active', 1)
-            ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
-            ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
-            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor'])
-            ->orderBy('t1.cod_fenovo')
-            ->get();
+            $categorieIdBetween = [1,3];
+            $productos = DB::table('products as t1')
+                            ->where('t1.active', 1)
+                            ->whereBetween('t1.categorie_id', $categorieIdBetween)
+                            ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
+                            ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
+                            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor'])
+                            ->orderBy('t1.cod_fenovo')
+                            ->get();
 
             return Datatables::of($productos)
 
@@ -144,6 +147,7 @@ class ProductController extends Controller
 
         return view('admin.products.listByStock');
     }
+
     public function index(Request $request)
     {
         return view('admin.products.index');
@@ -189,7 +193,7 @@ class ProductController extends Controller
 
 
     public function ajusteHistoricoDeposito(Request $request)
-    {       
+    {
 
         if ($request->ajax()) {
 
@@ -198,15 +202,15 @@ class ProductController extends Controller
                 ->join('products as t3', 't2.product_id', '=', 't3.id')
                 ->join('users as t4', 't1.user_id', '=', 't4.id')
                 ->select(
-                    't1.id', 't1.date', 
-                    't2.unit_price', 't2.cost_fenovo', 't2.tasiva', 't2.bultos', 't2.circuito', 
-                    't3.id as product_id', 't3.unit_type', 't3.unit_package', 't3.name as producto', 't3.cod_fenovo', 
+                    't1.id', 't1.date',
+                    't2.unit_price', 't2.cost_fenovo', 't2.tasiva', 't2.bultos', 't2.circuito',
+                    't3.id as product_id', 't3.unit_type', 't3.unit_package', 't3.name as producto', 't3.cod_fenovo',
                     't4.name as usuario'
                 )
-                ->selectRaw('t2.bultos * t2.unit_package as cantidad')    
-                ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.cost_fenovo,2) as costoTotal')    
-                ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.unit_price,2) as ventaTotal')    
-                ->selectRaw('IF(t2.entry > 0, "salida", "entrada") as estado')    
+                ->selectRaw('t2.bultos * t2.unit_package as cantidad')
+                ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.cost_fenovo,2) as costoTotal')
+                ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.unit_price,2) as ventaTotal')
+                ->selectRaw('IF(t2.entry > 0, "salida", "entrada") as estado')
                 ->where('t1.type', '=','AJUSTE')
                 ->where('t2.entidad_id', '=',64)
                 ->orderBy('t1.id', 'desc')
@@ -540,7 +544,7 @@ class ProductController extends Controller
 
                     $prod_store->save();
                     $balance_deposito = $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo;
-                    
+
                 } else {
 
                     $data_prod_store['product_id'] = $product->id;
@@ -861,7 +865,7 @@ class ProductController extends Controller
         return $array_prices;
     }
 
-    private function calcularPrecios($request)
+    protected function calcularPrecios($request)
     {
         try {
             $validate       = ($request->has('validate')) ? (bool)$request->input('validate') : 1;
@@ -1158,7 +1162,7 @@ class ProductController extends Controller
         return back();
     }
 
-    private function descp2($p2may, $p2tienda)
+    protected function descp2($p2may, $p2tienda)
     {
         try {
             $p2tienda = ($p2tienda) ? $p2tienda : 1;
@@ -1168,7 +1172,7 @@ class ProductController extends Controller
         }
     }
 
-    private function mupp2may($p2may, $plist0Iva)
+    protected function mupp2may($p2may, $plist0Iva)
     {
         try {
             return round(($p2may / $plist0Iva - 1) * 100, 2);
@@ -1177,7 +1181,7 @@ class ProductController extends Controller
         }
     }
 
-    private function p2may($p2tienda, $descp2)
+    protected function p2may($p2tienda, $descp2)
     {
         try {
             return round($p2tienda - $p2tienda * ($descp2 / 100), 2);
@@ -1186,7 +1190,7 @@ class ProductController extends Controller
         }
     }
 
-    private function mup2($plist0Iva, $p2tienda)
+    protected function mup2($plist0Iva, $p2tienda)
     {
         try {
             return round(($p2tienda / $plist0Iva - 1) * 100, 2);
@@ -1195,7 +1199,7 @@ class ProductController extends Controller
         }
     }
 
-    private function mupp1may($p1may, $plist0Iva)
+    protected function mupp1may($p1may, $plist0Iva)
     {
         try {
             return round(($p1may / $plist0Iva - 1) * 100, 2);
@@ -1204,7 +1208,7 @@ class ProductController extends Controller
         }
     }
 
-    private function p1may($p1tienda, $descp1)
+    protected function p1may($p1tienda, $descp1)
     {
         try {
             return round($p1tienda - $p1tienda * ($descp1 / 100), 2);
@@ -1213,7 +1217,7 @@ class ProductController extends Controller
         }
     }
 
-    private function mup1($plist0Iva, $p1tienda)
+    protected function mup1($plist0Iva, $p1tienda)
     {
         try {
             return round(($p1tienda / $plist0Iva - 1) * 100, 2);
@@ -1222,7 +1226,7 @@ class ProductController extends Controller
         }
     }
 
-    private function costFenovo($plistproveedor, $descproveedor)
+    protected function costFenovo($plistproveedor, $descproveedor)
     {
         try {
             return round($plistproveedor - $plistproveedor * ($descproveedor / 100), 2);
@@ -1231,7 +1235,7 @@ class ProductController extends Controller
         }
     }
 
-    private function plist0Neto($costFenovo, $mupfenovo, $contribution_fund)
+    protected function plist0Neto($costFenovo, $mupfenovo, $contribution_fund)
     {
         try {
             return round($costFenovo * ($mupfenovo / 100 + 1) * ($contribution_fund / 100 + 1), 2);
@@ -1240,7 +1244,7 @@ class ProductController extends Controller
         }
     }
 
-    private function plist0Iva($plist0Neto, $tasiva)
+    protected function plist0Iva($plist0Neto, $tasiva)
     {
         try {
             return round($plist0Neto * ($tasiva / 100 + 1), 2);
@@ -1249,7 +1253,7 @@ class ProductController extends Controller
         }
     }
 
-    private function plist1($plist0Iva, $muplist1)
+    protected function plist1($plist0Iva, $muplist1)
     {
         try {
             return round($plist0Iva * ($muplist1 / 100 + 1), 2);
@@ -1258,7 +1262,7 @@ class ProductController extends Controller
         }
     }
 
-    private function comlista1($plist0Iva, $plist1, $tasiva)
+    protected function comlista1($plist0Iva, $plist1, $tasiva)
     {
         try {
             return round((($plist1 - $plist0Iva) / ($tasiva / 100 + 1) * 100) / $plist1, 2);
@@ -1267,7 +1271,7 @@ class ProductController extends Controller
         }
     }
 
-    private function plist2($plist0Iva, $muplist2, $plist1)
+    protected function plist2($plist0Iva, $muplist2, $plist1)
     {
         try {
             return round($plist0Iva * ($muplist2 / 100 + 1), 2);
@@ -1276,7 +1280,7 @@ class ProductController extends Controller
         }
     }
 
-    private function comlista2($plist0Iva, $plist2, $tasiva)
+    protected function comlista2($plist0Iva, $plist2, $tasiva)
     {
         try {
             return round((($plist2 - $plist0Iva) / ($tasiva / 100 + 1)) * 100 / $plist2, 2);

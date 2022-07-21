@@ -58,6 +58,10 @@
     {
       "type": "T",
       "name": "TIENDA"
+    },
+    {
+      "type": "D",
+      "name": "DEPOSITO"
     }
   ],
   "print": [
