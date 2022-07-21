@@ -43,6 +43,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
+use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -1091,6 +1092,7 @@ class ProductController extends Controller
 
     public function compararStock(Request $request)
     {
+
         if ($request->ajax()) {
             $productos = Product::where('active', '=', 1)->get();
 
@@ -1117,18 +1119,12 @@ class ProductController extends Controller
 
                     // Buscar si el producto tiene oferta del proveedor
                     $hoy    = Carbon::parse(now())->format('Y-m-d');
-                    $oferta = DB::table('products as t1')
-                    ->join('session_ofertas as t2', 't1.id', '=', 't2.product_id')
-                    ->select('t2.costfenovo')
-                    ->where('t1.id', $product->id)
-                    ->where('t2.fecha_desde', '<=', $hoy)
-                    ->where('t2.fecha_hasta', '>=', $hoy)
-                    ->first();
-
-                    return (!$oferta) ? $product->product_price->costfenovo : $oferta->costfenovo;
+                    $oferta = SessionOferta::whereProductId($product->id)->select('costfenovo')->where('fecha_desde', '<=', $hoy)->where('fecha_hasta', '>=', $hoy)->first();
+                    $costo  = (!$oferta) ? $product->product_price->costfenovo : $oferta->costfenovo;
+                    return number_format($costo, 2);
                 })
 
-                ->rawColumns(['stockInicioSemana', 'ingresoSemana', 'salidaSemana', 'stock'])
+                ->rawColumns(['stockInicioSemana', 'ingresoSemana', 'salidaSemana', 'stock', 'costo'])
                 ->make(true);
         }
 
@@ -1137,9 +1133,6 @@ class ProductController extends Controller
 
     public function printCompararStock(Request $request)
     {
-        // $producto = Product::find(6)->stockInicioSemana();
-        // return $producto;
-
         return Excel::download(new ProductsViewExportStock(), 'stocks-' . date('d-m-Y') . '.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
