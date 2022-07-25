@@ -1,67 +1,53 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="d-flex flex-column-fluid">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="row">
-                        <div class="col-lg-12 col-xl-12">
-                            <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
-                                <div class="card-header align-items-center  border-bottom-dark px-0">
-                                    <div class="card-title mb-0">
-                                        <h4 class="card-label mb-0 font-weight-bold text-body">
-                                            Salidas cerrradas
-                                        </h4>
-                                    </div>
-                                    <div class="icons d-flex">
-                                        <a href="{{ route('index.ordenConsolidada') }}" class="mt-1 mr-3">
-                                            Salidas consolidadas
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        
+    <div class="row">
+        <div class="col-lg-12 col-xl-12">
+            <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
+                <div class="card-header align-items-center  border-bottom-dark px-0">
+                    <div class="card-title mb-0">
+                        <h4 class="card-label mb-0 font-weight-bold text-body">
+                            Salidas cerrradas
+                        </h4>
                     </div>
-                    <div class="row">
-                        <div class="col-12 ">
-                            <div class="card card-custom gutter-b bg-white border-0">
-                                <div class="card-body">
-
-                                    <div class="table-responsive">
-                                        <table class="table table-condensed table-hover yajra-datatable text-center">
-                                            <thead>
-                                                <tr class="bg-dark text-white">
-                                                    <td>#</td>
-                                                    <td style="width: 70px" >Fecha</td>
-                                                                <td>Destino</td>
-                                                                <td>Tipo</td>
-                                                                <td>Item</td>
-                                                                <td>Factura</td>
-                                                                <td>Remito</td>
-                                                                <td>Paper</td>
-                                                                <td>Flete</td>
-                                                                <td>Orden</td>
-                                                                <td>OrdenPan</td>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="icons d-flex">
+                        <a href="{{ route('index.ordenConsolidada') }}" class="mt-1 mr-3">
+                            Salidas consolidadas
+                        </a>
                     </div>
                 </div>
-
-                @include(
-                    'admin.movimientos.salidas.partials.modal-open-remito'
-                )
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 ">
+            <div class="table-responsive">
+                <table class="table table-condensed table-hover yajra-datatable text-center">
+                    <thead>
+                        <tr class="bg-dark text-white">
+                            <td>#</td>
+                            <td style="width: 70px" >Fecha</td>
+                            <td>Destino</td>
+                            <td>Tipo</td>
+                            <td>Directa</td>
+                            <td>Item</td>
+                            <td>Factura</td>
+                            <td>Rto</td>
+                            <td>Paper</td>
+                            <td>Flete</td>
+                            <td>Orden</td>
+                            <td>O.Pan</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>       
+        </div>
+    </div>
+         
+    @include('admin.movimientos.salidas.partials.modal-open-remito')
 @endsection
 
 @section('js')
@@ -79,12 +65,18 @@
                 },
                 {
                     data: 'destino',
-                    'class': 'text-left',
+                    class: 'text-left',
                     searchable: true
                 },
                 {
                     data: 'type',
-                    'class': 'text-left',
+                    class: 'text-left',
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: 'observacion',
+                    class: 'text-left',
                     orderable: false,
                     searchable: true
                 },
