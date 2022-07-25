@@ -193,7 +193,8 @@ class SalidasController extends Controller
 
     public function pendienteShow(Request $request)
     {
-        $explode = explode('_', $request->input('list_id'));
+        $list_id = $request->input('list_id');
+        $explode = explode('_',$list_id );
         $pedido  = null;
         if (count($explode) == 3) {
             $pedido = $explode[2];
@@ -201,7 +202,7 @@ class SalidasController extends Controller
         $tipo        = $explode[0];
         $destino     = $this->origenData($tipo, $explode[1], true);
         $destinoName = $this->origenData($tipo, $explode[1]);
-        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName', 'pedido'));
+        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName', 'pedido','list_id'));
     }
 
     public function getTotalMovement(Request $request)
@@ -221,7 +222,7 @@ class SalidasController extends Controller
 
     public function pendientePrint(Request $request)
     {
-        $list_id = $request->list_id . '_' . \Auth::user()->store_active;
+        $list_id = $request->list_id ;//. '_' . \Auth::user()->store_active;
 
         $session_products = DB::table('session_products as t1')
             ->join('products as t2', 't1.product_id', '=', 't2.id')
