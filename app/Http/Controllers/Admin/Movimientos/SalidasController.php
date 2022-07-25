@@ -1045,11 +1045,16 @@ class SalidasController extends Controller
                 }
 
                 if (isset($pedido)) {
-                    $ped_producto                    = PedidoProductos::where('pedido_id', $pedido->id)->where('product_id', $product->product_id)->first();
-                    $ped_producto->bultos_enviados   = $product->quantity;
-                    $ped_producto->bultos_pendientes = $ped_producto->bultos - $product->quantity;
-                    $ped_producto->save();
+                    $ped_producto  = PedidoProductos::where('pedido_id', $pedido->id)->where('product_id', $product->product_id)->first();
+                    if($ped_producto){
+                        $ped_producto->bultos_enviados   = $product->quantity;
+                        $ped_producto->bultos_pendientes = $ped_producto->bultos - $product->quantity;
+                        $ped_producto->save();
+                    }else{
+                        //Aca deberia ir el producto nuevo que cargo en el pedido
+                    }
                 }
+
 
                 $countEgress = 0;
                 for ($i = 0; $i < count($quantities); $i++) {
