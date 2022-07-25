@@ -191,26 +191,33 @@ class ProductController extends Controller
 
 
     public function ajusteHistoricoDeposito(Request $request)
-    {       
-
+    {
         if ($request->ajax()) {
-
             $movimientos = DB::table('movements as t1')
                 ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
                 ->join('products as t3', 't2.product_id', '=', 't3.id')
                 ->join('users as t4', 't1.user_id', '=', 't4.id')
                 ->select(
-                    't1.id', 't1.date', 
-                    't2.unit_price', 't2.cost_fenovo', 't2.tasiva', 't2.bultos', 't2.circuito', 
-                    't3.id as product_id', 't3.unit_type', 't3.unit_package', 't3.name as producto', 't3.cod_fenovo', 
+                    't1.id',
+                    't1.date',
+                    't2.unit_price',
+                    't2.cost_fenovo',
+                    't2.tasiva',
+                    't2.bultos',
+                    't2.circuito',
+                    't3.id as product_id',
+                    't3.unit_type',
+                    't3.unit_package',
+                    't3.name as producto',
+                    't3.cod_fenovo',
                     't4.name as usuario'
                 )
-                ->selectRaw('t2.bultos * t2.unit_package as cantidad')    
-                ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.cost_fenovo,2) as costoTotal')    
-                ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.unit_price,2) as ventaTotal')    
-                ->selectRaw('IF(t2.entry > 0, "salida", "entrada") as estado')    
-                ->where('t1.type', '=','AJUSTE')
-                ->where('t2.entidad_id', '=',64)
+                ->selectRaw('t2.bultos * t2.unit_package as cantidad')
+                ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.cost_fenovo,2) as costoTotal')
+                ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.unit_price,2) as ventaTotal')
+                ->selectRaw('IF(t2.entry > 0, "salida", "entrada") as estado')
+                ->where('t1.type', '=', 'AJUSTE')
+                ->where('t2.entidad_id', '=', 64)
                 ->orderBy('t1.id', 'desc')
                 ->get();
 
@@ -542,9 +549,7 @@ class ProductController extends Controller
 
                     $prod_store->save();
                     $balance_deposito = $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo;
-                    
                 } else {
-
                     $data_prod_store['product_id'] = $product->id;
                     $data_prod_store['store_id']   = 64;
 
@@ -1092,7 +1097,6 @@ class ProductController extends Controller
 
     public function compararStock(Request $request)
     {
-
         if ($request->ajax()) {
             $productos = Product::where('active', '=', 1)->get();
 
@@ -1300,13 +1304,13 @@ class ProductController extends Controller
         // 59 - Deposito Reconquista
         // 60 - Deposito Resistencia
 
-        if(!$request->storeId){
+        if (!$request->storeId) {
             return 'Por favor ingrese ID de tienda tipo DEPOSITO';
         }
 
         $store = Store::find($request->storeId);
 
-        if(!$store){
+        if (!$store) {
             return 'No existe ID tienda';
         }
 
@@ -1373,6 +1377,33 @@ class ProductController extends Controller
         }
 
         return 'Completado la carga de Stock y distribucion de stocks en ' . $store->description;
+    }
+
+    public function stockDeposito(Request $request)
+    {
+        $stores =  Store::whereStoreType('B')->get();
+        return view('admin.products.listDepositos', compact('stores'));
+    }
+
+    public function stockDepositoDetalle(Request $request)
+    {
+        try {
+            $productos = DB::table('products as t1')->where('t1.active', 1)
+                ->leftJoin('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
+                ->leftJoin('products_store as t4', 't1.id', '=', 't4.product_id')
+                ->select(['t1.id', 't1.cod_fenovo', 't1.name as producto', 't1.unit_type', 't3.name as proveedor'])
+                ->selectRaw('t4.stock_f + t4.stock_r + t4.stock_cyo as stock')
+                ->where('t4.store_id', '=', $request->id)
+                ->orderBy('t1.cod_fenovo')
+                ->get();
+
+            return new JsonResponse([
+                    'type' => 'success',
+                    'html' => view('admin.products.listDepositosDetalle', compact('productos'))->render(),
+                ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
     }
 
     public function printListaMayoristaFenovo(Request $request)

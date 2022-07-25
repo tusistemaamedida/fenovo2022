@@ -19,6 +19,10 @@
                             <span class="text-black-50"> Lista de productos </span>
                         </a>
 
+                        <a class="dropdown-item" href="{{ route('productos.stock.deposito') }}">
+                            <span class="text-black-50"> Lista de productos - Depósitos </span>
+                        </a>
+
                         <a class="dropdown-item" href="{{ route('productos.ajusteHistoricoDeposito') }}">
                             <span class="text-black-50"> Lista de productos - Depósito reclamos </span>
                         </a>
