@@ -387,7 +387,7 @@
 
         jQuery('#btnPrintCerrarSalida').click(function(e) {
             var list_id = jQuery("#list_id").val();
-            if(!list_id){
+            if(!list_id || list_id == ''){
                 var to_type = jQuery("#to_type").val();
                 var to = jQuery("#to").val();
                 var list_id = to_type + '_' + to;
