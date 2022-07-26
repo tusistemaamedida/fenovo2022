@@ -1,11 +1,17 @@
+<div class="row mt-2">
+    <div class="col-12">
+        <p class=" text-dark font-weight-bolder">Local :: {{ str_pad($store->cod_fenovo, 3, '0', STR_PAD_LEFT)  }} - {{ $store->description }}</p>
+    </div>
+</div>
 <div class="table-responsive">
     <table class=" table table-hover dataTable table-condensed yajra-datatable" role="grid">
         <thead class="text-body">
             <tr class="bg-dark text-black-50">
-                <td class=" w-30px">Codigo</td>
+                <td>Codigo</td>
                 <td class=" w-50">Producto</td>
-                <td class=" w-30px">Stock</td>
-                <td class=" w-30px">Proveedor</td>
+                <td>Stock</td>
+                <td class=" w-25">Proveedor</td>
+                <td>Historial</td>
             </tr>
         </thead>
         <tbody>
@@ -16,6 +22,11 @@
                     <td>{{ $producto->producto }}</td>
                     <td>{{ $producto->stock }}</td>
                     <td>{{ $producto->proveedor }}</td>
+                    <td>
+                        <a href="{{ route('product.historial.tienda', ['store_id' => $store->id,'product_id' => $producto->id]) }}"> 
+                            <i class="fa fa-list" aria-hidden="true"></i> 
+                        </a>
+                    </td>
                 </tr>
                 @endforeach
             @endif
@@ -23,21 +34,13 @@
     </table>
 </div>
 
+
 <script>
 
     var dataTable = jQuery(".yajra-datatable").DataTable({
         scrollY: 300,
         paging: false,
         ordering: false,
-        columnDefs: [
-            { orderable: false, targets: 0 },
-            { orderable: false, targets: 1 },
-            { orderable: false, targets: 2 },
-            { orderable: false, targets: 3 },
-        ],
-        order: [[1, 'asc']],
         iDisplayLength: -1,
-    });
-
-    
+    });    
 </script>

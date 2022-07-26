@@ -185,8 +185,45 @@ class ProductController extends Controller
                 ->rawColumns(['fecha', 'type', 'from', 'to', 'orden', 'observacion'])
                 ->make(true);
         }
-
         return view('admin.products.historial', compact('producto'));
+    }
+
+    public function historialTienda(Request $request)
+    {
+        $store = Store::find($request->store_id);
+        $producto = Product::find($request->product_id);
+
+        if ($request->ajax()) {
+            $movimientos = MovementProduct::with(['movement'])
+                ->whereProductId($producto->id)
+                ->whereEntidadId($store->id)
+                ->orderBy('id', 'DESC')
+                ->get();
+            return Datatables::of($movimientos)
+                ->addIndexColumn()
+                ->addColumn('fecha', function ($movimiento) {
+                    return date('d/m/Y', strtotime($movimiento->created_at));
+                })
+                ->addColumn('type', function ($movimiento) {
+                    return $movimiento->movement->type;
+                })
+                ->addColumn('from', function ($movimiento) {
+                    return $movimiento->movement->From($movimiento->movement->type);
+                })
+                ->addColumn('to', function ($movimiento) {
+                    return $movimiento->movement->To($movimiento->movement->type);
+                })
+                ->addColumn('orden', function ($movimiento) {
+                    return $movimiento->movement->id;
+                })
+                ->addColumn('observacion', function ($movimiento) {
+                    return $movimiento->movement->observacion;
+                })
+
+                ->rawColumns(['fecha', 'type', 'from', 'to', 'orden', 'observacion'])
+                ->make(true);
+        }
+        return view('admin.products.historialTienda', compact('producto', 'store'));
     }
 
 
@@ -1381,13 +1418,14 @@ class ProductController extends Controller
 
     public function stockDeposito(Request $request)
     {
-        $stores =  Store::whereStoreType('B')->get();
+        $stores =  Store::where('store_type', '!=', 'N')->orderBy('description')->get();
         return view('admin.products.listDepositos', compact('stores'));
     }
 
     public function stockDepositoDetalle(Request $request)
     {
         try {
+            $store = Store::find($request->id);
             $productos = DB::table('products as t1')->where('t1.active', 1)
                 ->leftJoin('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
                 ->leftJoin('products_store as t4', 't1.id', '=', 't4.product_id')
@@ -1399,7 +1437,7 @@ class ProductController extends Controller
 
             return new JsonResponse([
                     'type' => 'success',
-                    'html' => view('admin.products.listDepositosDetalle', compact('productos'))->render(),
+                    'html' => view('admin.products.listDepositosDetalle', compact('store', 'productos'))->render(),
                 ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);

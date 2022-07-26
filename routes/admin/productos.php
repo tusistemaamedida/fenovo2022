@@ -53,6 +53,7 @@ Route::get('producto/buscar', [ProductController::class, 'buscarProductos'])->na
 Route::get('producto/ajustes', [ProductController::class, 'ajusteHistoricoDeposito'])->name('productos.ajusteHistoricoDeposito');
 
 Route::get('producto/historial/{id?}', [ProductController::class, 'historial'])->middleware('can:products.edit')->name('product.historial');
+Route::get('producto/historial/tienda/{store_id?}/{product_id?}', [ProductController::class, 'historialTienda'])->name('product.historial.tienda');
 Route::get('producto/print-historial', [ProductController::class, 'printHistorial'])->middleware('can:products.edit')->name('product.printHistorial');
 
 Route::get('stock-de-productos', [ProductController::class, 'listByStocks'])->name('products.by.stocks');
