@@ -56,7 +56,8 @@
                                 <tr class=" bg-dark text-white-50">
                                     <td>Fecha   </td>
                                     <td>Destino </td>
-                                    <td>Tipo movimiento </td>
+                                    <td>Tipo movimiento</td>
+                                    <td>Venta directa</td>
                                     <td>Comprobante nro </td>
                                     <td>Vincular </td>
                                 </tr>
@@ -64,10 +65,14 @@
                             @foreach ($movements as $movement)
 
                             <tr>
-
                                 <td> {{ date('d-m-Y', strtotime($movement->date)) }}  </td>
                                 <td class="text-left"> {{ $movement->origenData($movement->type);}}     </td>
-                                <td> {{ $movement->type }}                            </td>
+                                <td> {{ $movement->type }} </td>
+                                <td>
+                                    @if($movement->observacion == 'VENTA DIRECTA')
+                                        <i class="fa fa-check-circle text-dark"></i>
+                                    @endif
+                                </td>
                                 <td> {{ $movement->voucher_number }}                  </td>
                                 <td> 
                                     <label class="checkbox-inline" >
