@@ -47,8 +47,9 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>CAE</th>
-                                                    <th>Cliente</th>
+                                                    <th>Nombre</th>
                                                     <th>CUIT</th>
+                                                    <th>Tienda</th>
                                                     <th>Importe total</th>
                                                     <th>Fecha</th>
                                                     <th class="no-sort">FAC</th>
@@ -63,6 +64,7 @@
                                                         <td>{{$invoice->cae}}</td>
                                                         <td>{{$invoice->client_name}}</td>
                                                         <td>{{$invoice->client_cuit}}</td>
+                                                        <td>{{$invoice->tienda()}}</td>
                                                         <td>${{number_format($invoice->imp_total, 2, ',', '.')}}</td>
                                                         <td>{{\Carbon\Carbon::parse($invoice->created_at)->format('d/m/Y')}}</td>
                                                         <td>

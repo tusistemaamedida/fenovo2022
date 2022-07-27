@@ -8,6 +8,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Movement;
 
 /**
  * Class Invoice
@@ -129,5 +130,11 @@ class Invoice extends Model
 
     public function flete(){
         return $this->hasOne(Panamas::class, 'movement_id', 'movement_id')->where('tipo','!=','PAN');
+    }
+
+    public function tienda(){
+        $movement = $this->hasOne(Movement::class, 'id', 'movement_id')->first();
+        $tienda = Store::where('id',$movement->to)->first();
+        return ($tienda)?$tienda->description:'';
     }
 }
