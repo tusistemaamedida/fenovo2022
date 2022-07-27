@@ -51,7 +51,9 @@
                                                     <th>CUIT</th>
                                                     <th>Importe total</th>
                                                     <th>Fecha</th>
-                                                    <th class="no-sort">Descargar</th>
+                                                    <th class="no-sort">FAC</th>
+                                                    <th class="no-sort">PAN</th>
+                                                    <th class="no-sort">FLE</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="kt-table-tbody text-dark">
@@ -64,7 +66,21 @@
                                                         <td>${{number_format($invoice->imp_total, 2, ',', '.')}}</td>
                                                         <td>{{\Carbon\Carbon::parse($invoice->created_at)->format('d/m/Y')}}</td>
                                                         <td>
-                                                            <a class="text-primary" title="Descargar factura" target="_blank" href="{{$invoice->url}}"> <i class="fa fa-download"></i></a>
+                                                            <a class="text-primary" title="Descargar FACTURA" target="_blank" href="{{$invoice->url}}"> <i class="fa fa-download"></i></a>
+                                                        </td>
+                                                        <td>
+                                                            @if($invoice->panama)
+                                                                <a class="text-primary" title="Descargar PAN" target="_blank" href="{{route('tiendas.print.panama', ['id' => $invoice->movement_id])}}">
+                                                                    <i class="fa fa-download"></i>
+                                                                </a>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if($invoice->flete)
+                                                                <a class="text-primary" title="Descargar FLETE" target="_blank" href="{{route('tiendas.print.flete', ['id' => $invoice->movement_id])}}">
+                                                                    <i class="fa fa-download"></i>
+                                                                </a>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach

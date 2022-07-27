@@ -122,4 +122,12 @@ class Invoice extends Model
     public function tipoFactura(){
         return $this->belongsTo(VoucherType::class, 'cbte_tipo', 'id');
     }
+
+    public function panama(){
+        return $this->hasOne(Panamas::class, 'movement_id', 'movement_id')->where('tipo','PAN');
+    }
+
+    public function flete(){
+        return $this->hasOne(Panamas::class, 'movement_id', 'movement_id')->where('tipo','!=','PAN');
+    }
 }

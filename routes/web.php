@@ -9,11 +9,13 @@ Route::get('/', function () {
     return view('portada');
 });
 
-Route::get('/tiendas-facturas', function () {
+Route::get('/mis-facturas', function () {
     return view('mis-facturas-inicio');
 })->name('mis.facturas');
 
 Route::post('/mis-facturas', [App\Http\Controllers\MisFacturasController::class, 'getMisFacturas'])->name('get.mis.facturas');
+Route::get('tiendas-imprimir-papers/', [App\Http\Controllers\MisFacturasController::class, 'printPanama'])->name('tiendas.print.panama');
+Route::get('tiendas-imprimir-flete/', [App\Http\Controllers\MisFacturasController::class, 'printPanamaFlete'])->name('tiendas.print.flete');
 
 Route::group(['middleware' => 'preventBackHistory'], function () {
     Auth::routes();
