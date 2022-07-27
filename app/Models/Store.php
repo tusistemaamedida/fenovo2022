@@ -58,6 +58,7 @@ class Store extends Model
         'comision_distribucion',
         'active',
         'cip',                         // codigo impresion panama
+        'password',                    // codigo acceso impresion facturas
     ];
 
     public function region()
