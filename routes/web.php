@@ -9,6 +9,12 @@ Route::get('/', function () {
     return view('portada');
 });
 
+Route::get('/tiendas-facturas', function () {
+    return view('mis-facturas-inicio');
+})->name('mis.facturas');
+
+Route::post('/mis-facturas', [App\Http\Controllers\MisFacturasController::class, 'getMisFacturas'])->name('get.mis.facturas');
+
 Route::group(['middleware' => 'preventBackHistory'], function () {
     Auth::routes();
     Route::get('/inicio', [App\Http\Controllers\HomeController::class, 'index'])->name('inicio');
