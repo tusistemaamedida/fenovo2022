@@ -17,8 +17,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StoreController extends Controller
 {
-    private $storeRepository;
-    private $regionRepository;
+    protected $storeRepository;
+    protected $regionRepository;
 
     public function __construct(StoreRepository $storeRepository, RegionRepository $regionRepository, EnumRepository $enumRepository)
     {

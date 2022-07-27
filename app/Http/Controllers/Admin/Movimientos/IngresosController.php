@@ -41,7 +41,13 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $movement = MovementTemp::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
+            $movement = MovementTemp::where('to', Auth::user()->store_active)
+                                    ->where('type', 'COMPRA')
+                                    ->where('user_id', Auth::user()->id)
+                                    ->whereStatus('CREATED')
+                                    ->with('movement_ingreso_products')
+                                    ->orderBy('date', 'DESC')
+                                    ->get();
 
             return Datatables::of($movement)
                 ->addIndexColumn()
@@ -133,15 +139,20 @@ class IngresosController extends Controller
         return view('admin.movimientos.ingresos.indexChequeadas');
     }
 
-    public function add()
-    {
+    public function add(){
+        $depositos = null;
         $proveedores = Proveedor::orderBy('name')->pluck('name', 'id');
-        return view('admin.movimientos.ingresos.add', compact('proveedores'));
+        if(\Auth::user()->rol() == 'contable'){
+            $depositos = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->where('store_type','D')->get();
+        }
+
+        return view('admin.movimientos.ingresos.add', compact('proveedores','depositos'));
     }
 
     public function store(Request $request)
     {
         $data     = $request->all();
+        $data['user_id'] = \Auth::user()->id;
         $movement = MovementTemp::create($data);
         return redirect()->route('ingresos.edit', ['id' => $movement->id]);
     }
@@ -429,7 +440,7 @@ class IngresosController extends Controller
                 }
 
                 // Actualizo valor del flete y guardo
-                
+
                 // $movement_venta->flete = $flete;
                 // $movement_venta->save();
             }

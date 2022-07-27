@@ -12,16 +12,11 @@
                             <div class="card-header align-items-center  border-bottom-dark px-0">
                                 <div class="card-title mb-0">
                                     <h4 class="card-label mb-0 font-weight-bold text-body">
-                                        Tiendas
+                                        Depósitos
                                     </h4>
                                 </div>
                                 <div class="icons d-flex">
-
-                                    <a href="{{url('fletes')}}" class="mt-1 mr-3">
-                                        Parámetros de fletes
-                                    </a>
-
-                                    <a href="{{ route('stores.add') }}" class="ml-2">
+                                    <a href="{{ route('depositos.add') }}" class="ml-2">
                                         <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                     </a>
                                 </div>
@@ -39,14 +34,10 @@
                                         <table class="table table-hover display yajra-datatable" style="width:100%">
                                             <thead>
                                                 <tr class="bg-dark text-white">
-                                                    <th>No</th>
-                                                    <th>Cod Fenovo</th>
-                                                    <th>Tipo tienda</th>
-                                                    <th>Recibe traslado</th>
-                                                    <th>Pto venta</th>
-                                                    <th>Comision</th>
-                                                    <th>Nombre </th>
-                                                    <th>Cuit</th>
+                                                    <th style="width: 25px">Cod.</th>
+                                                    <th style="width: 25px">Abrev.</th>
+                                                    <th style="width: 405px">Nombre</th>
+                                                    <th style="width: 405px">Responsable</th>
                                                     <th></th>
                                                     <th></th>
                                                 </tr>
@@ -74,16 +65,12 @@
 <script>
     var table = jQuery('.yajra-datatable').DataTable({
         @include('partials.table.setting'),
-        ajax: "{{ route('stores.index') }}",
+        ajax: "{{ route('depositos.index') }}",
         columns: [
-            {data: 'id', 'class':'text-center', orderable: false, searchable: false},
             {data: 'cod_fenovo'},
-            {data: 'store_type', 'class':'text-center font-weight-bolder',},
-            {data: 'recibe', 'class':'text-center', orderable: false, searchable: false},
-            {data: 'punto_venta', 'class':'text-center',},
-            {data: 'comision_distribucion', 'class':'text-center',},
+            {data: 'razon_social', 'class':'text-center font-weight-bolder',},
             {data: 'description'},
-            {data: 'cuit'},
+            {data: 'responsable'},
             {data: 'edit', name: 'Editar', 'class':'text-center', orderable: false, searchable: false},
             {data: 'destroy', name: 'Borrar', 'class':'text-center', orderable: false, searchable: false},
         ]

@@ -14,8 +14,7 @@ class SessionProductRepository extends BaseRepository
         return new SessionProduct();
     }
 
-    public function getByListId($list_id)
-    {
+    public function getByListId($list_id){
         return $this->newQuery()->where('list_id', $list_id)->whereNull('pausado')->with('producto')->orderBy('product_id')->get();
     }
 
