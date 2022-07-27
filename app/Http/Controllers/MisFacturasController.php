@@ -33,13 +33,13 @@ class MisFacturasController extends Controller
 
             if ($store->password == $request->password) {
                 $invoices = Invoice::with(['panama', 'flete'])->where('client_cuit', $cuit)->whereNotNull('cae')->whereNotNull('url')->orderBy('created_at', 'DESC')->get();
-                return view('admin.mis-facturas.inicio', compact('invoices'));
+                return view('admin.mis-facturas.list', compact('invoices'));
             }
 
-            $request->session()->flash('error-store', 'Su clave no es válida ');
+            $request->session()->flash('error-store', 'su clave no es válida ');
             return view('admin.mis-facturas.inicio');
         }
-        $request->session()->flash('error-store', 'No existe tienda asociada al CUIT ' . $cuit);
+        $request->session()->flash('error-store', 'cuit no registrada ' . $cuit);
         return view('admin.mis-facturas.inicio');
     }
 
@@ -53,7 +53,8 @@ class MisFacturasController extends Controller
     {
         $store = Store::find($request->store_id);
         $store->update(['password' => $request->password]);
-        return $store;
+        $request->session()->flash('update-store', 'clave actualizada ');
+        return view('admin.mis-facturas.inicio');
     }
 
     public function printPanama(Request $request)

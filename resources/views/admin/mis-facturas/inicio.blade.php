@@ -10,8 +10,7 @@
                         <div class="card-title">
                             <div class="row text-center">
                                 <div class="col-xs-12 col-md-12 col-lg-12">
-                                    <img src="{{ asset('assets/images/misc/logo-color-300.png') }}" alt="fenovo"
-                                        class=" img-fluid">
+                                    <img src="{{ asset('assets/images/misc/logo-color-300.png') }}" alt="fenovo" class=" img-fluid">
                                 </div>
                             </div>
                         </div>
@@ -20,22 +19,33 @@
                                 @csrf
                                 <div class="row mb-5">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
-                                        <label for="cuit">CUIT</label>
+                                        <label for="cuit">Cuit</label>
                                         <input type="number" name="cuit" id="cuit" required
                                             class="form-control input border-dark mb-2" autofocus>
-                                        <small> (Ingrese cuit sin guiones, sólo números)</small>
+                                        <small class=" text-center"> Ingrese <b>cuit</b> sin guiones ni barras, sólo números</small>
                                     </div>
                                 </div>
 
                                 <div class="row mb-5">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
-                                        <label for="password">CONTRASEÑA</label>
-                                        <input type="password" name="password" id="password" required
-                                            class="form-control input border-dark">
+                                        <label for="password">Contraseña</label>
+                                        <input type="password" name="password" id="password" required class="form-control input border-dark">
+                                        <div class="mt-3">
+                                            @if (Session()->has('update-store'))
+                                                <div class="alert alert-card alert-info" role="alert">
+                                                    <strong>Perfecto, </strong> {!! Session::get('update-store') !!}
+                                                </div>                                            
+                                            @endif    
+                                            @if (Session()->has('error-store'))
+                                                <div class="alert alert-card alert-danger" role="alert">
+                                                    <strong>Verifique, </strong>  {!! Session::get('error-store') !!}                                             
+                                                </div>                                            
+                                            @endif    
+                                        </div>    
                                     </div>
                                 </div>
 
-                                <div class="row mt-5">
+                                <div class="row mt-5 mb-5">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <input type="submit" class="btn btn-dark btn-block" value="BUSCAR" />
                                     </div>
