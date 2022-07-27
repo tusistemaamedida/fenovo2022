@@ -13,37 +13,37 @@
                                 <div class="col-xs-12 col-md-12 col-lg-12">
                                     <img src="{{ asset('assets/images/misc/logo-color-300.png') }}" alt="fenovo"
                                         class=" img-fluid">
-                                    <h5>Actualice su clave</h5>
+                                    <h5>Actualice su password</h5>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
                             <form method="POST" action="{{ route('mis.facturas.update.password') }}">
                                 @csrf
-
-                                <input type="text" id="store_id" name="store_id" value="{{ $store->id }}">
-                                <div class="row mb-5">
+                                <input type="hidden" id="store_id" name="store_id" value="{{ $store->id }}">
+                                <input type="hidden" id="cuit" name="cuit" value="{{ $store->cuit }}">
+                                <div class="row">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
-                                        <label for="clave">Ingrese clave</label>
-                                        <input type="text" name="clave" id="clave" value="" required
-                                            autofocus class="form-control input border-dark">
-                                        <small> (Ingrese hasta 10 caracteres)</small>
+                                        <label for="password">Ingrese password</label>
+                                        <input type="text" name="password" id="password" value="" required
+                                            onkeyup="longitud(this)" autofocus class="form-control input border-dark">
+                                        <small> Ingrese texto entre 6 y 10 caracteres</small>
                                     </div>
                                 </div>
 
                                 <div class="row mb-5">
-                                    <div class="col-xs-12 col-md-12 col-lg-12">
-                                        <label for="clave_verify">Vuelva a escribir su clave</label>
-                                        <input type="text" name="clave_verify" id="clave_verify" required
-                                            onkeyup="coincidir(this)" class="form-control input border-dark">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-2">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <div id="mensaje" class="alert alert-card alert-danger d-none" role="alert">
-                                            Verifique que escribió hasta 10 caracteres y que coincidan ambos ingresos.
+     
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-5">
+                                    <div class="col-xs-12 col-md-12 col-lg-12">
+                                        <label for="password_verify">Vuelva a escribir su password</label>
+                                        <input type="text" name="password_verify" id="password_verify" required
+                                            onkeyup="coincidir(this)" class="form-control input border-dark">
                                     </div>
                                 </div>
 
@@ -64,9 +64,39 @@
 
 @section('js')
     <script>
+
+        const longitud = (objeto) => {
+            let password = jQuery("#password").val();
+
+            if(password.length < 6){
+                jQuery("#mensaje").html('No tiene 6 caracteres').removeClass('d-none');
+                return
+            }else{
+                if(password.length > 10){
+                    jQuery("#mensaje").html('Tiene más 10 caracteres').removeClass('d-none');
+                    return
+                }else{
+                    jQuery("#mensaje").addClass('d-none');
+                }
+            }   
+        }
+
         const coincidir = (objeto) => {
-            let clave = jQuery("#clave").val();
-            if (clave == objeto.value) {
+            let password = jQuery("#password").val();
+
+            if(password.length < 6){
+                jQuery("#mensaje").html('No tiene 6 caracteres').removeClass('d-none');
+                return
+            }else{
+                if(password.length > 10){
+                    jQuery("#mensaje").html('Tiene más 10 caracteres').removeClass('d-none');
+                    return
+                }else{
+                    jQuery("#mensaje").addClass('d-none');
+                }
+            }
+
+            if (password == objeto.value) {
                 jQuery("#btn-actualizar").attr('disabled', false);
             }else{
                 jQuery("#btn-actualizar").attr('disabled', true);

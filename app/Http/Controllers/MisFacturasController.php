@@ -27,35 +27,33 @@ class MisFacturasController extends Controller
         $store = Store::where('cuit', $cuit)->where('active', 1)->first();
 
         if ($store) {
-            if (!$store->password) { 
-               return redirect()->route('mis.facturas.edit.password', compact('store'));
+            if (!$store->password) {
+                return redirect()->route('mis.facturas.edit.password', compact('store'));
             }
 
-            if($store->password == $request->password){
-
+            if ($store->password == $request->password) {
                 $invoices = Invoice::with(['panama', 'flete'])->where('client_cuit', $cuit)->whereNotNull('cae')->whereNotNull('url')->orderBy('created_at', 'DESC')->get();
                 return view('admin.mis-facturas.inicio', compact('invoices'));
+            }
 
-            }else{
-
-                $request->session()->flash('error-store', 'Su clave no es válida ');
-                return view('admin.mis-facturas.inicio');
-            }            
+            $request->session()->flash('error-store', 'Su clave no es válida ');
+            return view('admin.mis-facturas.inicio');
         }
         $request->session()->flash('error-store', 'No existe tienda asociada al CUIT ' . $cuit);
         return view('admin.mis-facturas.inicio');
     }
 
-    public function editPassword()
-    {	
-        return view('admin.mis-facturas.modificar-password');
+    public function editPassword(Request $request)
+    {
+        $store = Store::find($request->store);
+        return view('admin.mis-facturas.modificar-password', compact('store'));
     }
 
-
     public function updatePassword(Request $request)
-    {	
-        return $request->password;
-        $request->password_verify;
+    {
+        $store = Store::find($request->store_id);
+        $store->update(['password' => $request->password]);
+        return $store;
     }
 
     public function printPanama(Request $request)
