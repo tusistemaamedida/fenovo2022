@@ -22,20 +22,15 @@
                                         Facturas generadas
                                     </h4>
                                 </div>
+                                <div class="icons d-flex">
+                                    <a href="{{ route('mis.facturas') }}">
+                                        Salir
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                @if (Session()->has('error-store'))
-                    <div class="row">
-                        <div class="col-lg-12 col-xl-12">
-                            <div class="alert alert-card alert-danger" role="alert">
-                                <strong class="text-capitalize">ERROR!</strong><br> {!! Session::get('error-store') !!} &nbsp; &nbsp; &nbsp; &nbsp;
-                                <a href="{{route('mis.facturas')}}" class="btn btn-dark"  rel="noopener noreferrer"> <strong>VOLVER</strong> </a>
-                            </div>
-                        </div>
-                    </div>
-                @endif
                 @if(isset($invoices))
                     <div class="row">
                         <div class="col-12 ">
