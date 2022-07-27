@@ -2,32 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade as PDF;
-use PDFMerger;
-use stdClass;
-
-use App\Traits\OriginDataTrait;
 use App\Models\Invoice;
-use App\Models\Panamas;
 use App\Models\Movement;
-use App\Models\MovementProduct;
+use App\Models\Panamas;
+
 use App\Models\Store;
-use Session;
+use App\Traits\OriginDataTrait;
+use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Http\Request;
+use stdClass;
 
 class MisFacturasController extends Controller
 {
     use OriginDataTrait;
 
-    public function getMisFacturas(Request $request){
-        $cuit = $request->cuit;
-        $store = Store::where('cuit',$cuit)->where('active',1)->first();
-        if($store){
-            $invoices = Invoice::with(['panama','flete'])->where('client_cuit',$cuit)->whereNotNull('cae')->whereNotNull('url')->orderBy('created_at','DESC')->get();
-            return view('mis-facturas',compact('invoices'));
+    public function inicio()
+    {
+        return view('admin.mis-facturas.inicio');
+    }
+
+    public function getMisFacturas(Request $request)
+    {
+        $cuit  = $request->cuit;
+        $store = Store::where('cuit', $cuit)->where('active', 1)->first();
+
+        if ($store) {
+            if (!$store->password) { 
+               return redirect()->route('mis.facturas.edit.password', compact('store'));
+            }
+
+            if($store->password == $request->password){
+
+                $invoices = Invoice::with(['panama', 'flete'])->where('client_cuit', $cuit)->whereNotNull('cae')->whereNotNull('url')->orderBy('created_at', 'DESC')->get();
+                return view('admin.mis-facturas.inicio', compact('invoices'));
+
+            }else{
+
+                $request->session()->flash('error-store', 'Su clave no es válida ');
+                return view('admin.mis-facturas.inicio');
+            }            
         }
-        $request->session()->flash('error-store', 'No existe tienda asociada al cuit '.$cuit);
-        return view('mis-facturas');
+        $request->session()->flash('error-store', 'No existe tienda asociada al CUIT ' . $cuit);
+        return view('admin.mis-facturas.inicio');
+    }
+
+    public function editPassword()
+    {	
+        return view('admin.mis-facturas.modificar-password');
+    }
+
+
+    public function updatePassword(Request $request)
+    {	
+        return $request->password;
+        $request->password_verify;
     }
 
     public function printPanama(Request $request)

@@ -31,7 +31,7 @@
                         <div class="col-lg-12 col-xl-12">
                             <div class="alert alert-card alert-danger" role="alert">
                                 <strong class="text-capitalize">ERROR!</strong><br> {!! Session::get('error-store') !!} &nbsp; &nbsp; &nbsp; &nbsp;
-                                <a href="{{route('mis.facturas')}}"  rel="noopener noreferrer"> <strong style="color: green">VOLVER</strong> </a>
+                                <a href="{{route('mis.facturas')}}" class="btn btn-dark"  rel="noopener noreferrer"> <strong>VOLVER</strong> </a>
                             </div>
                         </div>
                     </div>

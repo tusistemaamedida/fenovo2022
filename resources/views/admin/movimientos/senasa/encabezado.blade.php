@@ -20,7 +20,7 @@
     </tr>
 </table>
 
-<table style="width:100%; margin-top: 5cm; font-size: 9px ">
+<table style="width:100%; margin-top: 5cm; font-size: 8px ">
     <tr>
         <th class="text-center" style="width: 10%; ">&nbsp;</th>
         <th class="text-center" style="width: 55%;">&nbsp;</th>
