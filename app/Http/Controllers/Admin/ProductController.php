@@ -590,10 +590,6 @@ class ProductController extends Controller
 
                     $prod_store->save();
                     $balance_deposito = $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo;
-<<<<<<< HEAD
-
-=======
->>>>>>> develop
                 } else {
                     $data_prod_store['product_id'] = $product->id;
                     $data_prod_store['store_id']   = 64;
@@ -1455,5 +1451,108 @@ class ProductController extends Controller
     public function printListaMayoristaFenovo(Request $request)
     {
         return Excel::download(new ListaMayoristaFenovo(), 'lista-mayorista-fenovo-' . date('d-m-Y') . '.xlsx');
+    }
+
+    public function importNoCongelados(){
+        $filepath = public_path('/imports/almacen.TXT');
+            $file     = fopen($filepath, 'r');
+
+            $importData_arr = [];
+            $i              = 0;
+
+            while (($filedata = fgetcsv($file, 0, ',')) !== false) {
+                $num = count($filedata);
+                for ($c = 0; $c < $num; $c++) {
+                    $importData_arr[$i][] = $filedata[$c];
+                }
+                $i++;
+            }
+
+            fclose($file);
+            foreach ($importData_arr as $importData) {
+                $data       = [];
+                $categ = $importData[0];
+                switch ($categ) {
+                case 'MP':
+                    $categoria_id = 4;
+                    break;
+                case 'IN':
+                    $categoria_id = 5;
+                    break;
+                case 'EQ':
+                    $categoria_id = 6;
+                    break;
+                case 'MT':
+                    $categoria_id = 7;
+                    break;
+                default:
+                    $categoria_id = 4;
+                    break;
+                }
+
+                $costFenovo = $importData[3];
+                $mupFtk = $importData[7];
+                $cosven = $importData[8];
+                $iva    = $importData[9];
+
+                $insertData = [
+                    'cod_fenovo'    => $importData[1],
+                    'cod_proveedor' => null,
+                    'name'          => $importData[2],
+                    'proveedor_id'  => null,
+                    'categorie_id'  => $categoria_id,
+                    'barcode'       => null,
+                    'unit_type'     => $importData[4],
+                    'unit_weight'   => $importData[5],
+                    'unit_package'  => $importData[6],
+                    'package_palet' => 0,
+                    'package_row'   => 0,
+                    'cod_descuento' => null,
+                ];
+
+                $producto_nuevo      = Product::updateOrCreate(['cod_fenovo'=>$importData[1]],$insertData);
+
+                $plist1 = round($cosven * ($iva / 100 + 1) * (10 / 100 + 1), 2);
+                $plist2 = round($cosven * ($iva / 100 + 1) * (20 / 100 + 1), 2);
+
+                $plist1 = ((int)$plist1 == 0) ? 1 : $plist1;
+                $plist2 = ((int)$plist2 == 0) ? 1 : $plist2;
+
+            $data = [
+                'product_id'        => $producto_nuevo->id,
+                'plistproveedor'    => $costFenovo,
+                'descproveedor'     => 0,
+                'costfenovo'        => $costFenovo,
+                'mupfenovo'         => $mupFtk,
+                'tasiva'            => $iva,
+                'plist0neto'        => $cosven,
+                'plist0iva'         => $cosven * ($iva / 100 + 1),
+                'contribution_fund' => 0.5,
+
+                'p1tienda' => 1,
+                'mup1'     => 1,
+                'mupp1may' => 1,
+                'descp1'   => 1,
+                'p1may'    => 1,
+                'muplist1' => 10,
+                'muplist2' => 20,
+
+                'plist1'    => $plist1,
+                'plist2'    => $plist2,
+                'comlista1' => round((($plist1 - $cosven * ($iva / 100 + 1)) / ($iva / 100 + 1) * 100) / $plist1, 2),
+                'comlista2' => round((($plist2 - $cosven * ($iva / 100 + 1)) / ($iva / 100 + 1) * 100) / $plist2, 2),
+
+                'p2tienda' => 1,
+                'mup2'     => 1,
+                'p2may'    => 1,
+                'descp2'   => 1,
+                'mupp2may' => 1,
+
+                'cantmay1' => 10,
+                'cantmay2' => 10,
+            ];
+            ProductPrice::updateOrCreate(['product_id'=>$producto_nuevo->id],$data);
+        }
+        dd('ok');
     }
 }

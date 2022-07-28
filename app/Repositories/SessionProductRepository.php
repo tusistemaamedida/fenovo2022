@@ -74,12 +74,22 @@ class SessionProductRepository extends BaseRepository
 
     public function groupBy($group)
     {
-        return SessionProduct::select('*', DB::raw("COUNT(id) as total"))
-                                 ->where('store_id',\Auth::user()->store_active)
-                                 ->where('list_id', 'not like', '%DEVOLUCION_%')
-                                 ->orderBy('updated_at', 'DESC')
-                                 ->groupBy('list_id','pausado')
-                                 ->get();
+        if(\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin'){
+            return SessionProduct::select('*', DB::raw("COUNT(id) as total"))
+                                    ->where('store_id',\Auth::user()->store_active)
+                                    ->where('list_id', 'not like', '%DEVOLUCION_%')
+                                    ->orderBy('updated_at', 'DESC')
+                                    ->groupBy('list_id','pausado')
+                                    ->get();
+        }else{
+            return SessionProduct::select('*', DB::raw("COUNT(id) as total"))
+                                    ->where('store_id',\Auth::user()->store_active)
+                                    ->where('list_id', 'not like', '%DEVOLUCION_%')
+                                    ->where('user_id', \Auth::user()->id)
+                                    ->orderBy('updated_at', 'DESC')
+                                    ->groupBy('list_id','pausado')
+                                    ->get();
+        }
     }
 
     public function getFlete($list_id)

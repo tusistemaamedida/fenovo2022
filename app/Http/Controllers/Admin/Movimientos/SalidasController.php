@@ -73,13 +73,23 @@ class SalidasController extends Controller
 
             // Tomo los movimientos de 90 dias atras
             $fecha = Carbon::now()->subDays(90)->toDateTimeString();
-
-            $movement = Movement::where('from', Auth::user()->store_active)
+            if(\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin'){
+                $movement = Movement::where('from', Auth::user()->store_active)
+                    ->whereIn('type', $arrTypes)
+                    ->whereDate('created_at', '>', $fecha)
+                    ->orderBy('date', 'DESC')
+                    ->orderBy('id', 'DESC')
+                    ->get();
+            }else{
+                $movement = Movement::where('from', Auth::user()->store_active)
                 ->whereIn('type', $arrTypes)
+                ->where('user_id', Auth::user()->id)
                 ->whereDate('created_at', '>', $fecha)
                 ->orderBy('date', 'DESC')
                 ->orderBy('id', 'DESC')
                 ->get();
+            }
+
 
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
@@ -700,6 +710,7 @@ class SalidasController extends Controller
     {
         try {
             if ($request->has('id') && $request->input('id') != '') {
+                $producto_en_depositos = '';
                 $product    = $this->productRepository->getById($request->input('id'));
                 $list_id    = $request->input('list_id') . '_' . \Auth::user()->store_active;
                 $devolucion = str_contains($list_id, 'DEVOLUCION_');
@@ -735,7 +746,10 @@ class SalidasController extends Controller
                         $view = 'admin.movimientos.notas-credito.partials.inserByAjax';
                     } elseif ($debito) {
                         $view = 'admin.movimientos.notas-debito.partials.inserByAjax';
-                    } else {
+                    } elseif(\Auth::user()->rol() == 'contable'){
+                        $producto_en_depositos = ProductStore::where('product_id',$request->input('id'))->with('deposito')->get();
+                        $view = 'admin.movimientos.salidas.partials.inserByAjaxWithDepositos';
+                    } else{
                         $view = 'admin.movimientos.salidas.partials.inserByAjax';
                     }
 
@@ -743,7 +757,7 @@ class SalidasController extends Controller
                         'type' => 'success',
                         'html' => view(
                             $view,
-                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total', 'stock_session')
+                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total', 'stock_session','producto_en_depositos')
                         )->render(),
                     ]);
                 }
@@ -841,6 +855,7 @@ class SalidasController extends Controller
             $insert_data['costo_fenovo'] = $prices->costfenovo;
             $insert_data['list_id']      = $to_type . '_' . $to . '_' . Auth::user()->store_active;
             $insert_data['store_id']     = Auth::user()->store_active;
+            $insert_data['user_id']      = Auth::user()->id;
             $insert_data['invoice']      = true;
             $insert_data['circuito']     = null;
             $insert_data['iibb']         = $product->iibb;

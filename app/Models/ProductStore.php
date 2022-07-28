@@ -22,4 +22,8 @@ class ProductStore extends Model
         'stock_r',
         'stock_cyo'
     ];
+
+    public function deposito(){
+        return $this->hasOne(Store::class, 'id', 'store_id');
+    }
 }

@@ -44,7 +44,7 @@ class ProductNoCongeladosController extends ProductController
                             ->whereBetween('t1.categorie_id', $categorieIdBetween)
                             ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
                             ->join('product_categories as categ', 'categ.id', '=', 't1.categorie_id')
-                            ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
+                            ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id', 'left outer')
                             ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 'categ.abrev as categoria', 't3.name as proveedor'])
                             ->orderBy('t1.cod_fenovo')
                             ->get();

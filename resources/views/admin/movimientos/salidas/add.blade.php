@@ -326,15 +326,20 @@
 
         jQuery("#sessionProductstore").click(function(e) {
             e.preventDefault();
-            jQuery("#sessionProductstore").attr('disabled', true);
+           /*  jQuery("#sessionProductstore").attr('disabled', true); */
             guardarProductoEnSession(e)
         })
 
         function guardarProductoEnSession() {
+            var deposito = null;
             var unit_type = jQuery("#unit_type").val();
             var to_type = jQuery("#to_type").val();
             var product_id = jQuery("#product_search").val();
             var to = jQuery("#to").val();
+            deposito =  document.querySelector('input[name="deposito"]:checked');
+            if(deposito){
+                deposito = deposito.value;
+            }
             var list_id = to_type + '_' + to;
             var unidades = jQuery("#unidades_a_enviar").serializeArray();
             var formData = {
@@ -343,11 +348,14 @@
                 unidades,
                 to,
                 to_type,
+                deposito,
                 unit_type
             };
+            console.log(formData)
+
             var url = "{{ route('store.session.product') }}";
             var elements = document.querySelectorAll('.is-invalid');
-            jQuery.ajax({
+            /* jQuery.ajax({
                 url: url,
                 type: 'POST',
                 data: formData,
@@ -376,7 +384,7 @@
                     jQuery("#sessionProductstore").attr('disabled', false);
                     jQuery('#loader').addClass('hidden');
                 }
-            });
+            }); */
         }
 
         jQuery('#close_modal_presentaciones').on('click', function() {

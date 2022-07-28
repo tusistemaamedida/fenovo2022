@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\PrintController;
 use App\Http\Controllers\Admin\ProductNoCongeladosController;
+use App\Http\Controllers\Admin\ProductController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -14,3 +15,4 @@ Route::get('productos-no-congelados/add',    [ProductNoCongeladosController::cla
 Route::post('productos-no-congelados/store', [ProductNoCongeladosController::class, 'store'])->name('product.nc.store');
 
 Route::get('productos-no-congelados/ver/{id?}', [ProductController::class, 'ver'])->name('product.nc.ver');
+Route::get('importar-no-congelados', [ProductController::class, 'importNoCongelados'])->name('product.nc.import');
