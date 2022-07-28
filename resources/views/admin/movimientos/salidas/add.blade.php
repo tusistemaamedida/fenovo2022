@@ -55,7 +55,8 @@
                 type: 'POST',
                 data: {
                     id: jQuery("#session_product_id").val(),
-                    quantity: jQuery("#session_product_quantity").val()
+                    quantity: jQuery("#session_product_quantity").val(),
+                    palet: jQuery("#palet").val(),
                 },
                 beforeSend: function() {
                     jQuery('#loader').removeClass('hidden');

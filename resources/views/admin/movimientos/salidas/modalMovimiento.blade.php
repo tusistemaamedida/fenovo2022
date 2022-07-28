@@ -1,17 +1,38 @@
 <div id="movimientoPopup" class="movimientoPopup offcanvas offcanvas-right kt-color-panel p-5">
     <form id="formDataMovimiento">
         @csrf
-        <div class="row">
-            <h4>Cod Fenovo <span id="mov_cod_fenovo"></span></h4>
-            <div class="form-group mt-3">
-                <label class="text-body">Bultos *</label>
-                <fieldset class="form-group mb-3">
-                    <input type="number" id="session_product_quantity" name="session_product_quantity" value="" class="form-control text-center" />
-                </fieldset>
-            </div>
 
-            <input type="hidden" id="session_product_id" name="session_product_id" value="" class="form-control" />
+        <input type="hidden" id="session_product_id" name="session_product_id" value=""/>
+
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                <h4>Codigo fenovo <span id="mov_cod_fenovo"></span></h4>
+            </div>
+        </div>    
+        <div class="row mb-3">
+            <div class="col-6">
+                Bultos
+            </div>
+            <div class="col-6">
+                <input type="number" id="session_product_quantity" name="session_product_quantity" value="" class="form-control text-center" />
+            </div>
         </div>
+
+        <div class="row mb-3">
+            <div class="col-6">
+                Palets
+            </div>
+            <div class="col-6">
+                <select class="rounded form-control text-center" name="palet" id="palet">
+                    @foreach ($palets as $palet)
+                        <option value="{{ $palet->id }}">
+                            {{ $palet->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
         <div class="row mt-5">
             <div class="col-6">
                 <button type="reset" class="btn btn-outline-primary" onclick="cerrarModal()">

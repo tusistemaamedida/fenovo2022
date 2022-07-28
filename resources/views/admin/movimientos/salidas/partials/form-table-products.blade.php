@@ -15,8 +15,9 @@
                                     <th>Bultos</th>
                                     <th>Cant</th>
                                     <th>P.U.</th>
-                                    <th>IVA</th>
+                                    <th>Iva</th>
                                     <th>Subtotal</th>
+                                    <th>Palet</th>
                                     <th>Editar</th>
                                     <th>Quitar</th>
                                 </tr>
@@ -52,8 +53,8 @@
                                                 {{$session_product->producto->cod_fenovo}} {{$session_product->producto->name}}
                                             </td>
                                             <td>{{number_format($session_product->unit_package,2)}}</td>
-                                            <td>{{$session_product->quantity}}</td>
-                                            <td>
+                                            <td class=" text-center">{{$session_product->quantity}}</td>
+                                            <td class=" text-center">
                                                 @if ($session_product->unit_type == 'K')
                                                 {{$session_product->producto->unit_weight * $session_product->unit_package * $session_product->quantity}}
                                                 @else
@@ -69,7 +70,8 @@
                                                 @endif
                                             </td>
                                             <td>${{ $subtotal_product_format }}</td>
-                                            <td class=" text-center">
+                                            <td>{{ ($session_product->palet)?$session_product->Palet->nombre:null }}</td>
+                                            <td class="text-center">
                                                 <a href="javascript:void(0)" onclick="editarMovimiento('{{$session_product->id}}', '{{$session_product->quantity}}', '{{$session_product->producto->cod_fenovo}}')">
                                                     <i class=" fa fa-pencil-alt"></i>
                                                 </a>
@@ -96,25 +98,24 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
                                 </tr>
                                 <tr class="bg-light">
-                                    <td>TOTALES</td>
                                     <td></td>
                                     <td></td>
+                                    <th>Totales</th>
                                     <td></td>
-                                    <td>{{ $session_products->sum('quantity')}}</td>
+                                    <td class=" text-center">{{ $session_products->sum('quantity')}}</td>
                                     <td></td>
                                     <td></td>
                                     <td>${{number_format($total_iva, 2, ',', '');}}</td>
                                     <td>${{number_format($subtotal, 2, ',', '');}}</td>
-                                    <td>
-                                        <input type="hidden" name="subTotal" id="subTotal" value="{{ $subtotal +$total_iva }}">
-                                    </td>
-                                    <td>$ {{number_format($subtotal +$total_iva , 2, ',', '');}} </td>
+                                    <td colspan="3"> $ {{number_format($subtotal +$total_iva , 2, ',', '');}} </td>
                                 </tr>
                             </tfoot>
                         </table>
-
+                        
+                        <input type="hidden" name="subTotal" id="subTotal" value="{{ $subtotal +$total_iva }}">
                         <input type="hidden" name="total_from_session" id="total_from_session" value="{{$subtotal}}">
                     </div>
                 </div>
@@ -183,6 +184,7 @@
             { orderable: false, targets: 8 },
             { orderable: false, targets: 9 },
             { orderable: false, targets: 10 },
+            { orderable: false, targets: 11 },
         ],
         order: [[1, 'asc']],
         iDisplayLength: -1,

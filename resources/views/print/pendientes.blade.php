@@ -60,6 +60,7 @@
         <th class="text-center">Presentación</th>
         <th class="text-center">Peso_U</th>
         <th class="text-center">Unidad</th>
+        <th class="text-center">Palet</th>
     </tr>    
 
     @php
@@ -80,16 +81,18 @@
         <td class="text-center">{{$session_product->unit_package}}</td>
         <td class="text-center">{{$session_product->unit_weight }}</td>
         <td class="text-center">{{$session_product->unit_type}}</td>
+        <td class="text-center"> ...... </td>
     </tr>
     @endforeach
 
     <tr>
-        <th colspan="7"><br></th>
+        <th colspan="8"><br></th>
     </tr>
     <tr class=" bg-info text-white">
         <th>{{ number_format($session_products->sum('quantity'),2) }} </th>
         <th>{{ $total_kgrs }} Kgrs</th>
         <th></th>
+        <th> </th>
         <th> </th>
         <th> </th>
         <th> </th>
