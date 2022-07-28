@@ -5,21 +5,21 @@
                 <div class="col-12">
                     <div class="table-responsive">
 
-                        <table class="table table-striped table-borderless table-condensed table-hover text-body yajra-datatable">
+                        <table class="table table-striped table-borderless table-condensed table-hover text-center yajra-datatable">
                             <thead>
-                                <tr class="bg-dark text-white ">
+                                <tr class="bg-dark text-black-50">
                                     <th>#</th>
-                                    <th>Cod</th>
-                                    <th>Nombre</th>
-                                    <th>Pres</th>
+                                    <th>Codigo</th>
+                                    <th>Producto</th>
+                                    <th>Presentación</th>
                                     <th>Bultos</th>
-                                    <th>Cant</th>
-                                    <th>P.U.</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio</th>
                                     <th>Iva</th>
                                     <th>Subtotal</th>
                                     <th>Palet</th>
-                                    <th>Editar</th>
-                                    <th>Quitar</th>
+                                    <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -48,13 +48,13 @@
                                         <tr>
                                             <td>{{ $i }}</td>
                                             <td>{{$session_product->producto->cod_fenovo}}</td>
-                                            <td>
+                                            <td class="text-left">
                                                 @if($session_product->circuito == 'CyO') <span style="font-size: 24px;vertical-align: -webkit-baseline-middle;"> * </span>@endif
-                                                {{$session_product->producto->cod_fenovo}} {{$session_product->producto->name}}
+                                                {{$session_product->producto->name}}
                                             </td>
                                             <td>{{number_format($session_product->unit_package,2)}}</td>
-                                            <td class=" text-center">{{$session_product->quantity}}</td>
-                                            <td class=" text-center">
+                                            <td>{{$session_product->quantity}}</td>
+                                            <td>
                                                 @if ($session_product->unit_type == 'K')
                                                 {{$session_product->producto->unit_weight * $session_product->unit_package * $session_product->quantity}}
                                                 @else
@@ -62,24 +62,18 @@
                                                 @endif
                                             </td>
                                             <td>${{ number_format($unit_price, 2, ',', '')}}</td>
-                                            <td>
-                                                @if($session_product->invoice)
-                                                {{ number_format($session_product->producto->product_price->tasiva,2)}} %
-                                                @else
-                                                0 %
-                                                @endif
-                                            </td>
+                                            <td>{{ ($session_product->invoice) ? number_format($session_product->producto->product_price->tasiva,2) : 0 }} % </td>
                                             <td>${{ $subtotal_product_format }}</td>
                                             <td>{{ ($session_product->palet)?$session_product->Palet->nombre:null }}</td>
-                                            <td class="text-center">
-                                                <a href="javascript:void(0)" onclick="editarMovimiento('{{$session_product->id}}', '{{$session_product->quantity}}', '{{$session_product->producto->cod_fenovo}}')">
+                                            <td>
+                                                <a href="javascript:void(0)" onclick="editarMovimiento('{{$session_product->id}}', '{{$session_product->quantity}}', '{{$session_product->producto->cod_fenovo}}')" title="modificar">
                                                     <i class=" fa fa-pencil-alt"></i>
                                                 </a>
                                             </td>
-                                            <td class=" text-center">
-                                                <button type="button" onclick="deleteItemSession({{$session_product->id}},'{{route('delete.item.session.produc')}}')" class="btn btn-link confirm-delete" title="Eliminar">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
+                                            <td>
+                                                <a href="javascript:void(0)" onclick="deleteItemSession({{$session_product->id}},'{{route('delete.item.session.produc')}}')" title="eliminar">
+                                                    <i class="fas fa-trash-alt text-danger"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -105,7 +99,7 @@
                                     <td></td>
                                     <th>Totales</th>
                                     <td></td>
-                                    <td class=" text-center">{{ $session_products->sum('quantity')}}</td>
+                                    <td>{{ $session_products->sum('quantity')}}</td>
                                     <td></td>
                                     <td></td>
                                     <td>${{number_format($total_iva, 2, ',', '');}}</td>

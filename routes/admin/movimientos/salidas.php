@@ -33,7 +33,7 @@ Route::get('get-presentaciones', [SalidasController::class, 'getPresentaciones']
 Route::post('imprimir-remito', [SalidasController::class, 'printRemito'])->name('print.remito');
 Route::get('imprimir-orden', [SalidasController::class, 'printOrden'])->name('print.orden');
 Route::get('imprimir-orden-panama', [SalidasController::class, 'printOrdenPanama'])->name('print.ordenPanama');
-Route::get('imprimir-ordenes', [SalidasController::class, 'printOrdenes'])->name('print.ordenes');
+Route::get('imprimir-ordenes/{id}', [SalidasController::class, 'printOrdenes'])->name('print.ordenes');
 
 Route::get('ver-orden/consolidada', [SalidasController::class, 'indexOrdenConsolidada'])->name('index.ordenConsolidada');
 Route::get('imprimir-orden/consolidada', [SalidasController::class, 'printOrdenConsolidada'])->name('print.ordenConsolidada');

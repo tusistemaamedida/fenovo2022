@@ -278,7 +278,7 @@ class SalidasController extends Controller
                     $objProduct->unit_type    = $movimiento->unit_type;
                     $objProduct->unit_package = $movimiento->unit_package;
                     $objProduct->quantity     = $movimiento->bultos;
-                    $objProduct->palet        = ($movimiento->palet)?$movimiento->Palet->nombre:null;
+                    $objProduct->palet        = ($movimiento->palet) ? $movimiento->Palet->nombre : null;
                     $objProduct->unity        = '( ' . $movimiento->unit_package . ' ' . $movimiento->product->unit_type . ' )';
                     $objProduct->total_unit   = number_format($movimiento->bultos * $movimiento->unit_package, 2, ',', '.');
                     $objProduct->class        = '';
@@ -347,6 +347,7 @@ class SalidasController extends Controller
                 $objProduct->name         = $producto->product->name;
                 $objProduct->unit_weight  = $producto->product->unit_weight;
                 $objProduct->unit_package = $producto->unit_package;
+                $objProduct->palet = $producto->palet;
                 $objProduct->quantity     = $producto->bultos;
                 $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
                 $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
@@ -357,7 +358,7 @@ class SalidasController extends Controller
 
         // Guarda el PDF en la carpeta public
 
-        $orden = 'orden-' . $request->id . '.pdf';
+        $orden = 'exportacion/orden-' . $request->id . '.pdf';
         $pdf   = PDF::loadView('print.orden', compact('orden', 'destino', 'array_productos'));
         $pdf->save($orden);
 
@@ -376,6 +377,7 @@ class SalidasController extends Controller
             $objProduct->name         = $producto->product->name;
             $objProduct->unit_weight  = $producto->product->unit_weight;
             $objProduct->unit_package = $producto->unit_package;
+            $objProduct->palet = $producto->palet;
             $objProduct->quantity     = $producto->bultos;
             $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
             $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
@@ -383,7 +385,7 @@ class SalidasController extends Controller
             array_push($array_productos, $objProduct);
         }
 
-        $ordenp = 'ordenp-' . $request->id . '.pdf';
+        $ordenp = 'exportacion/ordenp-' . $request->id . '.pdf';
         $pdfp   = PDF::loadView('print.ordenPanama', compact('orden', 'destino', 'array_productos'));
         $pdf->save($ordenp);
 
@@ -549,7 +551,7 @@ class SalidasController extends Controller
                 $objProduct->cod_fenovo = $producto->product->cod_fenovo;
                 $objProduct->codigo     = $producto->product->cod_fenovo;
                 $objProduct->name       = $producto->product->name;
-                $objProduct->palet      = ($producto->palet)?$producto->Palet->nombre:null;
+                $objProduct->palet      = ($producto->palet) ? $producto->Palet->nombre : null;
                 $objProduct->unit_price = number_format($producto->unit_price, 2, ',', '.');
                 $objProduct->subtotal   = number_format($subtotal, 2, ',', '.');
                 $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
@@ -567,7 +569,7 @@ class SalidasController extends Controller
     public function add()
     {
         $this->sessionProductRepository->deleteDevoluciones();
-        $palets      = Palet::all();
+        $palets = Palet::all();
         return view('admin.movimientos.salidas.add', compact('palets'));
     }
 
