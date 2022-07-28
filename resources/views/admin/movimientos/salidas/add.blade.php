@@ -15,6 +15,9 @@
     <div class="d-flex flex-column-fluid">
         <div class="container-fluid">
             <div class="row">
+                @if (isset($list_id))
+                    <input type="hidden" name="list_id" id="list_id" value="{{ $list_id }}">
+                @endif
                 @include('admin.movimientos.salidas.partials.form-select-cliente')
                 <div class="col-md-12" id="divAlertStock"></div>
                 <div style="width: 100%" id="session_products_table"></div>
@@ -383,9 +386,12 @@
         })
 
         jQuery('#btnPrintCerrarSalida').click(function(e) {
-            var to_type = jQuery("#to_type").val();
-            var to = jQuery("#to").val();
-            var list_id = to_type + '_' + to;
+            var list_id = jQuery("#list_id").val();
+            if(!list_id || list_id == ''){
+                var to_type = jQuery("#to_type").val();
+                var to = jQuery("#to").val();
+                var list_id = to_type + '_' + to;
+            }
             var url = "{{ route('salidas.pendiente.print', '') }}" + "?list_id=" + list_id;
             window.open(url, '_blank');
         })

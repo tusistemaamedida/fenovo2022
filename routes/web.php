@@ -9,6 +9,8 @@ Route::get('/', function () {
     return view('portada');
 });
 
+require __DIR__ . '/admin/mis-facturas.php';
+
 Route::group(['middleware' => 'preventBackHistory'], function () {
     Auth::routes();
     Route::get('/inicio', [App\Http\Controllers\HomeController::class, 'index'])->name('inicio');

@@ -25,6 +25,7 @@ use App\Models\ProductStore;
 use App\Models\Proveedor;
 use App\Models\SessionOferta;
 use App\Models\SessionPrices;
+use App\Models\Store;
 use App\Repositories\AlicuotaTypeRepository;
 use App\Repositories\EnumRepository;
 use App\Repositories\ProducDescuentoRepository;
@@ -42,6 +43,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
+use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -187,32 +189,76 @@ class ProductController extends Controller
                 ->rawColumns(['fecha', 'type', 'from', 'to', 'orden', 'observacion'])
                 ->make(true);
         }
-
         return view('admin.products.historial', compact('producto'));
+    }
+
+    public function historialTienda(Request $request)
+    {
+        $store = Store::find($request->store_id);
+        $producto = Product::find($request->product_id);
+
+        if ($request->ajax()) {
+            $movimientos = MovementProduct::with(['movement'])
+                ->whereProductId($producto->id)
+                ->whereEntidadId($store->id)
+                ->orderBy('id', 'DESC')
+                ->get();
+            return Datatables::of($movimientos)
+                ->addIndexColumn()
+                ->addColumn('fecha', function ($movimiento) {
+                    return date('d/m/Y', strtotime($movimiento->created_at));
+                })
+                ->addColumn('type', function ($movimiento) {
+                    return $movimiento->movement->type;
+                })
+                ->addColumn('from', function ($movimiento) {
+                    return $movimiento->movement->From($movimiento->movement->type);
+                })
+                ->addColumn('to', function ($movimiento) {
+                    return $movimiento->movement->To($movimiento->movement->type);
+                })
+                ->addColumn('orden', function ($movimiento) {
+                    return $movimiento->movement->id;
+                })
+                ->addColumn('observacion', function ($movimiento) {
+                    return $movimiento->movement->observacion;
+                })
+
+                ->rawColumns(['fecha', 'type', 'from', 'to', 'orden', 'observacion'])
+                ->make(true);
+        }
+        return view('admin.products.historialTienda', compact('producto', 'store'));
     }
 
 
     public function ajusteHistoricoDeposito(Request $request)
     {
-
         if ($request->ajax()) {
-
             $movimientos = DB::table('movements as t1')
                 ->join('movement_products as t2', 't1.id', '=', 't2.movement_id')
                 ->join('products as t3', 't2.product_id', '=', 't3.id')
                 ->join('users as t4', 't1.user_id', '=', 't4.id')
                 ->select(
-                    't1.id', 't1.date',
-                    't2.unit_price', 't2.cost_fenovo', 't2.tasiva', 't2.bultos', 't2.circuito',
-                    't3.id as product_id', 't3.unit_type', 't3.unit_package', 't3.name as producto', 't3.cod_fenovo',
+                    't1.id',
+                    't1.date',
+                    't2.unit_price',
+                    't2.cost_fenovo',
+                    't2.tasiva',
+                    't2.bultos',
+                    't2.circuito',
+                    't3.id as product_id',
+                    't3.unit_type',
+                    't3.unit_package',
+                    't3.name as producto',
+                    't3.cod_fenovo',
                     't4.name as usuario'
                 )
                 ->selectRaw('t2.bultos * t2.unit_package as cantidad')
                 ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.cost_fenovo,2) as costoTotal')
                 ->selectRaw('FORMAT(t2.bultos * t2.unit_package * t2.unit_price,2) as ventaTotal')
                 ->selectRaw('IF(t2.entry > 0, "salida", "entrada") as estado')
-                ->where('t1.type', '=','AJUSTE')
-                ->where('t2.entidad_id', '=',64)
+                ->where('t1.type', '=', 'AJUSTE')
+                ->where('t2.entidad_id', '=', 64)
                 ->orderBy('t1.id', 'desc')
                 ->get();
 
@@ -544,9 +590,11 @@ class ProductController extends Controller
 
                     $prod_store->save();
                     $balance_deposito = $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo;
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
                 } else {
-
                     $data_prod_store['product_id'] = $product->id;
                     $data_prod_store['store_id']   = 64;
 
@@ -1120,18 +1168,12 @@ class ProductController extends Controller
 
                     // Buscar si el producto tiene oferta del proveedor
                     $hoy    = Carbon::parse(now())->format('Y-m-d');
-                    $oferta = DB::table('products as t1')
-                    ->join('session_ofertas as t2', 't1.id', '=', 't2.product_id')
-                    ->select('t2.costfenovo')
-                    ->where('t1.id', $product->id)
-                    ->where('t2.fecha_desde', '<=', $hoy)
-                    ->where('t2.fecha_hasta', '>=', $hoy)
-                    ->first();
-
-                    return (!$oferta) ? $product->product_price->costfenovo : $oferta->costfenovo;
+                    $oferta = SessionOferta::whereProductId($product->id)->select('costfenovo')->where('fecha_desde', '<=', $hoy)->where('fecha_hasta', '>=', $hoy)->first();
+                    $costo  = (!$oferta) ? $product->product_price->costfenovo : $oferta->costfenovo;
+                    return number_format($costo, 2);
                 })
 
-                ->rawColumns(['stockInicioSemana', 'ingresoSemana', 'salidaSemana', 'stock'])
+                ->rawColumns(['stockInicioSemana', 'ingresoSemana', 'salidaSemana', 'stock', 'costo'])
                 ->make(true);
         }
 
@@ -1140,9 +1182,6 @@ class ProductController extends Controller
 
     public function printCompararStock(Request $request)
     {
-        // $producto = Product::find(6)->stockInicioSemana();
-        // return $producto;
-
         return Excel::download(new ProductsViewExportStock(), 'stocks-' . date('d-m-Y') . '.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
     }
 
@@ -1304,11 +1343,23 @@ class ProductController extends Controller
         return 'Completado la Distribucion stock en Nave';
     }
 
-    public function distribuirBase()
+    public function distribuirBase(Request $request)
     {
-        // Deposito Blas Parera Store_id = 11
-        $store_id = 11;
-        ProductStore::where('store_id', $store_id)->delete();
+        // 11 - Deposito Blas parera
+        // 59 - Deposito Reconquista
+        // 60 - Deposito Resistencia
+
+        if (!$request->storeId) {
+            return 'Por favor ingrese ID de tienda tipo DEPOSITO';
+        }
+
+        $store = Store::find($request->storeId);
+
+        if (!$store) {
+            return 'No existe ID tienda';
+        }
+
+        ProductStore::where('store_id', $request->storeId)->delete();
         $parametros = Coeficiente::all();
 
         foreach ($parametros as $parametro) {
@@ -1317,13 +1368,13 @@ class ProductController extends Controller
             $product = Product::find($parametro->id);
 
             // Reviso si esta en los stocks de las Stores
-            $producto = ProductStore::where('product_id', $parametro->id)->where('store_id', $store_id)->first();
+            $producto = ProductStore::where('product_id', $parametro->id)->where('store_id', $request->storeId)->first();
 
-            // Si no esta definido la Store  y el producto, lo genero
+            // Si no esta definido la Store y el producto, lo genero
             if (!$producto) {
                 $producto = ProductStore::create([
                     'product_id' => $parametro->id,
-                    'store_id'   => $store_id,
+                    'store_id'   => $request->storeId,
                     'stock_f'    => 0,
                     'stock_r'    => 0,
                     'stock_cyo'  => 0,
@@ -1337,41 +1388,68 @@ class ProductController extends Controller
                 $stock             = $producto_stock->stock;
                 $producto->stock_f = $stock          * ($parametro->coeficiente / 100);
                 $producto->stock_r = $stock - $stock * ($parametro->coeficiente / 100);
-                $producto->save();
             } else {
                 $stock             = 0;
                 $producto->stock_f = 0;
                 $producto->stock_r = 0;
-                $producto->save();
             }
+            $producto->save();
 
             // Crear el movimiento ajuste
             $movement = Movement::create([
                 'date'           => now(),
                 'type'           => 'AJUSTE',
-                'from'           => $store_id,
-                'to'             => $store_id,
+                'from'           => $request->storeId,
+                'to'             => $request->storeId,
                 'status'         => 'CREATED',
                 'voucher_number' => '00001',
             ]);
 
             // Crear el detalle
             MovementProduct::create([
-                'entidad_id'   => $store_id,
+                'entidad_id'   => $request->storeId,
                 'entidad_tipo' => 'S',
                 'movement_id'  => $movement->id,
                 'product_id'   => $product->id,
                 'unit_package' => $product->unit_package,
+                'unit_price'   => $product->product_price->costfenovo,
+                'tasiva'       => $product->product_price->tasiva,
                 'invoice'      => 1,
                 'entry'        => $stock,
                 'egress'       => 0,
                 'balance'      => $stock,
-                'unit_price'   => $product->product_price->costfenovo,
-                'tasiva'       => $product->product_price->tasiva,
             ]);
         }
 
-        return 'Completado la Distribucion stock en Store ' . $store_id;
+        return 'Completado la carga de Stock y distribucion de stocks en ' . $store->description;
+    }
+
+    public function stockDeposito(Request $request)
+    {
+        $stores =  Store::where('store_type', '!=', 'N')->orderBy('description')->get();
+        return view('admin.products.listDepositos', compact('stores'));
+    }
+
+    public function stockDepositoDetalle(Request $request)
+    {
+        try {
+            $store = Store::find($request->id);
+            $productos = DB::table('products as t1')->where('t1.active', 1)
+                ->leftJoin('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
+                ->leftJoin('products_store as t4', 't1.id', '=', 't4.product_id')
+                ->select(['t1.id', 't1.cod_fenovo', 't1.name as producto', 't1.unit_type', 't3.name as proveedor'])
+                ->selectRaw('t4.stock_f + t4.stock_r + t4.stock_cyo as stock')
+                ->where('t4.store_id', '=', $request->id)
+                ->orderBy('t1.cod_fenovo')
+                ->get();
+
+            return new JsonResponse([
+                    'type' => 'success',
+                    'html' => view('admin.products.listDepositosDetalle', compact('store', 'productos'))->render(),
+                ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
+        }
     }
 
     public function printListaMayoristaFenovo(Request $request)

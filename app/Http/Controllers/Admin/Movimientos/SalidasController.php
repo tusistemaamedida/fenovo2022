@@ -70,7 +70,16 @@ class SalidasController extends Controller
     {
         if ($request->ajax()) {
             $arrTypes = ['VENTA', 'VENTACLIENTE', 'TRASLADO'];
-            $movement = Movement::where('from', Auth::user()->store_active)->whereIn('type', $arrTypes)->orderBy('date', 'DESC')->orderBy('id', 'DESC')->limit(200)->get();
+
+            // Tomo los movimientos de 90 dias atras
+            $fecha = Carbon::now()->subDays(90)->toDateTimeString();
+
+            $movement = Movement::where('from', Auth::user()->store_active)
+                ->whereIn('type', $arrTypes)
+                ->whereDate('created_at', '>', $fecha)
+                ->orderBy('date', 'DESC')
+                ->orderBy('id', 'DESC')
+                ->get();
 
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
@@ -89,6 +98,9 @@ class SalidasController extends Controller
                 ->editColumn('type', function ($movement) {
                     return $movement->type;
                 })
+                ->editColumn('observacion', function ($movement) {
+                    return ($movement->observacion == 'VENTA DIRECTA') ? '<i class="fa fa-check-circle text-dark"></i>' : null;
+                })
                 ->editColumn('factura_nro', function ($movement) {
                     if ($movement->type == 'VENTA' || $movement->type == 'VENTACLIENTE' || $movement->type == 'TRASLADO') {
                         if (isset($movement->invoice) && count($movement->invoice)) {
@@ -97,7 +109,7 @@ class SalidasController extends Controller
                                 if (!is_null($invoice->cae) && !is_null($invoice->url)) {
                                     $number = ($invoice->cyo) ? 'CyO - ' . $invoice->voucher_number : $invoice->voucher_number;
                                     $urls .= '<a class="text-primary" title="Descargar factura" target="_blank" href="' . $invoice->url . '"> ' . $number . ' </a><br>';
-                                }elseif(!is_null($invoice->cae) && is_null($invoice->url)){
+                                } elseif (!is_null($invoice->cae) && is_null($invoice->url)) {
                                     $number = ($invoice->cyo) ? 'CyO - ' . $invoice->voucher_number : $invoice->voucher_number;
                                     $urls .= '<a class="text-primary" title="Generar factura" target="_blank" href="' . route('ver.fe', ['movment_id' => $movement->id]) . '">' . $number . ' </a><br>';
                                 }
@@ -134,12 +146,12 @@ class SalidasController extends Controller
                         : null;
                 })
                 ->addColumn('ordenpanama', function ($movement) {
-                    return ($movement->hasPanama() || isset($movement->panamas))
+                    return ($movement->hasPanama() || count($movement->panamas))
                         ? '<a title="Imprimir Orden panama"  href="' . route('print.ordenPanama', ['id' => $movement->id]) . '" target="_blank"> <i class="fas fa-list"></i> </a>'
                         : null;
                 })
 
-                ->rawColumns(['id', 'origen', 'items', 'date', 'type', 'factura_nro', 'remito', 'paper', 'flete', 'orden', 'ordenpanama'])
+                ->rawColumns(['id', 'origen', 'items', 'date', 'type', 'observacion', 'factura_nro', 'remito', 'paper', 'flete', 'orden', 'ordenpanama'])
                 ->make(true);
         }
         return view('admin.movimientos.salidas.index');
@@ -193,7 +205,8 @@ class SalidasController extends Controller
 
     public function pendienteShow(Request $request)
     {
-        $explode = explode('_', $request->input('list_id'));
+        $list_id = $request->input('list_id');
+        $explode = explode('_', $list_id);
         $pedido  = null;
         if (count($explode) == 3) {
             $pedido = $explode[2];
@@ -201,7 +214,7 @@ class SalidasController extends Controller
         $tipo        = $explode[0];
         $destino     = $this->origenData($tipo, $explode[1], true);
         $destinoName = $this->origenData($tipo, $explode[1]);
-        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName', 'pedido'));
+        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName', 'pedido', 'list_id'));
     }
 
     public function getTotalMovement(Request $request)
@@ -221,7 +234,7 @@ class SalidasController extends Controller
 
     public function pendientePrint(Request $request)
     {
-        $list_id = $request->list_id . '_' . \Auth::user()->store_active;
+        $list_id = $request->list_id;//. '_' . \Auth::user()->store_active;
 
         $session_products = DB::table('session_products as t1')
             ->join('products as t2', 't1.product_id', '=', 't2.id')
@@ -446,7 +459,7 @@ class SalidasController extends Controller
         }
 
         $store_from = Store::where('id', $movement->from)->first();
-        $cip        = (is_null($store_from->cip))?'8889':$store_from->cip;
+        $cip        = (is_null($store_from->cip)) ? '8889' : $store_from->cip;
 
         if ($movement) {
             $id_flete               = $cip . '-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
@@ -514,10 +527,10 @@ class SalidasController extends Controller
         }
 
         $store_from = Store::where('id', $movement->from)->first();
-        $cip        = (is_null($store_from->cip))?'8889':$store_from->cip;
+        $cip        = (is_null($store_from->cip)) ? '8889' : $store_from->cip;
 
         if ($movement) {
-            $id_panama       = $cip .'-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
+            $id_panama       = $cip . '-' . str_pad($orden, 8, '0', STR_PAD_LEFT);
             $destino         = $this->origenData($movement->type, $movement->to, false);
             $fecha           = \Carbon\Carbon::parse($panama->created_at)->format('d/m/Y');
             $neto            = 0;
@@ -986,7 +999,6 @@ class SalidasController extends Controller
             $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
 
             foreach ($session_products as $product) {
-
                 $stock_inicial_store = 0;
                 $quantities          = $this->getStockDividido($product);
                 $stock_inicial       = $product->producto->stockReal();
@@ -1044,10 +1056,13 @@ class SalidasController extends Controller
                 }
 
                 if (isset($pedido)) {
-                    $ped_producto                    = PedidoProductos::where('pedido_id', $pedido->id)->where('product_id', $product->product_id)->first();
-                    $ped_producto->bultos_enviados   = $product->quantity;
-                    $ped_producto->bultos_pendientes = $ped_producto->bultos - $product->quantity;
-                    $ped_producto->save();
+                    $ped_producto = PedidoProductos::where('pedido_id', $pedido->id)->where('product_id', $product->product_id)->first();
+                    if ($ped_producto) {
+                        $ped_producto->bultos_enviados   = $product->quantity;
+                        $ped_producto->bultos_pendientes = $ped_producto->bultos - $product->quantity;
+                        $ped_producto->save();
+                    }
+                    //Aca deberia ir el producto nuevo que cargo en el pedido
                 }
 
                 $countEgress = 0;
@@ -1187,10 +1202,11 @@ class SalidasController extends Controller
         );
     }
 
-    public function cambiarPausaSalida(Request $request){
+    public function cambiarPausaSalida(Request $request)
+    {
         $existe_session_en_curso = SessionProduct::where('list_id', $request->list_id)->whereNull('pausado')->count();
-        $productos_en_session = SessionProduct::where('list_id', $request->list_id)->where('pausado', $request->id_pausado)->get();
-        if($existe_session_en_curso && !is_null($productos_en_session[0]->pausado)){
+        $productos_en_session    = SessionProduct::where('list_id', $request->list_id)->where('pausado', $request->id_pausado)->get();
+        if ($existe_session_en_curso && !is_null($productos_en_session[0]->pausado)) {
             return new JsonResponse(
                 [
                     'msj'  => 'Para cambiar la pausa debe cerrar o pausar la salida pendiente a la misma tienda de ésta. ',
@@ -1198,7 +1214,7 @@ class SalidasController extends Controller
                 ]
             );
         }
-        $id_pausado = rand(1111111111,9999999999);
+        $id_pausado = rand(1111111111, 9999999999);
         foreach ($productos_en_session as $ps) {
             $ps->pausado = (is_null($ps->pausado)) ? $id_pausado : null;
             $ps->save();
