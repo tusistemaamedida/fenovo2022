@@ -663,7 +663,7 @@ class SalidasController extends Controller
             $session_products      = $this->sessionProductRepository->getByListId($list_id);
             $mostrar_check_invoice = false; //!(str_contains($list_id, 'DEVOLUCION_') || str_contains($list_id, 'DEBITO_'));
             return new JsonResponse([
-                'type' => 'success',
+                'type' => $list_id,
                 'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products', 'mostrar_check_invoice'))->render(),
             ]);
         } catch (\Exception $e) {
@@ -773,6 +773,10 @@ class SalidasController extends Controller
             $product_id          = $request->input('product_id');
             $unit_type           = $request->input('unit_type');
             $list_id             = $request->input('list_id');
+
+            if (count(explode('_', $list_id)) == 2) {
+                $list_id .= '_' . Auth::user()->store_active;
+            }
 
             if (!$to) {
                 return new JsonResponse(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
