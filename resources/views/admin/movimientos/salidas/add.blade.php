@@ -336,7 +336,12 @@
             var to_type = jQuery("#to_type").val();
             var product_id = jQuery("#product_search").val();
             var to = jQuery("#to").val();
-            var list_id = to_type + '_' + to;
+            var nro_pedido = jQuery("#nro_pedido").val();
+            if(nro_pedido){
+                var list_id = to_type + '_' + to + '_' + nro_pedido;
+            }else{
+                var list_id = to_type + '_' + to;
+            }
             var unidades = jQuery("#unidades_a_enviar").serializeArray();
             var formData = {
                 list_id,
