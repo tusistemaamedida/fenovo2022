@@ -65,8 +65,9 @@
         <td class=" text-center">Kgrs</td>
         <td class=" text-center">Unidades</td>
         <td class="w-25 text-left">Nombre del producto</td>
-        <td>Presentación</td>
-        <td>Unidad</td>
+        <td class=" text-center">Presentación</td>
+        <td class=" text-center">Unidad</td>
+        <td class=" text-center">Palet</td>
     </tr>
     @php
     $total_kgrs = 0;
@@ -84,20 +85,22 @@
         <td class=" text-center">{{ (int)$session_product->quantity}}</td>
         <td class=" text-center">{{ (float)$session_product->unit_weight * (float)$session_product->unit_package * (float)$session_product->quantity }} </td>
         <td class=" text-center">{{ $session_product->unit_package * $session_product->quantity }} </td>
-        <td style="text-align: left">{{$session_product->name}}</td>
-        <td>{{$session_product->unit_package}}</td>
-        <td>{{$session_product->unit_type}}</td>
+        <td class=" text-left">{{$session_product->name}}</td>
+        <td class=" text-center">{{$session_product->unit_package}}</td>
+        <td class=" text-center">{{$session_product->unit_type}}</td>
+        <td class=" text-center">{{$session_product->palet}}</td>
     </tr>
 
     @endforeach
 
     <tr>
-        <th colspan="6"><br></th>
+        <th colspan="7"><br></th>
     </tr>
     <tr class=" bg-info text-white">
         <th class=" text-center"> {{ number_format($total_bultos,2) }}</th>
         <th class=" text-center"> {{ number_format($total_kgrs,2) }} </th>
         <th class=" text-center"> </th>
+        <th></th>
         <th></th>
         <th></th>
         <th></th>

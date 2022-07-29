@@ -9,15 +9,20 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
+
+                @can('products.index')
                 <li class="nav-item dropdown ml-3 mt-2" title="Lista de productos">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-barcode"></i> </span>
                     </a>
                     <div class="dropdown-menu bg-dark">
+
+                                                    
                         <a class="dropdown-item" href="{{ url('productos') }}">
                             <span class="text-black-50"> Lista de productos </span>
                         </a>
+                      
 
                         <a class="dropdown-item" href="{{ route('productos.stock.deposito') }}">
                             <span class="text-black-50"> Stock de productos en Friotekas </span>
@@ -47,7 +52,9 @@
                         </a>
                     </div>
                 </li>
+                @endcan
 
+                @can('products.index')
                 <li class="nav-item dropdown mt-2" title="Compras">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -65,7 +72,7 @@
                         </a>
                     </div>
                 </li>
-
+                @endcan
 
                 <li class="nav-item dropdown mt-2" title="Salidas">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
@@ -76,6 +83,9 @@
                         <a class="dropdown-item text-black-50" href="{{ route('salidas.pendientes') }}">
                             Preparar salidas
                         </a>
+
+                        @if(in_array(Auth::user()->rol(), ['superadmin', 'admin']) )
+
                         <a class="dropdown-item text-black-50" href="{{ route('salidas.index') }}">
                             Salidas finalizadas
                         </a>
@@ -88,11 +98,13 @@
                         <a class="dropdown-item text-black-50" href="{{ route('nd.index') }}">
                             Notas de <span class="text-warning">Dédito</span>
                         </a>
+                        
+                        @endif
                     </div>
                 </li>
 
-                <li class="nav-item"
-                    title="@if ($nroPedidos > 0) Tiene {{ $nroPedidos }} pedido pendientes @else Lista de pedidos @endif ">
+                @can('pedidos.index')
+                <li class="nav-item" title="Lista de pedidos - @if ($nroPedidos > 0) tiene {{ $nroPedidos }} pedido pendientes @endif " >
                     <a href="{{ route('pedidos.index') }}" class="nav-link mt-2">
                         @if ($nroPedidos > 0)
                             <i class="fas fa-list text-warning"></i> <span
@@ -100,10 +112,12 @@
                         @else
                             <i class="fas fa-list"></i>
                         @endif
-
                     </a>
                 </li>
+                @endcan
 
+    
+                @can('stores.index')
                 <li class="nav-item" title="Lista de franquicias">
                     <a href="{{ url('tiendas') }}" class="nav-link mt-2">
                         <span class="svg-icon nav-icon">
@@ -111,7 +125,9 @@
                         </span>
                     </a>
                 </li>
+                @endcan
 
+                @can('customers.index')
                 <li class="nav-item" title="Clientes">
                     <a href="{{ url('clientes') }}" class="nav-link mt-2">
                         <span class="svg-icon nav-icon">
@@ -119,7 +135,9 @@
                         </span>
                     </a>
                 </li>
+                @endcan
 
+                @can('print.index')
                 <li class="nav-item" title="Impresión / Exportación">
                     <a href="{{ route('menu.print') }}" class="nav-link mt-2">
                         <span class="svg-icon nav-icon">
@@ -127,8 +145,11 @@
                         </span>
                     </a>
                 </li>
+                @endcan
 
-                <li class="nav-item dropdown mt-2">
+
+                @can('setting.index')
+                <li class="nav-item dropdown mt-2" title="Configuracion de accesos y roles">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-cogs"></i>
@@ -147,7 +168,9 @@
                         @endrole
                     </div>
                 </li>
+                @endcan
 
+                @can('setting.index')
                 <li class="nav-item" title="Proveedores">
                     <a href="{{ url('proveedores') }}" class="nav-link mt-2">
                         <span class="svg-icon nav-icon">
@@ -155,7 +178,9 @@
                         </span>
                     </a>
                 </li>
+                @endcan
 
+                @can('transporte.index')
                 <li class="nav-item dropdown mt-2" title="Transporte">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -176,6 +201,8 @@
                         </a>
                     </div>
                 </li>
+                @endcan
+
             </ul>
 
             <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
