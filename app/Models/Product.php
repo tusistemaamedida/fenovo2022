@@ -212,21 +212,30 @@ class Product extends Model
 
     public function stockInicioSemana()
     {
-        $movimientos = MovementProduct::whereEntidadId(1)
-            ->where('created_at', '>', Carbon::now()->subDays(7))
+        $dias       = 7;
+        $movimiento = MovementProduct::whereEntidadId(1)
+            ->where('created_at', '>', Carbon::now()->subDays($dias))
             ->whereProductId($this->id)
             ->orderBy('created_at')
-            ->get();
-
-        if ($movimientos) {
-            foreach ($movimientos as $movimiento) {
-                if ($movimiento->balance != 0) {
-                    return $movimiento;
+            ->first();
+        if (!$movimiento) {
+            $dias++;
+            $tope = 31;
+            for ($i = $dias; $i < $tope; $i++) {
+                $movimiento = MovementProduct::whereEntidadId(1)
+                    ->where('created_at', '>', Carbon::now()->subDays($i))
+                    ->whereProductId($this->id)
+                    ->orderBy('created_at')
+                    ->first();
+                if ($movimiento) {
+                    break;
                 }
             }
-        }
-
-        return null;
+            if ($i == $tope) {
+                return null;
+            }
+        } 
+        return $movimiento;
     }
 
     public function ingresoSemana()

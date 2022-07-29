@@ -63,6 +63,7 @@
         <td class="text-center">Unidades</td>
         <td class="w-25">Nombre del producto</td>
         <td class="text-center">Presentación</td>
+        <td class="text-center">Palet</td>
     </tr>
     @php
     $total_kgrs = 0;
@@ -82,16 +83,18 @@
         <td class="text-center">{{ $session_product->unit_package * $session_product->quantity }} </td>
         <td>{{$session_product->name}}</td>
         <td class="text-center">{{$session_product->unit_package}}</td>
+        <td class="text-center">{{$session_product->palet}}</td>
     </tr>
 
     @endforeach
 
     <tr>
-        <th colspan="5"><br></th>
+        <th colspan="6"><br></th>
     </tr>
     <tr class=" bg-info text-white">
         <th> {{ number_format($total_bultos,2) }}</th>
         <th> {{ number_format($total_kgrs,2) }} </th>
+        <th></th>
         <th></th>
         <th></th>
     </tr>

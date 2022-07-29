@@ -69,11 +69,17 @@ class SessionProduct extends Model
         'neto',
         'nro_pedido',
         'pausado',
-        'circuito'
+        'circuito',
+        'palet',
     ];
 
     public function producto()
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    public function palet()
+    {
+        return $this->belongsTo(Palet::class, 'palet');
     }
 }
