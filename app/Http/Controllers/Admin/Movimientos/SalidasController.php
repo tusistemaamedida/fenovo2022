@@ -778,6 +778,7 @@ class SalidasController extends Controller
             $unidades            = $request->input('unidades');
             $product_id          = $request->input('product_id');
             $unit_type           = $request->input('unit_type');
+            $deposito            = $request->input('deposito');
 
             if (!$to) {
                 return new JsonResponse(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
@@ -794,6 +795,11 @@ class SalidasController extends Controller
             if (count($unidades) == $count_unidades_cero) {
                 return new JsonResponse(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
             }
+
+            if(\Auth::user()->rol() == 'contable' && is_null($deposito)){
+                return new JsonResponse(['msj' => 'Debe seleccionar despósito de origen.', 'type' => 'error', 'index' => 'deposito']);
+            }
+
             $insert_data = [];
             $product     = $this->productRepository->getByIdWith($product_id);
 
@@ -860,6 +866,7 @@ class SalidasController extends Controller
             $insert_data['circuito']     = null;
             $insert_data['iibb']         = $product->iibb;
             $insert_data['product_id']   = $product_id;
+            $insert_data['deposito']     = $deposito;
 
             for ($i = 0; $i < count($unidades); $i++) {
                 $unidad   = $unidades[$i];
@@ -1023,6 +1030,8 @@ class SalidasController extends Controller
                 $unit_weight         = $product->producto->unit_weight;
                 $unit_package        = $product->unit_package;
 
+                $deposito = $product->deposito;
+
                 if (isset($quantities[0])) {
                     $cant_total_f = ($unit_type == 'K') ? ($unit_weight * $unit_package * $quantities[0]['cant']) : ($unit_package * $quantities[0]['cant']);
                     $product->producto->stock_f -= $cant_total_f;
@@ -1041,7 +1050,12 @@ class SalidasController extends Controller
                 $product->producto->save();
 
                 if ($insert_data['type'] != 'VENTACLIENTE') {
-                    $prod_store          = ProductStore::where('product_id', $product->product_id)->where('store_id', $insert_data['to'])->first();
+
+                    if($deposito){
+                        $prod_store          = ProductStore::where('product_id', $product->product_id)->where('store_id', $deposito)->first();
+                    }else{
+                        $prod_store          = ProductStore::where('product_id', $product->product_id)->where('store_id', $insert_data['to'])->first();
+                    }
                     $stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo : 0;
                     if ($prod_store) {
                         if (isset($quantities[0])) {
@@ -1125,8 +1139,8 @@ class SalidasController extends Controller
                         ]);
 
                         MovementProduct::create([
-                            'entidad_id'   => $insert_data['to'],
-                            'entidad_tipo' => $entidad_tipo,
+                            'entidad_id'   => ($deposito)?$deposito:$insert_data['to'],
+                            'entidad_tipo' => ($deposito)?'D':$entidad_tipo,
                             'movement_id'  => $movement->id,
                             'product_id'   => $product->product_id,
                             'unit_package' => $product->unit_package,

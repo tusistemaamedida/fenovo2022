@@ -326,7 +326,7 @@
 
         jQuery("#sessionProductstore").click(function(e) {
             e.preventDefault();
-           /*  jQuery("#sessionProductstore").attr('disabled', true); */
+            jQuery("#sessionProductstore").attr('disabled', true);
             guardarProductoEnSession(e)
         })
 
@@ -351,11 +351,10 @@
                 deposito,
                 unit_type
             };
-            console.log(formData)
 
             var url = "{{ route('store.session.product') }}";
             var elements = document.querySelectorAll('.is-invalid');
-            /* jQuery.ajax({
+            jQuery.ajax({
                 url: url,
                 type: 'POST',
                 data: formData,
@@ -384,7 +383,7 @@
                     jQuery("#sessionProductstore").attr('disabled', false);
                     jQuery('#loader').addClass('hidden');
                 }
-            }); */
+            });
         }
 
         jQuery('#close_modal_presentaciones').on('click', function() {

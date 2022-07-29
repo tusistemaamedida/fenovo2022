@@ -41,8 +41,7 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $movement = MovementTemp::where('to', Auth::user()->store_active)
-                                    ->where('type', 'COMPRA')
+            $movement = MovementTemp::where('type', 'COMPRA')
                                     ->where('user_id', Auth::user()->id)
                                     ->whereStatus('CREATED')
                                     ->with('movement_ingreso_products')
@@ -86,8 +85,7 @@ class IngresosController extends Controller
     public function indexCerradas(Request $request)
     {
         if ($request->ajax()) {
-            $movement = Movement::where('to', Auth::user()->store_active)
-                               ->where('type', 'COMPRA')
+            $movement = Movement::where('type', 'COMPRA')
                                ->where('user_id', Auth::user()->id)
                                ->whereStatus('FINISHED')
                                ->with('movement_ingreso_products')
@@ -121,7 +119,7 @@ class IngresosController extends Controller
     public function indexChequeadas(Request $request)
     {
         if ($request->ajax()) {
-            $movement = Movement::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('CHECKED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
+            $movement = Movement::where('type', 'COMPRA')->whereStatus('CHECKED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
 
             return Datatables::of($movement)
                 ->addIndexColumn()
@@ -245,7 +243,7 @@ class IngresosController extends Controller
             // Completo los datos del movimiento de COMPRA
             $data['type']           = 'COMPRA';
             $data['subtype']        = $movement_temp->subtype;
-            $data['to']             = 1;
+            $data['to']             = ($movement_temp->deposito)?$movement_temp->deposito:1;
             $data['date']           = $movement_temp->date;
             $data['from']           = $movement_temp->from;
             $data['orden']          = $orden;

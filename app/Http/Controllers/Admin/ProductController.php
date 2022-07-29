@@ -1529,11 +1529,11 @@ class ProductController extends Controller
                 'plist0iva'         => $cosven * ($iva / 100 + 1),
                 'contribution_fund' => 0.5,
 
-                'p1tienda' => 1,
-                'mup1'     => 1,
-                'mupp1may' => 1,
-                'descp1'   => 1,
-                'p1may'    => 1,
+                'p1tienda' => 0,
+                'mup1'     => 0,
+                'mupp1may' => 0,
+                'descp1'   => 0,
+                'p1may'    => 0,
                 'muplist1' => 10,
                 'muplist2' => 20,
 
@@ -1542,11 +1542,11 @@ class ProductController extends Controller
                 'comlista1' => round((($plist1 - $cosven * ($iva / 100 + 1)) / ($iva / 100 + 1) * 100) / $plist1, 2),
                 'comlista2' => round((($plist2 - $cosven * ($iva / 100 + 1)) / ($iva / 100 + 1) * 100) / $plist2, 2),
 
-                'p2tienda' => 1,
-                'mup2'     => 1,
-                'p2may'    => 1,
-                'descp2'   => 1,
-                'mupp2may' => 1,
+                'p2tienda' => 0,
+                'mup2'     => 0,
+                'p2may'    => 0,
+                'descp2'   => 0,
+                'mupp2may' => 0,
 
                 'cantmay1' => 10,
                 'cantmay2' => 10,
