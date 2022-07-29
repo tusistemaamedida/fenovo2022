@@ -39,14 +39,15 @@
                                         <table class="table table-hover display yajra-datatable" style="width:100%">
                                             <thead>
                                                 <tr class="bg-dark text-white">
-                                                    <th>No</th>
+                                                    <th>#ID</th>
                                                     <th>Cod Fenovo</th>
-                                                    <th>Tipo tienda</th>
-                                                    <th>Recibe traslado</th>
-                                                    <th>Pto venta</th>
-                                                    <th>Comision</th>
                                                     <th>Nombre </th>
                                                     <th>Cuit</th>
+                                                    <th>Tipo tienda</th>
+                                                    <th>Recibe traslado</th>
+                                                    <th>Pto Vta</th>
+                                                    <th>Comision</th>
+                                                    <th>Password</th>
                                                     <th></th>
                                                     <th></th>
                                                 </tr>
@@ -78,12 +79,13 @@
         columns: [
             {data: 'id', 'class':'text-center', orderable: false, searchable: false},
             {data: 'cod_fenovo'},
+            {data: 'description'},
+            {data: 'cuit'},
             {data: 'store_type', 'class':'text-center font-weight-bolder',},
             {data: 'recibe', 'class':'text-center', orderable: false, searchable: false},
             {data: 'punto_venta', 'class':'text-center',},
             {data: 'comision_distribucion', 'class':'text-center',},
-            {data: 'description'},
-            {data: 'cuit'},
+            {data: 'password'},
             {data: 'edit', name: 'Editar', 'class':'text-center', orderable: false, searchable: false},
             {data: 'destroy', name: 'Borrar', 'class':'text-center', orderable: false, searchable: false},
         ]

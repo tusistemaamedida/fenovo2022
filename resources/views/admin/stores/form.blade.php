@@ -240,7 +240,7 @@
                     <p>Activo :</p>
                     <div class="custom-control switch custom-switch custom-control-inline">
                         <input type="checkbox" class="custom-control-input" id="active" name="active"
-                            @if (isset($store) && $store->active) checked="" @elseif(isset($store) && !$store->active)) unchecked="" @else checked="" @endif
+                            @if (isset($store) && $store->active) checked="" @elseif(isset($store) && !$store->active) unchecked="" @else checked="" @endif
                             value="1">
                         <label class="custom-control-label mr-1" for="active"></label>
                     </div>
@@ -280,7 +280,12 @@
             </div>
 
             <div class="row mt-3">
-                <div class="col-12 text-right">
+                <div class="col-4">
+                    <label class="text-dark">Password</label>
+                    <input type="text" id="password" name="password"
+                        @if (isset($store)) value="{{ $store->password }}" @else value="" @endif class="form-control">
+                </div>
+                <div class="col-8 text-right">
                     <button type="submit" class="btn btn-dark"><i class="fa fa-save"></i>
                         Guardar
                     </button>
