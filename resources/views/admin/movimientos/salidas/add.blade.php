@@ -20,7 +20,7 @@
                 @endif
                 @include('admin.movimientos.salidas.partials.form-select-cliente')
                 <div class="col-md-12" id="divAlertStock"></div>
-                <div style="width: 100%" id="session_products_table"></div>
+                <div class="col-md-12" id="session_products_table"></div>
             </div>
         </div>
     </div>
