@@ -43,7 +43,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
-use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -190,7 +189,7 @@ class ProductController extends Controller
 
     public function historialTienda(Request $request)
     {
-        $store = Store::find($request->store_id);
+        $store    = Store::find($request->store_id);
         $producto = Product::find($request->product_id);
 
         if ($request->ajax()) {
@@ -225,7 +224,6 @@ class ProductController extends Controller
         }
         return view('admin.products.historialTienda', compact('producto', 'store'));
     }
-
 
     public function ajusteHistoricoDeposito(Request $request)
     {
@@ -1134,12 +1132,11 @@ class ProductController extends Controller
 
     public function compararStock(Request $request)
     {
+
         if ($request->ajax()) {
             $productos = Product::where('active', '=', 1)->get();
-
             return Datatables::of($productos)
                 ->addIndexColumn()
-
                 ->addColumn('proveedor', function ($product) {
                     return $product->proveedor->name;
                 })
@@ -1155,7 +1152,6 @@ class ProductController extends Controller
                 ->addColumn('stock', function ($product) {
                     return $product->stockFinSemana();
                 })
-
                 ->addColumn('costo', function ($product) {
 
                     // Buscar si el producto tiene oferta del proveedor
@@ -1164,7 +1160,6 @@ class ProductController extends Controller
                     $costo  = (!$oferta) ? $product->product_price->costfenovo : $oferta->costfenovo;
                     return number_format($costo, 2);
                 })
-
                 ->rawColumns(['stockInicioSemana', 'ingresoSemana', 'salidaSemana', 'stock', 'costo'])
                 ->make(true);
         }
@@ -1418,14 +1413,14 @@ class ProductController extends Controller
 
     public function stockDeposito(Request $request)
     {
-        $stores =  Store::where('store_type', '!=', 'N')->orderBy('description')->get();
+        $stores = Store::where('store_type', '!=', 'N')->orderBy('description')->get();
         return view('admin.products.listDepositos', compact('stores'));
     }
 
     public function stockDepositoDetalle(Request $request)
     {
         try {
-            $store = Store::find($request->id);
+            $store     = Store::find($request->id);
             $productos = DB::table('products as t1')->where('t1.active', 1)
                 ->leftJoin('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
                 ->leftJoin('products_store as t4', 't1.id', '=', 't4.product_id')
@@ -1436,9 +1431,9 @@ class ProductController extends Controller
                 ->get();
 
             return new JsonResponse([
-                    'type' => 'success',
-                    'html' => view('admin.products.listDepositosDetalle', compact('store', 'productos'))->render(),
-                ]);
+                'type' => 'success',
+                'html' => view('admin.products.listDepositosDetalle', compact('store', 'productos'))->render(),
+            ]);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
         }

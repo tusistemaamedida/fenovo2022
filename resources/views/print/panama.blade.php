@@ -50,6 +50,7 @@
         <th>Bultos</th>
         <th>Cant</th>
         <th>U</th>
+        <th>Palet</th>
         <th>Producto</th>
         <th>Precio </th>
         <th>Subtotal</th>
@@ -60,6 +61,7 @@
         <td class="text-center" style="width: 15px "> {{$p->bultos}} </td>
         <td class="text-center" style="width: 15px "> {{$p->total_unit}} </td>
         <td class="text-center" style="width: 15px "> {{$p->unidad}} </td>
+        <td class="text-center" style="width: 15px "> {{$p->palet}} </td>
         <td class="text-left"> <strong> {{$p->cod_fenovo}}</strong> - {{$p->name}} </td>
         <td class="text-center"> {{$p->unit_price}} </td>
         <td class="text-center"> {{$p->subtotal}} </td>
