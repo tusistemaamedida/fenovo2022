@@ -3,7 +3,7 @@
         <thead>
             <tr class="bg-dark text-black-50">
                 <th>Codigo</th>
-                <th>Producto</th>
+                <th>Nombre del producto</th>
                 <th>Presentación</th>
                 <th>Bultos</th>
                 <th>Cantidad</th>
@@ -11,7 +11,7 @@
                 <th>Iva</th>
                 <th class="text-right">Subtotal</th>
                 <th>Palet</th>
-                <th></th>
+                <th>Editar</th>
                 <th></th>
             </tr>
         </thead>
@@ -61,9 +61,11 @@
                             </a>
                         </td>
                         <td>
+                            @if(in_array(Auth::user()->rol(), ['superadmin', 'admin']) )
                             <a href="javascript:void(0)" onclick="deleteItemSession({{$session_product->id}},'{{route('delete.item.session.produc')}}')" title="eliminar">
                                 <i class="fas fa-trash-alt text-danger"></i>
                             </a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

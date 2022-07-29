@@ -176,8 +176,11 @@ class SalidasController extends Controller
                 })
                 ->addColumn('destroy', function ($pendiente) {
                     if (is_null($pendiente->pausado)) {
-                        $ruta = "motivoPendiente('" . $pendiente->list_id . "')";
-                        return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+
+                        if (in_array(Auth::user()->rol(), ['superadmin', 'admin'])) {
+                            $ruta = "motivoPendiente('" . $pendiente->list_id . "')";
+                            return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                        }
                     }
                     return '';
                 })

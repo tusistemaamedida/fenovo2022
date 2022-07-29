@@ -1,5 +1,5 @@
 <fieldset class="form-group mb-3 d-flex">
-    <select class="js-states form-control bg-transparent" name="buscar_producto" id="buscar_producto">
+    <select class="js-states form-control " name="buscar_producto" id="buscar_producto">
     </select>
 </fieldset>
 
@@ -8,7 +8,7 @@
     @parent
     <script>
         jQuery('#buscar_producto').select2({
-            placeholder: 'Ingrese codigo fenovo',
+            placeholder: 'Ingrese codigo fenovo a buscar ... ',
             minimumInputLength: 2,
             tags: false,
             ajax: {

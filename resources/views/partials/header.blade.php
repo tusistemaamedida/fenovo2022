@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-red navbar-dark mt-2">
     <div class="wrapper-f"></div>
     <div class="container-fluid all-show">
-        <a class="navbar-brand" href="{{ route('inicio') }}">FENOVO SA </a>
+        <a class="navbar-brand mt-3" href="{{ route('inicio') }}">FENOVO SA </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -208,7 +208,7 @@
             <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
                 <li class="nav-item" title="Opciones del usuario">
                     <a href="{{ route('users.editProfile') }}" class="nav-link">
-                        <small> [ <i class="fa fa-user "></i> {{ ucfirst(Auth::user()->username) }} ] </small>
+                        <small> {{ ucfirst(Auth::user()->username) }} [{{ Auth::user()->rol()}}] </small>
                     </a>
                 </li>
             </ul>
