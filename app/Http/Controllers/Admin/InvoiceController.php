@@ -19,6 +19,8 @@ use stdClass;
 use Storage;
 use Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class InvoiceController extends Controller
 {
@@ -199,6 +201,8 @@ class InvoiceController extends Controller
     public function create($movement_id)
     {
         try {
+            DB::beginTransaction();
+            Schema::disableForeignKeyConstraints();
             $error = null;
             // Inicio creacion del invoice con punto de vta fenovo
             $movement = Movement::where('id', $movement_id)->with('salida_products_no_cyo')->firstOrFail();
@@ -268,9 +272,8 @@ class InvoiceController extends Controller
 
                 if($movement->verifSiFactura() && $movement->type != 'TRASLADO'){
                     $result  = $this->createVoucher($movement,$this->pto_vta);
-                    $invoice = $this->invoiceRepository->getByMovement($movement_id,$this->pto_vta);
-
                     if ($result['status']) {
+                        $invoice = $this->invoiceRepository->getByMovement($movement_id,$this->pto_vta);
                         if (isset($invoice)) {
                             $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
                             $orden = (isset($inv)) ? $inv->orden + 1 : 1;
@@ -287,46 +290,47 @@ class InvoiceController extends Controller
                                 'cyo'        => $cyo
                             ]);
                         }
-                    }elseif (isset($invoice)) {
-                        $error = json_encode($result['error']);
+                    }else{
+                        $error = json_encode($result);
                     }
                 }
             }
             // fin de creacion del invoice con punto de vta fenovo
+            if(is_null($error)){
+                if($movement->type != 'TRASLADO'){
+                    // Inicio creacion del invoice cta y orden
+                    $movement = Movement::where('id', $movement_id)->with('salida_products_cyo')->firstOrFail();
+                    if(isset($movement->salida_products_cyo) && count($movement->salida_products_cyo)){
+                        $movements = $movement->salida_products_cyo->groupBy('punto_venta');
+                        $invoice_cyo = null;
+                        foreach ($movements as $m) {
+                            $productos = $m;
+                            $punto_venta = $m[0]->punto_venta;
+                            $movement->products = $productos;
 
-            if($movement->type != 'TRASLADO'){
-                // Inicio creacion del invoice cta y orden
-                $movement = Movement::where('id', $movement_id)->with('salida_products_cyo')->firstOrFail();
-                if(isset($movement->salida_products_cyo) && count($movement->salida_products_cyo)){
-                    $movements = $movement->salida_products_cyo->groupBy('punto_venta');
-                    $invoice_cyo = null;
-                    foreach ($movements as $m) {
-                        $productos = $m;
-                        $punto_venta = $m[0]->punto_venta;
-                        $movement->products = $productos;
+                            $result  = $this->createVoucher($movement,$punto_venta);
+                            if ($result['status']) {
+                                $invoice_cyo = $this->invoiceRepository->getByMovement($movement_id,$punto_venta);
+                                if (isset($invoice_cyo)) {
+                                    $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
+                                    $orden = (isset($inv)) ? $inv->orden + 1 : 1;
+                                    $this->invoiceRepository->fill($invoice_cyo->id, [
+                                        'error'      => null,
+                                        'orden'      => $orden,
+                                        'cae'        => $result['response_afip']['CAE'],
+                                        'expiration' => $result['response_afip']['CAEFchVto'],
+                                    ]);
 
-                        $result  = $this->createVoucher($movement,$punto_venta);
-                        $invoice_cyo = $this->invoiceRepository->getByMovement($movement_id,$punto_venta);
-                        if ($result['status']) {
-                            if (isset($invoice_cyo)) {
-                                $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
-                                $orden = (isset($inv)) ? $inv->orden + 1 : 1;
-                                $this->invoiceRepository->fill($invoice_cyo->id, [
-                                    'error'      => null,
-                                    'orden'      => $orden,
-                                    'cae'        => $result['response_afip']['CAE'],
-                                    'expiration' => $result['response_afip']['CAEFchVto'],
-                                ]);
-
-                                $cyo = 1;
-                                $url_factura = $this->generateInvoicePdf($movement_id,$punto_venta,$cyo);
-                                $this->invoiceRepository->fill($invoice_cyo->id, [
-                                    'url'        => $url_factura,
-                                    'cyo'        => $cyo
-                                ]);
+                                    $cyo = 1;
+                                    $url_factura = $this->generateInvoicePdf($movement_id,$punto_venta,$cyo);
+                                    $this->invoiceRepository->fill($invoice_cyo->id, [
+                                        'url'        => $url_factura,
+                                        'cyo'        => $cyo
+                                    ]);
+                                }
+                            }else{
+                                $error = json_encode($result);
                             }
-                        }elseif (isset($invoice_cyo)) {
-                            $error = json_encode($result['error']);
                         }
                     }
                 }
@@ -335,12 +339,18 @@ class InvoiceController extends Controller
                 $movement = Movement::where('id', $movement_id)->first();
                 $movement->status = 'FINISHED_AND_GENERATED_FACT';
                 $movement->save();
-            }else{
-                return view('error',compact($error));
+            }
+            DB::commit();
+            Schema::enableForeignKeyConstraints();
+            if($error){
+                return view('error',compact('error'));
             }
             return redirect()->route('salidas.index');
         } catch (\Exception $e) {
-            return $e->getMessage();
+            DB::rollback();
+            Schema::enableForeignKeyConstraints();
+            $error = $e->getMessage();
+            return view('error',compact('error'));
         }
     }
 
@@ -350,8 +360,8 @@ class InvoiceController extends Controller
             $movement = Movement::where('id', $movement_id)->with('products_egress')->firstOrFail();
 
             $result  = $this->createVoucher($movement,$this->pto_vta);
-            $invoice = $this->invoiceRepository->getByMovement($movement_id);
             if ($result['status']) {
+                $invoice = $this->invoiceRepository->getByMovement($movement_id);
                 if (isset($invoice)) {
                     $inv   = Invoice::whereNotNull('cae')->orderBy('orden', 'DESC')->first();
                     $orden = (isset($inv)) ? $inv->orden + 1 : 1;
