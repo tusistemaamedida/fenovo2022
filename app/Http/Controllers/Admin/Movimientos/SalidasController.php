@@ -764,6 +764,7 @@ class SalidasController extends Controller
             $unidades            = $request->input('unidades');
             $product_id          = $request->input('product_id');
             $unit_type           = $request->input('unit_type');
+            $list_id             = $request->input('list_id');
 
             if (!$to) {
                 return new JsonResponse(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
@@ -839,7 +840,7 @@ class SalidasController extends Controller
 
             $insert_data['unit_type']    = $unit_type;
             $insert_data['costo_fenovo'] = $prices->costfenovo;
-            $insert_data['list_id']      = $to_type . '_' . $to . '_' . Auth::user()->store_active;
+            $insert_data['list_id']      = $list_id;
             $insert_data['store_id']     = Auth::user()->store_active;
             $insert_data['invoice']      = true;
             $insert_data['circuito']     = null;
