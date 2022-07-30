@@ -182,7 +182,7 @@ jQuery('.show-t').on('click', function () {
                 previous: "Anterior",
             },
             //processing: "Procesando...",
-            processing: "<div> <span class='fa-stack fa-lg'> <i class='fa fa-spinner fa-spin fa-stack-2x fa-fw'></i> </span> Aguarde por favor ... </div>",
+            processing: "<span class='fa-stack fa-lg'> <i class='fas fa-cog fa-spin fa-stack-2x fa-fw'></i> </span> Aguarde... ",
             search: "Buscar:",
             searchPlaceholder: "Palabra a buscar",
             zeroRecords: "No se encontraron resultados",

@@ -18,21 +18,6 @@
             </div>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-6">
-                Palets
-            </div>
-            <div class="col-6">
-                <select class="rounded form-control text-center" name="palet" id="palet">
-                    @foreach ($palets as $palet)
-                        <option value="{{ $palet->id }}">
-                            {{ $palet->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
-
         <div class="row mt-5">
             <div class="col-6">
                 <button type="reset" class="btn btn-outline-primary" onclick="cerrarModal()">

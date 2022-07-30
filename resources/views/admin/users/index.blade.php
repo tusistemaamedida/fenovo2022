@@ -36,11 +36,11 @@
                                                 <tr class="bg-dark text-white">
                                                     <th>UserID</th>
                                                     <th>Username</th>
+                                                    <th>Email</th>
                                                     <th>Rol</th>
-                                                    <th>ResetPassword</th>
                                                     <th>Vincular</th>
-                                                    <th>TiendasAsociadas</th>
-                                                    <th>TiendaActiva</th>
+                                                    <th>Tiendas</th>
+                                                    <th>Activa</th>
                                                     <th>Editar</th>
                                                     <th>Borrar</th>
                                                 </tr>
@@ -74,8 +74,8 @@
         columns: [
             {data: 'user_id', 'class':'text-center', orderable: false, searchable: false},
             {data: 'username'},
+            {data: 'email'},
             {data: 'rol'},
-            {data: 'reset','class':'text-center', orderable: false, searchable: false},
             {data: 'vincular','class':'text-center', orderable: false, searchable: false},
             {data: 'asociadas','class':'text-center', orderable: false, searchable: false},
             {data: 'tienda', orderable: false, searchable: false},

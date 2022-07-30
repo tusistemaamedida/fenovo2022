@@ -42,11 +42,6 @@ class UserController extends Controller
                 ->addColumn('rol', function ($user) {
                     return $user->rol();
                 })
-                ->addColumn('reset', function ($user) {
-                    $ruta      = "reset('" . $user->email . "','" . route('users.reset.password') . "')";
-                    $linkReset = '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fas fa-trash-restore"></i> </a>';
-                    return ($user->rol() == 'tienda') ? $linkReset : null;
-                })
                 ->addColumn('vincular', function ($user) {
                     return ($user->rol() != 'tienda') ? '<a href="' . route('users.vincular.tienda', ['id' => $user->id]) . '"> <i class="fa fa-link"></i> </a>' : null;
                 })
