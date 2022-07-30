@@ -61,8 +61,4 @@ class MovementProduct extends Model
         return $this->belongsTo(Store::class, 'entidad_id');
     }
 
-    public function palet()
-    {
-        return $this->belongsTo(Palet::class, 'palet');
-    }
 }

@@ -12,7 +12,6 @@ use App\Models\Invoice;
 use App\Models\Movement;
 use App\Models\MovementProduct;
 use App\Models\OfertaStore;
-use App\Models\Palet;
 use App\Models\Panamas;
 use App\Models\Pedido;
 use App\Models\PedidoEstados;
@@ -176,7 +175,6 @@ class SalidasController extends Controller
                 })
                 ->addColumn('destroy', function ($pendiente) {
                     if (is_null($pendiente->pausado)) {
-
                         if (in_array(Auth::user()->rol(), ['superadmin', 'admin'])) {
                             $ruta = "motivoPendiente('" . $pendiente->list_id . "')";
                             return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
@@ -218,8 +216,7 @@ class SalidasController extends Controller
         $tipo        = $explode[0];
         $destino     = $this->origenData($tipo, $explode[1], true);
         $destinoName = $this->origenData($tipo, $explode[1]);
-        $palets      = Palet::all();
-        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName', 'palets', 'pedido', 'list_id'));
+        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName', 'pedido', 'list_id'));
     }
 
     public function getTotalMovement(Request $request)
@@ -281,7 +278,7 @@ class SalidasController extends Controller
                     $objProduct->unit_type    = $movimiento->unit_type;
                     $objProduct->unit_package = $movimiento->unit_package;
                     $objProduct->quantity     = $movimiento->bultos;
-                    $objProduct->palet        = ($movimiento->palet) ? $movimiento->Palet->nombre : null;
+                    $objProduct->palet        = $movimiento->product->palet . $movimiento->palet;
                     $objProduct->unity        = '( ' . $movimiento->unit_package . ' ' . $movimiento->product->unit_type . ' )';
                     $objProduct->total_unit   = number_format($movimiento->bultos * $movimiento->unit_package, 2, ',', '.');
                     $objProduct->class        = '';
@@ -308,17 +305,17 @@ class SalidasController extends Controller
             }
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $array_productos = [];
-            $productos       = $movement->panamas;
-            foreach ($productos as $producto) {
+            $movimientos     = $movement->panamas;
+            foreach ($movimientos as $movimiento) {
                 $objProduct               = new stdClass();
-                $objProduct->cod_fenovo   = $producto->product->cod_fenovo;
-                $objProduct->name         = $producto->product->name;
-                $objProduct->unit_weight  = $producto->product->unit_weight;
-                $objProduct->unit_package = $producto->unit_package;
-                $objProduct->palet        = ($producto->palet) ? $producto->Palet->nombre : null;
-                $objProduct->quantity     = $producto->bultos;
-                $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
-                $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                $objProduct->cod_fenovo   = $movimiento->product->cod_fenovo;
+                $objProduct->name         = $movimiento->product->name;
+                $objProduct->unit_weight  = $movimiento->product->unit_weight;
+                $objProduct->unit_package = $movimiento->unit_package;
+                $objProduct->palet        = $movimiento->product->palet . $movimiento->palet;
+                $objProduct->quantity     = $movimiento->bultos;
+                $objProduct->unity        = '( ' . $movimiento->unit_package . ' ' . $movimiento->product->unit_type . ' )';
+                $objProduct->total_unit   = number_format($movimiento->bultos * $movimiento->unit_package, 2, ',', '.');
                 $objProduct->class        = '';
                 array_push($array_productos, $objProduct);
             }
@@ -350,7 +347,7 @@ class SalidasController extends Controller
                 $objProduct->name         = $producto->product->name;
                 $objProduct->unit_weight  = $producto->product->unit_weight;
                 $objProduct->unit_package = $producto->unit_package;
-                $objProduct->palet = $producto->palet;
+                $objProduct->palet        = $producto->palet;
                 $objProduct->quantity     = $producto->bultos;
                 $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
                 $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
@@ -380,7 +377,7 @@ class SalidasController extends Controller
             $objProduct->name         = $producto->product->name;
             $objProduct->unit_weight  = $producto->product->unit_weight;
             $objProduct->unit_package = $producto->unit_package;
-            $objProduct->palet = $producto->palet;
+            $objProduct->palet        = $producto->palet;
             $objProduct->quantity     = $producto->bultos;
             $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
             $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
@@ -554,7 +551,7 @@ class SalidasController extends Controller
                 $objProduct->cod_fenovo = $producto->product->cod_fenovo;
                 $objProduct->codigo     = $producto->product->cod_fenovo;
                 $objProduct->name       = $producto->product->name;
-                $objProduct->palet      = ($producto->palet) ? $producto->Palet->nombre : null;
+                $objProduct->palet      = $producto->palet;
                 $objProduct->unit_price = number_format($producto->unit_price, 2, ',', '.');
                 $objProduct->subtotal   = number_format($subtotal, 2, ',', '.');
                 $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
@@ -572,8 +569,7 @@ class SalidasController extends Controller
     public function add()
     {
         $this->sessionProductRepository->deleteDevoluciones();
-        $palets = Palet::all();
-        return view('admin.movimientos.salidas.add', compact('palets'));
+        return view('admin.movimientos.salidas.add');
     }
 
     public function show(Request $request)
@@ -878,7 +874,12 @@ class SalidasController extends Controller
     public function storeSessionProductItem(Request $request)
     {
         try {
-            SessionProduct::find($request->id)->update(['quantity' => $request->quantity, 'palet' => $request->palet]);
+            if ($request->quantity) {
+                SessionProduct::find($request->id)->update(['quantity' => $request->quantity]);
+            }
+            if ($request->palet) {
+                SessionProduct::find($request->id)->update(['palet' => $request->palet]);
+            }
             return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -891,7 +892,7 @@ class SalidasController extends Controller
             $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
             $balance  = $product->producto->stockReal();
             if ($balance < $cantidad) {
-                $alert = '<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert"><i class="ace-icon fa fa-times"></i></button>';
+                $alert = '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert"><i class="ace-icon fa fa-times"></i></button>';
                 $alert .= '<i class="ace-icon fa fa-ban"></i> COD-FENOVO <strong>';
                 $alert .= $product->producto->cod_fenovo . '</strong> insuficiente. Imposible vender <strong>';
                 $alert .= $cantidad . '</strong>, porque el stock actual es <strong>';

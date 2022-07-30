@@ -48,6 +48,15 @@
             jQuery('.movimientoPopup').addClass('offcanvas-on');
         }
 
+        const cambioPalet = (id, palet)=>{
+            var url = "{{ route('store.session.product.item') }}";
+            jQuery.ajax({
+                url: url,
+                type: 'POST',
+                data: {id, palet}
+            });            
+        }
+
         const actualizarMovimiento = () => {
             var url = "{{ route('store.session.product.item') }}";
             jQuery.ajax({
@@ -56,7 +65,6 @@
                 data: {
                     id: jQuery("#session_product_id").val(),
                     quantity: jQuery("#session_product_quantity").val(),
-                    palet: jQuery("#palet").val(),
                 },
                 beforeSend: function() {
                     jQuery('#loader').removeClass('hidden');
@@ -189,6 +197,7 @@
                         },
                         success: function(data) {
                             if (data['type'] == 'success') {
+                                jQuery("#divAlertStock").html('');
                                 cargarTablaProductos();
                             }
                         }
@@ -422,10 +431,10 @@
                 success: function(data) {
                     jQuery("#btnCloseSalida").attr('disabled',false);
                     if (data['type'] == 'error') {
-                        toastr.error(data['msj'], 'ERROR');
                         jQuery("#divAlertStock").html('');
                         jQuery("#divAlertStock").html(data['alert']);
                         cargarTablaProductos()
+                        jQuery('#closeSalida').removeClass('offcanvas-on');
                     } else {
                         toastr.info(data['msj'], 'EXITO');
                         setTimeout(() => {
