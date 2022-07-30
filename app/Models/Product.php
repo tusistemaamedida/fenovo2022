@@ -52,6 +52,7 @@ class Product extends Model
         'stock_f',
         'stock_r',
         'stock_cyo',
+        'coeficiente_relacion_stock',
         'stock_min',
         'stock_sem_min',
         'stock_sem_max',
@@ -74,7 +75,7 @@ class Product extends Model
         'senasa_id',
         'iibb',
         'active',
-        'coeficiente_relacion_stock',
+        'palet',
     ];
 
     public function product_category()

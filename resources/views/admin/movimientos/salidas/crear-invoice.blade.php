@@ -17,7 +17,7 @@
             <div class="row">
                 <input type="hidden" name="movement_id" id="movement_id"  value="{{$movement_id}}">
                 <div class="col-md-12" id="divAlertStock"></div>
-                <div style="width: 100%" id="session_products_table"></div>
+                <div class="col-md-12" id="session_products_table"></div>
             </div>
         </div>
     </div>
@@ -28,6 +28,7 @@
         jQuery(document).ready(function() {
             cargarTablaProductos();
         });
+
         function cargarTablaProductos() {
             var movement_id = jQuery("#movement_id").val();
             var formData = {
@@ -57,30 +58,10 @@
             jQuery.ajax({
                 url: "{{ route('change.product.invoice') }}",
                 type: 'POST',
-                data: {
-                    id,
-                    product_id
-                },
-                beforeSend: function() {
-                    jQuery('#loader').removeClass('hidden');
-                },
-                success: function(data) {
-                    if (data['type'] != 'success') {
-                        toastr.error(data['msj'], 'Verifique');
-                    }else{
-                        toastr.success(data['msj'], 'Éxito');
-                    }
-                    jQuery('#loader').addClass('hidden');
-                    setTimeout(() => {
-                        cargarTablaProductos();
-                    }, 300);
-                },
-                error: function(data) {},
-                complete: function() {
-                    jQuery('#loader').addClass('hidden');
-                }
+                data: {id, product_id}
             });
         }
+        
         function disableBtn(){
             jQuery("#btn-crear-invoice").attr('disabled',true);
             jQuery('#loader').removeClass('hidden');
