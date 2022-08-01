@@ -15,7 +15,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{{ route('get.mis.facturas') }}">
+                            <form method="POST" action="{{ route('mis.facturas.check') }}">
                                 @csrf
                                 <div class="row mb-3">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
