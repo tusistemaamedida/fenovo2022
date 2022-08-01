@@ -118,7 +118,7 @@
                                         class="form-control">
                                     <div class="input-group-append">
                                         <span class="input-group-text" id="basic-addon2">
-                                            <a onclick="javascript:printIIBB()" title="Exportar Ingresos Brutos">
+                                            <a href="#" onclick="javascript:printIIBB()" title="Exportar Ingresos Brutos">
                                                 Exportar <i class=" fa fa-file-csv"></i> 
                                             </a>
                                         </span>
@@ -140,8 +140,8 @@
                                         class="form-control">
                                     <div class="input-group-append">
                                         <span class="input-group-text" id="basic-addon2">
-                                            <a onclick="javascript:printVENTAS()" title="Exportar Ventas">
-                                                Exportar <i class=" fa fa-file-csv"></i>
+                                            <a href="#" onclick="javascript:printVENTAS()" title="Exportar Ventas">
+                                                Exportar <i class="fa fa-file-csv"></i>
                                             </a>
                                         </span>
                                     </div>
@@ -155,7 +155,7 @@
                         </div>
                         <div class="col-2">
                             <a href="{{ route('download.lista.mayorista.fenovo') }}" target="_blank"
-                                title="Descargar lista mayorista fenovo" class="mt-1 mr-3">
+                                title="Descargar lista mayorista fenovo" class=" mt-1 mr-3">
                                 <i class=" fa fa-file-csv"></i> Lista Mayorista Fenovo
                             </a>
                         </div>
