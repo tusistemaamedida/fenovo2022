@@ -964,12 +964,6 @@ class ProductController extends Controller
         }
     }
 
-    public function destroy(Request $request)
-    {
-        Product::find($request->id)->update(['active' => 0]);
-        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
-    }
-
     public function getProductByProveedor(Request $request)
     {
         try {
@@ -1442,5 +1436,11 @@ class ProductController extends Controller
     public function printListaMayoristaFenovo(Request $request)
     {
         return Excel::download(new ListaMayoristaFenovo(), 'lista-mayorista-fenovo-' . date('d-m-Y') . '.xlsx');
+    }
+
+    public function destroy(Request $request)
+    {
+        Product::find($request->id)->update(['active' => 0]);
+        return new JsonResponse(['msj' => 'Eliminado ... ', 'type' => 'success']);
     }
 }
