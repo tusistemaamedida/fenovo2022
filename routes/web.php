@@ -9,13 +9,14 @@ Route::get('/', function () {
     return view('portada');
 });
 
-require __DIR__ . '/admin/mis-facturas.php';
-
 Route::group(['middleware' => 'preventBackHistory'], function () {
     Auth::routes();
     Route::get('/inicio', [App\Http\Controllers\HomeController::class, 'index'])->name('inicio');
 
+    require __DIR__ . '/admin/mis-facturas.php';
+
     Route::group(['namespace' => 'Admin', 'middleware' => ['auth']], function () {
+
         require __DIR__ . '/admin/productos.php';
         require __DIR__ . '/api/productos.php';
 
