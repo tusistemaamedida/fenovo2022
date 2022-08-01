@@ -6,7 +6,6 @@
 
 @section('content')
 
-
     <div class="d-flex flex-column-fluid">
         <div class="container-fluid">
             <div class="row">
@@ -14,7 +13,7 @@
 
                     <div class="card card-custom gutter-b bg-transparent shadow-none border-0">
 
-                        <div class="row">
+                        <div class="row mb-3">
                             <div class="col-12">
                                 <div class="card-header align-items-center  border-bottom-dark px-0">
                                     <div class="card-title mb-0">
@@ -30,7 +29,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         @if (isset($invoices))
                             <div class="row">
@@ -98,6 +96,8 @@
                                 </div>
                             </div>
                         @endif
+
+
                     </div>
                 </div>
             </div>
@@ -107,6 +107,6 @@
 
 @section('js')
     <script>
-        jQuery('.yajra-datatable').DataTable();
+         var table = jQuery('.yajra-datatable').DataTable();
     </script>
 @endsection
