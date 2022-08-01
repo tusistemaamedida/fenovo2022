@@ -33,7 +33,7 @@ class MisFacturasController extends Controller
 
             if ($store->password == $request->password) {
                 $invoices = Invoice::with(['panama', 'flete'])->where('client_cuit', $cuit)->whereNotNull('cae')->whereNotNull('url')->orderBy('created_at', 'DESC')->get();
-                return view('admin.mis-facturas.list', compact('invoices'));
+                return view('admin.mis-facturas.list', compact('invoices', 'store'));
             }
 
             $request->session()->flash('error-store', 'su clave no es válida ');
