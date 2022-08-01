@@ -80,10 +80,10 @@ class ProductController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $productos = DB::table('products as t1')->where('t1.active', 1)
+            $productos = DB::table('products as t1')
             ->join('product_prices as t2', 't1.id', '=', 't2.product_id')
             ->join('proveedors as t3', 't3.id', '=', 't1.proveedor_id')
-            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor'])
+            ->select(['t1.id', 't1.cod_fenovo', 't1.name', 't1.unit_type', 't2.costfenovo', 't3.name as proveedor', 't1.active'])
             ->orderBy('t1.cod_fenovo')
             ->get();
 
@@ -97,6 +97,10 @@ class ProductController extends Controller
                 })
                 ->addColumn('proveedor', function ($producto) {
                     return $producto->proveedor;
+                })
+
+                ->addColumn('activo', function ($producto) {
+                    return ($producto->active == 0)?'<i class="fas fa-minus-circle text-danger"></i>':null ;
                 })
                 ->addColumn('ajuste', function ($producto) {
                     return '<a href="' . route('getData.stock.detail', ['id' => $producto->id]) . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
@@ -115,7 +119,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'costo', 'proveedor', 'ajuste', 'historial', 'borrar', 'editar'])
+                ->rawColumns(['stock', 'costo', 'proveedor', 'activo', 'ajuste', 'historial', 'borrar', 'editar'])
                 ->make(true);
         }
 
