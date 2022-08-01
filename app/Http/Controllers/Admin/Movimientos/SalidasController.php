@@ -1267,7 +1267,7 @@ class SalidasController extends Controller
         foreach ($products as $p) {
 
             // Obtengo los movimientos
-            $movements_products = MovementProduct::where('movement_id', '>', 1429)
+            $movements_products = MovementProduct::where('movement_id', '>', 1200)
                 ->where('product_id', $p->id)
                 ->where('entidad_id', 1)
                 ->orderBy('id', 'ASC')
