@@ -124,7 +124,7 @@
                 <li class="nav-item dropdown mt-2" title="">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-cart-arrow-down"></i>
+                        <i class="fas fa-store"></i>
                     </a>
                     <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item text-black-50" href="{{ url('depositos') }}">

@@ -72,7 +72,9 @@ class SessionProduct extends Model
         'circuito',
         'palet',
         'user_id',
-        'deposito'
+        'deposito',
+        'desde_deposito',
+        'a_deposito'
     ];
 
     public function producto()

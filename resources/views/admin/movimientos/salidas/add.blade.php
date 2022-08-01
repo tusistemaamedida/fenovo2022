@@ -1,5 +1,17 @@
 @extends('layouts.app')
 
+@section('css')
+    <style>
+        .not-display{
+            display: none;
+            visibility: hidden;
+        }
+        .display-block{
+            display: block;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="subheader py-2 py-lg-6 subheader-solid">
         <div class="container-fluid">
@@ -33,6 +45,28 @@
 @endsection
 
 @section('js')
+    @if(\Auth::user()->rol() == 'contable')
+        <script>
+            jQuery("#to_type").change(function(){
+                var type = jQuery("#to_type").val();
+                if(type == 'TRASLADO'){
+                    jQuery("#col-tienda").removeClass('display-block');
+                    jQuery("#col-tienda").addClass('not-display');
+                    jQuery("#desde-deposito").removeClass('not-display');
+                    jQuery("#a-deposito").removeClass('not-display');
+                    jQuery("#desde-deposito").addClass('display-block');
+                    jQuery("#a-deposito").addClass('display-block');
+                }else{
+                    jQuery("#col-tienda").removeClass('not-display');
+                    jQuery("#col-tienda").addClass('display-block');
+                    jQuery("#desde-deposito").addClass('not-display');
+                    jQuery("#a-deposito").addClass('not-display');
+                    jQuery("#desde-deposito").removeClass('display-block');
+                    jQuery("#a-deposito").removeClass('display-block');
+                }
+            })
+        </script>
+    @endif
     <script>
         jQuery(document).ready(function() {
             @if (isset($destino))
@@ -138,9 +172,22 @@
             var elements = document.querySelectorAll('.is-invalid');
             var id = jQuery("#product_search").val();
 
+            var desde_deposito = null;
+            var a_deposito = null;
+
             var to_type = jQuery("#to_type").val();
             var to = jQuery("#to").val();
             var list_id = to_type + '_' + to;
+            desde_deposito =  jQuery("#desde_deposito").val();
+            a_deposito =  jQuery("#a_deposito").val();
+            var nro_pedido = jQuery("#nro_pedido").val();
+            if(nro_pedido){
+                var list_id = to_type + '_' + to + '_' + nro_pedido;
+            }else if(desde_deposito){
+                var list_id = to_type + '_' + desde_deposito+'-'+a_deposito;
+            }else{
+                var list_id = to_type + '_' + to;
+            }
 
             if (id != '') {
                 jQuery.ajax({
@@ -178,6 +225,14 @@
             cargarTablaProductos();
         });
 
+        jQuery('#desde_deposito').change(function() {
+            cargarTablaProductos();
+        });
+
+        jQuery('#a_deposito').change(function() {
+            cargarTablaProductos();
+        });
+
         function deleteItemSession(id, route) {
             ymz.jq_confirm({
                 title: 'Eliminar',
@@ -207,11 +262,22 @@
         }
 
         function cargarTablaProductos() {
+
+            var desde_deposito = null;
+            var a_deposito = null;
+
             var nro_pedido = jQuery("#nro_pedido").val();
             var to_type = jQuery("#to_type").val();
             var to = jQuery("#to").val();
+
+            desde_deposito =  jQuery("#desde_deposito").val();
+            a_deposito =  jQuery("#a_deposito").val();
+            var nro_pedido = jQuery("#nro_pedido").val();
+
             if(nro_pedido){
                 var list_id = to_type + '_' + to + '_' + nro_pedido;
+            }else if(desde_deposito){
+                var list_id = to_type + '_' + desde_deposito+'-'+a_deposito;
             }else{
                 var list_id = to_type + '_' + to;
             }
@@ -242,10 +308,22 @@
         }
 
         function cargarFlete() {
+            var desde_deposito = null;
+            var a_deposito = null;
             var to_type = jQuery("#to_type").val();
             var to = jQuery("#to").val();
             var list_id = to_type + '_' + to;
             var total_from_session = jQuery("#total_from_session").val();
+            desde_deposito =  jQuery("#desde_deposito").val();
+            a_deposito =  jQuery("#a_deposito").val();
+            var nro_pedido = jQuery("#nro_pedido").val();
+            if(nro_pedido){
+                var list_id = to_type + '_' + to + '_' + nro_pedido;
+            }else if(desde_deposito){
+                var list_id = to_type + '_' + desde_deposito+'-'+a_deposito;
+            }else{
+                var list_id = to_type + '_' + to;
+            }
             var formData = {
                 list_id,
                 total_from_session
@@ -342,6 +420,9 @@
 
         function guardarProductoEnSession() {
             var deposito = null;
+            var desde_deposito = null;
+            var a_deposito = null;
+
             var unit_type = jQuery("#unit_type").val();
             var to_type = jQuery("#to_type").val();
             var product_id = jQuery("#product_search").val();
@@ -350,9 +431,15 @@
             if(deposito){
                 deposito = deposito.value;
             }
+
+            desde_deposito =  jQuery("#desde_deposito").val();
+            a_deposito =  jQuery("#a_deposito").val();
+
             var nro_pedido = jQuery("#nro_pedido").val();
             if(nro_pedido){
                 var list_id = to_type + '_' + to + '_' + nro_pedido;
+            }else if(desde_deposito){
+                var list_id = to_type + '_' + desde_deposito+'-'+a_deposito;
             }else{
                 var list_id = to_type + '_' + to;
             }
@@ -364,6 +451,8 @@
                 to,
                 to_type,
                 deposito,
+                desde_deposito,
+                a_deposito,
                 unit_type
             };
 

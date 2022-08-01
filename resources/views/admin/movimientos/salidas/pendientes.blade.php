@@ -16,7 +16,7 @@
                                     </div>
                                     <div class="icons d-flex">
                                         <a href="{{ route('salidas.add') }}" class="ml-2">
-                                            @if(in_array(Auth::user()->rol(), ['superadmin', 'admin']) )
+                                            @if(in_array(Auth::user()->rol(), ['superadmin', 'admin','contable']) )
                                             <i class="fa fa-2x fa-plus-circle text-primary"></i>
                                             @endif
                                         </a>

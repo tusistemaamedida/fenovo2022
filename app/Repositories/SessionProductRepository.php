@@ -74,7 +74,7 @@ class SessionProductRepository extends BaseRepository
 
     public function groupBy($group)
     {
-        if(\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin'){
+        if(\Auth::user()->rol() == 'superadmin'){
             return SessionProduct::select('*', DB::raw("COUNT(id) as total"))
                                     ->where('store_id',\Auth::user()->store_active)
                                     ->where('list_id', 'not like', '%DEVOLUCION_%')

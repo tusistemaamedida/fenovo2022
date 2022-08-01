@@ -7,17 +7,24 @@
             Unidad ::{{$product->unit_type}}
         </div>
     </div>
+
     <div class="row text-center">
         @foreach ($producto_en_depositos as $producto_en_deposito)
             <div class="col-4" style="padding-top: 5px;font-weight: bold;">{{$producto_en_deposito->deposito->razon_social}}</div>
             <div class="col-4" style="padding-top: 5px;font-weight: bold;">{{$producto_en_deposito->stock_f + $producto_en_deposito->stock_r + $producto_en_deposito->stock_cyo}}</div>
             <div class="col-4" style="padding-top: 5px;font-weight: bold;">
-                <input type="radio" name="deposito" class="form-group deposito" value="{{$producto_en_deposito->deposito->id}}" style="margin-top: 3px;">
+                <input type="radio"
+                       name="deposito"
+                       class="form-group deposito"
+                       @if($desposito_desde_seleccionado == $producto_en_deposito->deposito->id) checked @endif
+                       value="{{$producto_en_deposito->deposito->id}}"
+                       style="margin-top: 3px;">
             </div>
             <hr style="width: 100%">
         @endforeach
 
     </div>
+
     <input type="hidden" name="tope" id="tope" value="{{$stock_total}}">
     <input type="hidden" name="kg_totales" id="kg_totales" value="0">
     <input type="hidden" name="unit_type" id="unit_type" value="{{ $product->unit_type }}">
