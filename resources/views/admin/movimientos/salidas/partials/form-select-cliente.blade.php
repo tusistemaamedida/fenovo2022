@@ -40,9 +40,12 @@
                 </div>
 
                 <div class="col-md-2 text-center">
+
+                    @if(in_array(Auth::user()->rol(), ['superadmin', 'admin']) )
                     <button type="button" class="btn btn-danger" id="btnOpenCerrarSalida" disabled style="float: right;margin-top: 30px;height: 20px;padding: 2px 15px 22px 15px;">
                         <i class="fa fa-times"></i> Cerrar Salida
                     </button>
+                    @endif
                 </div>
             </div>
         </div>

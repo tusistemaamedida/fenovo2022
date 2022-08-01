@@ -185,8 +185,10 @@ class SalidasController extends Controller
                 })
                 ->addColumn('destroy', function ($pendiente) {
                     if (is_null($pendiente->pausado)) {
-                        $ruta = "motivoPendiente('" . $pendiente->list_id . "')";
-                        return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                        if (in_array(Auth::user()->rol(), ['superadmin', 'admin'])) {
+                            $ruta = "motivoPendiente('" . $pendiente->list_id . "')";
+                            return '<a href="javascript:void(0)" onclick="' . $ruta . '"> <i class="fa fa-trash"></i> </a>';
+                        }
                     }
                     return '';
                 })
@@ -244,7 +246,7 @@ class SalidasController extends Controller
 
     public function pendientePrint(Request $request)
     {
-        $list_id = $request->list_id;//. '_' . \Auth::user()->store_active;
+        $list_id = $request->list_id; //. '_' . \Auth::user()->store_active;
 
         $session_products = DB::table('session_products as t1')
             ->join('products as t2', 't1.product_id', '=', 't2.id')
@@ -286,6 +288,7 @@ class SalidasController extends Controller
                     $objProduct->unit_type    = $movimiento->unit_type;
                     $objProduct->unit_package = $movimiento->unit_package;
                     $objProduct->quantity     = $movimiento->bultos;
+                    $objProduct->palet        = $movimiento->product->palet . $movimiento->palet;
                     $objProduct->unity        = '( ' . $movimiento->unit_package . ' ' . $movimiento->product->unit_type . ' )';
                     $objProduct->total_unit   = number_format($movimiento->bultos * $movimiento->unit_package, 2, ',', '.');
                     $objProduct->class        = '';
@@ -312,16 +315,17 @@ class SalidasController extends Controller
             }
             $destino         = $this->origenData($movement->type, $movement->to, true);
             $array_productos = [];
-            $productos       = $movement->panamas;
-            foreach ($productos as $producto) {
+            $movimientos     = $movement->panamas;
+            foreach ($movimientos as $movimiento) {
                 $objProduct               = new stdClass();
-                $objProduct->cod_fenovo   = $producto->product->cod_fenovo;
-                $objProduct->name         = $producto->product->name;
-                $objProduct->unit_weight  = $producto->product->unit_weight;
-                $objProduct->unit_package = $producto->unit_package;
-                $objProduct->quantity     = $producto->bultos;
-                $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
-                $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
+                $objProduct->cod_fenovo   = $movimiento->product->cod_fenovo;
+                $objProduct->name         = $movimiento->product->name;
+                $objProduct->unit_weight  = $movimiento->product->unit_weight;
+                $objProduct->unit_package = $movimiento->unit_package;
+                $objProduct->palet        = $movimiento->product->palet . $movimiento->palet;
+                $objProduct->quantity     = $movimiento->bultos;
+                $objProduct->unity        = '( ' . $movimiento->unit_package . ' ' . $movimiento->product->unit_type . ' )';
+                $objProduct->total_unit   = number_format($movimiento->bultos * $movimiento->unit_package, 2, ',', '.');
                 $objProduct->class        = '';
                 array_push($array_productos, $objProduct);
             }
@@ -353,6 +357,7 @@ class SalidasController extends Controller
                 $objProduct->name         = $producto->product->name;
                 $objProduct->unit_weight  = $producto->product->unit_weight;
                 $objProduct->unit_package = $producto->unit_package;
+                $objProduct->palet        = $producto->palet;
                 $objProduct->quantity     = $producto->bultos;
                 $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
                 $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
@@ -363,7 +368,7 @@ class SalidasController extends Controller
 
         // Guarda el PDF en la carpeta public
 
-        $orden = 'orden-' . $request->id . '.pdf';
+        $orden = 'exportacion/orden-' . $request->id . '.pdf';
         $pdf   = PDF::loadView('print.orden', compact('orden', 'destino', 'array_productos'));
         $pdf->save($orden);
 
@@ -382,6 +387,7 @@ class SalidasController extends Controller
             $objProduct->name         = $producto->product->name;
             $objProduct->unit_weight  = $producto->product->unit_weight;
             $objProduct->unit_package = $producto->unit_package;
+            $objProduct->palet        = $producto->palet;
             $objProduct->quantity     = $producto->bultos;
             $objProduct->unity        = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
             $objProduct->total_unit   = number_format($producto->bultos * $producto->unit_package, 2, ',', '.');
@@ -389,7 +395,7 @@ class SalidasController extends Controller
             array_push($array_productos, $objProduct);
         }
 
-        $ordenp = 'ordenp-' . $request->id . '.pdf';
+        $ordenp = 'exportacion/ordenp-' . $request->id . '.pdf';
         $pdfp   = PDF::loadView('print.ordenPanama', compact('orden', 'destino', 'array_productos'));
         $pdf->save($ordenp);
 
@@ -555,6 +561,7 @@ class SalidasController extends Controller
                 $objProduct->cod_fenovo = $producto->product->cod_fenovo;
                 $objProduct->codigo     = $producto->product->cod_fenovo;
                 $objProduct->name       = $producto->product->name;
+                $objProduct->palet      = $producto->palet;
                 $objProduct->unit_price = number_format($producto->unit_price, 2, ',', '.');
                 $objProduct->subtotal   = number_format($subtotal, 2, ',', '.');
                 $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
@@ -665,7 +672,7 @@ class SalidasController extends Controller
             $session_products      = $this->sessionProductRepository->getByListId($list_id);
             $mostrar_check_invoice = false; //!(str_contains($list_id, 'DEVOLUCION_') || str_contains($list_id, 'DEBITO_'));
             return new JsonResponse([
-                'type' => 'success',
+                'type' => $list_id,
                 'html' => view('admin.movimientos.salidas.partials.form-table-products', compact('session_products', 'mostrar_check_invoice'))->render(),
             ]);
         } catch (\Exception $e) {
@@ -779,6 +786,11 @@ class SalidasController extends Controller
             $product_id          = $request->input('product_id');
             $unit_type           = $request->input('unit_type');
             $deposito            = $request->input('deposito');
+            $list_id             = $request->input('list_id');
+
+            if (count(explode('_', $list_id)) == 2) {
+                $list_id .= '_' . Auth::user()->store_active;
+            }
 
             if (!$to) {
                 return new JsonResponse(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
@@ -859,7 +871,7 @@ class SalidasController extends Controller
 
             $insert_data['unit_type']    = $unit_type;
             $insert_data['costo_fenovo'] = $prices->costfenovo;
-            $insert_data['list_id']      = $to_type . '_' . $to . '_' . Auth::user()->store_active;
+            $insert_data['list_id']      = $list_id;
             $insert_data['store_id']     = Auth::user()->store_active;
             $insert_data['user_id']      = Auth::user()->id;
             $insert_data['invoice']      = true;
@@ -889,7 +901,12 @@ class SalidasController extends Controller
     public function storeSessionProductItem(Request $request)
     {
         try {
-            SessionProduct::find($request->id)->update(['quantity' => $request->quantity]);
+            if ($request->quantity) {
+                SessionProduct::find($request->id)->update(['quantity' => $request->quantity]);
+            }
+            if ($request->palet) {
+                SessionProduct::find($request->id)->update(['palet' => $request->palet]);
+            }
             return new JsonResponse(['type' => 'success', 'msj' => 'ok']);
         } catch (\Exception $e) {
             return new JsonResponse(['msj' => $e->getMessage(), 'type' => 'error']);
@@ -902,7 +919,7 @@ class SalidasController extends Controller
             $cantidad = ($product->unit_type == 'K') ? ($product->producto->unit_weight * $product->unit_package * $product->quantity) : ($product->unit_package * $product->quantity);
             $balance  = $product->producto->stockReal();
             if ($balance < $cantidad) {
-                $alert = '<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert"><i class="ace-icon fa fa-times"></i></button>';
+                $alert = '<div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert"><i class="ace-icon fa fa-times"></i></button>';
                 $alert .= '<i class="ace-icon fa fa-ban"></i> COD-FENOVO <strong>';
                 $alert .= $product->producto->cod_fenovo . '</strong> insuficiente. Imposible vender <strong>';
                 $alert .= $cantidad . '</strong>, porque el stock actual es <strong>';
@@ -1029,6 +1046,7 @@ class SalidasController extends Controller
                 $unit_type           = $product->unit_type;
                 $unit_weight         = $product->producto->unit_weight;
                 $unit_package        = $product->unit_package;
+                $palet               = $product->palet;
 
                 $deposito = $product->deposito;
 
@@ -1124,6 +1142,7 @@ class SalidasController extends Controller
                             'movement_id'  => $movement->id,
                             'product_id'   => $product->product_id,
                             'unit_package' => $product->unit_package,
+                            'palet'        => $palet,
                             'invoice'      => $invoice,
                             'iibb'         => $product->iibb,
                             'unit_price'   => ($invoice) ? $product->unit_price : $product->neto,
@@ -1144,6 +1163,7 @@ class SalidasController extends Controller
                             'movement_id'  => $movement->id,
                             'product_id'   => $product->product_id,
                             'unit_package' => $product->unit_package,
+                            'palet'        => $palet,
                             'invoice'      => $invoice,
                             'bultos'       => $quantity,
                             'cost_fenovo'  => $product->costo_fenovo,

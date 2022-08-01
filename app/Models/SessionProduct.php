@@ -70,6 +70,7 @@ class SessionProduct extends Model
         'nro_pedido',
         'pausado',
         'circuito',
+        'palet',
         'user_id',
         'deposito'
     ];

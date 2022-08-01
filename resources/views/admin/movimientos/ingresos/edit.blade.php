@@ -230,7 +230,7 @@
                 if (total > 0) {
                     jQuery('#btn-guardar-producto').removeClass("d-none");
                 }
-                jQuery('.total').val(total)
+                jQuery('.total').val(total.toFixed(2))
             } else {
                 jQuery('#btn-guardar-producto').addClass("d-none");
                 jQuery('.total').val(0)

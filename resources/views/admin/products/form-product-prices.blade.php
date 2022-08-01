@@ -8,6 +8,10 @@
                 </span>
             </a>
             @foreach ($product->session_prices as $p)
+
+            <a href="javascript:void(0)" onclick="eliminarActualizacion({{ $p->id}})" title="Eliminar actualizacion">
+                <i class=" fa fa-trash text-dark"></i>
+            </a>
             <a href="{{route('product.edit',['id' => $product->id,'fecha_actualizacion_activa' => $p->id])}}#precios" @if(isset($fecha_actualizacion_activa) && $p->id != $fecha_actualizacion_activa) onclick="jQuery('#loader').removeClass('hidden')" @endif>
                 <span class="badge
                 @if(isset($fecha_actualizacion_activa) && $p->id != $fecha_actualizacion_activa)
@@ -18,10 +22,14 @@
                     Actualización :: {{\Carbon\Carbon::parse($p->fecha_actualizacion)->format('d/m/Y')}}
                 </span>
             </a>
+            
             @endforeach
         </span>
 
         @foreach ($ofertas as $precio_oferta)
+        <a href="javascript:void(0)" onclick="eliminarOferta({{ $precio_oferta->id}})" title="Eliminar oferta">
+            <i class=" fa fa-trash text-dark"></i>
+        </a>
         
         <a href="{{route('product.edit',['id' => $product->id, 'oferta_id' => $precio_oferta->id,'fecha_oferta' => $precio_oferta->fecha_desde ])}}#precios" onclick="jQuery('#loader').removeClass('hidden')">
             <span class="badge @if(Request::get('fecha_oferta') !== null && Request::get('oferta_id') == $precio_oferta->id) badge-primary @else badge-light @endif p-2">
