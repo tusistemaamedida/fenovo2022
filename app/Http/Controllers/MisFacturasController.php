@@ -10,7 +10,6 @@ use App\Models\Store;
 use App\Traits\OriginDataTrait;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use stdClass;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -48,11 +47,43 @@ class MisFacturasController extends Controller
 
     public function list(Request $request)
     {
-        $cuit     = session('cuit');
-        $invoices = Invoice::with(['panama', 'flete'])->where('client_cuit', $cuit)->whereNotNull('cae')->whereNotNull('url')->orderBy('created_at', 'DESC')->get();
+        $cuit = session('cuit');
 
-        //$invoices =  DB::table('invoices as t1')->leftJoin('panamas as t2', 't1.movement_id', '=', 't2.movement_id');
-        return view('admin.mis-facturas.list', compact('invoices'));
+        if ($request->ajax()) {
+            $invoices = Invoice::where('client_cuit', $cuit)->orderBy('id', 'DESC')->get();
+            return Datatables::of($invoices)
+                ->addColumn('fecha', function ($invoice) {
+                    return \Carbon\Carbon::parse($invoice->updated_at)->format('d/m/Y');
+                })
+                ->addColumn('tienda', function ($invoice) {
+                    return $invoice->tienda();
+                })
+                ->addColumn('cliente', function ($invoice) {
+                    return $invoice->client_name;
+                })
+                ->addColumn('importe', function ($invoice) {
+                    return number_format($invoice->imp_total, 2, ',', '.');
+                })
+                ->addColumn('url', function ($invoice) {
+                    return ($invoice->url) ? '<a class="text-primary" title="Descargar factura" target="_blank" href="'.$invoice->url.'">
+                    <i class="fa fa-download"></i></a>' : null;
+                })
+                ->addColumn('panama', function ($invoice) {
+                    $ruta = route('tiendas.print.panama', ['id' => $invoice->movement_id]);
+                    return (($invoice->panama)) ? '<a class="text-primary" title="Descargar PAN" target="_blank" href="' . $ruta . '"> <i class="fa fa-download"></i>  </a>' : null;
+                })
+
+                ->addColumn('flete', function ($invoice) {
+                    $ruta = route('tiendas.print.panama', ['id' => $invoice->movement_id]);
+                    return (($invoice->flete)) ? '<a class="text-primary" title="Descargar FLETE"
+                    target="_blank" href="' . route('tiendas.print.flete', ['id' => $invoice->movement_id]) . '"> <i class="fa fa-download"></i> </a>' : null;
+                })
+
+                ->rawColumns(['fecha', 'tienda', 'cliente', 'importe', 'url', 'panama', 'flete'])
+                ->make(true);
+        }
+
+        return view('admin.mis-facturas.list', compact('cuit'));
     }
 
     public function editPassword(Request $request)

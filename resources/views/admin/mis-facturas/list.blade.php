@@ -30,7 +30,12 @@
                             </div>
                         </div>
 
-                        @if (isset($invoices))
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                CUIT {{ $cuit }}
+                            </div>
+                        </div>
+
                             <div class="row">
                                 <div class="col-12 ">
                                     <div class="card card-custom gutter-b bg-white border-0">
@@ -40,54 +45,17 @@
                                                     <thead class="text-body">
                                                         <tr>
                                                             <th>#</th>
-                                                            <th>CAE</th>
-                                                            <th>Nombre</th>
-                                                            <th>CUIT</th>
-                                                            <th>Tienda</th>
-                                                            <th>Importe total</th>
                                                             <th>Fecha</th>
-                                                            <th class="no-sort">FAC</th>
-                                                            <th class="no-sort">PAN</th>
-                                                            <th class="no-sort">FLE</th>
+                                                            <th>Tienda</th>
+                                                            <th>Nombre</th>
+                                                            <th>Cae</th>
+                                                            <th>Importe</th>
+                                                            <th>FAC</th>
+                                                            <th>PAN</th>
+                                                            <th>FLE</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody class="kt-table-tbody text-dark">
-                                                        @foreach ($invoices as $invoice)
-                                                            <tr>
-                                                                <td>{{ $invoice->id }}</td>
-                                                                <td>{{ $invoice->cae }}</td>
-                                                                <td>{{ $invoice->client_name }}</td>
-                                                                <td>{{ $invoice->client_cuit }}</td>
-                                                                <td>{{ $invoice->tienda() }}</td>
-                                                                <td>${{ number_format($invoice->imp_total, 2, ',', '.') }}
-                                                                </td>
-                                                                <td>{{ \Carbon\Carbon::parse($invoice->created_at)->format('d/m/Y') }}
-                                                                </td>
-                                                                <td>
-                                                                    <a class="text-primary" title="Descargar FACTURA"
-                                                                        target="_blank" href="{{ $invoice->url }}"> <i
-                                                                            class="fa fa-download"></i></a>
-                                                                </td>
-                                                                <td>
-                                                                    @if ($invoice->panama)
-                                                                        <a class="text-primary" title="Descargar PAN"
-                                                                            target="_blank"
-                                                                            href="{{ route('tiendas.print.panama', ['id' => $invoice->movement_id]) }}">
-                                                                            <i class="fa fa-download"></i>
-                                                                        </a>
-                                                                    @endif
-                                                                </td>
-                                                                <td>
-                                                                    @if ($invoice->flete)
-                                                                        <a class="text-primary" title="Descargar FLETE"
-                                                                            target="_blank"
-                                                                            href="{{ route('tiendas.print.flete', ['id' => $invoice->movement_id]) }}">
-                                                                            <i class="fa fa-download"></i>
-                                                                        </a>
-                                                                    @endif
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
+                                                    <tbody>                                                           
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -95,9 +63,7 @@
                                     </div>
                                 </div>
                             </div>
-                        @endif
-
-
+                        
                     </div>
                 </div>
             </div>
@@ -107,6 +73,20 @@
 
 @section('js')
     <script>
-         var table = jQuery('.yajra-datatable').DataTable();
+        var table = jQuery('.yajra-datatable').DataTable({
+            'bSort':false,
+            ajax: "{{ route('mis.facturas.list') }}",
+            columns: [
+                {data: 'movement_id'},
+                {data: 'fecha'},
+                {data: 'tienda'},
+                {data: 'cliente'},
+                {data: 'cae'},
+                {data: 'importe'},
+                {data: 'url'},
+                {data: 'panama'},
+                {data: 'flete'},
+            ]
+        });
     </script>
 @endsection
