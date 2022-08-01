@@ -17,7 +17,7 @@
                         <div class="card-body">
                             <form method="POST" action="{{ route('get.mis.facturas') }}">
                                 @csrf
-                                <div class="row mb-5">
+                                <div class="row mb-3">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <label for="cuit">Cuit</label>
                                         <input type="number" name="cuit" id="cuit" required
@@ -26,7 +26,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row mb-5">
+                                <div class="row mb-1">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <label for="password">Contraseña</label>
                                         <input type="password" name="password" id="password" required class="form-control input border-dark">
@@ -45,7 +45,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row mt-5 mb-5">
+                                <div class="row mt-2 mb-5">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <input type="submit" class="btn btn-dark btn-block" value="BUSCAR" />
                                     </div>
