@@ -21,26 +21,34 @@ class MisFacturasController extends Controller
         return view('admin.mis-facturas.inicio');
     }
 
-    public function getMisFacturas(Request $request)
+    public function check(Request $request)
     {
         $cuit  = $request->cuit;
         $store = Store::where('cuit', $cuit)->where('active', 1)->first();
 
-        if ($store) {
-            if (!$store->password) {
-                return redirect()->route('mis.facturas.edit.password', compact('store'));
-            }
+        if (!$store) {
+            $request->session()->flash('error-store', 'cuit no registrada ' . $cuit);
+            return view('admin.mis-facturas.inicio');
+        }
 
-            if ($store->password == $request->password) {
-                $invoices = Invoice::with(['panama', 'flete'])->where('client_cuit', $cuit)->whereNotNull('cae')->whereNotNull('url')->orderBy('created_at', 'DESC')->get();
-                return view('admin.mis-facturas.list', compact('invoices', 'store'));
-            }
+        if (!$store->password) {
+            return redirect()->route('mis.facturas.edit.password', compact('store'));
+        }
 
+        if ($store->password !== $request->password) {
             $request->session()->flash('error-store', 'su clave no es válida ');
             return view('admin.mis-facturas.inicio');
         }
-        $request->session()->flash('error-store', 'cuit no registrada ' . $cuit);
-        return view('admin.mis-facturas.inicio');
+
+        session(['store' => $store]);
+        return redirect()->route('mis.facturas.list');
+    }
+
+    public function list(Request $request)
+    {
+        $store    = session('store');
+        $invoices = Invoice::with(['panama', 'flete'])->where('client_cuit', $store->cuit)->whereNotNull('cae')->whereNotNull('url')->orderBy('created_at', 'DESC')->get();
+        return view('admin.mis-facturas.list', compact('invoices', 'store'));
     }
 
     public function editPassword(Request $request)

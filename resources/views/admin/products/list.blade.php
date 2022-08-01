@@ -56,6 +56,7 @@
                                         <td>Unidad</td>
                                         <td>Costo</td>
                                         <td>Proveedor</td>
+                                        <td>Desactivado</td>
                                         <td>Historial</td>
                                         <td>Ajuste</td>
                                         <td>Editar</td>
@@ -90,6 +91,7 @@
             {data: 'unit_type',class:'text-center', orderable: false, searchable: false},
             {data: 'costo', orderable: false, searchable: false},
             {data: 'proveedor', orderable: false},
+            {data: 'activo', class:'text-center', orderable: false},
             {data: 'historial', class:'text-center', orderable: false, searchable: false},
             {data: 'ajuste', class:'text-center', orderable: false, searchable: false},
             {data: 'editar', class:'text-center', orderable: false, searchable: false},
