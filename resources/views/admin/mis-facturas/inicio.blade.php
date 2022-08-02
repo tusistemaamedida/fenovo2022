@@ -10,38 +10,36 @@
                         <div class="card-title">
                             <div class="row text-center">
                                 <div class="col-xs-12 col-md-12 col-lg-12">
-                                    <img src="{{ asset('assets/images/misc/logo-color-300.png') }}" alt="fenovo" class=" img-fluid">
+                                    <img src="{{ asset('assets/images/misc/logo-color-300.png') }}" alt="fenovo"
+                                        class=" img-fluid">
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="{{ route('mis.facturas.check') }}">
+                            <form method="POST" action="{{ route('mis.facturas.check') }}" id="LogCuit">
                                 @csrf
                                 <div class="row mb-3">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <label for="cuit">Cuit</label>
                                         <input type="number" name="cuit" id="cuit" required
                                             class="form-control input border-dark" autofocus>
-                                        <small class=" text-center"> Ingrese <b>cuit</b> sin guiones ni barras, sólo números</small>
+                                        <small class=" text-center"> Ingrese <b>cuit</b> sin guiones ni barras, sólo
+                                            números</small>
                                     </div>
                                 </div>
 
                                 <div class="row mb-3">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <label for="password">Contraseña</label>
-                                        <input type="password" name="password" id="password" required class="form-control input border-dark">
+                                        <input type="password" name="password" id="password" required
+                                            class="form-control input border-dark">
                                         <div class="mt-3">
-                                            @if (Session()->has('update-store'))
-                                                <div class="alert alert-card alert-info" role="alert">
-                                                    <strong>Perfecto, </strong> {!! Session::get('update-store') !!}
-                                                </div>                                            
-                                            @endif    
                                             @if (Session()->has('error-store'))
                                                 <div class="alert alert-card alert-danger" role="alert">
-                                                    <strong>Verifique, </strong>  {!! Session::get('error-store') !!}                                             
-                                                </div>                                            
-                                            @endif    
-                                        </div>    
+                                                    <strong>Verifique, </strong> {!! Session::get('error-store') !!}
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
 
@@ -62,7 +60,6 @@
 
 @section('js')
     <script>
-        
         jQuery("#cuit").on("focus", function() {
             jQuery("cuit").val("");
         });
@@ -70,6 +67,10 @@
         jQuery("#password").on("focus", function() {
             jQuery("password").val("");
         });
-        
+
+        jQuery("#LogCuit").submit(function() {
+            let cuit = jQuery("#cuit").val();
+            localStorage.setItem('cuit', cuit);
+        })
     </script>
 @endsection

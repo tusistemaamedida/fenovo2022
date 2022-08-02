@@ -10,6 +10,7 @@ Route::get('/', function () {
 });
 
 Route::group(['middleware' => 'preventBackHistory'], function () {
+    
     Auth::routes();
     Route::get('/inicio', [App\Http\Controllers\HomeController::class, 'index'])->name('inicio');
 

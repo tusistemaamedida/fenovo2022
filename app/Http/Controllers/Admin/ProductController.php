@@ -170,19 +170,19 @@ class ProductController extends Controller
                     return date('d/m/Y', strtotime($movimiento->created_at));
                 })
                 ->addColumn('type', function ($movimiento) {
-                    return $movimiento->movement->type;
+                    return ($movimiento->movement)?$movimiento->movement->type:null;
                 })
                 ->addColumn('from', function ($movimiento) {
-                    return $movimiento->movement->From($movimiento->movement->type);
+                    return ($movimiento->movement)?$movimiento->movement->From($movimiento->movement->type):null;
                 })
                 ->addColumn('to', function ($movimiento) {
-                    return $movimiento->movement->To($movimiento->movement->type);
+                    return ($movimiento->movement)?$movimiento->movement->To($movimiento->movement->type):null;
                 })
                 ->addColumn('orden', function ($movimiento) {
-                    return $movimiento->movement->id;
+                    return ($movimiento->movement)?$movimiento->movement->id:null;
                 })
                 ->addColumn('observacion', function ($movimiento) {
-                    return $movimiento->movement->observacion;
+                    return ($movimiento->movement)?$movimiento->movement->observacion:null;
                 })
 
                 ->rawColumns(['fecha', 'type', 'from', 'to', 'orden', 'observacion'])
@@ -528,7 +528,7 @@ class ProductController extends Controller
             $insert_data['flete']          = 0;
             $insert_data['user_id']        = Auth::user()->id;
             $insert_data['observacion']    = $primer_registro['observacion'];
-            $movement                      = Movement::create($insert_data);
+            $movement_ajuste               = Movement::create($insert_data);
 
             $product = Product::find($primer_registro['product_id']);
 
@@ -552,7 +552,7 @@ class ProductController extends Controller
                 $stock = $product->stockReal();
 
                 // Inserta el Detalle del Ajuste Nave
-                $latest['movement_id']  = $movement->id;
+                $latest['movement_id']  = $movement_ajuste->id;
                 $latest['entidad_id']   = 1;
                 $latest['entidad_tipo'] = 'S';
                 $latest['product_id']   = $registro['product_id'];
@@ -611,7 +611,7 @@ class ProductController extends Controller
                 }
 
                 // Inserta el Detalle del Ajuste al Deposito
-                $latest['movement_id']  = $movement->id;
+                $latest['movement_id']  = $movement_ajuste->id;
                 $latest['entidad_id']   = 64;  // Deposito Reclamos
                 $latest['entidad_tipo'] = 'S';
                 $latest['product_id']   = $registro['product_id'];
