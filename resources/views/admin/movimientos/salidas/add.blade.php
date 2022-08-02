@@ -47,6 +47,9 @@
 @section('js')
     @if(\Auth::user()->rol() == 'contable')
         <script>
+            jQuery(document).ready(function() {
+                cargarTablaProductos();
+            });
             jQuery("#to_type").change(function(){
                 var type = jQuery("#to_type").val();
                 if(type == 'TRASLADO'){
@@ -273,7 +276,9 @@
             desde_deposito =  jQuery("#desde_deposito").val();
             a_deposito =  jQuery("#a_deposito").val();
             var nro_pedido = jQuery("#nro_pedido").val();
-
+            console.log(desde_deposito)
+            console.log(a_deposito)
+            console.log(nro_pedido)
             if(nro_pedido){
                 var list_id = to_type + '_' + to + '_' + nro_pedido;
             }else if(desde_deposito){
@@ -453,7 +458,8 @@
                 deposito,
                 desde_deposito,
                 a_deposito,
-                unit_type
+                unit_type,
+                nro_pedido
             };
 
             var url = "{{ route('store.session.product') }}";

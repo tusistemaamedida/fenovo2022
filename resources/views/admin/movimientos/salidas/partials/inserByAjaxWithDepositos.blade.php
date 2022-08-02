@@ -13,12 +13,14 @@
             <div class="col-4" style="padding-top: 5px;font-weight: bold;">{{$producto_en_deposito->deposito->razon_social}}</div>
             <div class="col-4" style="padding-top: 5px;font-weight: bold;">{{$producto_en_deposito->stock_f + $producto_en_deposito->stock_r + $producto_en_deposito->stock_cyo}}</div>
             <div class="col-4" style="padding-top: 5px;font-weight: bold;">
-                <input type="radio"
-                       name="deposito"
-                       class="form-group deposito"
-                       @if($desposito_desde_seleccionado == $producto_en_deposito->deposito->id) checked @endif
-                       value="{{$producto_en_deposito->deposito->id}}"
-                       style="margin-top: 3px;">
+
+                    <input type="radio"
+                        name="deposito"
+                        class="form-group deposito"
+                        @if($desposito_desde_seleccionado == $producto_en_deposito->deposito->id) checked @elseif($es_traslado) disabled @endif
+                        value="{{$producto_en_deposito->deposito->id}}"
+                        style="margin-top: 3px;">
+
             </div>
             <hr style="width: 100%">
         @endforeach

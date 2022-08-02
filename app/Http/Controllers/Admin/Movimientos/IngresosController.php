@@ -312,8 +312,8 @@ class IngresosController extends Controller
                 if(!is_null($movement_temp->deposito)){
                     $stock_cyo = $stock_f = $stock_r =0;
                     $prod_store   = ProductStore::where('product_id', $movimiento['product_id'])->where('store_id', $movement_temp->deposito)->first();
-                    $stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo : 0;
-                    $balance_compra = ($stock_inicial_store) ? $stock_inicial_store + $movimiento['entry'] : $movimiento['entry'];
+                    //$stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo : 0;
+                    //$balance_compra = ($stock_inicial_store) ? $stock_inicial_store + $movimiento['entry'] : $movimiento['entry'];
 
                     if ($movimiento['cyo']) {
                         ($prod_store) ?  $prod_store->stock_cyo = $prod_store->stock_cyo + $movimiento['entry'] : $stock_cyo = $movimiento['entry'];
@@ -354,6 +354,7 @@ class IngresosController extends Controller
                     'entry'        => $movimiento['entry'],
                     'egress'       => $movimiento['egress'],
                     'balance'      => $balance_compra,
+                    'deposito'     => $movement_temp->deposito,
                 ]);
 
                 // Generar la venta directa si viene el Id de Store

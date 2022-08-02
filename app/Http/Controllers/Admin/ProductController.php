@@ -160,10 +160,10 @@ class ProductController extends Controller
 
         if ($request->ajax()) {
             $movimientos = MovementProduct::with(['movement'])
-            ->whereEntidadId(1)
-            ->whereProductId($producto->id)
-            ->orderBy('id', 'DESC')
-            ->get();
+                ->whereEntidadId(1)
+                ->whereProductId($producto->id)
+                ->orderBy('id', 'DESC')
+                ->get();
             return Datatables::of($movimientos)
                 ->addIndexColumn()
                 ->addColumn('fecha', function ($movimiento) {
@@ -173,6 +173,10 @@ class ProductController extends Controller
                     return $movimiento->movement->type;
                 })
                 ->addColumn('from', function ($movimiento) {
+                    if(!is_null($movimiento->deposito) && $movimiento->movement->type == 'TRASLADO'){
+                        $dep = Store::where('id',$movimiento->deposito)->first();
+                        return $dep->razon_social;
+                    }
                     return $movimiento->movement->From($movimiento->movement->type);
                 })
                 ->addColumn('to', function ($movimiento) {
@@ -200,6 +204,7 @@ class ProductController extends Controller
             $movimientos = MovementProduct::with(['movement'])
                 ->whereProductId($producto->id)
                 ->whereEntidadId($store->id)
+                ->orWhere('deposito',$store->id)
                 ->orderBy('id', 'DESC')
                 ->get();
             return Datatables::of($movimientos)
@@ -208,9 +213,16 @@ class ProductController extends Controller
                     return date('d/m/Y', strtotime($movimiento->created_at));
                 })
                 ->addColumn('type', function ($movimiento) {
+                    if(!is_null($movimiento->deposito) && $movimiento->entry > 0 && $movimiento->movement->type == 'TRASLADO'){
+                        return 'INGRESO';
+                    }
                     return $movimiento->movement->type;
                 })
                 ->addColumn('from', function ($movimiento) {
+                    if(!is_null($movimiento->deposito) && $movimiento->movement->type == 'TRASLADO'){
+                        $dep = Store::where('id',$movimiento->deposito)->first();
+                        return $dep->razon_social;
+                    }
                     return $movimiento->movement->From($movimiento->movement->type);
                 })
                 ->addColumn('to', function ($movimiento) {
