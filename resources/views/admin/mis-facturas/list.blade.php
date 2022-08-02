@@ -22,8 +22,8 @@
                                         </h4>
                                     </div>
                                     <div class="icons d-flex">
-                                        <a href="{{ route('mis.facturas') }}">
-                                            Salir
+                                        <a href="{{ route('mis.facturas') }}" title="Salir">
+                                            <i class="fas fa-sign-out-alt text-dark"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -32,7 +32,7 @@
 
                         <div class="row mb-3">
                             <div class="col-12">
-                                CUIT {{ $cuit }}
+                                CUIT <span class=" text-dark font-weight-bolder">{{ $cuit }}</span>
                             </div>
                         </div>
 
@@ -42,17 +42,17 @@
                                         <div class="card-body">
                                             <div class=" table-responsive" id="printableTable">
                                                 <table id="productTable" class="display table-hover yajra-datatable">
-                                                    <thead class="text-body">
+                                                    <thead class=" bg-dark text-black-50">
                                                         <tr>
                                                             <th>#</th>
                                                             <th>Fecha</th>
                                                             <th>Tienda</th>
-                                                            <th>Nombre</th>
+                                                            <th>Titular</th>
                                                             <th>Cae</th>
                                                             <th>Importe</th>
-                                                            <th>FAC</th>
-                                                            <th>PAN</th>
-                                                            <th>FLE</th>
+                                                            <th>Factura</th>
+                                                            <th>Panama</th>
+                                                            <th>Flete</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>                                                           
@@ -82,10 +82,10 @@
                 {data: 'tienda'},
                 {data: 'cliente'},
                 {data: 'cae'},
-                {data: 'importe'},
-                {data: 'url'},
-                {data: 'panama'},
-                {data: 'flete'},
+                {data: 'importe', 'class':'text-center', orderable: false, searchable: false},
+                {data: 'url', 'class':'text-center', orderable: false, searchable: false},
+                {data: 'panama', 'class':'text-center', orderable: false, searchable: false},
+                {data: 'flete', 'class':'text-center', orderable: false, searchable: false},
             ]
         });
     </script>
