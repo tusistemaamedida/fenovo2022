@@ -197,7 +197,7 @@
                             <span class="text-black-50">Vehículos</span>
                         </a>
                         <a class="dropdown-item" href="{{ route('localidades.index') }}">
-                            <span class="text-black-50"> Localidades </span>
+                            <span class="text-black-50"> Localidades</span>
                         </a>
                     </div>
                 </li>

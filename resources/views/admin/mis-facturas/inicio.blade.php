@@ -21,12 +21,12 @@
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <label for="cuit">Cuit</label>
                                         <input type="number" name="cuit" id="cuit" required
-                                            class="form-control input border-dark mb-2" autofocus>
+                                            class="form-control input border-dark" autofocus>
                                         <small class=" text-center"> Ingrese <b>cuit</b> sin guiones ni barras, sólo números</small>
                                     </div>
                                 </div>
 
-                                <div class="row mb-1">
+                                <div class="row mb-3">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <label for="password">Contraseña</label>
                                         <input type="password" name="password" id="password" required class="form-control input border-dark">
@@ -45,9 +45,9 @@
                                     </div>
                                 </div>
 
-                                <div class="row mt-2 mb-5">
+                                <div class="row">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
-                                        <input type="submit" class="btn btn-dark btn-block" value="BUSCAR" />
+                                        <input type="submit" class="btn btn-dark btn-block" value="Buscar" />
                                     </div>
                                 </div>
                             </form>

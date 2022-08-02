@@ -10,7 +10,7 @@
                     <div class="card">
                         <div class="card-title text-center">
                             <img src="{{ asset('assets/images/misc/logo-color-300.png') }}" alt="fenovo" class=" img-responsive">
-                            <p class=" font-weight-bolder">Visualizador de facturas - bienvenido</p>
+                            <p class=" font-weight-bolder">Mis facturas - FENOVO SA</p>
                         </div>
                         <div class="card-body">
 
@@ -19,7 +19,7 @@
                                 <input type="hidden" id="store_id" name="store_id" value="{{ $store->id }}">
                                 <input type="hidden" id="cuit" name="cuit" value="{{ $store->cuit }}">
                                 
-                                <div class="row mb-5">
+                                <div class="row mb-3">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <label for="password">Ingrese contraseña</label>
                                         <input type="text" name="password" id="password" value="" required
@@ -30,7 +30,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row mb-5">
+                                <div class="row mb-3">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <label for="password_verify">Vuelva a escribir su contraseña</label>
                                         <input type="text" name="password_verify" id="password_verify" required
@@ -40,7 +40,7 @@
                                     </div>
                                 </div>
 
-                                <div class="row mt-5">
+                                <div class="row">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <input type="submit" id="btn-actualizar" class="btn btn-dark btn-block"
                                             value="Generar" disabled=true />
