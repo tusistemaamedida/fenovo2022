@@ -89,7 +89,7 @@ class MisFacturasController extends Controller
                 })
 
                 ->addColumn('flete', function ($invoice) {
-                    $ruta = route('tiendas.print.panama', ['id' => $invoice->movement_id]);
+                    $ruta = route('tiendas.print.flete', ['id' => $invoice->movement_id]);
                     return ($invoice->tipo == 'FLE') ? '<a class="text-primary" title="Descargar FLETE"
                     target="_blank" href="' . $ruta . '"> <i class="fa fa-download"></i> </a>' : null;
                 })
