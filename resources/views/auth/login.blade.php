@@ -10,15 +10,13 @@
                         <div class="card-title">
                             <div class="row text-center">
                                 <div class="col-xs-12 col-md-12 col-lg-12">
-                                    <img src="{{ asset('assets/images/misc/logo-color-300.png') }}" alt="fenovo"
-                                        class=" img-fluid">
+                                    <img src="{{ asset('assets/images/misc/logo-color-300.png') }}" alt="fenovo" class=" img-fluid">
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
                             <form method="POST" action="{{ route('login') }}">
                                 @csrf
-
                                 <div class="row mb-3">
                                     <div class="col-xs-12 col-md-12 col-lg-12">
                                         <label for="email">Correo electrónico </label>

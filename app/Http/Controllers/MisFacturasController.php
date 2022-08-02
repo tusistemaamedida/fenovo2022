@@ -10,7 +10,9 @@ use App\Models\Store;
 use App\Traits\OriginDataTrait;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use stdClass;
+use Yajra\DataTables\Facades\DataTables;
 
 class MisFacturasController extends Controller
 {
@@ -40,15 +42,63 @@ class MisFacturasController extends Controller
             return view('admin.mis-facturas.inicio');
         }
 
-        session(['store' => $store]);
+        session(['cuit' => $cuit]);
         return redirect()->route('mis.facturas.list');
     }
 
     public function list(Request $request)
     {
-        $store    = session('store');
-        $invoices = Invoice::with(['panama', 'flete'])->where('client_cuit', $store->cuit)->whereNotNull('cae')->whereNotNull('url')->orderBy('created_at', 'DESC')->get();
-        return view('admin.mis-facturas.list', compact('invoices', 'store'));
+        $cuit = session('cuit');
+
+        if ($request->ajax()) {            
+
+            $invoices = DB::table('invoices as t1')->where('t1.client_cuit', $cuit)
+                ->join('movements as t2', 't1.movement_id', '=', 't2.id')
+                ->leftJoin('panamas as t3', 't2.id', '=', 't3.movement_id')    
+                ->leftJoin('stores as t4', 't2.to', '=', 't4.id')    
+                ->select('t1.movement_id', 't1.cae', 't1.updated_at', 't1.client_name', 't1.imp_total', 't1.url', 't1.voucher_number', 't1.updated_at', 
+                    't3.tipo',
+                    't4.description as tienda')            
+                ->orderByDesc('t1.id')
+                ->get();
+
+            return Datatables::of($invoices)
+                ->editColumn('movement_id', function ($invoice) {
+                    return str_pad($invoice->movement_id, 6, '0', STR_PAD_LEFT);
+                })
+                ->addColumn('fecha', function ($invoice) {
+                    return \Carbon\Carbon::parse($invoice->updated_at)->format('d/m/Y');
+                })
+                ->addColumn('tienda', function ($invoice) {                    
+                    return $invoice->tienda;
+                })
+                ->addColumn('cliente', function ($invoice) {
+                    return $invoice->client_name;
+                })
+                ->addColumn('importe', function ($invoice) {
+                    return number_format($invoice->imp_total, 2, ',', '.');
+                })
+                ->addColumn('url', function ($invoice) {
+                    return ($invoice->url) 
+                        ?'<a class="text-primary" title="Descargar factura" target="_blank" href="'.$invoice->url.'">'.
+                            $invoice->voucher_number.'</a>': null;
+                })
+                ->addColumn('panama', function ($invoice) {
+                    $ruta = route('tiendas.print.panama', ['id' => $invoice->movement_id]);
+                    return ($invoice->tipo == 'PAN') ? '<a class="text-primary" title="Descargar PAN" target="_blank" href="' . $ruta . '"> <i class="fa fa-download"></i>  </a>' : null;
+                })
+
+                ->addColumn('flete', function ($invoice) {
+                    $ruta = route('tiendas.print.panama', ['id' => $invoice->movement_id]);
+                    return ($invoice->tipo == 'FLE') ? '<a class="text-primary" title="Descargar FLETE"
+                    target="_blank" href="' . $ruta . '"> <i class="fa fa-download"></i> </a>' : null;
+                })
+
+                ->rawColumns(['movement_id', 'fecha', 'tienda', 'cliente', 'importe', 'url', 'panama', 'flete'])
+                ->make(true);
+        }
+
+        return view('admin.mis-facturas.list', compact('cuit'));
     }
 
     public function editPassword(Request $request)
@@ -94,6 +144,7 @@ class MisFacturasController extends Controller
                 $objProduct->cod_fenovo = $producto->product->cod_fenovo;
                 $objProduct->codigo     = $producto->product->cod_fenovo;
                 $objProduct->name       = $producto->product->name;
+                $objProduct->palet      = $producto->palet;
                 $objProduct->unit_price = number_format($producto->unit_price, 2, ',', '.');
                 $objProduct->subtotal   = number_format($subtotal, 2, ',', '.');
                 $objProduct->unity      = '( ' . $producto->unit_package . ' ' . $producto->product->unit_type . ' )';
