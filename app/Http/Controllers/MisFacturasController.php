@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Invoice;
 use App\Models\Movement;
 use App\Models\Panamas;
 
@@ -42,63 +41,78 @@ class MisFacturasController extends Controller
             return view('admin.mis-facturas.inicio');
         }
 
-        session(['cuit' => $cuit]);
-        return redirect()->route('mis.facturas.list');
+        return redirect()->route('mis.facturas.list');        
     }
 
     public function list(Request $request)
-    {
-        $cuit = session('cuit');
+    {       
+        $arrTypes = ['VENTA', 'TRASLADO'];
+        $storeTypes = ['B', 'T', 'E'];
 
-        if ($request->ajax()) {            
+        if ($request->ajax()) {
+            $cuit = $request->cuit;
 
-            $invoices = DB::table('invoices as t1')->where('t1.client_cuit', $cuit)
-                ->join('movements as t2', 't1.movement_id', '=', 't2.id')
-                ->leftJoin('panamas as t3', 't2.id', '=', 't3.movement_id')    
-                ->leftJoin('stores as t4', 't2.to', '=', 't4.id')    
-                ->select('t1.movement_id', 't1.cae', 't1.updated_at', 't1.client_name', 't1.imp_total', 't1.url', 't1.voucher_number', 't1.updated_at', 
+            $movimientos = Movement::leftJoin('invoices as t2', 'movements.id', '=', 't2.movement_id')
+                ->leftJoin('panamas as t3', 'movements.id', '=', 't3.movement_id')
+                ->leftJoin('stores as t4', 'movements.to', '=', 't4.id')
+                ->where('t4.cuit', $cuit)
+                ->whereIn('movements.type', $arrTypes)
+                ->whereIn('t4.store_type', $storeTypes)
+                ->select(
+                    'movements.id',
+                    't2.cae',
+                    'movements.updated_at',
+                    't4.razon_social',
+                    't2.imp_total',
+                    't2.url',
+                    't2.voucher_number',
+                    'movements.updated_at',
                     't3.tipo',
-                    't4.description as tienda')            
-                ->orderByDesc('t1.id')
-                ->get();
+                    't4.description as tienda'
+                )
+                ->orderByDesc('movements.id')
+                ->groupBy('movements.id')
+                ->get();    
 
-            return Datatables::of($invoices)
-                ->editColumn('movement_id', function ($invoice) {
-                    return str_pad($invoice->movement_id, 6, '0', STR_PAD_LEFT);
+            return Datatables::of($movimientos)
+                ->editColumn('movement_id', function ($movimiento) {
+                    return str_pad($movimiento->id, 6, '0', STR_PAD_LEFT);
                 })
-                ->addColumn('fecha', function ($invoice) {
-                    return \Carbon\Carbon::parse($invoice->updated_at)->format('d/m/Y');
+                ->addColumn('fecha', function ($movimiento) {
+                    return \Carbon\Carbon::parse($movimiento->updated_at)->format('d/m/Y');
                 })
-                ->addColumn('tienda', function ($invoice) {                    
-                    return $invoice->tienda;
+                ->addColumn('destino', function ($movimiento) {
+                    return $movimiento->tienda;
                 })
-                ->addColumn('cliente', function ($invoice) {
-                    return $invoice->client_name;
+                ->addColumn('cliente', function ($movimiento) {
+                    return $movimiento->razon_social;
                 })
-                ->addColumn('importe', function ($invoice) {
-                    return number_format($invoice->imp_total, 2, ',', '.');
+                ->addColumn('importe', function ($movimiento) {
+                    return ($movimiento->imp_total)?number_format($movimiento->imp_total, 2, ',', '.'):null;
                 })
-                ->addColumn('url', function ($invoice) {
-                    return ($invoice->url) 
-                        ?'<a class="text-primary" title="Descargar factura" target="_blank" href="'.$invoice->url.'">'.
-                            $invoice->voucher_number.'</a>': null;
+                ->addColumn('url', function ($movimiento) {
+                    return ($movimiento->url)
+                        ? '<a class="text-primary" title="Descargar factura" target="_blank" href="' . $movimiento->url . '">' .
+                            $movimiento->voucher_number . '</a>' : null;
                 })
-                ->addColumn('panama', function ($invoice) {
-                    $ruta = route('tiendas.print.panama', ['id' => $invoice->movement_id]);
-                    return ($invoice->tipo == 'PAN') ? '<a class="text-primary" title="Descargar PAN" target="_blank" href="' . $ruta . '"> <i class="fa fa-download"></i>  </a>' : null;
+                ->addColumn('panama', function ($movimiento) {
+                    if ($movimiento->hasPanama()) {
+                        $orden = $movimiento->getPanama()->orden;
+                        return '<a class="text-primary" title="Imprime panama"  href="' . route('tiendas.print.panama', ['id' => $movimiento->id]) . '" target="_blank">' . $orden . '</a>';
+                    }
+                })
+                ->addColumn('flete', function ($movimiento) {
+                    if ($movimiento->hasFlete()) {
+                        $orden = $movimiento->getFlete()->orden;
+                        return '<a class="text-primary" title="Imprimir flete' . $orden . '"  href="' . route('tiendas.print.flete', ['id' => $movimiento->id]) . '" target="_blank">' . $orden . '</a>';
+                    }
                 })
 
-                ->addColumn('flete', function ($invoice) {
-                    $ruta = route('tiendas.print.flete', ['id' => $invoice->movement_id]);
-                    return ($invoice->tipo == 'FLE') ? '<a class="text-primary" title="Descargar FLETE"
-                    target="_blank" href="' . $ruta . '"> <i class="fa fa-download"></i> </a>' : null;
-                })
-
-                ->rawColumns(['movement_id', 'fecha', 'tienda', 'cliente', 'importe', 'url', 'panama', 'flete'])
+                ->rawColumns(['id', 'fecha', 'destino', 'cliente', 'importe', 'url', 'panama', 'flete'])
                 ->make(true);
         }
 
-        return view('admin.mis-facturas.list', compact('cuit'));
+        return view('admin.mis-facturas.list');
     }
 
     public function editPassword(Request $request)
@@ -111,8 +125,9 @@ class MisFacturasController extends Controller
     {
         $store = Store::find($request->store_id);
         $store->update(['password' => $request->password]);
-        $request->session()->flash('update-store', 'clave actualizada ');
-        return view('admin.mis-facturas.inicio');
+        $request->session()->flash('update-store', 'clave activada correctamente ');
+        session(['cuit' => $store->cuit]);
+        return redirect()->route('mis.facturas.list');
     }
 
     public function printPanama(Request $request)
