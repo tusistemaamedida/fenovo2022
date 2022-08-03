@@ -1175,6 +1175,37 @@ class SalidasController extends Controller
                                 ProductStore::create($data_prod_a_deposito);
                             }
                         }
+                    }else{
+                        if($deposito){
+                            $prod_store = ProductStore::where('product_id', $product->product_id)->where('store_id', $deposito)->first();
+                            $stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo : 0;
+
+                            if ($prod_store) {
+                                if (isset($quantities[0])) {
+                                    ($deposito) ? $prod_store->stock_f -= $cant_total_f : null;
+                                }
+                                if (isset($quantities[1])) {
+                                    ($deposito) ? $prod_store->stock_r -= $cant_total_r : null;
+                                }
+                                if (isset($quantities[2])) {
+                                    ($deposito) ? $prod_store->stock_cyo -= $cant_total_cyo : null;
+                                }
+                                $prod_store->save();
+                            } else {
+                                $data_prod_store['product_id'] = $product->product_id;
+                                $data_prod_store['store_id']   = $insert_data['to'];
+                                if (isset($quantities[0])) {
+                                    $data_prod_store['stock_f'] = $cant_total_f;
+                                }
+                                if (isset($quantities[1])) {
+                                    $data_prod_store['stock_r'] = $cant_total_r;
+                                }
+                                if (isset($quantities[2])) {
+                                    $data_prod_store['stock_cyo'] = $cant_total_cyo;
+                                }
+                                ProductStore::create($data_prod_store);
+                            }
+                        }
                     }
 
                     if (isset($pedido)) {
@@ -1223,19 +1254,19 @@ class SalidasController extends Controller
                                 'cost_fenovo'  => $product->costo_fenovo,
                                 'tasiva'       => $product->tasiva,
                                 'unit_type'    => $product->unit_type,
-                                'entry'        => 0,
+                                'entry'        => (!$es_traslado_a_deposito)?0:$egress,
                                 'bultos'       => $quantity,
                                 'egress'       => $egress,
-                                'balance'      => $stock_inicial - $countEgress,
+                                'balance'      => (!$es_traslado_a_deposito)?($stock_inicial - $countEgress):$stock_inicial,
                                 'punto_venta'  => $punto_venta,
                                 'circuito'     => $circuito,
                                 'deposito'     => $deposito,
                             ]);
 
-                            if(!$deposito || $a_deposito){
+                            if(!$deposito || !$a_deposito){
                                 MovementProduct::create([
-                                    'entidad_id'   => ($a_deposito)?1:$insert_data['to'],
-                                    'entidad_tipo' => ($a_deposito)?'D':$entidad_tipo,
+                                    'entidad_id'   => $insert_data['to'],
+                                    'entidad_tipo' => $entidad_tipo,
                                     'movement_id'  => $movement->id,
                                     'product_id'   => $product->product_id,
                                     'unit_package' => $product->unit_package,

@@ -156,7 +156,7 @@ class ProductController extends Controller
 
     public function historial(Request $request)
     {
-        $producto = Product::find($request->id);
+        $producto = Product::where('id',$request->id)->with('productos_store')->first();
 
         if ($request->ajax()) {
             $movimientos = MovementProduct::with(['movement'])
@@ -173,7 +173,7 @@ class ProductController extends Controller
                     return $movimiento->movement->type;
                 })
                 ->addColumn('from', function ($movimiento) {
-                    if(!is_null($movimiento->deposito) && $movimiento->movement->type == 'TRASLADO'){
+                    if(!is_null($movimiento->deposito) && $movimiento->movement->type != 'COMPRA'){
                         $dep = Store::where('id',$movimiento->deposito)->first();
                         return $dep->razon_social;
                     }
