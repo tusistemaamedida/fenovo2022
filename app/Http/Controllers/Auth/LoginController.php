@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -16,6 +18,16 @@ class LoginController extends Controller
      * @var string
      */
     protected $redirectTo = '/inicio';
+
+    public function authenticated($request, $user)
+    {
+        if (Auth::user()->rol() == 'base') {
+            $this->guard()->logout();
+            $request->session()->invalidate();
+            Session::flash('role-error', 'Acceso <strong>restringido </strong>');
+            return $this->loggedOut($request) ?: redirect('/login');
+        }
+    }
 
     public function logout(Request $request)
     {
