@@ -1,6 +1,8 @@
 <div class="row mt-2">
     <div class="col-12">
-        <p class=" text-dark font-weight-bolder">Local :: {{ str_pad($store->cod_fenovo, 3, '0', STR_PAD_LEFT)  }} - {{ $store->description }}</p>
+        <p class=" text-dark font-weight-bolder">
+            @if($store->store_type == 'D') Depósito @else Local @endif :: {{ str_pad($store->cod_fenovo, 3, '0', STR_PAD_LEFT)  }} - {{ $store->description }}
+        </p>
     </div>
 </div>
 <div class="table-responsive">
@@ -23,8 +25,8 @@
                     <td>{{ $producto->stock }}</td>
                     <td>{{ $producto->proveedor }}</td>
                     <td>
-                        <a href="{{ route('product.historial.tienda', ['store_id' => $store->id,'product_id' => $producto->id]) }}"> 
-                            <i class="fa fa-list" aria-hidden="true"></i> 
+                        <a href="{{ route('product.historial.tienda', ['store_id' => $store->id,'product_id' => $producto->id]) }}">
+                            <i class="fa fa-list" aria-hidden="true"></i>
                         </a>
                     </td>
                 </tr>
@@ -42,5 +44,5 @@
         paging: false,
         ordering: false,
         iDisplayLength: -1,
-    });    
+    });
 </script>

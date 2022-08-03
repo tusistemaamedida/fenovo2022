@@ -33,6 +33,7 @@ class MovementTemp extends Model
         'exported',
         'user_id',
         'observacion',
+        'deposito'
     ];
 
     public function movement_products()
@@ -88,7 +89,7 @@ class MovementTemp extends Model
                 }
 
                 return null;
-                    
+
             case 'DEVOLUCIONCLIENTE':
                 $customer = Customer::find($this->to);
                 return $customer->razon_social;

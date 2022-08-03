@@ -7,7 +7,7 @@
                 <div class="row mt-5 mb-3">
                     <div class="col-6">
                         <h4 class="card-label mb-0 font-weight-bold text-body">
-                            Stock de productos en otras Friotekas
+                            Stock de productos en Friotekas y Depósitos
                         </h4>
                     </div>
                 </div>
@@ -29,11 +29,11 @@
                 <div class="row mt-3">
                     <div class="col-12">
                         <div class="detalle">
-                            
+
                         </div>
                     </div>
                 </div>
-                
+
             </div>
 
         </div>
@@ -68,7 +68,7 @@
                 url: route,
                 type: 'GET',
                 data: {id},
-                success: function(data) {                    
+                success: function(data) {
                     if (data['type'] == 'success') {
                         jQuery(".detalle").html(data['html']);
                     }

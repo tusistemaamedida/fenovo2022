@@ -11,7 +11,12 @@
                         <div class="card-title mb-0">
                             <h4 class="card-label mb-0 font-weight-bold text-body">
                                 Historial del producto {{ $producto->cod_fenovo }} - {{ $producto->name }} - Unidad <span class=" text-danger">{{ $producto->unit_type }} </span>
-                            </h4>
+                            </h4>@if(\Auth::user()->rol() == 'contable')
+                            <br>
+                                @foreach ($producto->productos_store as $ps)
+                                    <strong>{{$ps->deposito->razon_social}}:</strong> {{$ps->stock_f +$ps->stock_r +$ps->stock_cyo }} &nbsp;&nbsp;&nbsp;
+                                @endforeach
+                            @endif
                         </div>
                         <div class="icons d-flex">
                             <a href="{{ route('product.printHistorial',['id'=>$producto->id]) }}" class="mt-1 mr-3">

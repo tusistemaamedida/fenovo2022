@@ -73,13 +73,23 @@ class SalidasController extends Controller
 
             // Tomo los movimientos de 90 dias atras
             $fecha = Carbon::now()->subDays(90)->toDateTimeString();
-
-            $movement = Movement::where('from', Auth::user()->store_active)
+            if(\Auth::user()->rol() == 'superadmin' || \Auth::user()->rol() == 'admin'){
+                $movement = Movement::where('from', Auth::user()->store_active)
+                    ->whereIn('type', $arrTypes)
+                    ->whereDate('created_at', '>', $fecha)
+                    ->orderBy('date', 'DESC')
+                    ->orderBy('id', 'DESC')
+                    ->get();
+            }else{
+                $movement = Movement::where('from', Auth::user()->store_active)
                 ->whereIn('type', $arrTypes)
+                ->where('user_id', Auth::user()->id)
                 ->whereDate('created_at', '>', $fecha)
                 ->orderBy('date', 'DESC')
                 ->orderBy('id', 'DESC')
                 ->get();
+            }
+
 
             return DataTables::of($movement)
                 ->addColumn('id', function ($movement) {
@@ -167,8 +177,15 @@ class SalidasController extends Controller
                     return date('d-m-Y H:i:s', strtotime($pendiente->updated_at));
                 })
                 ->addColumn('destino', function ($pendiente) {
-                    $explode = explode('_', $pendiente->list_id);
-                    return $this->origenDataCiudad($explode[0], $explode[1]);
+                    if(!is_null($pendiente->a_deposito)){
+                        $explode = explode('_', $pendiente->list_id);
+                        $obj = $this->origenDataCiudad('TRASLADO', $pendiente->a_deposito,true);
+                        return $obj->razon_social;
+                    }else{
+                        $explode = explode('_', $pendiente->list_id);
+                        return $this->origenDataCiudad($explode[0], $explode[1]);
+                    }
+
                 })
                 ->addColumn('items', function ($pendiente) {
                     return '<span class="badge badge-primary">' . $pendiente->total . '</span>';
@@ -207,16 +224,39 @@ class SalidasController extends Controller
 
     public function pendienteShow(Request $request)
     {
+        $pedido  = $desde_deposito = $a_deposito = $destino = $destinoName = null;
+        $depositos = null;
+        $es_traslado_depositos = false;
         $list_id = $request->input('list_id');
+
         $explode = explode('_', $list_id);
-        $pedido  = null;
-        if (count($explode) == 3) {
-            $pedido = $explode[2];
-        }
         $tipo        = $explode[0];
-        $destino     = $this->origenData($tipo, $explode[1], true);
-        $destinoName = $this->origenData($tipo, $explode[1]);
-        return view('admin.movimientos.salidas.add', compact('tipo', 'destino', 'destinoName', 'pedido', 'list_id'));
+
+        $sp = SessionProduct::where('list_id',$list_id)->first();
+        if(\Auth::user()->rol() == 'contable'){
+            if(isset($sp) && !is_null($sp->desde_deposito)){
+                $desde_deposito = $this->origenData($tipo, $sp->desde_deposito, true);
+                $es_traslado_depositos = true;
+            }
+            if(isset($sp) && !is_null($sp->a_deposito)){
+                $a_deposito = $this->origenData($tipo, $sp->a_deposito, true);
+                $es_traslado_depositos = true;
+            }
+
+            $depositos = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->where('store_type','D')->get();
+        }
+
+        if(isset($sp) && !is_null($sp->nro_pedido)){
+            $pedido = $sp->nro_pedido;
+        }
+
+        if(!$es_traslado_depositos){
+            $destino     = $this->origenData($tipo, $explode[1], true);
+            $destinoName = $this->origenData($tipo, $explode[1]);
+        }
+
+        return view('admin.movimientos.salidas.add',
+               compact('tipo', 'destino', 'destinoName', 'pedido', 'list_id','es_traslado_depositos','desde_deposito','a_deposito','depositos'));
     }
 
     public function getTotalMovement(Request $request)
@@ -568,8 +608,12 @@ class SalidasController extends Controller
 
     public function add()
     {
+        $depositos = null;
+        if(\Auth::user()->rol() == 'contable'){
+            $depositos = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->where('store_type','D')->get();
+        }
         $this->sessionProductRepository->deleteDevoluciones();
-        return view('admin.movimientos.salidas.add');
+        return view('admin.movimientos.salidas.add',compact('depositos'));
     }
 
     public function show(Request $request)
@@ -707,10 +751,13 @@ class SalidasController extends Controller
     {
         try {
             if ($request->has('id') && $request->input('id') != '') {
+                $producto_en_depositos = '';
                 $product    = $this->productRepository->getById($request->input('id'));
                 $list_id    = $request->input('list_id') . '_' . \Auth::user()->store_active;
                 $devolucion = str_contains($list_id, 'DEVOLUCION_');
                 $debito     = str_contains($list_id, 'DEBITO_');
+                $es_traslado   = str_contains($list_id, 'TRASLADO_');
+                $depositos = $desposito_desde_seleccionado = null;
 
                 if ($product) {
                     $stock_presentaciones = [];
@@ -742,7 +789,12 @@ class SalidasController extends Controller
                         $view = 'admin.movimientos.notas-credito.partials.inserByAjax';
                     } elseif ($debito) {
                         $view = 'admin.movimientos.notas-debito.partials.inserByAjax';
-                    } else {
+                    } elseif(\Auth::user()->rol() == 'contable'){
+                        $explode = explode('-',$request->input('list_id'));
+                        $desposito_desde_seleccionado = explode('_',$explode[0])[1];
+                        $producto_en_depositos = ProductStore::where('product_id',$request->input('id'))->with('deposito')->get();
+                        $view = 'admin.movimientos.salidas.partials.inserByAjaxWithDepositos';
+                    } else{if(\Auth::user()->rol() != 'contable')
                         $view = 'admin.movimientos.salidas.partials.inserByAjax';
                     }
 
@@ -750,7 +802,7 @@ class SalidasController extends Controller
                         'type' => 'success',
                         'html' => view(
                             $view,
-                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total', 'stock_session')
+                            compact('stock_presentaciones', 'product', 'presentaciones', 'stock_total', 'stock_session','producto_en_depositos','es_traslado','desposito_desde_seleccionado')
                         )->render(),
                     ]);
                 }
@@ -771,15 +823,21 @@ class SalidasController extends Controller
             $unidades            = $request->input('unidades');
             $product_id          = $request->input('product_id');
             $unit_type           = $request->input('unit_type');
+            $deposito            = $request->input('deposito');
+            $a_deposito          = $request->input('a_deposito');
+            $desde_deposito      = $request->input('desde_deposito');
             $list_id             = $request->input('list_id');
+            $nro_pedido          = $request->input('nro_pedido');
 
             if (count(explode('_', $list_id)) == 2) {
                 $list_id .= '_' . Auth::user()->store_active;
             }
 
-            if (!$to) {
+            if ((\Auth::user()->rol() != 'contable' && !$to) ||
+                (\Auth::user()->rol() == 'contable' && !$to && $to_type != 'TRASLADO')  ) {
                 return new JsonResponse(['msj' => 'Ingrese el cliente o tienda según corresponda.', 'type' => 'error', 'index' => 'to']);
             }
+
             if (!$unidades || count($unidades) == 0) {
                 return new JsonResponse(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
             }
@@ -792,6 +850,15 @@ class SalidasController extends Controller
             if (count($unidades) == $count_unidades_cero) {
                 return new JsonResponse(['msj' => 'Ingrese una cantidad a enviar.', 'type' => 'error', 'index' => 'quantity']);
             }
+
+            if(\Auth::user()->rol() == 'contable' && is_null($deposito) && $to_type != 'TRASLADO'){
+                return new JsonResponse(['msj' => 'Debe seleccionar despósito de origen.', 'type' => 'error', 'index' => 'deposito']);
+            }
+
+            if(\Auth::user()->rol() == 'contable' && ($a_deposito == $desde_deposito) && isset($a_deposito) && isset($desde_deposito)){
+                return new JsonResponse(['msj' => 'Debe seleccionar despósitos de origen y destino diferentes. ', 'type' => 'error', 'index' => 'deposito']);
+            }
+
             $insert_data = [];
             $product     = $this->productRepository->getByIdWith($product_id);
 
@@ -853,10 +920,15 @@ class SalidasController extends Controller
             $insert_data['costo_fenovo'] = $prices->costfenovo;
             $insert_data['list_id']      = $list_id;
             $insert_data['store_id']     = Auth::user()->store_active;
+            $insert_data['user_id']      = Auth::user()->id;
             $insert_data['invoice']      = true;
             $insert_data['circuito']     = null;
             $insert_data['iibb']         = $product->iibb;
             $insert_data['product_id']   = $product_id;
+            $insert_data['deposito']     = ($desde_deposito)?$desde_deposito:$deposito;
+            $insert_data['desde_deposito']= $desde_deposito;
+            $insert_data['a_deposito']    = $a_deposito;
+            $insert_data['nro_pedido']    = $nro_pedido;
 
             for ($i = 0; $i < count($unidades); $i++) {
                 $unidad   = $unidades[$i];
@@ -964,194 +1036,260 @@ class SalidasController extends Controller
             $from = 1;
             DB::beginTransaction();
             Schema::disableForeignKeyConstraints();
-            $list_id = $request->input('session_list_id');
-            if (count(explode('_', $list_id)) == 2) {
-                $list_id .= '_' . Auth::user()->store_active;
-            }
-            $explode          = explode('_', $list_id);
-            $session_products = $this->sessionProductRepository->getByListId($list_id);
-
-            $check = $this->checkStockPass($session_products);
-            if ($check['type'] == 'error') {
-                return new JsonResponse(['msj' => 'Stock Insuficiente', 'type' => 'error', 'alert' => $check['alert']]);
-            }
-
-            if ($explode[0] != 'TRASLADO') {
-                $count = Movement::where('from', $from)->whereIn('type', ['VENTA', 'VENTACLIENTE'])->count();
-            } else {
-                $count = Movement::where('from', $from)->where('type', 'TRASLADO')->count();
-            }
-
-            $orden = ($count) ? $count + 1 : 1;
-
-            $insert_data['type']           = $explode[0];
-            $insert_data['to']             = $explode[1];
-            $insert_data['date']           = now();
-            $insert_data['from']           = $from;
-            $insert_data['orden']          = $orden;
-            $insert_data['status']         = 'FINISHED';
-            $insert_data['voucher_number'] = $request->input('voucher_number');
-            $insert_data['flete']          = $request->flete;
-            $insert_data['observacion']    = $request->observacion;
-            $insert_data['user_id']        = \Auth::user()->id;
-            $insert_data['flete_invoice']  = (isset($request->factura_flete)) ? 1 : 0;
-
-            $movement = Movement::create($insert_data);
-
-            if (count($explode) == 3 && strlen($explode[2]) > 9) {
-                $voucher_number      = $explode[2];
-                $pedido              = Pedido::where('voucher_number', $voucher_number)->first();
-                $pedido->movement_id = $movement->id;
-                $pedido->status      = 'FINISHED';
-                $pedido->save();
-
-                PedidoEstados::create([
-                    'user_id'   => \Auth::user()->id,
-                    'pedido_id' => $pedido->id,
-                    'fecha'     => now(),
-                    'estado'    => 'CERRADO',
-                ]);
-            }
-
-            $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
-
-            foreach ($session_products as $product) {
-                $stock_inicial_store = 0;
-                $quantities          = $this->getStockDividido($product);
-                $stock_inicial       = $product->producto->stockReal();
-                $cantidad            = $product->quantity;
-                $punto_venta         = env('PTO_VTA_FENOVO', 18);
-                $unit_type           = $product->unit_type;
-                $unit_weight         = $product->producto->unit_weight;
-                $unit_package        = $product->unit_package;
-                $palet               = $product->palet;
-
-                if (isset($quantities[0])) {
-                    $cant_total_f = ($unit_type == 'K') ? ($unit_weight * $unit_package * $quantities[0]['cant']) : ($unit_package * $quantities[0]['cant']);
-                    $product->producto->stock_f -= $cant_total_f;
+                $list_id = $request->input('session_list_id');
+                if (count(explode('_', $list_id)) == 2) {
+                    $list_id .= '_' . Auth::user()->store_active;
                 }
-                if (isset($quantities[1])) {
-                    $cant_total_r = ($unit_type == 'K') ? ($unit_weight * $unit_package * $quantities[1]['cant']) : ($unit_package * $quantities[1]['cant']);
-                    $product->producto->stock_r -= $cant_total_r;
-                }
-                if (isset($quantities[2])) {
-                    $cant_total_cyo = ($unit_type == 'K') ? ($unit_weight * $unit_package * $quantities[2]['cant']) : ($unit_package * $quantities[2]['cant']);
-                    $product->producto->stock_cyo -= $cant_total_cyo;
-                    $punto_venta = $product->producto->proveedor->punto_venta;
+                $explode          = explode('_', $list_id);
+                $session_products = $this->sessionProductRepository->getByListId($list_id);
+
+                $check = $this->checkStockPass($session_products);
+                if ($check['type'] == 'error') {
+                    return new JsonResponse(['msj' => 'Stock Insuficiente', 'type' => 'error', 'alert' => $check['alert']]);
                 }
 
-                $cant_total = $cant_total_f + $cant_total_r + $cant_total_cyo;
-                $product->producto->save();
+                if ($explode[0] != 'TRASLADO') {
+                    $count = Movement::where('from', $from)->whereIn('type', ['VENTA', 'VENTACLIENTE'])->count();
+                } else {
+                    $count = Movement::where('from', $from)->where('type', 'TRASLADO')->count();
+                }
 
-                if ($insert_data['type'] != 'VENTACLIENTE') {
-                    $prod_store          = ProductStore::where('product_id', $product->product_id)->where('store_id', $insert_data['to'])->first();
-                    $stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo : 0;
-                    if ($prod_store) {
-                        if (isset($quantities[0])) {
-                            $prod_store->stock_f += $cant_total_f;
+                $orden = ($count) ? $count + 1 : 1;
+
+                $es_traslado_a_deposito = $session_products[0]->a_deposito;
+                $es_pedido              = $session_products[0]->nro_pedido;
+                $desde_pedido           = $session_products[0]->desde_deposito;
+
+                $insert_data['type']           = $explode[0];
+                $insert_data['to']             = ($es_traslado_a_deposito)?$es_traslado_a_deposito:$explode[1];
+                $insert_data['date']           = now();
+                $insert_data['from']           = ($desde_pedido)?$desde_pedido:$from;
+                $insert_data['orden']          = $orden;
+                $insert_data['status']         = 'FINISHED';
+                $insert_data['voucher_number'] = $request->input('voucher_number');
+                $insert_data['flete']          = $request->flete;
+                $insert_data['observacion']    = $request->observacion;
+                $insert_data['user_id']        = \Auth::user()->id;
+                $insert_data['flete_invoice']  = (isset($request->factura_flete)) ? 1 : 0;
+                // Movimiento
+                $movement = Movement::create($insert_data);
+                // Si es un Pedido
+                if ($es_pedido) {
+                    $voucher_number      = $es_pedido;
+                    $pedido              = Pedido::where('voucher_number', $voucher_number)->first();
+                    $pedido->movement_id = $movement->id;
+                    $pedido->status      = 'FINISHED';
+                    $pedido->save();
+
+                    PedidoEstados::create([
+                        'user_id'   => \Auth::user()->id,
+                        'pedido_id' => $pedido->id,
+                        'fecha'     => now(),
+                        'estado'    => 'CERRADO',
+                    ]);
+                }
+
+                $entidad_tipo = parent::getEntidadTipo($insert_data['type']);
+
+                foreach ($session_products as $product) {
+                    $stock_inicial_store = 0;
+                    $quantities          = $this->getStockDividido($product);
+                    $stock_inicial       = $product->producto->stockReal();
+                    $cantidad            = $product->quantity;
+                    $punto_venta         = env('PTO_VTA_FENOVO', 18);
+                    $unit_type           = $product->unit_type;
+                    $unit_weight         = $product->producto->unit_weight;
+                    $unit_package        = $product->unit_package;
+                    $palet               = $product->palet;
+
+                    $deposito       = $product->deposito;
+                    $desde_deposito = $product->desde_deposito;
+                    $a_deposito     = $product->a_deposito;
+
+                    if (isset($quantities[0])) {
+                        $cant_total_f = ($unit_type == 'K') ? ($unit_weight * $unit_package * $quantities[0]['cant']) : ($unit_package * $quantities[0]['cant']);
+                        $product->producto->stock_f -= $cant_total_f;
+                    }
+                    if (isset($quantities[1])) {
+                        $cant_total_r = ($unit_type == 'K') ? ($unit_weight * $unit_package * $quantities[1]['cant']) : ($unit_package * $quantities[1]['cant']);
+                        $product->producto->stock_r -= $cant_total_r;
+                    }
+                    if (isset($quantities[2])) {
+                        $cant_total_cyo = ($unit_type == 'K') ? ($unit_weight * $unit_package * $quantities[2]['cant']) : ($unit_package * $quantities[2]['cant']);
+                        $product->producto->stock_cyo -= $cant_total_cyo;
+                        $punto_venta = $product->producto->proveedor->punto_venta;
+                    }
+
+                    $cant_total = $cant_total_f + $cant_total_r + $cant_total_cyo;
+                    if(!$es_traslado_a_deposito) $product->producto->save();
+
+                    if ($insert_data['type'] != 'VENTACLIENTE') {
+
+                        if($deposito){
+                            $prod_store = ProductStore::where('product_id', $product->product_id)->where('store_id', $deposito)->first();
+                        }else{
+                            $prod_store = ProductStore::where('product_id', $product->product_id)->where('store_id', $insert_data['to'])->first();
                         }
-                        if (isset($quantities[1])) {
-                            $prod_store->stock_r += $cant_total_r;
+
+                        $stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo : 0;
+
+                        if ($prod_store) {
+                            if (isset($quantities[0])) {
+                                ($deposito) ? $prod_store->stock_f -= $cant_total_f : $prod_store->stock_f += $cant_total_f;
+                            }
+                            if (isset($quantities[1])) {
+                                ($deposito) ? $prod_store->stock_r -= $cant_total_r : $prod_store->stock_r += $cant_total_r;
+                            }
+                            if (isset($quantities[2])) {
+                                ($deposito) ? $prod_store->stock_cyo -= $cant_total_cyo : $prod_store->stock_cyo += $cant_total_cyo;
+                            }
+                            $prod_store->save();
+                        } else {
+                            $data_prod_store['product_id'] = $product->product_id;
+                            $data_prod_store['store_id']   = $insert_data['to'];
+                            if (isset($quantities[0])) {
+                                $data_prod_store['stock_f'] = $cant_total_f;
+                            }
+                            if (isset($quantities[1])) {
+                                $data_prod_store['stock_r'] = $cant_total_r;
+                            }
+                            if (isset($quantities[2])) {
+                                $data_prod_store['stock_cyo'] = $cant_total_cyo;
+                            }
+                            ProductStore::create($data_prod_store);
                         }
-                        if (isset($quantities[2])) {
-                            $prod_store->stock_cyo += $cant_total_cyo;
+
+                        if($a_deposito){
+                            $prod_a_depsito = ProductStore::where('product_id', $product->product_id)->where('store_id', $a_deposito)->first();
+                            if ($prod_a_depsito) {
+                                if (isset($quantities[0])) $prod_a_depsito->stock_f += $cant_total_f;
+                                if (isset($quantities[1])) $prod_a_depsito->stock_r += $cant_total_r;
+                                if (isset($quantities[2])) $prod_a_depsito->stock_cyo += $cant_total_cyo;
+                                $prod_a_depsito->save();
+                            } else {
+                                $data_prod_a_deposito['product_id'] = $product->product_id;
+                                $data_prod_a_deposito['store_id']   = $a_deposito;
+                                if (isset($quantities[0]))  $data_prod_a_deposito['stock_f'] = $cant_total_f;
+                                if (isset($quantities[1]))  $data_prod_a_deposito['stock_r'] = $cant_total_r;
+                                if (isset($quantities[2]))  $data_prod_a_deposito['stock_cyo'] = $cant_total_cyo;
+                                ProductStore::create($data_prod_a_deposito);
+                            }
                         }
-                        $prod_store->save();
-                    } else {
-                        $data_prod_store['product_id'] = $product->product_id;
-                        $data_prod_store['store_id']   = $insert_data['to'];
-                        if (isset($quantities[0])) {
-                            $data_prod_store['stock_f'] = $cant_total_f;
+                    }else{
+                        if($deposito){
+                            $prod_store = ProductStore::where('product_id', $product->product_id)->where('store_id', $deposito)->first();
+                            $stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo : 0;
+
+                            if ($prod_store) {
+                                if (isset($quantities[0])) {
+                                    ($deposito) ? $prod_store->stock_f -= $cant_total_f : null;
+                                }
+                                if (isset($quantities[1])) {
+                                    ($deposito) ? $prod_store->stock_r -= $cant_total_r : null;
+                                }
+                                if (isset($quantities[2])) {
+                                    ($deposito) ? $prod_store->stock_cyo -= $cant_total_cyo : null;
+                                }
+                                $prod_store->save();
+                            } else {
+                                $data_prod_store['product_id'] = $product->product_id;
+                                $data_prod_store['store_id']   = $insert_data['to'];
+                                if (isset($quantities[0])) {
+                                    $data_prod_store['stock_f'] = $cant_total_f;
+                                }
+                                if (isset($quantities[1])) {
+                                    $data_prod_store['stock_r'] = $cant_total_r;
+                                }
+                                if (isset($quantities[2])) {
+                                    $data_prod_store['stock_cyo'] = $cant_total_cyo;
+                                }
+                                ProductStore::create($data_prod_store);
+                            }
                         }
-                        if (isset($quantities[1])) {
-                            $data_prod_store['stock_r'] = $cant_total_r;
+                    }
+
+                    if (isset($pedido)) {
+                        $ped_producto = PedidoProductos::where('pedido_id', $pedido->id)->where('product_id', $product->product_id)->first();
+                        if ($ped_producto) {
+                            $ped_producto->bultos_enviados   = $product->quantity;
+                            $ped_producto->bultos_pendientes = $ped_producto->bultos - $product->quantity;
+                            $ped_producto->save();
                         }
-                        if (isset($quantities[2])) {
-                            $data_prod_store['stock_cyo'] = $cant_total_cyo;
+                    }
+
+                    $countEgress = 0;
+                    for ($i = 0; $i < count($quantities); $i++) {
+                        if ($quantities[$i]['cant'] > 0) {
+                            $invoice = 1;
+                            if ($quantities[$i]['tipo'] == 'quantity_f') {
+                                $circuito = 'F';
+                                $egress   = $cant_total_f;
+                                $quantity = $quantities[$i]['cant'];
+                                $invoice  = 1;
+                            }
+                            if ($quantities[$i]['tipo'] == 'quantity_r') {
+                                $circuito = 'R';
+                                $egress   = $cant_total_r;
+                                $quantity = $quantities[$i]['cant'];
+                                $invoice  = ($explode[0] == 'TRASLADO' || $explode[0] == 'DEVOLUCION' || $explode[0] == 'DEVOLUCIONCLIENTE') ? 1 : 0;
+                            }
+                            if ($quantities[$i]['tipo'] == 'quantity_cyo') {
+                                $circuito    = 'CyO';
+                                $egress      = $cant_total_cyo;
+                                $quantity    = $quantities[$i]['cant'];
+                                $invoice     = 1;
+                                $punto_venta = $product->producto->proveedor->punto_venta;
+                            }
+                            $countEgress += $egress;
+                            MovementProduct::create([
+                                'entidad_id'   => 1,
+                                'entidad_tipo' => 'S',
+                                'movement_id'  => $movement->id,
+                                'product_id'   => $product->product_id,
+                                'unit_package' => $product->unit_package,
+                                'palet'        => $palet,
+                                'invoice'      => $invoice,
+                                'iibb'         => $product->iibb,
+                                'unit_price'   => ($invoice) ? $product->unit_price : $product->neto,
+                                'cost_fenovo'  => $product->costo_fenovo,
+                                'tasiva'       => $product->tasiva,
+                                'unit_type'    => $product->unit_type,
+                                'entry'        => (!$es_traslado_a_deposito)?0:$egress,
+                                'bultos'       => $quantity,
+                                'egress'       => $egress,
+                                'balance'      => (!$es_traslado_a_deposito)?($stock_inicial - $countEgress):$stock_inicial,
+                                'punto_venta'  => $punto_venta,
+                                'circuito'     => $circuito,
+                                'deposito'     => $deposito,
+                            ]);
+
+                            if(!$deposito || !$a_deposito){
+                                MovementProduct::create([
+                                    'entidad_id'   => $insert_data['to'],
+                                    'entidad_tipo' => $entidad_tipo,
+                                    'movement_id'  => $movement->id,
+                                    'product_id'   => $product->product_id,
+                                    'unit_package' => $product->unit_package,
+                                    'palet'        => $palet,
+                                    'invoice'      => $invoice,
+                                    'bultos'       => $quantity,
+                                    'cost_fenovo'  => $product->costo_fenovo,
+                                    'entry'        => $egress,
+                                    'unit_price'   => ($invoice) ? $product->unit_price : $product->neto,
+                                    'tasiva'       => $product->tasiva,
+                                    'unit_type'    => $product->unit_type,
+                                    'egress'       => 0,
+                                    'balance'      => $stock_inicial_store + $countEgress,
+                                    'punto_venta'  => $punto_venta,
+                                    'circuito'     => $circuito,
+                                    'deposito'     => $a_deposito,
+                                ]);
+                            }
                         }
-                        ProductStore::create($data_prod_store);
                     }
                 }
 
-                if (isset($pedido)) {
-                    $ped_producto = PedidoProductos::where('pedido_id', $pedido->id)->where('product_id', $product->product_id)->first();
-                    if ($ped_producto) {
-                        $ped_producto->bultos_enviados   = $product->quantity;
-                        $ped_producto->bultos_pendientes = $ped_producto->bultos - $product->quantity;
-                        $ped_producto->save();
-                    }
-                    //Aca deberia ir el producto nuevo que cargo en el pedido
-                }
-
-                $countEgress = 0;
-                for ($i = 0; $i < count($quantities); $i++) {
-                    if ($quantities[$i]['cant'] > 0) {
-                        $invoice = 1;
-                        if ($quantities[$i]['tipo'] == 'quantity_f') {
-                            $circuito = 'F';
-                            $egress   = $cant_total_f;
-                            $quantity = $quantities[$i]['cant'];
-                            $invoice  = 1;
-                        }
-                        if ($quantities[$i]['tipo'] == 'quantity_r') {
-                            $circuito = 'R';
-                            $egress   = $cant_total_r;
-                            $quantity = $quantities[$i]['cant'];
-                            $invoice  = ($explode[0] == 'TRASLADO' || $explode[0] == 'DEVOLUCION' || $explode[0] == 'DEVOLUCIONCLIENTE') ? 1 : 0;
-                        }
-                        if ($quantities[$i]['tipo'] == 'quantity_cyo') {
-                            $circuito    = 'CyO';
-                            $egress      = $cant_total_cyo;
-                            $quantity    = $quantities[$i]['cant'];
-                            $invoice     = 1;
-                            $punto_venta = $product->producto->proveedor->punto_venta;
-                        }
-                        $countEgress += $egress;
-                        MovementProduct::create([
-                            'entidad_id'   => 1,
-                            'entidad_tipo' => 'S',
-                            'movement_id'  => $movement->id,
-                            'product_id'   => $product->product_id,
-                            'unit_package' => $product->unit_package,
-                            'palet'        => $palet,
-                            'invoice'      => $invoice,
-                            'iibb'         => $product->iibb,
-                            'unit_price'   => ($invoice) ? $product->unit_price : $product->neto,
-                            'cost_fenovo'  => $product->costo_fenovo,
-                            'tasiva'       => $product->tasiva,
-                            'unit_type'    => $product->unit_type,
-                            'entry'        => 0,
-                            'bultos'       => $quantity,
-                            'egress'       => $egress,
-                            'balance'      => $stock_inicial - $countEgress,
-                            'punto_venta'  => $punto_venta,
-                            'circuito'     => $circuito,
-                        ]);
-
-                        MovementProduct::create([
-                            'entidad_id'   => $insert_data['to'],
-                            'entidad_tipo' => $entidad_tipo,
-                            'movement_id'  => $movement->id,
-                            'product_id'   => $product->product_id,
-                            'unit_package' => $product->unit_package,
-                            'palet'        => $palet,
-                            'invoice'      => $invoice,
-                            'bultos'       => $quantity,
-                            'cost_fenovo'  => $product->costo_fenovo,
-                            'entry'        => $egress,
-                            'unit_price'   => ($invoice) ? $product->unit_price : $product->neto,
-                            'tasiva'       => $product->tasiva,
-                            'unit_type'    => $product->unit_type,
-                            'egress'       => 0,
-                            'balance'      => $stock_inicial_store + $countEgress,
-                            'punto_venta'  => $punto_venta,
-                            'circuito'     => $circuito,
-                        ]);
-                    }
-                }
-            }
-
-            $this->sessionProductRepository->deleteList($list_id);
+                $this->sessionProductRepository->deleteList($list_id);
             DB::commit();
             Schema::enableForeignKeyConstraints();
             return new JsonResponse(['msj' => 'Salida cerrada correctamente', 'type' => 'success']);

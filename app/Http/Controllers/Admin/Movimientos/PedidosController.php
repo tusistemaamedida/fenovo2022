@@ -122,6 +122,7 @@ class PedidosController extends Controller
                     $sp = SessionProduct::create([
                         'list_id'      => 'TRASLADO_'.$pedido->from.'_'.$voucher_number,
                         'store_id'     => \Auth::user()->store_active,
+                        'user_id'      => \Auth::user()->id,
                         'product_id'   => $ped_producto->product_id,
                         'neto'         => $prices->plist0neto,
                         'unit_price'   => $prices->plist0neto,
