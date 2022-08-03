@@ -20,6 +20,7 @@ Route::group(['middleware' => 'preventBackHistory'], function () {
 
         require __DIR__ . '/admin/productos.php';
         require __DIR__ . '/api/productos.php';
+        require __DIR__ . '/admin/productos-no-congelados.php';
 
         require __DIR__ . '/admin/actualizaciones-precios.php';
         require __DIR__ . '/admin/senasa-definitions.php';

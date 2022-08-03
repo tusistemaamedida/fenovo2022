@@ -41,7 +41,12 @@ class IngresosController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $movement = MovementTemp::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('CREATED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->get();
+            $movement = MovementTemp::where('type', 'COMPRA')
+                                    ->where('user_id', Auth::user()->id)
+                                    ->whereStatus('CREATED')
+                                    ->with('movement_ingreso_products')
+                                    ->orderBy('date', 'DESC')
+                                    ->get();
 
             return Datatables::of($movement)
                 ->addIndexColumn()
@@ -80,7 +85,13 @@ class IngresosController extends Controller
     public function indexCerradas(Request $request)
     {
         if ($request->ajax()) {
-            $movement = Movement::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('FINISHED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
+            $movement = Movement::where('type', 'COMPRA')
+                               ->where('user_id', Auth::user()->id)
+                               ->whereStatus('FINISHED')
+                               ->with('movement_ingreso_products')
+                               ->orderBy('date', 'DESC')
+                               ->orderBy('id', 'DESC')
+                               ->get();
 
             return Datatables::of($movement)
                 ->addIndexColumn()
@@ -108,7 +119,7 @@ class IngresosController extends Controller
     public function indexChequeadas(Request $request)
     {
         if ($request->ajax()) {
-            $movement = Movement::where('to', Auth::user()->store_active)->where('type', 'COMPRA')->whereStatus('CHECKED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
+            $movement = Movement::where('type', 'COMPRA')->whereStatus('CHECKED')->with('movement_ingreso_products')->orderBy('date', 'DESC')->orderBy('id', 'DESC')->get();
 
             return Datatables::of($movement)
                 ->addIndexColumn()
@@ -133,30 +144,36 @@ class IngresosController extends Controller
         return view('admin.movimientos.ingresos.indexChequeadas');
     }
 
-    public function add()
-    {
+    public function add(){
+        $depositos = null;
         $proveedores = Proveedor::orderBy('name')->pluck('name', 'id');
-        return view('admin.movimientos.ingresos.add', compact('proveedores'));
+        if(\Auth::user()->rol() == 'contable'){
+            $depositos = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->where('store_type','D')->get();
+        }
+
+        return view('admin.movimientos.ingresos.add', compact('proveedores','depositos'));
     }
 
     public function store(Request $request)
     {
         $data     = $request->all();
+        $data['user_id'] = \Auth::user()->id;
         $movement = MovementTemp::create($data);
         return redirect()->route('ingresos.edit', ['id' => $movement->id]);
     }
 
     public function edit(Request $request)
     {
+        $depositos = null;
         $movement    = MovementTemp::find($request->id);
         $productos   = $this->productRepository->getByProveedorIdPluck($movement->from);
         $stores      = Store::orderBy('description', 'asc')->where('active', 1)->get();
         $proveedor   = Proveedor::find($movement->from);
         $movimientos = MovementProductTemp::where('movement_id', $request->id)->orderBy('created_at', 'asc')->get();
-        return view(
-            'admin.movimientos.ingresos.edit',
-            compact('movement', 'proveedor', 'productos', 'movimientos', 'stores')
-        );
+        if(\Auth::user()->rol() == 'contable'){
+            $depositos = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->where('store_type','D')->get();
+        }
+        return view( 'admin.movimientos.ingresos.edit',  compact('movement', 'proveedor', 'productos', 'movimientos', 'stores','depositos'));
     }
 
     public function editIngreso(Request $request)
@@ -226,7 +243,7 @@ class IngresosController extends Controller
             // Completo los datos del movimiento de COMPRA
             $data['type']           = 'COMPRA';
             $data['subtype']        = $movement_temp->subtype;
-            $data['to']             = 1;
+            $data['to']             = ($movement_temp->deposito)?$movement_temp->deposito:1;
             $data['date']           = $movement_temp->date;
             $data['from']           = $movement_temp->from;
             $data['orden']          = $orden;
@@ -290,12 +307,41 @@ class IngresosController extends Controller
                     $product->stock_r = $product->stock_r + $movimiento['entry'];
                 }
                 $product->save();
+                $entidad_tipo = 'S';
+
+                if(!is_null($movement_temp->deposito)){
+                    $stock_cyo = $stock_f = $stock_r =0;
+                    $prod_store   = ProductStore::where('product_id', $movimiento['product_id'])->where('store_id', $movement_temp->deposito)->first();
+                    //$stock_inicial_store = ($prod_store) ? $prod_store->stock_f + $prod_store->stock_r + $prod_store->stock_cyo : 0;
+                    //$balance_compra = ($stock_inicial_store) ? $stock_inicial_store + $movimiento['entry'] : $movimiento['entry'];
+
+                    if ($movimiento['cyo']) {
+                        ($prod_store) ?  $prod_store->stock_cyo = $prod_store->stock_cyo + $movimiento['entry'] : $stock_cyo = $movimiento['entry'];
+                    } elseif ($movimiento['invoice']) {
+                        ($prod_store) ? $prod_store->stock_f    = $prod_store->stock_f   + $movimiento['entry'] : $stock_f   = $movimiento['entry'];
+                    } else {
+                        ($prod_store) ? $prod_store->stock_r    = $prod_store->stock_r + $movimiento['entry']   : $stock_r = $movimiento['entry'];
+                    }
+                    if($prod_store){
+                        $prod_store->save();
+                    }else{
+                        ProductStore::create([
+                            'product_id' => $movimiento['product_id'],
+                            'store_id' => $movement_temp->deposito,
+                            'stock_cyo'  => $stock_cyo,
+                            'stock_f'  => $stock_f,
+                            'stock_r'  => $stock_r,
+                        ]);
+                    }
+
+                    $entidad_tipo = 'D';
+                }
 
                 // Registro el detalle de la compra
                 MovementProduct::create([
                     'entidad_id'   => Auth::user()->store_active,
                     'movement_id'  => $movement_compra->id,
-                    'entidad_tipo' => 'S',
+                    'entidad_tipo' => $entidad_tipo,
                     'product_id'   => $movimiento['product_id'],
                     'unit_package' => $movimiento['unit_package'],
                     'unit_type'    => $movimiento['unit_type'],
@@ -308,6 +354,7 @@ class IngresosController extends Controller
                     'entry'        => $movimiento['entry'],
                     'egress'       => $movimiento['egress'],
                     'balance'      => $balance_compra,
+                    'deposito'     => $movement_temp->deposito,
                 ]);
 
                 // Generar la venta directa si viene el Id de Store
@@ -429,7 +476,7 @@ class IngresosController extends Controller
                 }
 
                 // Actualizo valor del flete y guardo
-                
+
                 // $movement_venta->flete = $flete;
                 // $movement_venta->save();
             }
@@ -445,6 +492,7 @@ class IngresosController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             Schema::enableForeignKeyConstraints();
+            dd($e->getMessage());
             return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }

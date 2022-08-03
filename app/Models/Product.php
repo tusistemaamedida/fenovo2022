@@ -235,7 +235,7 @@ class Product extends Model
             if ($i == $tope) {
                 return null;
             }
-        } 
+        }
         return $movimiento;
     }
 
@@ -276,5 +276,10 @@ class Product extends Model
         if ($codfenovo) {
             return $query->orWhere('cod_fenovo', $codfenovo);
         }
+    }
+
+    public function productos_store()
+    {
+        return $this->hasMany(ProductStore::class,'product_id','id');
     }
 }

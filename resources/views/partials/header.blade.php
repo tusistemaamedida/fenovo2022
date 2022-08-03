@@ -18,12 +18,15 @@
                     </a>
                     <div class="dropdown-menu bg-dark">
 
-                                                    
+
                         <a class="dropdown-item" href="{{ url('productos') }}">
                             <span class="text-black-50"> Lista de productos </span>
                         </a>
-                      
 
+
+                        <a class="dropdown-item" href="{{ url('productos-no-congelados') }}">
+                            <span class="text-black-50"> Productos No congelados </span>
+                        </a>
                         <a class="dropdown-item" href="{{ route('productos.stock.deposito') }}">
                             <span class="text-black-50"> Stock de productos en Friotekas </span>
                         </a>
@@ -98,32 +101,39 @@
                         <a class="dropdown-item text-black-50" href="{{ route('nd.index') }}">
                             Notas de <span class="text-warning">Dédito</span>
                         </a>
-                        
+
                         @endif
                     </div>
                 </li>
 
                 @can('pedidos.index')
-                <li class="nav-item" title="Lista de pedidos - @if ($nroPedidos > 0) tiene {{ $nroPedidos }} pedido pendientes @endif " >
-                    <a href="{{ route('pedidos.index') }}" class="nav-link mt-2">
-                        @if ($nroPedidos > 0)
-                            <i class="fas fa-list text-warning"></i> <span
-                                class="text-warning">{{ $nroPedidos }}</span>
-                        @else
-                            <i class="fas fa-list"></i>
-                        @endif
-                    </a>
-                </li>
+                    <li class="nav-item" title="Lista de pedidos - @if ($nroPedidos > 0) tiene {{ $nroPedidos }} pedido pendientes @endif " >
+                        <a href="{{ route('pedidos.index') }}" class="nav-link mt-2">
+                            @if ($nroPedidos > 0)
+                                <i class="fas fa-list text-warning"></i> <span
+                                    class="text-warning">{{ $nroPedidos }}</span>
+                            @else
+                                <i class="fas fa-list"></i>
+                            @endif
+                        </a>
+                    </li>
                 @endcan
 
-    
+
                 @can('stores.index')
-                <li class="nav-item" title="Lista de franquicias">
-                    <a href="{{ url('tiendas') }}" class="nav-link mt-2">
-                        <span class="svg-icon nav-icon">
-                            <i class="fas fa-store"></i>
-                        </span>
+                <li class="nav-item dropdown mt-2" title="">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-store"></i>
                     </a>
+                    <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item text-black-50" href="{{ url('depositos') }}">
+                            Depósitos
+                        </a>
+                        <a class="dropdown-item text-black-50" href="{{ url('tiendas') }}">
+                            Franquicias
+                        </a>
+                    </div>
                 </li>
                 @endcan
 

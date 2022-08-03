@@ -17,8 +17,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StoreController extends Controller
 {
-    private $storeRepository;
-    private $regionRepository;
+    protected $storeRepository;
+    protected $regionRepository;
 
     public function __construct(StoreRepository $storeRepository, RegionRepository $regionRepository, EnumRepository $enumRepository)
     {
@@ -30,7 +30,8 @@ class StoreController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $store = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->get();
+            $store = Store::orderBy('cod_fenovo', 'asc')->where('active', 1)->where('store_type','!=','D')->get();
+
             return Datatables::of($store)
                 ->addIndexColumn()
                 ->addColumn('cod_fenovo', function ($store) {

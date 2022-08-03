@@ -26,12 +26,12 @@
                                     class="form-control mb-3" readonly>
                             </fieldset>
                         </div>
-                        <div class="col-md-3">
+                        <div class="@if(isset($depositos)) col-md-2 @else col-md-3 @endif">
                             <label class="text-body">Fecha</label>
                             <input type="text" name="date" value="{{ date('d-m-Y', strtotime($movement->date)) }}"
                                 class="form-control datepicker mb-3" readonly>
                         </div>
-                        <div class="col-md-2">
+                        <div class="@if(isset($depositos)) col-md-1 @else col-md-3 @endif">
                             <label class="text-body">Tipo compra</label>
                             <input type="text" name="subtype" id="subtype" value="{{ $movement->subtype }}"
                                 class=" form-control" readonly>
@@ -41,6 +41,18 @@
                             <input type="text" id="voucher_number" name="voucher_number"
                                 value="{{ $movement->voucher_number }}" class="form-control text-center" readonly>
                         </div>
+                        @if(isset($depositos))
+                            <div class="col-md-2">
+                                <label class="text-body">Depósito final</label>
+                                <select class="form-control bg-transparent" name="deposito" id="deposito">
+                                    @foreach ($depositos as $deposito)
+                                        <option value="{{$deposito->id}}" @if($movement->deposito == $deposito->id ) selected @endif>
+                                            {{$deposito->razon_social}} - {{$deposito->description}}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                         <div class="col-md-2 text-center">
                             <label class="text-dark font-size-bold">Cerrar</label>
                             <fieldset class="form-group">
@@ -236,7 +248,7 @@
             let invoice = 0;
             let cyo = 0;
 
-            // Definir subtype     
+            // Definir subtype
             if (jQuery("#subtype").val() == 'FACTURA') {
                 invoice = 1;
             } else {
