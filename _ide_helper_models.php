@@ -65,13 +65,9 @@ namespace App\Models{
 /**
  * App\Models\Base08
  *
- * @property int|null $cod_fenovo
- * @property int|null $stock
  * @method static \Illuminate\Database\Eloquent\Builder|Base08 newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Base08 newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Base08 query()
- * @method static \Illuminate\Database\Eloquent\Builder|Base08 whereCodFenovo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Base08 whereStock($value)
  */
 	class Base08 extends \Eloquent {}
 }
@@ -569,7 +565,7 @@ namespace App\Models{
  * @property string|null $circuito Cta y Orden
  * @property int|null $punto_venta
  * @property int|null $iibb
- * @property \App\Models\Palet|null $palet
+ * @property int|null $palet
  * @property float|null $entry
  * @property float|null $egress
  * @property float|null $balance
@@ -728,21 +724,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|OfertaStore whereStoreId($value)
  */
 	class OfertaStore extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
- * App\Models\Palet
- *
- * @property int $id
- * @property string|null $nombre
- * @method static \Illuminate\Database\Eloquent\Builder|Palet newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Palet newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Palet query()
- * @method static \Illuminate\Database\Eloquent\Builder|Palet whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Palet whereNombre($value)
- */
-	class Palet extends \Eloquent {}
 }
 
 namespace App\Models{
@@ -962,6 +943,7 @@ namespace App\Models{
  * @property string|null $cod_descuento
  * @property int|null $iibb
  * @property int $active
+ * @property string $palet
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property-read \App\Models\ProductCategory|null $product_category
@@ -1003,6 +985,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereOnlineSale($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePackagePalet($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePackageRow($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product wherePalet($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePorcentajeBruto($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product whereProveedorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Product wherePublicationDate($value)
@@ -1662,7 +1645,7 @@ namespace App\Models{
  * @property string|null $nro_pedido
  * @property string|null $pausado
  * @property string|null $circuito
- * @property \App\Models\Palet|null $palet
+ * @property int|null $palet
  * @property-read \App\Models\Product|null $producto
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SessionProduct newQuery()

@@ -101,6 +101,10 @@ class ProductController extends Controller
                 ->addColumn('proveedor', function ($producto) {
                     return $producto->proveedor;
                 })
+
+                ->addColumn('activo', function ($producto) {
+                    return ($producto->active == 0)?'<i class="fas fa-minus-circle text-danger"></i>':null ;
+                })
                 ->addColumn('ajuste', function ($producto) {
                     return '<a href="' . route('getData.stock.detail', ['id' => $producto->id]) . '"> <i class="fa fa-wrench" aria-hidden="true"></i> </a>';
                 })
@@ -118,7 +122,7 @@ class ProductController extends Controller
                     $ruta = 'destroy(' . $producto->id . ",'" . route('product.destroy') . "')";
                     return '<a title="Delete" href="javascript:void(0)" onclick="' . $ruta . '"><i class="fa fa-trash"></i></a>';
                 })
-                ->rawColumns(['stock', 'costo', 'proveedor', 'ajuste', 'historial', 'borrar', 'editar'])
+                ->rawColumns(['stock', 'costo', 'proveedor', 'activo', 'ajuste', 'historial', 'borrar', 'editar'])
                 ->make(true);
         }
 
@@ -170,7 +174,7 @@ class ProductController extends Controller
                     return date('d/m/Y', strtotime($movimiento->created_at));
                 })
                 ->addColumn('type', function ($movimiento) {
-                    return $movimiento->movement->type;
+                    return ($movimiento->movement)?$movimiento->movement->type:null;
                 })
                 ->addColumn('from', function ($movimiento) {
                     if(!is_null($movimiento->deposito) && $movimiento->movement->type != 'COMPRA'){
@@ -180,13 +184,13 @@ class ProductController extends Controller
                     return $movimiento->movement->From($movimiento->movement->type);
                 })
                 ->addColumn('to', function ($movimiento) {
-                    return $movimiento->movement->To($movimiento->movement->type);
+                    return ($movimiento->movement)?$movimiento->movement->To($movimiento->movement->type):null;
                 })
                 ->addColumn('orden', function ($movimiento) {
-                    return $movimiento->movement->id;
+                    return ($movimiento->movement)?$movimiento->movement->id:null;
                 })
                 ->addColumn('observacion', function ($movimiento) {
-                    return $movimiento->movement->observacion;
+                    return ($movimiento->movement)?$movimiento->movement->observacion:null;
                 })
 
                 ->rawColumns(['fecha', 'type', 'from', 'to', 'orden', 'observacion'])
@@ -540,7 +544,7 @@ class ProductController extends Controller
             $insert_data['flete']          = 0;
             $insert_data['user_id']        = Auth::user()->id;
             $insert_data['observacion']    = $primer_registro['observacion'];
-            $movement                      = Movement::create($insert_data);
+            $movement_ajuste               = Movement::create($insert_data);
 
             $product = Product::find($primer_registro['product_id']);
 
@@ -564,7 +568,7 @@ class ProductController extends Controller
                 $stock = $product->stockReal();
 
                 // Inserta el Detalle del Ajuste Nave
-                $latest['movement_id']  = $movement->id;
+                $latest['movement_id']  = $movement_ajuste->id;
                 $latest['entidad_id']   = 1;
                 $latest['entidad_tipo'] = 'S';
                 $latest['product_id']   = $registro['product_id'];
@@ -623,7 +627,7 @@ class ProductController extends Controller
                 }
 
                 // Inserta el Detalle del Ajuste al Deposito
-                $latest['movement_id']  = $movement->id;
+                $latest['movement_id']  = $movement_ajuste->id;
                 $latest['entidad_id']   = 64;  // Deposito Reclamos
                 $latest['entidad_tipo'] = 'S';
                 $latest['product_id']   = $registro['product_id'];
